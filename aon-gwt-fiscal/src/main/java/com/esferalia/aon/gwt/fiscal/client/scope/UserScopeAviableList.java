@@ -15,10 +15,12 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -34,6 +36,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -83,9 +86,11 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	private AonTableButton uncheckAll;
 	
 	private AonCustomSuggestBox scopeOwnerSB = new AonCustomSuggestBox("Usuario");
+	private AonCustomListBox enterpriseStatusLB = new AonCustomListBox("Estado empresa");
 	private AonTableButton addAviableButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconKeyboardDoubleArrowRight());
 	private HashMap<String, Integer> scopeOwnerByLabel = new HashMap<String, Integer>();
 	private Integer selectedScopeOwnerId;
+	private DomainStatusFilter selectedDomainStatusFilter = DomainStatusFilter.ALL;
 	
 	private SimplePanel tableContainer;
 	private ScrollPanel tableScrollPanel;
@@ -102,6 +107,23 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private int searchRequestToken;
+
+	private static enum DomainStatusFilter {
+		ALL("Todos"),
+		ACTIVE("Activo"),
+		INACTIVE("Inactivo"),
+		BLOCKED("Bloqueado");
+
+		private final String label;
+
+		private DomainStatusFilter(String label) {
+			this.label = label;
+		}
+
+		private String getLabel() {
+			return label;
+		}
+	}
 	
 	// ------------------------------------------------- COLS
 	
@@ -165,6 +187,10 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn2());
 		
+		HTMLPanel row = new HTMLPanel("");
+		row.addStyleName(AON.CSS.aonItemFlex());
+		row.getElement().getStyle().setProperty("padding", "0 1rem");
+		
 		scopeOwnerSB.setAutoSelectEnabled(false);
 		scopeOwnerSB.setPlaceHolder("Ctrl + espacio para ver sugerencias");
 		scopeOwnerSB.getSuggestBox().addSelectionHandler(e -> {
@@ -180,9 +206,23 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 				scopeOwnerSB.showSuggestionList();
 			}
 		});
-		scopeOwnerSB.getElement().getStyle().setProperty("padding", "0 1rem");
 		
-		container.add(scopeOwnerSB);
+		row.add(scopeOwnerSB);
+
+		enterpriseStatusLB.addItem(DomainStatusFilter.ALL.getLabel(), DomainStatusFilter.ALL.name());
+		enterpriseStatusLB.addItem(DomainStatusFilter.ACTIVE.getLabel(), DomainStatusFilter.ACTIVE.name());
+		enterpriseStatusLB.addItem(DomainStatusFilter.INACTIVE.getLabel(), DomainStatusFilter.INACTIVE.name());
+		enterpriseStatusLB.addItem(DomainStatusFilter.BLOCKED.getLabel(), DomainStatusFilter.BLOCKED.name());
+		enterpriseStatusLB.setValue(DomainStatusFilter.ALL.name());
+		enterpriseStatusLB.addChangeHandler(e -> {
+			selectedDomainStatusFilter = DomainStatusFilter.valueOf(enterpriseStatusLB.getValue());
+			onSearch();
+		});
+		row.add(enterpriseStatusLB);
+		
+		enterpriseStatusLB.getElement().getStyle().setProperty("max-width", "8rem");
+		
+		container.add(row);
 	
 		tableContainer = new SimpleLayoutPanel();
 		tableContainer.setHeight("100%");
@@ -216,6 +256,8 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 			hideMessage();
 			getSearchTextBox().setValue(null, false);
 			scopeOwnerSB.setValue("");
+			enterpriseStatusLB.setValue(DomainStatusFilter.ALL.name());
+			selectedDomainStatusFilter = DomainStatusFilter.ALL;
 			selectedScopeOwnerId = null;
 			onSearch();
 		});
@@ -397,7 +439,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 			e.stopPropagation();
 			e.getNativeEvent().stopPropagation();
 
-		    HashMap<Integer, String> map = userScope_.getScope().getScopeDomains();
+		    HashMap<Integer, Domain> map = userScope_.getScope().getScopeDomains();
 		    
 		    AonCustomDialog dialog = new AonCustomDialog();
 		    dialog.showCloseButton(true);
@@ -405,13 +447,24 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 		    
 		    VerticalPanel root = new VerticalPanel();
 	        root.setSpacing(10);
-	        root.setWidth("300px");
+	        root.setWidth("500px");
 	        root.getElement().getStyle().setProperty("margin", ".5rem");
 
-	        // Lista de valores del HashMap
-	        for (String value : map.values()) {
-	            Label item = new Label(value);
-	            item.getElement().getStyle().setProperty("padding-left", ".5rem");
+	        // Estado + descripción por dominio
+	        for (Domain domain : map.values()) {
+	        	HorizontalPanel item = new HorizontalPanel();
+	        	item.setSpacing(6);
+
+	        	Label status = new Label(resolveDomainStatusLabel(domain));
+	        	status.getElement().getStyle().setProperty("font-weight", "600");
+	        	status.getElement().getStyle().setProperty("width", "5rem");
+	        	status.getElement().getStyle().setProperty("color", resolveDomainStatusColor(domain));
+
+	            Label description = new Label(domain.getDescription());
+	            description.getElement().getStyle().setProperty("padding-left", ".5rem");
+
+	            item.add(status);
+	            item.add(description);
 	            root.add(item);
 	        }
 
@@ -454,7 +507,7 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 
 			@Override
 			public void onSuccess(List<UserScopeFull> result) {
-				userScope = result;
+				userScope = filterByDomainStatus(result);
 				success.accept(userScope);
 			}
 
@@ -463,6 +516,80 @@ public abstract class UserScopeAviableList extends AonCustomDockLayout {
 				showError(caught.getMessage());
 			}
 		});
+	}
+
+	private List<UserScopeFull> filterByDomainStatus(List<UserScopeFull> userScopes) {
+		if (selectedDomainStatusFilter == null || selectedDomainStatusFilter == DomainStatusFilter.ALL) {
+			return userScopes;
+		}
+
+		Date todayDay = normalizeDay(new Date());
+
+		return userScopes.stream().filter(us -> {
+			HashMap<Integer, Domain> map = us.getScope() == null ? null : us.getScope().getScopeDomains();
+			if (map == null || map.isEmpty()) {
+				return false;
+			}
+			return map.values().stream().anyMatch(domain -> matchesFilter(domain, todayDay));
+		}).collect(Collectors.toList());
+	}
+
+	private boolean matchesFilter(Domain domain, Date todayDay) {
+		if (domain == null) {
+			return false;
+		}
+
+		switch (selectedDomainStatusFilter) {
+			case ALL:
+				return true;
+			case ACTIVE:
+				return isActiveDomain(domain, todayDay);
+			case INACTIVE:
+				return isInactiveDomain(domain, todayDay);
+			case BLOCKED:
+				return isBlockedDomain(domain, todayDay);
+			default:
+				return false;
+		}
+	}
+
+	private Date normalizeDay(Date date) {
+		if (date == null) {
+			return null;
+		}
+		return new Date(date.getYear(), date.getMonth(), date.getDate());
+	}
+
+	private String resolveDomainStatusLabel(Domain domain) {
+		Date todayDay = normalizeDay(new Date());
+		if (isBlockedDomain(domain, todayDay)) {
+			return "Bloqueado";
+		}
+		return isActiveDomain(domain, todayDay) ? "Activo" : "Inactivo";
+	}
+
+	private String resolveDomainStatusColor(Domain domain) {
+		Date todayDay = normalizeDay(new Date());
+		if (isBlockedDomain(domain, todayDay)) {
+			return "#d32f2f";
+		}
+		return isActiveDomain(domain, todayDay) ? "#2e7d32" : "#ef6c00";
+	}
+
+	private boolean isActiveDomain(Domain domain, Date todayDay) {
+		return domain != null && domain.isActive() && !isBlockedDomain(domain, todayDay);
+	}
+
+	private boolean isInactiveDomain(Domain domain, Date todayDay) {
+		return domain != null && !domain.isActive() && !isBlockedDomain(domain, todayDay);
+	}
+
+	private boolean isBlockedDomain(Domain domain, Date todayDay) {
+		if (domain == null || domain.getExpirationDate() == null) {
+			return false;
+		}
+		Date expirationDay = normalizeDay(domain.getExpirationDate());
+		return expirationDay != null && todayDay != null && !expirationDay.after(todayDay);
 	}
 	
 	private void getUsers(String description, Consumer<ArrayList<User>> success) {

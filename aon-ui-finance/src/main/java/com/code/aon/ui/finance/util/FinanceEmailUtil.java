@@ -353,9 +353,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 					String fromEmail = isVerifiedForSendingStatus(getEmailSender().getMailAccount().getEmail())
 							? getEmailSender().getMailAccount().getEmail() : "no-reply@aon.solutions";
 					
-					String from = getEmailSender().getMailAccount().getDisplayName() + "<" + fromEmail + ">";
+					String displayName = getEmailSender().getMailAccount().getDisplayName();
 		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
-		            message.setFrom(new InternetAddress(from.trim()));
+		            message.setFrom(new InternetAddress(fromEmail.trim(), displayName));
 		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail().trim());
 		            if(getEmailSender().getMailAccount().getReplyToMail() != null)
 		            	message.addRecipient(RecipientType.BCC, replyTo);

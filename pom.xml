@@ -222,9 +222,6 @@
     <module>aon-stat</module>
     <!-- WEB MODULES -->
     <module>aon-web-aio</module>
-    <!--  
-    <module>aon-solutions</module>
-    -->
     <module>aon-tedi</module>
     <module>tedi-api</module>
     <!-- AWS API Gateway & Lambda 

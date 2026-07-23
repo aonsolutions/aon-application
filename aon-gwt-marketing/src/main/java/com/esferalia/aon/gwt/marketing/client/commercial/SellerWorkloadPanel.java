@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
@@ -142,6 +143,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	}
 	
 	private void onSearch() {
+		onShowLoadingMessage("Cargando ... (si tiene muchos agentes/clientes, puede tardar un poco)");
 		enableMoreData();
 		search();
 	}
@@ -230,9 +232,11 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			}
 			enableSearch();
 			
+			onHideMessage();
+			
 		});
 	}
-	
+
 	private void paintRow(SellerWorkload sellerWorkload) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
@@ -380,6 +384,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onShowLoadingMessage(String loadingMessage);
 	protected abstract void onSellerWorkloadOpen(SellerWorkload sellerWorkload);
+	protected abstract void onHideMessage();
 	
 }
 

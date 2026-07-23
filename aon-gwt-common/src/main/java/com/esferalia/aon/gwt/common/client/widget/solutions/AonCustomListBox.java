@@ -137,4 +137,11 @@ public class AonCustomListBox extends HTMLPanel implements Focusable {
 	public void setTabIndex(int index) {
 		listBox.setTabIndex(index);
 	}
+
+	public void setSelectedIndex(int i) {
+		listBox.setSelectedIndex(i);
+	}
+	public int getSelectedIndex() {
+		return listBox.getSelectedIndex();
+	}
 }

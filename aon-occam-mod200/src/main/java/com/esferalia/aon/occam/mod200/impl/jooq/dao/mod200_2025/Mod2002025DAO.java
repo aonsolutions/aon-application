@@ -1177,8 +1177,8 @@ public class Mod2002025DAO  {
 			// Grabar Importe a ingresar o devolver (amount) y tipo de ingreso o devolucion (result_type, dev_type y pay_type)  
 			v = mod200.getVariable(Mod2002025Key.BN621);
 			mod200.setResultType(null);
-			if (v == null || v.getValue() == 0) {
-				// Cuota cero
+			if (v == null || v.getValue() == 0 || mod200.isChecked(Mod2002025Key.C0009) || mod200.isChecked(Mod2002025Key.C0010)) {
+				// Cuota cero (Resultado cero o se ha marcado el carácter 00009 o 00010)
 				mod200.setResultType("N");
 				mod200.setAmount(0.0);
 				mod200.setDevType(null);

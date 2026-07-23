@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -33,7 +34,9 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 	private PeriodListBox periodBox;
 	private AonDateBox fromDateBox;
 	private AonDateBox toDateBox;
-	private AonAccountBox accountBox;
+	private AonAccountBox fixedAssetAccount;
+	private AonAccountBox allocationAccountBox;
+	private AonAccountBox accumulatedAccount;
 	private ListBox statusBox;
 	
 	AccountingAmortizationFilterPanel( AmortizationModuleOptions opts ) {
@@ -41,9 +44,11 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 		initPeriodBox(opts);
 		initFromDateBox(opts);
 		initToDateBox(opts);
-		initAccountBox(opts);
+		initFixedAssetAccountBox(opts);
+		initAllocationAccountBox(opts);
+		initAccumulatedAccountBox(opts);
 		initStatusBox(opts);
-		
+		initialize(opts);
 		paint( opts);
 	}
 	
@@ -67,12 +72,21 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 		addPair(container, AON.MSG.fiscalYear(), yearBox);
 		addPair(container,AON.MSG.period(),periodBox);
 		addPair(container,AON.MSG.date() ,datePanel);
-		addPair(container,AON.MSG.investment() ,statusBox);
-		addPair(container,AON.MSG.titular() ,accountBox);
+		addPair(container,AON.MSG.status() ,statusBox);
+		
+		FlowPanel lineBreak = new FlowPanel();
+		lineBreak.setStyleName(AON.CSS.aonFlexBreak()); 
+		container.add(lineBreak);
+		
+		addPair(container,AON.MSG.fixedAssetAccount() ,fixedAssetAccount);
+		addPair(container,AON.MSG.allocationAccount() ,allocationAccountBox);
+		addPair(container,AON.MSG.accumulatedAccount() ,accumulatedAccount);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
+		scrollPanel.setStyleName(AON.CSS.aonPaddingTop());
+		scrollPanel.addStyleName(AON.CSS.aonPaddingLeft());
+		scrollPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+		scrollPanel.addStyleName(AON.CSS.aonBlockCenter());
 		scrollPanel.setWidget(container);
 		setWidget( scrollPanel );
 		
@@ -80,8 +94,9 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 
 	private void addPair(FlowPanel container, String label, Widget widget) {
 		FlowPanel blockContainer = new FlowPanel();
-		blockContainer.getElement().getStyle().setProperty("display", "flex");
-		blockContainer.getElement().getStyle().setProperty("flex-grow", "0");
+		blockContainer.setStyleName(AON.CSS.aonDisplayFlex());
+		blockContainer.addStyleName(AON.CSS.aonAlignItemsCenter());
+		blockContainer.addStyleName(AON.CSS.aonFlexGrow0());
 		Label l = new Label(label);
 		l.setStyleName(AON.CSS.aonSearchPanelLabel());
 		l.addStyleName(AON.CSS.aonCustomTextBoxTitle());
@@ -159,31 +174,51 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 		toDateBox.addValueChangeHandler(event -> checkDatesAndFire(opts));
 	}
 
-	private void initAccountBox(AmortizationModuleOptions opts) {
-		accountBox = new AonAccountBox(opts.getOccam());
-		accountBox.setRequired(false);
-		accountBox.addSelectionHandler(event -> fire(opts));
+	private void initFixedAssetAccountBox(AmortizationModuleOptions opts) {
+		fixedAssetAccount = new AonAccountBox(opts.getOccam(), false);
+		fixedAssetAccount.setRequired(false);
+		fixedAssetAccount.addSelectionHandler(event -> fire(opts));
+	}
+
+	private void initAllocationAccountBox(AmortizationModuleOptions opts) {
+		allocationAccountBox = new AonAccountBox(opts.getOccam(), false);
+		allocationAccountBox.setRequired(false);
+		allocationAccountBox.addSelectionHandler(event -> fire(opts));
 	}
 	
+	private void initAccumulatedAccountBox(AmortizationModuleOptions opts) {
+		accumulatedAccount = new AonAccountBox(opts.getOccam(), false);
+		accumulatedAccount.setRequired(false);
+		accumulatedAccount.addSelectionHandler(event -> fire(opts));
+	}
+
 	private void initStatusBox(AmortizationModuleOptions opts) {
 		statusBox = new ListBox();
+		statusBox.addStyleName(AON.CSS.aonWidth150());
 		statusBox.addItem(ALL);
-		statusBox.addItem(AmortizationDetailStatus.PENDING.getDescription());
-		statusBox.addItem(AmortizationDetailStatus.SCORED.getDescription());
-		statusBox.addItem(AmortizationDetailStatus.BLOCKED.getDescription());
+		AonCollectionUtils.stream(AmortizationDetailStatus.values())
+			.forEach(status -> statusBox.addItem(status.getDescription()));
 		statusBox.addChangeHandler(event -> fire(opts));
 	}
 
 	AmortizationParams getWidgetParams(AmortizationModuleOptions opts) {
 		AmortizationParams params = new AmortizationParams()
 			.setDomain(opts.getDomain())
-			.setInitialDate(fromDateBox.getValue())
-			.setDeadline(toDateBox.getValue())
+			.setFromInitialDate(fromDateBox.getValue())
+			.setToInitialDate(toDateBox.getValue())
 		;
-		if (accountBox.getId() != null) {
-			params.setAllocationAccount( accountBox.getId() );
+		if (fixedAssetAccount.getId() != null) {
+			params.setFixedAssetAccount( fixedAssetAccount.getId() );
 		}
-		
+		if (allocationAccountBox.getId() != null) {
+			params.setAllocationAccount( allocationAccountBox.getId() );
+		}
+		if (accumulatedAccount.getId() != null) {
+			params.setAccumulatedAccount( accumulatedAccount.getId() );
+		}
+		if (statusBox.getSelectedIndex()>0) {
+			params.setStatus(AmortizationDetailStatus.values()[statusBox.getSelectedIndex() - 1]);	
+		}
 		params.setLimit( 50 ); 
 		return params;
 	}
@@ -191,6 +226,11 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 
 	private void fire(final AmortizationModuleOptions opts) {
 		ValueChangeEvent.<AmortizationParams>fire( AccountingAmortizationFilterPanel.this, getWidgetParams( opts ) ); 
+	}
+	
+	void clean(AmortizationModuleOptions opts) {
+		initialize(opts);
+		fire(opts);
 	}
 
 	void initialize(AmortizationModuleOptions opts) {
@@ -203,7 +243,10 @@ class AccountingAmortizationFilterPanel extends SimpleLayoutPanel implements Has
 		if ( fromYear == toYear ) {
 			yearBox.setValue(fromYear,false);
 		}
-		fire(opts);
+		statusBox.setSelectedIndex( AmortizationDetailStatus.PENDING.ordinal() + 1 );
+		fixedAssetAccount.setAccount(null, false);
+		allocationAccountBox.setAccount(null, false);
+		accumulatedAccount.setAccount(null, false);
 	}
 	
 	@Override

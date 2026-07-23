@@ -49,9 +49,10 @@ public class Mod131MVELContext extends ModelMVELContext implements Map<String, O
 	}
 	
 	public double computeC01() {
+		// En actividades de temporada es la suma de act.getNet() y en el resto es getRdr()
 		return round(
 			AonCollectionUtils.stream( mod131.getActivities() )
-				.mapToDouble( act -> act.getNet())
+				.mapToDouble( act -> (act.getTem() > 0 && act.getTem() <= 180 ? act.getNet() : act.getRdr()) )
 				.sum());
 	}
 	

@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
@@ -51,6 +52,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
@@ -959,9 +961,33 @@ public class ACCOUNTING {
 			getAccounting().unlinkAmortizationInvoice(ctx, domain, amortizationId, invoiceId);
 		 }
 	}
+	public static Invoice changeInvestment(Occam occam, Integer domain, Integer invoiceId) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().changeInvestment(ctx, domain, invoiceId);
+		}
+	}
 
+	public static LinkedList<AccountingAmortization> getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			return getAccounting().getAccountingAmortizations(ctx, domain, params)
+				.collect(Collectors.toCollection(LinkedList::new));
+		}
+	}
+	
+	public static void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().recordAmortizationDetails(ctx, domain, ids);
+		}
+	}
+	
+	public static void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(occam)){
+			getAccounting().unrecordAmortizationDetails(ctx, domain, ids);
+		}
+	}
+	
 	// *******************************************************
-	// ********************************** [INVOICES CONUNTERS]
+	// ********************************** [INVOICES COUNTERS]
 	// *******************************************************
 	public static LinkedList<DomainInvoiceStat> getDomainInvoiceStats(Occam occam, DomainInvoiceStatParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

@@ -999,6 +999,7 @@ export const SEE_ALL = 'Ver Todas';
 export const SELECT_LANGUAGE = "Selección da lingua";
 export const SELECT_COMPANY_TYPE = "Seleccione o tipo de empresa";
 export const SEND = 'Enviar';
+export const SEND_TO = 'Enviar a';
 export const SEND_FILE = 'Enviar Ficheiro';
 export const SEND_FILES = 'Enviar Ficheiros';
 export const SEND_INVOICE = 'Enviar Factura';

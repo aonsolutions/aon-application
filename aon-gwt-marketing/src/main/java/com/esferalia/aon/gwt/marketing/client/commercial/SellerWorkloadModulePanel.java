@@ -36,7 +36,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	private AonSearchPanelButton cleanButton;
 	
 	private AonCustomListBox month = new AonCustomListBox("Mes");
-	private AonCustomListBox year = new AonCustomListBox("Año");
+	private AonCustomListBox year = new AonCustomListBox("A\u00f1o");
 	private AonCustomListBox compareWith = new AonCustomListBox("Comparar con");
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Estado Agente");
@@ -187,6 +187,8 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		
 		add(container);
 		
+		AonMessagePanel.showLoading(messagePanel, "Cargando ... (si tiene muchos agentes/clientes, puede tardar un poco)");
+		
 		onSearch( options );
 	}
 	
@@ -285,6 +287,11 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			@Override
 			protected void onShowLoadingMessage(String loadingMessage) {
 				AonMessagePanel.showLoading(messagePanel, loadingMessage);
+			}
+			
+			@Override
+			protected void onHideMessage() {
+				AonMessagePanel.hideMessage(messagePanel);
 			}
 		
 		};

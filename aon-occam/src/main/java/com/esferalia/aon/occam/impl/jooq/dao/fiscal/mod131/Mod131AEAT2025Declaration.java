@@ -1672,13 +1672,13 @@ public class Mod131AEAT2025Declaration extends Mod131Declaration {
 								tr(
 									td(act.getEpigraph())			.withStyle( border),
 									td(act.getDescription())		.withStyle( border),
-									td(DEC2.format( act.getNet()))	.withStyle( border+textRight )
+									td(DEC2.format( (act.getTem() > 0 && act.getTem() <= 180 ? act.getNet() : act.getRdr()) ))	.withStyle( border+textRight )
 							))
 						)
 						,tr(
 							td("")			.withStyle( border+bold ),
 							td("Resultado")	.withStyle( border+bold+textRight ),
-							td(DEC2.format( AonMathUtils.round(AonCollectionUtils.stream(mod.getEffectiveActivities()).mapToDouble( a -> a.getNet()).sum())))
+							td(DEC2.format( AonMathUtils.round(AonCollectionUtils.stream(mod.getEffectiveActivities()).mapToDouble( a -> (a.getTem() > 0 && a.getTem() <= 180 ? a.getNet() : a.getRdr()) ).sum())))
 											.withStyle( border+bold+textRight)
 						)
 					).render();

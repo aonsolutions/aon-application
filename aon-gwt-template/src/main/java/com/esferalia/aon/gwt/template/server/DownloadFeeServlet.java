@@ -689,6 +689,9 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setDomainName(domain.getName());
 		params.setDomain(domain.getId());
 		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
+		params.setPeriodStart(null == filterJSON.optString("periodStart") ? null : new Date(Long.parseLong(filterJSON.optString("periodStart"))));
+		params.setPeriodEnd(null == filterJSON.optString("periodEnd") ? null : new Date(Long.parseLong(filterJSON.optString("periodEnd"))));
+		
 		params.setSeller(AonStringUtils.isBlank(filterJSON.optString("seller")) ? null : Integer.parseInt(filterJSON.optString("seller")));
 		params.setTaskHolder(AonStringUtils.isBlank(filterJSON.optString("taskHolder")) ? null : Integer.parseInt(filterJSON.optString("taskHolder")));
 		params.setDescription(filterJSON.optString("description"));
@@ -712,6 +715,9 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setDomain(domain.getId());
 		
 		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
+		params.setPeriodStart(null == filterJSON.optString("periodStart") ? null : new Date(Long.parseLong(filterJSON.optString("periodStart"))));
+		params.setPeriodEnd(null == filterJSON.optString("periodEnd") ? null : new Date(Long.parseLong(filterJSON.optString("periodEnd"))));
+		
 		params.setScope(AonStringUtils.isBlank(filterJSON.optString("scope")) ? null : Integer.parseInt(filterJSON.optString("scope")));
 		params.setActive(AonStringUtils.isBlank(filterJSON.optString("active")) ? (byte)1 : Byte.parseByte(filterJSON.optString("active")));
 		params.setCustomers(AonStringUtils.isBlank(filterJSON.optString("customer")) ? null : Byte.parseByte(filterJSON.optString("customer")));

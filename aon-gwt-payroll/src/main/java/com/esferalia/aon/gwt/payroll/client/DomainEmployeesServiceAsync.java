@@ -559,8 +559,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeCbcTransform(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, sepeIde, callback);
 	}
 
-	public void getEmployeeCto(String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, contractId, startDate, endDate, sepeIde, callback);
+	public void getEmployeeCto(String cif, String document, Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), cif, document, contractId, startDate, endDate, sepeIde, callback);
 	}
 	
 	public void getEmployeeCtoTransform(String cif, String document, Integer contractId, Date startDate, String sepeIde, AsyncCallback<String> callback) throws IllegalArgumentException  {

@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amortization>{
 	
 	private static final String[] COLUMN_WIDTHS = new String[] {
-			"100px","100px","300px","300px","120px","auto" };
+			"100px","100px","300px","300px","120px","200px","300px"};
 
 	private FlowPanel containerPanel = new FlowPanel();
 	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
@@ -133,16 +133,22 @@ class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amor
 				String fixedAssetAccount = ensure(am.getFixedAssetAccount(), () -> am.getFixedAssetAccount().getFullName(), AonStringUtils.EMPTY);
 				fixedAssetAccount = AonStringUtils.abbreviate(fixedAssetAccount, 40);
 				Label fixedAssetAccountLabel = new Label(fixedAssetAccount);
+				Label investAssetLabel = new Label();
+				String investAsset = ensure(am.getInvestAsset(), () -> am.getInvestAsset().getDescription(), AonStringUtils.EMPTY);
+				investAssetLabel.setTitle(investAsset);
+				investAssetLabel.setText(AonStringUtils.abbreviate(investAsset, 50));
+				
 				String comments = ensure(am.getComments(), am::getComments, AonStringUtils.EMPTY);
 				Label commentsLabel = new Label();
 				commentsLabel.setTitle(comments);
-				commentsLabel.setText(AonStringUtils.abbreviate(comments, 30));
+				commentsLabel.setText(AonStringUtils.abbreviate(comments, 50));
 				return row
 					.addCell(initialDateLabel)
 					.addCell(deadlineLabel)
 					.addCell(descriptionLabel)
 					.addCell(fixedAssetAccountLabel,AON.CSS.aonNowrap())
 					.addCell(new AonDoubleLabel(am.getAmount()), AON.CSS.aonTextRight())
+					.addCell(investAssetLabel,AON.CSS.aonNowrap())
 					.addCell(commentsLabel,AON.CSS.aonNowrap())
 				;
 			}
@@ -162,6 +168,7 @@ class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amor
 			.addHeaderCell(new Label(AON.MSG.description()))
 			.addHeaderCell(new Label(AON.MSG.fixedAssetAccount()),AON.CSS.aonNowrap())
 			.addHeaderCell(new Label(AON.MSG.amount()),AON.CSS.aonTextRight())
+			.addHeaderCell(new Label(AON.MSG.investAsset()),AON.CSS.aonNowrap())
 			.addHeaderCell(new Label(AON.MSG.comments()),AON.CSS.aonNowrap())
 		;
 	}

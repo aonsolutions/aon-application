@@ -46,6 +46,7 @@ class AmortizationInvoiceSelectionPanel extends DockLayoutPanel {
 
 	private void search(AmortizationModuleOptions opts, AmortizationPanelCallback callback, InvoiceConsoleSelectionHandler selectionHandler, InvoiceConsoleParams params) {
 		contentPanel.clear();
+		selectionHandler.clean();
 		AmortizationInvoiceSelectionTable table = new AmortizationInvoiceSelectionTable(opts, callback, params);
 		table.addInvoiceCheckedHandler( event -> selectionHandler.select( event.getInvoice() ) );
 		table.addInvoiceUncheckedHandler( event -> selectionHandler.unselect( event.getInvoice() ) );

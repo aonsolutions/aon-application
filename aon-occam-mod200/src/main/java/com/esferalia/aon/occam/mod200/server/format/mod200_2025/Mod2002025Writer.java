@@ -2174,6 +2174,12 @@ public class Mod2002025Writer {
 				,(line, mod200, label) -> {
 					
 					double importe = mod200.getDoubleValue(Mod2002025Key.BN621); // importe a ingresar o a devolver
+					
+					// Si caracteres 00009 o 00010 marcados, no se realiza ingreso ni devolución, por lo que se pone a cero el importe a ingresar o a devolver
+					if (mod200.isChecked(Mod2002025Key.C0009) || mod200.isChecked(Mod2002025Key.C0010)) {
+						importe = 0.0;
+					}
+					
 					double ingreso = 0.0;
 					double devolucion = 0.0;
 					double rectificacion = mod200.getDoubleValue(Mod2002025Key.LQ866);

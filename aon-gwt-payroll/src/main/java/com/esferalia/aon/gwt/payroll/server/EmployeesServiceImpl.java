@@ -6427,7 +6427,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getEmployeeCto(String domainName, String userLogin, String ipf, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
+	public String getEmployeeCto(String domainName, String userLogin, String cif, String ipf, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6442,8 +6442,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
-				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate)
-						: Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				byte [] pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), cif, ipf, startDate, endDate)
+						: Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), cif, sepeIde);
 				JooqContractAttach.setCopyContract(connection, domainId, contractId, pdfBytes);
 				base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 			}

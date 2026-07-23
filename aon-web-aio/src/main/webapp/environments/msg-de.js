@@ -1040,6 +1040,7 @@ export const SUBJECTS = 'Fächer';
 export const SURVEY_RESPONSES = 'Fragebogen-Antworten';
 export const SUPPLY_BY_CONSUMPTION = 'Beschaffung nach Verbrauch';
 export const SEND = 'Send';
+export const SEND_TO = 'Senden an';
 export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';
 export const SEND_INVOICE = 'Send Invoice';

@@ -6,11 +6,13 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -95,4 +97,25 @@ public class AmortizationServiceImpl extends AonStatelessRemoteServiceServlet im
 	public void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException {
 		ACCOUNTING.unlinkAmortizationInvoice(occam, domain, amortizationId, invoiceId);
 	}
+
+	@Override
+	public Invoice changeInvestment(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.changeInvestment(occam, domain, invoiceId);
+	}
+
+	@Override
+	public LinkedList<AccountingAmortization> getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params) throws AonCoreException {
+		return ACCOUNTING.getAccountingAmortizations(occam, domain, params);
+	}
+
+	@Override
+	public void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException {
+		ACCOUNTING.recordAmortizationDetails(occam, domain, ids);
+	}
+
+	@Override
+	public void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException {
+		ACCOUNTING.unrecordAmortizationDetails(occam, domain, ids);
+	}
+	
 }

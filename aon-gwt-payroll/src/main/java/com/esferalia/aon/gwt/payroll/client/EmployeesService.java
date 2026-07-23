@@ -268,7 +268,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getEmployeeCbcTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
 	
-	String getEmployeeCto(String currentDomainName, String currentUser, String document, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException;
+	String getEmployeeCto(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, Date endDate, String sepeIde) throws IllegalArgumentException;
 
 	String getEmployeeCtoTransform(String currentDomainName, String currentUser, String cif, String document, Integer contractId, Date startDate, String sepeIde) throws IllegalArgumentException;
 	

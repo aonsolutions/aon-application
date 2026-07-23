@@ -1024,6 +1024,7 @@ export const SECTION = 'Section';
 export const SECURITY = 'Security';
 export const SEE_ALL = 'See All';
 export const SEND = 'Send';
+export const SEND_TO = 'Send To';
 export const SEND_FILE = 'Send File';
 export const SEND_FILES = 'Send Files';
 export const SEND_INVOICE = 'Send Invoice';

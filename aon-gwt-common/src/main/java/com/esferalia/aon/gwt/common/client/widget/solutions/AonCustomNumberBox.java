@@ -137,6 +137,13 @@ public class AonCustomNumberBox extends HTMLPanel {
 			numberBox.setValue(null);
 		} else numberBox.setValue(value);
 	}
+	
+	public void setValue(Double value, boolean fireEvent) {
+		if(null == value) {
+			nearCB.setValue(false, fireEvent);
+			numberBox.setValue(null, fireEvent);
+		} else numberBox.setValue(value, fireEvent);
+	}
 
 	public Double getValue() {
 		return numberBox.getValue();

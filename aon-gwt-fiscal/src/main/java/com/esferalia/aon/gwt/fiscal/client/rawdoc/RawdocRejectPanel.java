@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 
 class RawdocRejectPanel extends AonCustomDialog implements Focusable {
@@ -33,7 +34,11 @@ class RawdocRejectPanel extends AonCustomDialog implements Focusable {
 		FlowPanel email = new FlowPanel();
 		email.setStyleName(AON.CSS.aonTextCenter());
 		email.addStyleName(AON.CSS.aonMarginTop());
-
+		
+		Label emailLabel = new Label("Enviar a");
+		emailLabel.setWidth("60px");
+		email.add(emailLabel);
+		
 		emailTextBox = new AonTextBox();
 		emailTextBox.setTitle("Correo electr\u00F3nico para notificar al usuario (opcional)");
 		emailTextBox.setName("Correo electr\u00F3nico para notificar al usuario (opcional)");

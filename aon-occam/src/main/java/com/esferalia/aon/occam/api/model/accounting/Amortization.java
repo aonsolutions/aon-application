@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.accounting;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -36,7 +37,8 @@ public class Amortization implements Serializable {
 	private SecurityLevel securityLevel;
 
 	private AmortizationType amortizationType;
-	LinkedList<AmortizationDetail> details;
+	private LinkedList<AmortizationDetail> details;
+	private LinkedList<String> messages;
 	
 	public Integer getId() {
 		return id;
@@ -218,6 +220,24 @@ public class Amortization implements Serializable {
 	public void addDetail(AmortizationDetail detail) {
 		if (details == null) details = new LinkedList<>();
 		details.add(detail);
+	}
+	
+	public Stream<String> messageStream() {
+		return AonCollectionUtils.stream(this.messages);
+	}
+	private List<String> ensureMessages() {
+	    if ( this.messages == null ) messages = new LinkedList<>();
+	    return this.messages;
+	}
+	public boolean hasMessages() {
+		return AonCollectionUtils.isNotEmpty(this.messages);
+	}
+	public int getMessagesSize() {
+		return AonCollectionUtils.size(this.messages);
+	}
+	public Amortization addMessage(String message) {
+		ensureMessages().add(message);
+	    return this;
 	}
 	
 	// ---------------------------------------------------------- DIRTY

@@ -662,6 +662,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 		if (lq1330 <= 0) 
 			return 0;
+		
+		// Carácter 00009 o 00010 cálculo general, si no está marcado el carácter 00088
+		if ((isChecked(C0009) || isChecked(C0010)) && !isChecked(C0088)) {
+			return round(lq1330 * lq558 / 100);
+		}
 
 		// Tipo 0% o No Liquida
 		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) 
@@ -850,6 +855,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 		if (isChecked(C0017) || isChecked(C0018)) {
 			
+			// Si carácteres 00009 o 00010 marcados, la casilla 560 es igual a cero
+			if (isChecked(C0009) || isChecked(C0010)) {
+				return 0.0;
+			}		
+			
 			// Cuando se haya marcado la clave 00017 ó 00018 junto con la clave 00057 (Régimen fiscal salida SOCIMI):
 			// Si clave 00558 = 20
 			// Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 - 00521 x 25% + 00521 x 0 %
@@ -882,7 +892,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 					crc = round((getLimit(LIM_4) * 18 / 100) + ((lq553 - getLimit(LIM_4)) * 19 / 100));						 
 				}
 				// B) Cálculo de la cuota por resultados extracooperativos
-				//	Si la clave 00554 es <= 50.000 (en términos absolutos) => CRE = 00553 x 21%
+				//	Si la clave 00554 es <= 50.000 (en términos absolutos) => CRE = 00554 x 21%
 				//	Si la clave 00554 es > 50.000 (en términos absolutos) => CRE = 50.000 x 21% + (00554 - 50.000) x 22 %
 				double cre = 0.0;
 				if (Math.abs(round(lq554)) <= getLimit(LIM_4)) {
@@ -952,7 +962,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 				}
 			}
 			
-			if (isChecked(C0071) || isChecked(C0083)) { 
+			if ((isChecked(C0071) || isChecked(C0083)) && !isChecked(C0009) && !isChecked(C0010)) { 
 				return round(lq552 * 15 / 100); 
 			}
 			
@@ -1485,8 +1495,6 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		}		
 	}
 	
-	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
-	// declaración.
 	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
 	// 00552) sea positiva (excepto en los supuestos que también se haya marcado la clave 00072 de 
 	// caracteres "extinción de entidad", en cuyo caso la clave 01034 permanecerá cerrada sin posibilidad 
@@ -1496,7 +1504,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 	public double computeLQ1034A() throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002025Key.LQ552);
-		if (isChecked(Mod2002025Key.C0006) && !isChecked(Mod2002025Key.C0072) && lq552 > 0) {
+		if (!isChecked(Mod2002025Key.C0072) && lq552 > 0) {
 			double lq1034 = roundKey(Mod2002025Key.LQ1034A);
 			if (lq1034 > round(lq552*10/100))
 				lq1034 = round(lq552*10/100);
