@@ -2056,7 +2056,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			throws AonException {
 
 	    	
-	    	Date paymentStart = Period.max(contractPayment.getStartDate(), start);
+	    Date paymentStart = Period.max(contractPayment.getStartDate(), start);
 		Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
 		if (paymentEnd.before(paymentStart))
 			return;
@@ -2157,6 +2157,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					public String getIrpfExpression() {
 						return extra.getTotalPayment().toString();
 					}
+					
 				};
 				
 				taxCalculator.tax(salaryExtraContractPayment, start, end, extraIssueDate, extra.getTotalPayment(), extra.getTotalPayment());
@@ -2165,6 +2166,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				Date extraEndDate = AonDateUtils.getLastDayOfMonth(extraEnd);
 				Date salaryStartDate = AonDateUtils.getFirstDayOfMonth(start);
 				if ( extraEndDate.before(salaryStartDate) ) {
+					contractPayment = new DelegateContractPayment(contractPayment) {
+						@Override
+						public String getQuoteExpression() {
+							return String.format("%s()", ContextVariable.PRORATION);
+						}
+						
+					};
 				    super.resolvePayment(contractPayment, 
 					    paymentStart, 
 					    paymentEnd, 

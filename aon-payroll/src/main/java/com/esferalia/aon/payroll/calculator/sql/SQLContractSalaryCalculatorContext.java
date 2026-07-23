@@ -1305,8 +1305,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
-	private Map<Double, Double> solveLiquids;
-	private Map<Double, Double> solvePayments;
 
 	private Set<IContractBonus> contextBonus;
 	private Set<IContractDeduction> contextDeduction;
@@ -1420,8 +1418,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.liquids = new HashMap<>();
 		this.payments = new HashMap<>();
-		this.solveLiquids = new HashMap<>();
-		this.solvePayments = new HashMap<>();
 		this.contextBonus = new HashSet<>();
 		this.contextDeduction = new HashSet<>();
 
@@ -1862,8 +1858,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		liquids.clear();
 		payments.clear();
-		solveLiquids.clear();
-		solvePayments.clear();
 		
 		if (next) {
 			initContractExpressionCtx(hook);
@@ -2960,11 +2954,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		UnivariateFunction univariateFunction = new UnivariateFunction() {
 
+			private Map<Double, Double> solveLiquids = new HashMap<>();
+
 			@Override
 			public double value(double solve) {
 				try {
-					if (SQLContractSalaryCalculatorContext.this.solveLiquids.containsKey(solve)) {
-						return SQLContractSalaryCalculatorContext.this.solveLiquids.get(solve);
+					if (this.solveLiquids.containsKey(solve)) {
+						return this.solveLiquids.get(solve);
 					}
 
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
@@ -2999,7 +2995,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if (Math.abs(zero) <= solver.getAbsoluteAccuracy())
 						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
 
-					SQLContractSalaryCalculatorContext.this.solveLiquids.put(solve, zero);
+					this.solveLiquids.put(solve, zero);
 					
 					return zero;
 
@@ -3023,8 +3019,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		result = solver.solve(Byte.MAX_VALUE, univariateFunction, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
-		
-		solveLiquids.clear();
 
 		return result;
 	}
@@ -3040,12 +3034,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
 
+			private Map<Double, Double> solvePayments = new HashMap<>();
+
 			@Override
 			public double value(double solve) {
 
 				try {
-					if ( SQLContractSalaryCalculatorContext.this.solvePayments.containsKey(solve)) {
-						return SQLContractSalaryCalculatorContext.this.solvePayments.get(solve);
+					if ( this.solvePayments.containsKey(solve)) {
+						return this.solvePayments.get(solve);
 					}
 					
 					ISQLContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
@@ -3063,7 +3059,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					ISalary salary = calculator.calculate(ctx);
 					
 					double zero = payment - salary.getTotalPayment();
-					SQLContractSalaryCalculatorContext.this.solvePayments.put(solve, zero);
+					this.solvePayments.put(solve, zero);
 					
 					return zero;
 				} catch (SalaryException e) {
