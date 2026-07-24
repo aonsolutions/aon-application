@@ -662,6 +662,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 		if (lq1330 <= 0) 
 			return 0;
+		
+		// Carácter 00009 o 00010 cálculo general, si no está marcado el carácter 00088
+		if ((isChecked(C0009) || isChecked(C0010)) && !isChecked(C0088)) {
+			return round(lq1330 * lq558 / 100);
+		}
 
 		// Tipo 0% o No Liquida
 		if ( (isChecked(C0013) || isChecked(C0085)) && (getValue(Mod2002025Key.UT060) == 100.0) ) 
@@ -850,6 +855,11 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 		
 		if (isChecked(C0017) || isChecked(C0018)) {
 			
+			// Si carácteres 00009 o 00010 marcados, la casilla 560 es igual a cero
+			if (isChecked(C0009) || isChecked(C0010)) {
+				return 0.0;
+			}		
+			
 			// Cuando se haya marcado la clave 00017 ó 00018 junto con la clave 00057 (Régimen fiscal salida SOCIMI):
 			// Si clave 00558 = 20
 			// Clave 00560 = clave 00553 x clave 00558/100 + clave 00554 - 00521 x 25% + 00521 x 0 %
@@ -952,7 +962,7 @@ public class Mod2002025MVELContext implements Map<String, Object> {
 				}
 			}
 			
-			if (isChecked(C0071) || isChecked(C0083)) { 
+			if ((isChecked(C0071) || isChecked(C0083)) && !isChecked(C0009) && !isChecked(C0010)) { 
 				return round(lq552 * 15 / 100); 
 			}
 			

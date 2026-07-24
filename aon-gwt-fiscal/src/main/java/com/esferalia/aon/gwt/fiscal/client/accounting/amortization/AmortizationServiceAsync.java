@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.amortization;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
@@ -29,7 +30,10 @@ public interface AmortizationServiceAsync {
 	void unblockDetail(Occam occam, AmortizationDetail detail, AsyncCallback<AmortizationDetail> callback);
 
 	void getInvoices(Occam occam, Integer domain, Integer amortizationId, AsyncCallback<LinkedList<AmortizationInvoice>> callback);
-	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds, AsyncCallback<Void> asyncCallback);
-	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> asyncCallback);
-	void changeInvestment(Occam occam, Integer domain, Integer invoiceId, AsyncCallback<Invoice> asyncCallback);
+	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds, AsyncCallback<Void> callback);
+	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId, AsyncCallback<Void> callback);
+	void changeInvestment(Occam occam, Integer domain, Integer invoiceId, AsyncCallback<Invoice> callback);
+	void getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params, AsyncCallback<LinkedList<AccountingAmortization>> callback);
+	void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback);
+	void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback);
 }

@@ -3,10 +3,11 @@ package com.esferalia.aon.occam.api.model.accounting;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.HasId;
 import com.esferalia.aon.occam.api.model.type.AmortizationDetailStatus;
 import com.esferalia.aon.watson.util.AonUtils;
 
-public class AmortizationDetail implements Serializable {
+public class AmortizationDetail implements Serializable, HasId {
 
 	private static final long serialVersionUID = -2788114698849263524L;
 
@@ -50,6 +51,7 @@ public class AmortizationDetail implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public Integer getId() {
 		return id;
 	}

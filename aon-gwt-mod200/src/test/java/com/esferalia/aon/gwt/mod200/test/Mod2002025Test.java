@@ -159,6 +159,19 @@ public class Mod2002025Test {
 												  .setPercent(100));
 		}
 		
+		// Carácter 00009 o 00010 marcado, el tipo de gravamen está abierto, le ponemos el 25%,
+		// además deben cumplimentarse los datos del grupo fiscal
+		if (mod200.isChecked(Mod2002025Key.C0009) || mod200.isChecked(Mod2002025Key.C0010)) {
+			mod200.setDoubleValue(Mod2002025Key.LQ558, 25.0);
+			if (mod200.isChecked(Mod2002025Key.C0009)) {
+				mod200.setFiscalGroup("0123/21");
+				mod200.setDominantDocument(mod200.getDocument());
+			} else {
+				mod200.setFiscalGroup("0123/21");
+				mod200.setDominantDocument("A50111111");
+			}
+		}
+		
 		return mod200;
 		
 	}
@@ -212,8 +225,10 @@ public class Mod2002025Test {
 			double casilla2828 = casilla1330 - casilla2827;
 			mod200.setDoubleValue(Mod2002025Key.CP2827, casilla2827);
 			mod200.setDoubleValue(Mod2002025Key.CP2828, casilla2828);
-			// Tambien el tipo de gravamen (casilla LQ558) de los tipos posibles, por ejemplo el 20%, si le corresponde otro ya lo pondrá el recalculo del modelo
-			mod200.setDoubleValue(Mod2002025Key.LQ558, mod200.isChecked(Mod2002025Key.C0046) ? 25.0 : 20.0);
+			// Tambien el tipo de gravamen (casilla LQ558) de los tipos posibles, por ejemplo el 20%, si le corresponde otro ya lo pondrá el recalculo del modelo, y 
+			// y siempre si no está marcado el carácter 9 o 10, pues esos caracteres tienen tipo abierto
+			if (!mod200.isChecked(Mod2002025Key.C0009) && !mod200.isChecked(Mod2002025Key.C0010))
+				mod200.setDoubleValue(Mod2002025Key.LQ558, mod200.isChecked(Mod2002025Key.C0046) ? 25.0 : 20.0);
 			// Si está marcado el caracter 57 las casillas 550TG y 550T0 se reparten al 80% y 20% en lugar de 70% y 30%
 			if (mod200.isChecked(Mod2002025Key.C0057)) {
 				double casilla550 = mod200.getDoubleValue(Mod2002025Key.LQ550);
@@ -252,11 +267,11 @@ public class Mod2002025Test {
 		}
 		
 		// Mostrar porcentaje de participación de la UTE (casilla 060) e importe usado en el calculo
-		System.out.println("Importe usado en el cálculo     : " + amount);
-		System.out.println("Porcentaje de participación UTE : " + mod200.getDoubleValue(Mod2002025Key.UT060));
+		System.out.println("Importe usado en el cálculo  : " + amount);
+		System.out.println("Porcentaje participación UTE : " + mod200.getDoubleValue(Mod2002025Key.UT060));
 		
-		// Mostrar tipo de gravamen calculado (casilla LQ558)
-		System.out.println("Tipo de gravamen calculado [LQ558]: " + mod200.getDoubleValue(Mod2002025Key.LQ558));
+		// Mostrar tipo de gravamen (casilla LQ558)
+		System.out.println("Tipo de gravamen [LQ558]     : " + mod200.getDoubleValue(Mod2002025Key.LQ558));
 
 		// Enviar el modelo 200 al servicio de validación de la AEAT
 		System.out.println("Enviando modelo 200 al servicio de validación de la AEAT...");
@@ -465,12 +480,13 @@ public class Mod2002025Test {
 			Mod2002025Key.C0079, 
 			Mod2002025Key.C0083, 
 			Mod2002025Key.C0085, 
-		 	Mod2002025Key.C0088
+		 	Mod2002025Key.C0088,
+		 	Mod2002025Key.C0010
 		};
 		
-//		pruebaSimple(false, Mod2002025Key.C0072, Mod2002025Key.C0006);
+//		pruebaSimple(false, Mod2002025Key.C0010, Mod2002025Key.C0006, Mod2002025Key.C0001);
 		pruebaTodas(null, characterKeys);
-//		pruebaTodas(Mod2002025Key.C0088, characterKeys);
+//		pruebaTodas(Mod2002025Key.C0010, characterKeys);
 		
 	}
 

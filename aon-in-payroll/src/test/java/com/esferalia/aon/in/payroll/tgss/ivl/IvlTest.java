@@ -734,6 +734,285 @@ public class IvlTest extends AbstractSQLTestCase {
 	    
     }
 
+    @Test
+    public void testIvlcccIVJooq() throws IOException, UnknownPDFException {
+	String domainName = Faker.instance().internet().domainName();
+	
+	Integer domainId ;
+	Integer registryId ;
+	Integer workplaceId ;
+	Integer payrollWorkplaceId ;
+	Integer raddressId ;
+	Integer enterpriseCccId ;
+	Integer enterpriseActivityId ;
+	
+	Map<Integer, Record> contractMap;
+	Map<Integer, Record> personRegistryMap;
+	
+	//Domain PARENT_DOMAIN = DOMAIN.as("parent_domain");
+	ContractData tc2 = CONTRACT_DATA.as("tc2");
+	ContractData quoteGroup = CONTRACT_DATA.as("quote_group");
+	ContractData monthDays = CONTRACT_DATA.as("month_days");
+	ContractData coeficienteParcialidad = CONTRACT_DATA.as("coeficiente_parcialidad");
+
+    DSLContext dslContext = getDslContext();
+    AONContext aonContext = new AONContext(dslContext);
+	
+	DomainRecord domain = newDomain(aonContext, domainName, "FC812 STAFF S.L.");
+	ScopeRecord scope = newScope(aonContext, domain.getId());
+	RegistryRecord enterprise = newEnterprise(aonContext, domain.getId(), "FC812 STAFF S.L.", "B16931438", "ES", DocumentType.NIF, scope.getId());
+	EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity4Enterprise(aonContext, domain.getId(), enterprise.getId(), SSRegimeType.GENERAL, "7810");
+	newEnterpriseCcc(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getId(), CCCType.PRINCIPAL, "28252599007");
+	newEnterpriseCcc(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getId(), CCCType.TRAINING, "28252599007");
+	
+	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIV.pdf")) {
+	    JooqIvl2Contract jooqIvl2Contract =  
+	    new JooqIvl2Contract(dslContext, domainName);
+	    
+	    IvlcccParser.parse(is, jooqIvl2Contract);
+	    
+	    
+	    org.jooq.Record record =
+	    dslContext
+	    .select()
+	    .from(ENTERPRISE_CCC)
+	    .innerJoin(ENTERPRISE_ACTIVITY).onKey(Keys.FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY)
+	    .innerJoin(ENTERPRISE).onKey(Keys.FK_ENTERPRISE_ACTIVITY_ENTERPRISE)
+	    .innerJoin(REGISTRY).onKey(Keys.FK_ENTERPRISE_REGISTRY)
+	    .innerJoin(DOMAIN).onKey(Keys.FK_REGISTRY_DOMAIN)
+	    .innerJoin(PAYROLL_WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY)
+	    .innerJoin(WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_WORKPLACE)
+	    .innerJoin(RADDRESS).onKey(Keys.FK_WORKPLACE_RADDRESS)
+	    .where(DOMAIN.NAME.eq(/*"B66259516." +*/ domainName))
+	    .fetchAny();
+	    
+	    assertEquals("B16931438", record.get(REGISTRY.DOCUMENT));
+	    assertEquals("28252599007", record.get(ENTERPRISE_CCC.CCC));
+	    assertEquals(7810,  (int) record.get(ENTERPRISE_ACTIVITY.CNAE2009));
+	    assertEquals("FC812 STAFF S.L.", record.get(REGISTRY.NAME));
+	    assertEquals("FC812 STAFF S.L.", record.get(DOMAIN.DESCRIPTION));
+	    assertEquals("GRIÑON", record.get(RADDRESS.CITY));
+	    //assertEquals("08019", record.get(RADDRESS.MUNICIPALITY_CODE));
+	    assertEquals("28971", record.get(RADDRESS.ZIP));
+	    assertEquals("CL ANDROMEDA 6", record.get(RADDRESS.ADDRESS));
+	    
+	    domainId = record.get(DOMAIN.ID);
+	    registryId = record.get(REGISTRY.ID);
+	    workplaceId = record.get(WORKPLACE.ID);
+	    raddressId = record.get(RADDRESS.ID);
+	    enterpriseCccId = record.get(ENTERPRISE_CCC.ID);
+	    payrollWorkplaceId = record.get(PAYROLL_WORKPLACE.ID);
+	    enterpriseActivityId = record.get(ENTERPRISE_ACTIVITY.ID);
+	    
+	    personRegistryMap  =
+	    dslContext
+	    .select()
+	    .from(PERSON)
+	    .innerJoin(REGISTRY).onKey()
+	    .where(PERSON.DOMAIN.eq(domainId))
+	    .fetchStream()
+	    .collect(Collectors.toMap(r -> r.get(PERSON.REGISTRY), r -> r));
+	    
+	    System.out.println(
+		    dslContext
+		    .select()
+		    .from(CONTRACT)
+		    .innerJoin(PERSON).onKey()
+		    .innerJoin(tc2).on(CONTRACT.ID.eq(tc2.CONTRACT).and(tc2.NAME.eq("TC2")))
+		    .innerJoin(quoteGroup).on(CONTRACT.ID.eq(quoteGroup.CONTRACT).and(quoteGroup.NAME.eq("GRUPO_COTIZACION")))
+		    .leftJoin(coeficienteParcialidad).on(CONTRACT.ID.eq(coeficienteParcialidad.CONTRACT).and(coeficienteParcialidad.NAME.eq("COEFICIENTE_PARCIALIDAD")))
+		    .where(CONTRACT.DOMAIN.eq(domainId))
+		    .getSQL()
+	  );
+	    
+	    contractMap  =
+	    dslContext
+	    .select()
+	    .from(CONTRACT)
+	    .innerJoin(PERSON).onKey()
+	    .innerJoin(tc2).on(CONTRACT.ID.eq(tc2.CONTRACT).and(tc2.NAME.eq("TC2")))
+	    .innerJoin(quoteGroup).on(CONTRACT.ID.eq(quoteGroup.CONTRACT).and(quoteGroup.NAME.eq("GRUPO_COTIZACION")))
+	    .leftJoin(coeficienteParcialidad).on(CONTRACT.ID.eq(coeficienteParcialidad.CONTRACT).and(coeficienteParcialidad.NAME.eq("COEFICIENTE_PARCIALIDAD")))
+	    .where(CONTRACT.DOMAIN.eq(domainId))
+	    .fetchStream()
+	    .collect(Collectors.toMap(r -> r.get(CONTRACT.ID), r -> r));
+	    
+	    
+	    Integer contractCount =
+	    dslContext
+	    .select(DSL.count())
+	    .from(CONTRACT)
+	    .where(CONTRACT.DOMAIN.eq(domainId))
+	    .fetchOne(DSL.count());
+	    
+	    Integer personCount =
+	    dslContext
+	    .select(DSL.count())
+	    .from(PERSON)
+	    .where(PERSON.DOMAIN.eq(domainId))
+	    .fetchOne(DSL.count());
+	    
+	    System.out.printf("persons : %d = contracts: %d\r\n", personCount , contractCount );
+	    
+	    assertTrue(contractCount >= personCount, "CONTRACTS : " + contractCount + ", PERSONS : " + personCount);
+	    
+	    
+	    
+	    
+
+	}
+	
+	// re-entrat 
+	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIV.pdf")) {
+	    JooqIvl2Contract jooqIvl2Contract =  
+	    new JooqIvl2Contract(dslContext, domainName);
+	    
+	    IvlcccParser.parse(is, jooqIvl2Contract);
+	    
+	    
+	    org.jooq.Record record =
+	    dslContext
+	    .select()
+	    .from(ENTERPRISE_CCC)
+	    .innerJoin(ENTERPRISE_ACTIVITY).onKey(Keys.FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY)
+	    .innerJoin(ENTERPRISE).onKey(Keys.FK_ENTERPRISE_ACTIVITY_ENTERPRISE)
+	    .innerJoin(REGISTRY).onKey(Keys.FK_ENTERPRISE_REGISTRY)
+	    .innerJoin(DOMAIN).onKey(Keys.FK_REGISTRY_DOMAIN)
+	    .innerJoin(PAYROLL_WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY)
+	    .innerJoin(WORKPLACE).onKey(Keys.FK_PAYROLL_WORKPLACE_WORKPLACE)
+	    .innerJoin(RADDRESS).onKey(Keys.FK_WORKPLACE_RADDRESS)
+	    .where(DOMAIN.NAME.eq(/*"B66259516." +*/ domainName))
+	    .fetchAny();
+	    
+	    assertEquals("B16931438", record.get(REGISTRY.DOCUMENT));
+	    assertEquals("28252599007", record.get(ENTERPRISE_CCC.CCC));
+	    assertEquals(7810,  (int) record.get(ENTERPRISE_ACTIVITY.CNAE2009));
+	    assertEquals("FC812 STAFF S.L.", record.get(REGISTRY.NAME));
+	    assertEquals("FC812 STAFF S.L.", record.get(DOMAIN.DESCRIPTION));
+	    assertEquals("GRIÑON", record.get(RADDRESS.CITY));
+	    //assertEquals("08019", record.get(RADDRESS.MUNICIPALITY_CODE));
+	    assertEquals("28971", record.get(RADDRESS.ZIP));
+	    assertEquals("CL ANDROMEDA 6", record.get(RADDRESS.ADDRESS));
+	    
+	    assertEquals(domainId, record.get(DOMAIN.ID) );
+	    assertEquals(registryId, record.get(REGISTRY.ID) );
+	    assertEquals(workplaceId, record.get(WORKPLACE.ID) );
+	    assertEquals(raddressId, record.get(RADDRESS.ID) );
+	    assertEquals(enterpriseCccId, record.get(ENTERPRISE_CCC.ID) );
+	    assertEquals(payrollWorkplaceId, record.get(PAYROLL_WORKPLACE.ID) );
+	    assertEquals(enterpriseActivityId, record.get(ENTERPRISE_ACTIVITY.ID) );
+	    
+	    dslContext
+	    .select()
+	    .from(PERSON)
+	    .innerJoin(REGISTRY).onKey()
+	    .where(PERSON.DOMAIN.eq(domainId))
+	    .fetchStream()
+	    .forEach(r -> {
+		Record mapR = personRegistryMap.get(r.get(PERSON.REGISTRY));
+		System.out.println( personRegistryMap.containsKey(r.get(PERSON.REGISTRY)) + " person : " + r.get(PERSON.NAME) + " " + r.get(PERSON.FIRST_SURNAME) + " " + r.get(PERSON.SECOND_SURNAME) + ", registry : " + r.get(PERSON.REGISTRY) + ", document : " + r.get(REGISTRY.DOCUMENT));
+		assertEquals(mapR.get(PERSON.NAME), r.get(PERSON.NAME));
+		assertEquals(mapR.get(PERSON.FIRST_SURNAME), r.get(PERSON.FIRST_SURNAME));
+		assertEquals(mapR.get(PERSON.SECOND_SURNAME), r.get(PERSON.SECOND_SURNAME));
+		assertEquals(mapR.get(REGISTRY.DOCUMENT), r.get(REGISTRY.DOCUMENT));
+		assertEquals(mapR.get(PERSON.SOCIAL_SECURITY_NUM), r.get(PERSON.SOCIAL_SECURITY_NUM));
+		
+	    });
+	    
+	    dslContext
+	    .select()
+	    .from(CONTRACT)
+	    .innerJoin(PERSON).onKey()
+	    .innerJoin(tc2).on(CONTRACT.ID.eq(tc2.CONTRACT).and(tc2.NAME.eq("TC2")))
+	    .leftJoin(quoteGroup).on(CONTRACT.ID.eq(quoteGroup.CONTRACT).and(quoteGroup.NAME.eq("GRUPO_COTIZACION")))
+	    .leftJoin(monthDays).on(CONTRACT.ID.eq(monthDays.CONTRACT).and(monthDays.NAME.eq("DIAS_MES")))
+	    .leftJoin(coeficienteParcialidad).on(CONTRACT.ID.eq(coeficienteParcialidad.CONTRACT).and(coeficienteParcialidad.NAME.eq("COEFICIENTE_PARCIALIDAD")))
+	    .where(CONTRACT.DOMAIN.eq(domainId))
+	    .fetchStream()
+	    .forEach(r -> {
+		Record mapR = contractMap.get(r.get(CONTRACT.ID));
+		assertEquals(mapR.get(CONTRACT.PERSON), r.get(CONTRACT.PERSON));
+		assertEquals(mapR.get(CONTRACT.WORKPLACE), r.get(CONTRACT.WORKPLACE));
+		assertEquals(mapR.get(CONTRACT.ENTERPRISE_CCC), r.get(CONTRACT.ENTERPRISE_CCC));
+		assertEquals(mapR.get(CONTRACT.ENTERPRISE_ACTIVITY), r.get(CONTRACT.ENTERPRISE_ACTIVITY));
+		assertEquals(mapR.get(CONTRACT.START_DATE), r.get(CONTRACT.START_DATE));
+		assertEquals(mapR.get(CONTRACT.END_DATE), r.get(CONTRACT.END_DATE));
+
+		assertEquals(mapR.get(tc2.EXPRESSION), r.get(tc2.EXPRESSION));
+		assertEquals(mapR.get(quoteGroup.EXPRESSION), r.get(quoteGroup.EXPRESSION));
+	    });
+	    
+	    
+	}
+	try (InputStream is = IvlTest.class.getResourceAsStream("ivlcccIV.pdf")) {
+
+	    contractMap
+	    .entrySet()
+	    .stream()
+	    .skip(66)
+	    .limit(200)
+	    .map(Entry::getValue)
+	    .forEach( r -> {
+		dslContext
+		.delete(CONTRACT_DATA)
+		.where(CONTRACT_DATA.ID.in(
+			r.get(quoteGroup.ID)
+			, r.get(tc2.ID)
+			, r.get(coeficienteParcialidad.ID)))
+		.execute();
+		dslContext
+		.delete(CONTRACT)
+		.where(CONTRACT.ID.in(r.get(CONTRACT.ID)))
+		.execute();
+		
+	    });
+
+	    JooqIvl2Contract jooqIvl2Contract =  
+		    new JooqIvl2Contract(dslContext, domainName);
+		    
+	    IvlcccParser.parse(is, jooqIvl2Contract);
+	    
+	    Map<String, Record > newContractMap  =
+	    dslContext
+	    .select()
+	    .from(CONTRACT)
+	    .innerJoin(PERSON).onKey()
+	    .innerJoin(tc2).on(CONTRACT.ID.eq(tc2.CONTRACT).and(tc2.NAME.eq("TC2")))
+	    .innerJoin(quoteGroup).on(CONTRACT.ID.eq(quoteGroup.CONTRACT).and(quoteGroup.NAME.eq("GRUPO_COTIZACION")))
+	    .leftJoin(coeficienteParcialidad).on(CONTRACT.ID.eq(coeficienteParcialidad.CONTRACT).and(coeficienteParcialidad.NAME.eq("COEFICIENTE_PARCIALIDAD")))
+	    .where(CONTRACT.DOMAIN.eq(domainId))
+	    .fetchStream()
+	    .collect(Collectors.toMap(r -> r.get(PERSON.SOCIAL_SECURITY_NUM)+"/"+r.get(CONTRACT.START_DATE), r -> r));
+
+	    assertEquals(contractMap.size(), newContractMap.size());
+	    
+	    contractMap
+	    .entrySet()
+	    .stream()
+	    .map(Entry::getValue)
+	    .forEach( r -> {
+		Record newMapR = newContractMap.get(r.get(PERSON.SOCIAL_SECURITY_NUM)+"/"+r.get(CONTRACT.START_DATE));
+		
+		//assertNotEquals(newMapR.get(CONTRACT.ID), r.get(CONTRACT.ID));
+
+		assertEquals(newMapR.get(CONTRACT.PERSON), r.get(CONTRACT.PERSON));
+		assertEquals(newMapR.get(CONTRACT.WORKPLACE), r.get(CONTRACT.WORKPLACE));
+		assertEquals(newMapR.get(CONTRACT.ENTERPRISE_CCC), r.get(CONTRACT.ENTERPRISE_CCC));
+		assertEquals(newMapR.get(CONTRACT.ENTERPRISE_ACTIVITY), r.get(CONTRACT.ENTERPRISE_ACTIVITY));
+		assertEquals(newMapR.get(CONTRACT.START_DATE), r.get(CONTRACT.START_DATE));
+		assertEquals(newMapR.get(CONTRACT.END_DATE), r.get(CONTRACT.END_DATE));
+
+		assertEquals(newMapR.get(tc2.EXPRESSION), r.get(tc2.EXPRESSION));
+		assertEquals(newMapR.get(quoteGroup.EXPRESSION), r.get(quoteGroup.EXPRESSION));
+	    });
+	    
+	    
+	}
+	    
+	    
+	    
+	    
+    }
 
     private DSLContext getDslContext() {
 	Settings settings = new Settings();

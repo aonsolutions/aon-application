@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.amortization;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
@@ -35,4 +36,10 @@ public interface AmortizationService extends RemoteService {
 	void linkInvoices(Occam occam, Integer domain, Integer amortizationId, Integer[] invoiceIds) throws AonCoreException;
 	void unlinkInvoice(Occam occam, Integer domain, Integer amortizationId, Integer invoiceId) throws AonCoreException;
 	Invoice changeInvestment(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException;
+	
+	LinkedList<AccountingAmortization> getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params) throws AonCoreException;
+
+	void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException;
+	void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids) throws AonCoreException;
+	
 }
