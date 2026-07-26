@@ -240,6 +240,9 @@ export class AonOfficePanel extends AonElement {
 		
 		let sellerWorkload = OfficeOptions.AON_SELLER_WORKLOAD
 		sellerWorkload.fn = () => this.showView(OfficeOptions.AON_SELLER_WORKLOAD.id);
+		
+		let sellerAssignScope = OfficeOptions.AON_SELLER_ASSIGN_SCOPE
+		sellerAssignScope.fn = () => this.showView(OfficeOptions.AON_SELLER_ASSIGN_SCOPE.id);
 
 		let customerPayrollActivity = OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY;
 		customerPayrollActivity.fn = () => this.showView(OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id);
@@ -250,6 +253,10 @@ export class AonOfficePanel extends AonElement {
 			icon: MATERIAL_ICONS.VIEW_TIMELINE,
 			clickable: false,
 			options: [sellerWorkload, customerPayrollActivity]
+		}
+		
+		if (this.isBeta()){
+			process.options.push(sellerAssignScope);
 		}
 		
 		if (!this.isSig()) {
@@ -761,6 +768,10 @@ export class AonOfficePanel extends AonElement {
 				case OfficeOptions.AON_SELLER_WORKLOAD.id:
 					this.clearToolbar();
 					GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE, this.getApplication().CONTENT);
+					break;	
+				case OfficeOptions.AON_SELLER_ASSIGN_SCOPE.id:
+					this.clearToolbar();
+					GWT.iLoad(GWT.SELLER_ASSIGN_SCOPE_MODULE, this.getApplication().CONTENT);
 					break;
 				case OfficeOptions.AON_SCOPE.id:
 					this.clearToolbar();

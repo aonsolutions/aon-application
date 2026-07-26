@@ -214,6 +214,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Booking;
@@ -731,6 +732,12 @@ public class AON {
 	public static void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			getSecurity().closeUserScopeAuthorizations(ctx, domain, user, authUserScopes, endDate);
+		} 
+	}
+
+	public static void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			getSecurity().assignSellerUserScopes(ctx, domain, user, userScopeAssign);
 		} 
 	}
 	

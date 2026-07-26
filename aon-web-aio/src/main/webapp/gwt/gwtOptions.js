@@ -678,6 +678,12 @@ export const SELLER_WORKLOAD_MODULE = {
   entryPoint: 'SellerWorkload'
 };
 
+export const SELLER_ASSIGN_SCOPE_MODULE = {
+  title: 'Reasignacion de Ámbitos',
+  module: GWT_FISCAL,
+  entryPoint: 'SellerReassignScopeEntryModule'
+}
+
 export const TARIFF_MODULE = {
   title: 'Tarifas',
   module: GWT_FISCAL,

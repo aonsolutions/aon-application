@@ -33,6 +33,12 @@ const AON_SELLER_WORKLOAD = {
     icon: MATERIAL_ICONS.PERSON_PLAY
 }
 
+const AON_SELLER_ASSIGN_SCOPE = {
+	id: 'sideNavSellerAssignScope',
+    name: "Reasignar Ámbitos a Agentes",
+    icon: MATERIAL_ICONS.PERSON_PLAY
+}
+
 const AON_SCOPE = {
     id: 'sideNavScope',
     name: "Ámbitos",
@@ -99,6 +105,7 @@ const OfficeOptions = {
     AON_WORKGROUP_LIST,
     AON_SELLER_LIST,
     AON_SELLER_WORKLOAD,
+    AON_SELLER_ASSIGN_SCOPE,
     AON_SCOPE,
     AON_CUSTOMER_STATUS,
     AON_CUSTOMER_PAYROLL_ACTIVITY

@@ -111,6 +111,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -473,6 +474,7 @@ public interface CommonServiceAsync {
 	void getUserScopesByUser(String domainName, Integer domain, String user, Integer userId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
 	void authorizateUserScopes(String currentDomainName, int currentDomain, String currentUser, UserScopeAuthorization userScopeAuthorization, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> asyncCallback) throws AonCoreException;
 	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope, AsyncCallback<Void> asyncCallback) throws AonCoreException;
