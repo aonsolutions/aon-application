@@ -22,6 +22,7 @@ public enum AonApp implements Serializable {
 	AIO(getEmptyModules(), "AIO"),														// 7
 	ALMA(getEmptyModules(), "Alma"),													// 8
 	COMUNICA(getEmptyModules(), "Comunica"),											// 9
+	@Deprecated
 	BIDOQ(getEmptyModules(), "Bidoq"),													// 10
 	CONVENIOS(getEmptyModules(), "Convenios"),											// 11
 	BANK(getEmptyModules(), "Bancos"),													// 12
@@ -31,10 +32,12 @@ public enum AonApp implements Serializable {
 	PACK_PORTAL(getEmptyModules(), "Pack Portal"),										// 16
 	PACK_PAYROLL(getEmptyModules(), "Pack Cotizaci\u00f3n"),							// 17
 	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributaci\u00f3n"),					// 18
+	@Deprecated 
 	SELFCONTA(getEmptyModules(), "Selfconta"),											// 19
 	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),								// 20
 	AULA(getEmptyModules(), "Aula"),													// 21
 	NOTES(getEmptyModules(), "Notas"),													// 22
+	@Deprecated
 	SALTRA(getEmptyModules(), "Saltra"),												// 23
 	BASIC_MANAGEMENT(getEmptyModules(), "Gesti\u00f3n B\u00e1sica"),					// 24
 	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gesti\u00f3n Est\u00e1ndar"),	// 25

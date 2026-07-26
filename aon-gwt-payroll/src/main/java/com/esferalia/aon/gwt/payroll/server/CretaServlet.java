@@ -797,6 +797,7 @@ public class CretaServlet extends HttpServlet
 			String[] nafs = getUniqueParameterValues(req, CretaService.Parameter.NAFS, null);
 			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
 			String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+			String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 			
 			Date desdeDate = toDate(desdeMes, desdeAnho); 
 			
@@ -805,7 +806,11 @@ public class CretaServlet extends HttpServlet
 			for ( String ccc : cccs ) {
 				
 				try {
-					trabajaresYTramosIsList.add(toInputStream(getTrabajadoresTramos(ctx, certificate, desdeDate, ccc, nafs)));
+					net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajaresYTramos = 
+							getTrabajadoresTramos(ctx, certificate, desdeDate, ccc, nafs);
+					if ( AonStringUtils.isNotBlank(autorizado) )
+						trabajaresYTramos.setAutorizado(autorizado);
+					trabajaresYTramosIsList.add(toInputStream(trabajaresYTramos));
 				} catch (SegSocialException | JAXBException e) {
 				}
 			}

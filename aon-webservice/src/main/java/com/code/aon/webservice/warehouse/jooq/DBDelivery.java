@@ -135,7 +135,7 @@ public class DBDelivery {
 			json.put(MSG.DESCRIPTION, detail.getDescription());
 			json.put(MSG.QUANTITY, detail.getQuantity());
 			json.put(MSG.PRICE, detail.getPrice());
-			json.put(MSG.DISCOUNT_EXPR, detail.getDiscountExpression());
+			json.put(MSG.DISCOUNT_EXPR, detail.getDiscountExpression().getDiscountExpr());
 			
 			json.put(MSG.CREATION_DATE, detail.getCreationDate());
 			json.put(MSG.CREATION_USER, detail.getCreationUser());

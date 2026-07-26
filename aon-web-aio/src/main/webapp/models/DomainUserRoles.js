@@ -741,28 +741,6 @@ export class DomainUserRoles {
 		return this.hasSelfconta() && (this.isAdmin() || this.hasRole(Role.SELFCONTA));
 	}
 
-	hasSaltra() {
-		return this.hasApp(App.SALTRA);
-	}
-
-	hasParentSaltra() {
-		return this.hasParentApp(App.SALTRA);
-	}
-
-	isSaltra() {
-		return this.hasSaltra();
-		//  && (this.isAdmin() || this.hasRole(Role.SALTRA))
-		// || this.isSaltraPortal() || this.isSaltraManager();
-	}
-
-	isSaltraPortal() {
-		return this.hasSaltra() && (this.isAdmin() || this.hasRole(Role.SALTRA_PORTAL));
-	}
-
-	isSaltraManager() {
-		return this.hasSaltra() && (this.isAdmin() || this.hasRole(Role.SALTRA_MANAGER));
-	}
-
 	isConfidential() {
 		return this.hasRole(Role.CONFIDENTIALITY);
 	}

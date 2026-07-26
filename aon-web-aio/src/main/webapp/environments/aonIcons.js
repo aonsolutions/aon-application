@@ -46,7 +46,6 @@ export const AON_CUSTOM = 'aon_custom';
 export const AON_WEB = 'aon_web';
 export const AON_GTA = 'aon_gta';
 export const AON_COMMERCE = 'aon_app';
-export const AON_SALTRA = 'aon_saltra';
 export const AON_ENTERPRISE = 'aon_enterprise';
 export const AON_KIT_DIGITAL = 'aon_kitdigital';
 export const AON_BRANCH = 'aon_branch';
