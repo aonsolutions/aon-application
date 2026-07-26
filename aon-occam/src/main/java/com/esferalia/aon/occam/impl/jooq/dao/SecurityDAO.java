@@ -101,6 +101,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -1735,6 +1736,36 @@ public class SecurityDAO {
 				.set(USER_SCOPE.START_DATE, AonDateUtils.toSql(userScopeAuthorization.getStartDate()))
 				.set(USER_SCOPE.END_DATE, AonDateUtils.toSql(userScopeAuthorization.getEndDate()))
 				.set(USER_SCOPE.OWNER, owner.getId())
+				.set(USER_SCOPE.CREATION_USER, user)
+				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
+				.execute();
+		});
+	}
+	
+	public static void assignSellerUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAssign userScopeAssign) {
+		Integer userOriginal = userScopeAssign.getSellerUserOwner();
+		Integer userNew = userScopeAssign.getSellerUserNewOwner();
+		Date starDate = userScopeAssign.getAssginDate();
+		Date endDate = AonDateUtils.addDays(starDate, -1);
+		
+		userScopeAssign.getUserScopes().forEach(us -> {
+			Integer originalUserScopeId = us.getId();
+			Scope scope = us.getScope();
+			
+			ctx.getDslContext().update(USER_SCOPE)
+				.set(USER_SCOPE.END_DATE, AonDateUtils.toSql(endDate))
+				.set(USER_SCOPE.MODIFICATION_USER, user)
+				.set(USER_SCOPE.MODIFICATION_DATE, DSL.currentTimestamp())
+				.where(USER_SCOPE.ID.eq(originalUserScopeId))
+				.and(USER_SCOPE.USER_ID.eq(userOriginal))
+				.execute();
+			
+			ctx.getDslContext().insertInto(USER_SCOPE)
+				.set(USER_SCOPE.DOMAIN, domain)
+				.set(USER_SCOPE.USER_ID, userNew)
+				.set(USER_SCOPE.SCOPE, scope.getId())
+				.set(USER_SCOPE.START_DATE, AonDateUtils.toSql(starDate))
+				//.set(USER_SCOPE.OWNER, userNew)
 				.set(USER_SCOPE.CREATION_USER, user)
 				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
 				.execute();

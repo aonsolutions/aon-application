@@ -156,6 +156,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -1476,6 +1477,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) throws AonCoreException {
 		AON.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate);
+	}
+
+	@Override
+	public void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign) throws AonCoreException {
+		AON.assignSellerUserScopes(domainName, domain, user, userScopeAssign);
 	}
 	
 	@Override
