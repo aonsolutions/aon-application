@@ -56,7 +56,7 @@ public class DeliveryDetailCRUDETest extends AbstractOccamTest {
 		DeliveryDetail deliveryDetail = AonFaker.getDeliveryDetail(ctx, delivery);
 				
 		double DELTA = 1e-8;
-		Double amounth = (deliveryDetail.getQuantity() * deliveryDetail.getPrice()) - (deliveryDetail.getQuantity() * deliveryDetail.getPrice() * Double.parseDouble(deliveryDetail.getDiscountExpression()) / 100);
+		Double amounth = deliveryDetail.getPrice() * deliveryDetail.getQuantity() * (1 - deliveryDetail.getDiscount() / 100);
 	
 		assertEquals(deliveryDetail.getAmount(), amounth, DELTA);
 	}

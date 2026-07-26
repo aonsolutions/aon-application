@@ -11,8 +11,8 @@ export class AonRegistryList extends AonElement {
 	filter;	
 
 	connectedCallback () {
+		this.clear();
 		this.initialize();
-
 		this.TABLE = new AonTable();
 		this.TABLE.id = 'aonRegistryTable';
 		this.appendChild(this.TABLE);

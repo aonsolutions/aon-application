@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.warehouse;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 
@@ -21,7 +22,7 @@ public class DeliveryDetail implements Serializable {
 	private Integer warehouse;
 	private double quantity;
 	private double price;
-	private String discountExpression;
+	private DiscountExpression discountExpression;
 	private Integer salesDetail;
 	private SalesDetail salesDetailData;
 	private String purchaseReference;
@@ -98,12 +99,28 @@ public class DeliveryDetail implements Serializable {
 		return this;
 	}
 	
-	public String getDiscountExpression() {
+	public DiscountExpression getDiscountExpression() {
+		if(discountExpression == null)
+			discountExpression = new DiscountExpression("0.0");
 		return discountExpression;
 	}
-	
-	public DeliveryDetail setDiscountExpression(String discountExpression) {
+
+	public DeliveryDetail setDiscountExpression(DiscountExpression discountExpression) {
 		this.discountExpression = discountExpression;
+		return this;
+	}
+
+	public DeliveryDetail setDiscountExpression(String discountExpression) {
+		this.discountExpression = new DiscountExpression(discountExpression);
+		return this;
+	}
+
+	public double getDiscount() {
+		return getDiscountExpression().getPercentage();
+	}
+
+	public DeliveryDetail setDiscount(double discount) {
+		setDiscountExpression(new DiscountExpression(discount));
 		return this;
 	}
 	
@@ -193,7 +210,7 @@ public class DeliveryDetail implements Serializable {
 	}
 	
 	public double getAmount() {
-		return (this.getQuantity() * this.getPrice()) - (this.getQuantity() * this.getPrice() * Double.parseDouble(this.getDiscountExpression()) / 100);
+		return getPrice() * getQuantity() * (1 - getDiscount()/100);
 	}
 	
 	@Deprecated

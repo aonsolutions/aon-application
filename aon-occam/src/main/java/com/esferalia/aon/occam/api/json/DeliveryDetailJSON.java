@@ -62,7 +62,7 @@ public class DeliveryDetailJSON {
 			.put(IJsonNames.WAREHOUSE, object.getWarehouse())
 			.put(IJsonNames.QUANTITY, object.getQuantity())
 			.put(IJsonNames.PRICE, object.getPrice())
-			.put(IJsonNames.DISCOUNT, object.getDiscountExpression())
+			.put(IJsonNames.DISCOUNT, object.getDiscountExpression().getDiscountExpr())
 			.put(IJsonNames.SALES_DETAIL, object.getSalesDetail())
 			.put(IJsonNames.PURCHASE_REFERENCE, object.getPurchaseReference())
 			.put(IJsonNames.CREATION_DATE, object.getCreationDate())

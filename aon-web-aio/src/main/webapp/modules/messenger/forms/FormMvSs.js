@@ -222,7 +222,7 @@ const createDataEnterprise = (form, data) => {
     });
 
     const divManager = TaskCreationUtils.createDivGrid(form, undefined, {});
-    divManager.style.display = data.fra && (dur.isComunicaManager() || dur.isSaltraManager()) ? "block" : "none";
+    divManager.style.display = data.fra && dur.isComunicaManager() ? "block" : "none";
     
     //---------------------DATA RESTANT
     let contract =  CreateComponent.createAonSelect({
@@ -261,7 +261,7 @@ const createDataEnterprise = (form, data) => {
     const observation = TaskCreationUtils.createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
     TaskCreationUtils.createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
-    if((dur.isComunicaManager() || dur.isSaltraManager()) && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
+    if(dur.isComunicaManager() && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
         let btnAccept = TaskCreationUtils.createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=>  processAccept(aonMessengerChat) );
          
