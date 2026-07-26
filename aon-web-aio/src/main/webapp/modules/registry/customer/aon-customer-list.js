@@ -25,10 +25,41 @@ export class AonCustomerList extends AonRegistryList {
 			super.build();
 		});
 	}
-
+	
 	async getRegistries() {
-		let customers = await getCustomers(this.filter);
-		return customers;
+	    this.filter = { ...this.filter, additional_info: ["MEDIA"] };
+	    console.log("getRegistries filter", this.filter);
+	    let customers = await getCustomers(this.filter);
+	    (customers || []).forEach(c => { c.contact = this.buildContactCell(c.media); });
+	    return customers;
+	}
+	
+	buildContactCell(media) {
+	    const list = Array.isArray(media) ? media : (media ? [media] : []);
+	    const find = type => list.find(m => (m?.media || '').toLowerCase() === type);
+	
+	    const wrap = document.createElement('span');
+	    wrap.style.display = 'inline-flex';
+	    wrap.style.gap = '8px';
+	
+	    const slot = (m, iconName) => {
+	        const i = document.createElement('i');
+	        i.className = 'material-icons';
+	        i.textContent = iconName;
+	        i.style.width = '24px';          // ancho fijo => alineación entre filas
+	        i.style.textAlign = 'center';
+	        if (m) {
+	            i.style.color = '#5f6368';
+	            i.title = m.value;           // el value en el tooltip
+	        } else {
+	            i.style.visibility = 'hidden'; // reserva el hueco sin pintar icono
+	        }
+	        return i;
+	    };
+	
+	    wrap.appendChild(slot(find('cellular'), 'phone'));
+	    wrap.appendChild(slot(find('email'), 'email'));
+	    return wrap;
 	}
 
 	async getCustomerCustom(registry){
@@ -224,6 +255,10 @@ export class AonCustomerList extends AonRegistryList {
 
 	setClientFile(clientFile) {
 		this.clientFile = clientFile;
+	}
+	
+	addCustomColumns() {
+	    this.TABLE.addColumn('Contacto', 'html', 'contact', '10%');
 	}
 
 }
