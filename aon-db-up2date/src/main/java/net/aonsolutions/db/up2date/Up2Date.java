@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFix;
 import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
@@ -621,17 +622,18 @@ public class Up2Date {
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
 			// OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
-			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
-			//SalaryTypeUpdate.ALL,
+			// AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
+			// SalaryTypeUpdate.ALL,
 			// BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
 			// DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
-			//CgcEMinInsert.CGCEMININSERT,
-			//ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
-			//ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
-			//AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
-			ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
-			UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
-			ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
+			// CgcEMinInsert.CGCEMININSERT,
+			// ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
+			// ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
+			// AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+			// ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
+			// UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
+			// ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
+			EreFzaExoneradoFix.EREFZAEXONERADOFIX,
 
 
 			// ----------------------------------------------------------------

@@ -3699,6 +3699,20 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestEre() throws Exception {
+
+		if (!isDisplayed("ere_completo,_fza_exoneracion_(_tiempo_completo_)"))
+			open("ere_&_huelga");
+
+		wait4Id("ere_completo,_fza_exoneracion_(_tiempo_completo_)");
+
+		draft("ERE COMPLETO, FZA EXONERACION ( TIEMPO COMPLETO )");
+		calculate(Calendar.AUGUST,2026);
+		assertText("totalEnterpriseLabel", 0.00);
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
