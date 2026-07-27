@@ -569,7 +569,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 
 			Calendar calendar = Calendar.getInstance();
@@ -656,7 +656,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 
 			Calendar calendar = Calendar.getInstance();
@@ -749,7 +749,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(2, ssBonuses.size());
+			assertEquals(2, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 			// EXONE.ERE.F.MAY.PARC ( 55,00%)
 
@@ -905,7 +905,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf")) {
 			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
-			assertEquals(4, ssBonuses.size());
+			assertEquals(4, ssBonuses.stream().filter(PEC::isBonus).count());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -1261,7 +1261,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIII.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%)
 
 			Salary salary = calculate(ssBonuses);

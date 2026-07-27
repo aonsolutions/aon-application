@@ -700,7 +700,6 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newSEAMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
 	}
 
-
 	private static NegativeDeduction newNegativeDeduction(
 			String nss, 
 			String ccc, 
