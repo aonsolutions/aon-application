@@ -142,7 +142,7 @@ public class DailyTrackingController extends BasicController {
 	
 	public List<SelectItem> getActivityTypes() throws ManagerBeanException {
 		DailyTracking dt = (DailyTracking) this.getTo();
-		if(dt.getProject().getProjectType() != null) {
+		if(dt != null && dt.getProject() != null && dt.getProject().getProjectType() != null) {
 			loadActivityTypes(dt.getProject().getProjectType().getId());
 		} else loadActivityTypes(null);
 		return activityTypes;
