@@ -54,8 +54,11 @@ public abstract class AssignScopeAuthorizationList extends AonCustomDockLayout {
 	
 	private AonCustomSuggestBox scopeOwnerSB = new AonCustomSuggestBox("Autorizado temporal \u00e1mbito");
 	private AonCustomDateBox startDate = new AonCustomDateBox("F. Asignaci\u00f3n");
+	
 	private HashMap<String, Integer> scopeOwnerByLabel = new HashMap<String, Integer>();
+	private HashMap<String, Integer> sellerByLabel = new HashMap<String, Integer>();
 	private Integer selectedScopeOwnerId;
+	private Integer selectedSellerId;  
 	
 	private SimplePanel tableContainer;
 	private ScrollPanel tableScrollPanel;
@@ -104,7 +107,7 @@ public abstract class AssignScopeAuthorizationList extends AonCustomDockLayout {
 	// ------------------------------------------------- Constructor
 	
 	public AssignScopeAuthorizationList(RegistryModuleOptions options) {
-		super("Autorizado del \u00e1mbito");
+		super("Agente asignado");
 		
 		initializeCommonService();
 		
@@ -160,12 +163,14 @@ public abstract class AssignScopeAuthorizationList extends AonCustomDockLayout {
 		
 		getSupportSellers("", sellers -> {
 			List<String> sellerLabels = new ArrayList<String>();
-			scopeOwnerByLabel.clear();
-			sellers.stream().filter(u -> u.isActive()).forEach(u -> {
-				String label = u.getName();
-				scopeOwnerByLabel.put(label, u.getTaskHolder().getUser().getId());
-				sellerLabels.add(label);
-			});
+		    scopeOwnerByLabel.clear();
+		    sellerByLabel.clear();                                    // NUEVO
+		    sellers.stream().filter(s -> s.isActive()).forEach(s -> {
+		        String label = s.getName();
+		        scopeOwnerByLabel.put(label, s.getTaskHolder().getUser().getId());
+		        sellerByLabel.put(label, s.getId());            // NUEVO: registry del seller
+		        sellerLabels.add(label);
+		    });
 			MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) scopeOwnerSB.getSuggestBox().getSuggestOracle();
 			oracle.clear();
 			oracle.addAll(sellerLabels);
@@ -337,16 +342,23 @@ public abstract class AssignScopeAuthorizationList extends AonCustomDockLayout {
 	public Integer getSelectedUser() {
 		return resolveSelectedScopeOwnerId();
 	}
+	
+	public Integer getSelectedSeller() {
+	    resolveSelectedScopeOwnerId();
+	    return selectedSellerId;
+	}
 
 	private Integer resolveSelectedScopeOwnerId() {
-		String selectedUser = scopeOwnerSB.getValue();
-		if (AonStringUtils.isBlank(selectedUser) || "-".equals(selectedUser)) {
-			selectedScopeOwnerId = null;
-			return null;
-		}
+	    String selectedUser = scopeOwnerSB.getValue();
+	    if (AonStringUtils.isBlank(selectedUser) || "-".equals(selectedUser)) {
+	        selectedScopeOwnerId = null;
+	        selectedSellerId = null;              // NUEVO
+	        return null;
+	    }
 
-		selectedScopeOwnerId = scopeOwnerByLabel.get(selectedUser);
-		return selectedScopeOwnerId;
+	    selectedScopeOwnerId = scopeOwnerByLabel.get(selectedUser);
+	    selectedSellerId = sellerByLabel.get(selectedUser);   // NUEVO
+	    return selectedScopeOwnerId;
 	}
 
 	public Date getSelectedStartDate() {

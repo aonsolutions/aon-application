@@ -126,6 +126,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDA
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.scope.SellerAssignHelper;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -1743,33 +1744,9 @@ public class SecurityDAO {
 	}
 	
 	public static void assignSellerUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAssign userScopeAssign) {
-		Integer userOriginal = userScopeAssign.getSellerUserOwner();
-		Integer userNew = userScopeAssign.getSellerUserNewOwner();
-		Date starDate = userScopeAssign.getAssginDate();
-		Date endDate = AonDateUtils.addDays(starDate, -1);
 		
-		userScopeAssign.getUserScopes().forEach(us -> {
-			Integer originalUserScopeId = us.getId();
-			Scope scope = us.getScope();
-			
-			ctx.getDslContext().update(USER_SCOPE)
-				.set(USER_SCOPE.END_DATE, AonDateUtils.toSql(endDate))
-				.set(USER_SCOPE.MODIFICATION_USER, user)
-				.set(USER_SCOPE.MODIFICATION_DATE, DSL.currentTimestamp())
-				.where(USER_SCOPE.ID.eq(originalUserScopeId))
-				.and(USER_SCOPE.USER_ID.eq(userOriginal))
-				.execute();
-			
-			ctx.getDslContext().insertInto(USER_SCOPE)
-				.set(USER_SCOPE.DOMAIN, domain)
-				.set(USER_SCOPE.USER_ID, userNew)
-				.set(USER_SCOPE.SCOPE, scope.getId())
-				.set(USER_SCOPE.START_DATE, AonDateUtils.toSql(starDate))
-				//.set(USER_SCOPE.OWNER, userNew)
-				.set(USER_SCOPE.CREATION_USER, user)
-				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
-				.execute();
-		});
+		SellerAssignHelper.assignSellerUserScopes(ctx, domain, user, userScopeAssign);
+		
 	}
 	
 	public static void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
