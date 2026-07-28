@@ -18,7 +18,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0000;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
-import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
@@ -67,7 +66,6 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
@@ -93,8 +91,8 @@ import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -374,7 +372,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		
 	}
-
+	
 	private class SmartQuoteCalculator extends QuoteCalculator {
 		
 		private QuoteCalculator delegate;
@@ -631,6 +629,119 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
+	private static class MonthlyQuotePayment implements IContractPayment {
+		
+		private String name;
+		private Double amount; 
+		private Double irpf;
+		private Double quote;
+		private String expression;
+		private String description; 
+		private com.esferalia.aon.occam.api.model.Salary salary;
+		private com.esferalia.aon.occam.api.model.type.PaymentType paymentType; 
+		
+		public MonthlyQuotePayment(Double amount, Double quote, Double irpf, String expression, String description, String name,
+				com.esferalia.aon.occam.api.model.type.PaymentType paymentType, com.esferalia.aon.occam.api.model.Salary salary) {
+			this.amount = amount;
+			this.quote = quote;
+			this.irpf = irpf;
+			this.expression = expression;
+			this.description = description;
+			this.name = name;
+			this.paymentType = paymentType;
+			this.salary = salary;
+		}
+		
+		public Double getIrpf() {
+			return AonNumberUtils.zeroIfNull(irpf);
+		}
+		
+		public Double getQuote() {
+			return AonNumberUtils.zeroIfNull(quote);
+		}
+		
+		public Date getStartDate() {
+			return salary.getStartDate();
+		}
+
+		public Date getEndDate() {
+			return salary.getEndDate();
+		}
+		
+		// IContractPayment implementation ---------------------------------------
+		
+		@Override
+		public String getExpression() {
+			return expression;
+		}
+
+		@Override
+		public PaymentType getType() {
+			return paymentType != null ? PaymentType.valueOf(paymentType.name()) : null;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public double getAmount() {
+			return AonNumberUtils.zeroIfNull(amount);
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public ExpressionScope getScope() {
+			return ExpressionScope.APPLICATION;
+		}
+
+		@Override
+		public boolean isReadOnly() {
+			return true;
+		}
+
+		@Override
+		public Integer getId() {
+			return null;
+		}
+
+		@Override
+		public Month getMonth() {
+			return null;
+		}
+
+		@Override
+		public Integer getConceptId() {
+			return null;
+		}
+
+		@Override
+		public String getIrpfExpression() {
+			return null;
+		}
+
+		@Override
+		public String getQuoteExpression() {
+			return null;
+		}
+
+		@Override
+		public SalaryType getSalaryType() {
+			return salary.getSalaryType() != null ? SalaryType.valueOf(salary.getSalaryType().name()) : null;
+		}
+
+		@Override
+		public boolean isDescriptionDecorable() {
+			return false;
+		}
+
+	}
+
 	private static class ExtraPayment extends SalaryPayment {
 		private Date endDate;
 		private Date startDate;
@@ -735,6 +846,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 							return SalaryType.EXTRA;
 						}
 					};
+				} else {
+					try {
+						resolveSalaryExtra(contractPayment, 
+								start, 
+								end, 
+								issueDate, 
+								expressionContext, 
+								((SmartTaxCalculator)taxCalculator).delegate, 
+								((SmartQuoteCalculator)quoteCalculator).delegate, 
+								leavePeriods, 
+								strikePeriods);
+						return;
+					} catch ( NotNowException | ClassCastException e ) {
+					}
 				}
 			} catch ( ClassCastException e ) {
 			}
@@ -1809,7 +1934,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,double amount, double total) throws AonException {
-		Collection<Payment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
+		Collection<MonthlyQuotePayment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
 		
 		int expected = 0;
 		for ( Date date = AonDateUtils.getFirstDayOfMonth(getContractStartate(ctx)); expected < 11 && date.compareTo(AonDateUtils.getFirstDayOfMonth(endDate))< 0; date = AonDateUtils.add(date, Calendar.MONTH,1) )
@@ -1820,10 +1945,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return Optional.empty();
 	}
 	
-	private static Collection<Payment> getMonthlyQuotePayments(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
+	private static Collection<MonthlyQuotePayment> getMonthlyQuotePayments(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
 		
 		
-		List<Payment> monthlyQuotedPayments = new ArrayList<Payment>();
+		List<MonthlyQuotePayment> monthlyQuotedPayments = new ArrayList<>();
 		
 		int contractId = ctx.getId();
 		
@@ -1836,7 +1961,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.and(p.getStartDateProperty().le(endExtraDate))
 			.and(p.getEndDateProperty().ge(startExtraDate)))
 		.forEach(salary -> {
-		    	Payment payment = 
+		    Payment payment = 
 			salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getDescription(), p.getDescription()))
 			.sorted(SmartContractSalaryCalculator.sorting(Payment::getAmount))
@@ -1851,17 +1976,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.findFirst().orElseGet( 
 			() -> new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null) ) ) ) ;
 			
+		    MonthlyQuotePayment monthlyQuotePayment = new MonthlyQuotePayment(payment.getAmount(), payment.getQuote(), payment.getIrpf(), payment.getExpression(), payment.getDescription(), payment.getName(), payment.getPaymentType(), salary);
+	    	try {
+	    	    Double quote = salary.getContextData(ContextVariable.getDecimalNameFor(payment.getQuote()), Collectors.summingDouble( Double::parseDouble ));
+	    	    if ( quote != null && quote > 0.00 ) {
+	    	    	monthlyQuotePayment = new MonthlyQuotePayment(payment.getAmount(), quote, payment.getIrpf(), payment.getExpression(), payment.getDescription(), payment.getName(), payment.getPaymentType(), salary);
+	    	    }
+	    	} catch ( Exception e ) {
+	    	    // 
+	    	}
 		    	
-		    	try {
-		    	    Double quote = salary.getContextData(ContextVariable.getDecimalNameFor(payment.getQuote()), Collectors.summingDouble( Double::parseDouble ));
-		    	    if ( quote != null && quote > 0.00 ) {
-		    		payment = new Payment(payment.getAmount(), quote, payment.getExpression(), payment.getDescription(), payment.getName(), payment.getPaymentType());
-		    	    }
-		    	} catch ( Exception e ) {
-		    	    // 
-		    	}
-		    	
-			monthlyQuotedPayments.add(payment);
+			monthlyQuotedPayments.add(monthlyQuotePayment);
 		})
 		;
 				
@@ -2193,6 +2318,37 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		throw new NotNowException();
 	}
 
+	private void resolveSalaryExtra(IContractPayment contractPayment, Date startDate, Date endDate, Date issueDate,
+			ExpressionContext expressionContext, TaxCalculator taxCalculator, QuoteCalculator quoteCalculator,
+			List<Period> leavePeriods, List<Period> strikePeriods) 
+			throws AonException {
+		Collection<MonthlyQuotePayment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
+		
+		int expected = 0;
+		for ( Date date = AonDateUtils.getFirstDayOfMonth(getContractStartate(ctx)); expected < 11 && date.compareTo(AonDateUtils.getFirstDayOfMonth(endDate))< 0; date = AonDateUtils.add(date, Calendar.MONTH,1) )
+			expected++;
+		
+		if ( expected == payments.size() ) {
+			for ( MonthlyQuotePayment payment : payments ) {
+			
+				salaryBuilder.addPayment(
+					payment.getQuote(), // amount it's the quote, .
+					0.00, 				// already quoted, so quote is 0.00
+					payment.getQuote(), // tax it's the amount .
+					payment.getDescription(), 
+					payment.getStartDate(), 
+					payment.getEndDate(), 
+					payment, 
+					Collections.emptyMap());
+			
+			}
+			super.resolvePayment(contractPayment, startDate, endDate, issueDate, expressionContext, taxCalculator, quoteCalculator, leavePeriods, strikePeriods);
+		} else {
+			throw new NotNowException();
+		}
+		
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	protected static long getDays(Period period){
