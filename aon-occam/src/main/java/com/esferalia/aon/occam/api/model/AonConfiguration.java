@@ -169,6 +169,12 @@ public class AonConfiguration implements Serializable {
 		this.enterpriseActivities = enterpriseActivities;
 		return this;
 	}
+	public int getActivityCount() {
+		return AonCollectionUtils.size(enterpriseActivities);
+	}
+	public boolean isMultiActivity() {
+		return getActivityCount() > 1;
+	}
 	public boolean hasActivities() {
 		return this.enterpriseActivities != null && this.enterpriseActivities.size() > 0;
 	}

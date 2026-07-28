@@ -45,7 +45,10 @@ public class InvoiceRecorderDAO {
 			.setActivity(
 				invoice.optActivity()                                                                                                 
 					.filter(a -> !a.isEmpty())                                                                                                           
-					.or(() -> Optional.ofNullable(aonCtx.getMainActivity()))                                                                             
+					.or(() -> (aonCtx != null && aonCtx.isMultiActivity())
+						? Optional.<EnterpriseActivity>empty()
+					    : Optional.ofNullable(aonCtx.getMainActivity())
+				    )                                                         
 					.map(EnterpriseActivity::getId)                                                                                                      
 					.orElse(null)
 			)
