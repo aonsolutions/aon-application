@@ -120,7 +120,8 @@
 							<aon:div rendered="#{finance.nevv}">
 								<aon:selectOneRadio id="Finance_type"
 									value="#{finance.financeGroup}"
-									reRender="Finance_amount-Panel, financeGroup-button">
+									valueChangeListener="#{finance.onFinanceGroupChanged}"
+									reRender="Finance_amount-Panel, Finance_total">
 									<f:selectItem itemLabel="#{bundle.finance_individual_finance}" itemValue="false" />
 									<f:selectItem itemLabel="#{bundle.finance_agrupation_finance}" itemValue="true" />
 								</aon:selectOneRadio>	
@@ -220,7 +221,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
@@ -233,7 +234,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and finance.purchase}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
@@ -246,7 +247,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and !finance.purchase}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
@@ -260,7 +261,7 @@
 							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.nevv}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
