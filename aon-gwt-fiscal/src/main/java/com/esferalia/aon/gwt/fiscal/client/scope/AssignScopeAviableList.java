@@ -88,8 +88,12 @@ public abstract class AssignScopeAviableList extends AonCustomDockLayout {
 	private AonCustomSuggestBox scopeOwnerSB = new AonCustomSuggestBox("Usuario");
 	private AonCustomListBox enterpriseStatusLB = new AonCustomListBox("Estado empresa");
 	private AonTableButton addAviableButton = new AonTableButton("Autorizar al usuario", AON.CSS.aonIconKeyboardDoubleArrowRight());
+	
 	private HashMap<String, Integer> scopeOwnerByLabel = new HashMap<String, Integer>();
+	private HashMap<String, Integer> sellerByLabel = new HashMap<String, Integer>();
 	private Integer selectedScopeOwnerId;
+	private Integer selectedSellerId;  
+	
 	private DomainStatusFilter selectedDomainStatusFilter = DomainStatusFilter.ALL;
 	
 	private SimplePanel tableContainer;
@@ -231,12 +235,14 @@ public abstract class AssignScopeAviableList extends AonCustomDockLayout {
 		
 		getSupportSellers("", sellers -> {
 			List<String> sellerLabels = new ArrayList<String>();
-			scopeOwnerByLabel.clear();
-			sellers.stream().filter(s -> s.isActive()).forEach(s -> {
-				String label = s.getName();
-				scopeOwnerByLabel.put(label, s.getTaskHolder().getUser().getId());
-				sellerLabels.add(label);
-			});
+		    scopeOwnerByLabel.clear();
+		    sellerByLabel.clear();                                    // NUEVO
+		    sellers.stream().filter(s -> s.isActive()).forEach(s -> {
+		        String label = s.getName();
+		        scopeOwnerByLabel.put(label, s.getTaskHolder().getUser().getId());
+		        sellerByLabel.put(label, s.getId());            // NUEVO: registry del seller
+		        sellerLabels.add(label);
+		    });
 			MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) scopeOwnerSB.getSuggestBox().getSuggestOracle();
 			oracle.clear();
 			oracle.addAll(sellerLabels);
@@ -257,6 +263,7 @@ public abstract class AssignScopeAviableList extends AonCustomDockLayout {
 			enterpriseStatusLB.setValue(DomainStatusFilter.ALL.name());
 			selectedDomainStatusFilter = DomainStatusFilter.ALL;
 			selectedScopeOwnerId = null;
+			selectedSellerId = null; 
 			onSearch();
 		});
 		addToolbarButton(resetSearchButton);
@@ -600,16 +607,23 @@ public abstract class AssignScopeAviableList extends AonCustomDockLayout {
 	public Integer getSelectedUser() {
 		return resolveSelectedScopeOwnerId();
 	}
+	
+	public Integer getSelectedSeller() {
+	    resolveSelectedScopeOwnerId();
+	    return selectedSellerId;
+	}
 
 	private Integer resolveSelectedScopeOwnerId() {
-		String selectedUser = scopeOwnerSB.getValue();
-		if (AonStringUtils.isBlank(selectedUser) || "-".equals(selectedUser)) {
-			selectedScopeOwnerId = null;
-			return null;
-		}
+	    String selectedUser = scopeOwnerSB.getValue();
+	    if (AonStringUtils.isBlank(selectedUser) || "-".equals(selectedUser)) {
+	        selectedScopeOwnerId = null;
+	        selectedSellerId = null;              // NUEVO
+	        return null;
+	    }
 
-		selectedScopeOwnerId = scopeOwnerByLabel.get(selectedUser);
-		return selectedScopeOwnerId;
+	    selectedScopeOwnerId = scopeOwnerByLabel.get(selectedUser);
+	    selectedSellerId = sellerByLabel.get(selectedUser);   // NUEVO
+	    return selectedScopeOwnerId;
 	}
 	
 	protected abstract void showWarning(String message);

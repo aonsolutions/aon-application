@@ -11,8 +11,11 @@ public class UserScopeAssign implements Serializable {
 	
 	private ArrayList<UserScopeFull> userScopes;
 	private Integer sellerUserOwner;
-	private Integer sellerUserNewOwner;
+	private Integer sellerUserNewOwner;	
 	private Date assginDate;
+	
+	private Integer sellerOwner;
+	private Integer sellerNewOwner;
 	
 	public UserScopeAssign() {
 		// TODO Auto-generated constructor stub
@@ -53,7 +56,23 @@ public class UserScopeAssign implements Serializable {
 		this.assginDate = assginDate;
 		return this;
 	}
-	
-	
+
+	public Integer getSellerOwner() {
+		return sellerOwner;
+	}
+
+	public UserScopeAssign setSellerOwner(Integer sellerOwner) {
+		this.sellerOwner = sellerOwner;
+		return this;
+	}
+
+	public Integer getSellerNewOwner() {
+		return sellerNewOwner;
+	}
+
+	public UserScopeAssign setSellerNewOwner(Integer sellerNewOwner) {
+		this.sellerNewOwner = sellerNewOwner;
+		return this;
+	}
 	
 }

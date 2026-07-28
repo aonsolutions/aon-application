@@ -101,7 +101,7 @@ public class ScopeAssignPanel extends AonCustomDockLayout {
 	// ------------------------------------------------- Constructor
 
 	public ScopeAssignPanel(RegistryModuleOptions options) {
-		super("Asignaciones Ambitos");
+		super(null);
 		this.options = options;
 		
 //		this.contextMenu = new OptionsContextMenu();
@@ -109,7 +109,8 @@ public class ScopeAssignPanel extends AonCustomDockLayout {
 		initializeCommonService();
 		
 //		createToolbar();
-		hideSearchWidget();
+//		hideSearchWidget();
+//		hideToolbar();
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn2());
@@ -209,6 +210,9 @@ public class ScopeAssignPanel extends AonCustomDockLayout {
 		Integer aviableSelectedUser = assignScopeAviableList.getSelectedUser();
 		Integer authorizationSelectedUser = assignScopeAuthorizationList.getSelectedUser();
 		
+		Integer aviableSelectedSeller = assignScopeAviableList.getSelectedSeller();
+		Integer authorizationSelectedSeller = assignScopeAuthorizationList.getSelectedSeller();
+		
 		Date assginStartDate = assignScopeAuthorizationList.getSelectedStartDate();
 		
 		if(aviableSelectedUser == null || authorizationSelectedUser == null || aviableSelectedUser.equals(authorizationSelectedUser)) {
@@ -235,6 +239,8 @@ public class ScopeAssignPanel extends AonCustomDockLayout {
 						.setUserScopes(new ArrayList<>(selectedUserScopes))
 						.setSellerUserOwner(aviableSelectedUser)
 						.setSellerUserNewOwner(authorizationSelectedUser)
+						.setSellerOwner(aviableSelectedSeller)
+						.setSellerNewOwner(authorizationSelectedSeller)
 						.setAssginDate(assginStartDate);
 
 				
