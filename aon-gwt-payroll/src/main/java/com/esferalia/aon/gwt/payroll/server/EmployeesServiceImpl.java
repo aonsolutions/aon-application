@@ -7395,7 +7395,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return certifica2Info;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

@@ -648,7 +648,8 @@ public class JooqCertifica2 {
 				.fetch(CONTRACT_INFO.EXPRESSION);
 
 		if (AonStringUtils.isBlank(representativeDocument))
-			representativeDocument = staffDocuments.get(0);
+			if(staffDocuments.isEmpty()) throw new IllegalArgumentException("No existe documento del representante de la empresa");
+			else representativeDocument = staffDocuments.get(0);
 		
 		// Get from contract
 		String staffCharge = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
