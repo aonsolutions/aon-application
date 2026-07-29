@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
@@ -91,7 +91,7 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 									
 									private String arrayNotNull() {
 										JSONArray array = new JSONArray(info);
-										Assert.assertNotNull(array);
+										assertNotNull(array);
 										return null;
 									}
 									
@@ -106,20 +106,20 @@ public class Mod115ScriptTest extends AbstractOccamTest {
 									public String visitComputeKey() {
 										Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 										if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals(info, "");
 										} else if (key != null) {
 											JSONObject json = new JSONObject(info);
-											Assert.assertNotNull(json);
+											assertNotNull(json);
 											JSONArray array = json.getJSONArray("messages");
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 										}
 										return null;
 									}
 									
 									@Override 
 									public String visitNone() { 
-										Assert.assertEquals(AonStringUtils.EMPTY,info);
+										assertEquals(AonStringUtils.EMPTY,info);
 										return null;
 									}
 									

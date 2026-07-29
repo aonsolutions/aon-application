@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jooq.impl.DSL;
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
@@ -37,7 +37,7 @@ public class Mod303CheckInsertedTest extends Mod303AbstractTest{
 			.collect(Collectors.toCollection(HashSet::new));
 
 		invoices.stream().forEach( i -> System.out.println( "\tFra. sin tener en cuenta ...: " + i));
-		Assert.assertEquals("Existen facturas que no se han tenido en cuenta",0, invoices.size());
+		assertEquals(0, invoices.size(), "Existen facturas que no se han tenido en cuenta");
 	}
 
 	private boolean isNotImportationWithoutDUA(Integer id) {

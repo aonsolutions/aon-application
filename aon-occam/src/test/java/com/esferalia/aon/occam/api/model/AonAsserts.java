@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.api.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.fail;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -28,8 +28,8 @@ public class AonAsserts {
 	private static final Comparator<Date> SAME_DAY = (d1, d2) -> AonDateUtils.isSameDay(d1 , d2) ? 0 : 1;
 	
 	static <T> void assertEqualsNulls(T expected, T actual, String msg) {
-		if ( expected == null) assertNull(msg, actual);
-		if ( expected != null) assertNotNull(msg, actual);
+		if ( expected == null) assertNull(actual, msg);
+		if ( expected != null) assertNotNull(actual, msg);
 	}
 	
 	private static <T> void assertAon(T expected, T actual, String[] skipFields, String className) {

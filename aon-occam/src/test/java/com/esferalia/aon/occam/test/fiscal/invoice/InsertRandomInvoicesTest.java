@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.test.fiscal.invoice;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
@@ -68,7 +68,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 			MessageFormat.format("\t\t [{0}] ({1} facturas creadas.)"
 				,AonStringUtils.repeat("-", times)
 				,times));
-		Assert.assertTrue( 
+		assertTrue( 
 			AON.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)
 				.findFirst()
 				.isPresent()
