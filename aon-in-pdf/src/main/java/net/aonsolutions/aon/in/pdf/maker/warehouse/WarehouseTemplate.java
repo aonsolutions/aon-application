@@ -37,8 +37,8 @@ import net.sourceforge.barbecue.linear.ean.UCCEAN128Barcode;
 
 public class WarehouseTemplate implements AutoCloseable {
 	
-	private static final PDFont DEFAULT_FONT = PdfFonts.HELVETICA;
-	private static final PDFont DEFAULT_BOLD_FONT = PdfFonts.HELVETICA_BOLD;
+	private final PDFont DEFAULT_FONT = PdfFonts.helvetica();
+	private final PDFont DEFAULT_BOLD_FONT = PdfFonts.helveticaBold();
 	
 	private static final Color DEFAULT_FONT_COLOR = PdfColors.BLACK;
 	

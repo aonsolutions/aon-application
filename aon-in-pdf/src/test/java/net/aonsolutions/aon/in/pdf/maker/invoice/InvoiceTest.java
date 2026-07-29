@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.in.pdf.maker.invoice;
 
-import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.HELVETICA;
-import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.helvetica;
+import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.helveticaBold;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfFormats.formatDate;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfFormats.toLatinNumber;
 import static net.aonsolutions.aon.in.pdf.api.toolkit.PDFToolkit.croppedString;
@@ -913,9 +913,9 @@ public class InvoiceTest {
 			log(GET, "ISSUE", PDFissueDate );
 			
 			start("Comparing original/PDF data");
-			assertPdfData("Address", croppedString(address, 230, HELVETICA, 9), PDFaddress);
+			assertPdfData("Address", croppedString(address, 230, helvetica(), 9), PDFaddress);
 			assertPdfData("Address line two", addressZIP + " " +  addressTown + " " + addressProvince, PDFaddressLineTwo);
-			assertPdfData("Name", croppedString(registryName, 230, HELVETICA_BOLD, 12), PDFregistryName);
+			assertPdfData("Name", croppedString(registryName, 230, helveticaBold(), 12), PDFregistryName);
 //			assertPdfData("code", referenceCode, PDFreferenceCode);
 			assertPdfData("NIF", registryDocument, PDFregistryDocument);
 			assertPdfData("TOTAL", toLatinNumber(total), PDFtotal);

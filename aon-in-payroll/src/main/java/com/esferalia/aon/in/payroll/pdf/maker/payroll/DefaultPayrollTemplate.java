@@ -2,8 +2,8 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helveticaBold;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
@@ -332,11 +332,11 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		// BUILDING THE HEADER
 		float headerFontSize = FONT_SIZE + 1;
 
-		enterprise = croppedString(enterprise, 255, HELVETICA_BOLD, headerFontSize);
-		employee   = croppedString(employee, 255, HELVETICA_BOLD, headerFontSize);
+		enterprise = croppedString(enterprise, 255, helveticaBold(), headerFontSize);
+		employee   = croppedString(employee, 255, helveticaBold(), headerFontSize);
 
 		drawBorderedBox(contents, x - 10, y - 85, 575, 120, LIGHT_GRAY);
-		drawTextCenter(contents, new PDRectangle(x, y + 4, 530, 100), title, BLACK, HELVETICA_BOLD, 12, 12);
+		drawTextCenter(contents, new PDRectangle(x, y + 4, 530, 100), title, BLACK, helveticaBold(), 12, 12);
 
 		y -= 60;
 //		drawBox(contents, x, y, 275, 65, LIGHT_GRAY);
@@ -346,31 +346,31 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 		y += 50;
 		x += 10;
-		drawText(contents, enterprise, x, y, BLACK, HELVETICA_BOLD, headerFontSize);
-		drawText(contents, employee, x + 280, y, BLACK, HELVETICA_BOLD, headerFontSize);
+		drawText(contents, enterprise, x, y, BLACK, helveticaBold(), headerFontSize);
+		drawText(contents, employee, x + 280, y, BLACK, helveticaBold(), headerFontSize);
 
 		y -= 13.5;
-		drawText(contents, address, x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, nif, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, address, x, y, BLACK, helvetica(), headerFontSize);
+		drawText(contents, nif, x + 280, y, BLACK, helvetica(), headerFontSize);
 
-		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize);
-
-		y -= 13.5;
-		drawText(contents, safeString(p.getAddress2()), x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, nss, x + 380, y, BLACK, helvetica(), headerFontSize);
 
 		y -= 13.5;
-		drawText(contents, ccc, x, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, cotizGroup, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, safeString(p.getAddress2()), x, y, BLACK, helvetica(), headerFontSize);
+		drawText(contents, profesGroup, x + 280, y, BLACK, helvetica(), headerFontSize);
+
+		y -= 13.5;
+		drawText(contents, ccc, x, y, BLACK, helvetica(), headerFontSize);
+		drawText(contents, cotizGroup, x + 280, y, BLACK, helvetica(), headerFontSize);
 
 		x += 100;
-		drawText(contents, cif, x + 30, y, BLACK, HELVETICA, headerFontSize);
-		drawText(contents, antiquDate, x + 280, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, cif, x + 30, y, BLACK, helvetica(), headerFontSize);
+		drawText(contents, antiquDate, x + 280, y, BLACK, helvetica(), headerFontSize);
 
 		y -= 25;
 		x -= 100;
-		drawText(contents, liquidPeriod, x - 8, y, BLACK, HELVETICA, FONT_SIZE);
-		new PdfText(x + 280, y, 265, 12, contents, dayTotal, BLACK, HELVETICA, FONT_SIZE, RIGHT).draw();
+		drawText(contents, liquidPeriod, x - 8, y, BLACK, helvetica(), FONT_SIZE);
+		new PdfText(x + 280, y, 265, 12, contents, dayTotal, BLACK, helvetica(), FONT_SIZE, RIGHT).draw();
 
 	}
 
@@ -392,8 +392,8 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String paymentTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase();
 		String paymentTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00));
 
-		drawText(contents, title, x - 5, y, BLACK, HELVETICA, FONT_SIZE);
-		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), totals, BLACK, HELVETICA, FONT_SIZE, 0, 0);
+		drawText(contents, title, x - 5, y, BLACK, helvetica(), FONT_SIZE);
+		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), totals, BLACK, helvetica(), FONT_SIZE, 0, 0);
 
 		y -= NORMAL_LINE_JUMP;
 		
@@ -418,7 +418,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String paymentTxt;
 		try {
 			paymentTxt = 1 + ". " + getType(1, lang);
-			drawText(contents, paymentTxt, x, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, paymentTxt, x, y, BLACK, helvetica(), FONT_SIZE);
 			y -= NORMAL_LINE_JUMP;
 			salaries.forEach(ps -> {
 				try {
@@ -426,7 +426,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 					y -= LITTLE_LINE_JUMP;
 				} catch (IOException e) {}
 			});
-			drawText(contents, "Complementos Salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Complementos Salariales", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(nonSalaries);
 			double hExtras = getExtraHoursPayment(allPayments);
@@ -444,7 +444,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 				PDFPayment kindExtrasPayment = new PDFPayment(inKindAmount != 0 ? inKindAmount : null, "Salario en Especie");
 				drawPayment(kindExtrasPayment);
 			} else {
-				drawText(contents, "Salario en Especie", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+				drawText(contents, "Salario en Especie", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 				y -= LITTLE_LINE_JUMP;
 				if ( !inKindPaymets.isEmpty() )
 					drawOrLine(inKindPaymets);
@@ -460,22 +460,22 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 				y -= LITTLE_LINE_JUMP;
 			}
 
-			drawText(contents, noSalaryTitle, x, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, noSalaryTitle, x, y, BLACK, helvetica(), FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
-			drawText(contents, "Indemnizaciones o suplidos", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Indemnizaciones o suplidos", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(indemns);
-			drawText(contents, "Prestaciones e indemnizaciones de la Seguridad Social", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Prestaciones e indemnizaciones de la Seguridad Social", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(prestSS);
 
 			if ( false && !ppes.isEmpty() ) {
-				drawText(contents, "Aportación empresarial al plan de pensiones de empleo", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+				drawText(contents, "Aportación empresarial al plan de pensiones de empleo", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 				y -= LITTLE_LINE_JUMP;
 				drawOrLine(ppes);
 			}
 
-			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Otras percepciones no salariales", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			y -= LITTLE_LINE_JUMP;
 			drawOrLine(others);
 			
@@ -486,14 +486,14 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 			if ( !notes.isEmpty() ) {
 			    	notes.forEach(p -> p.setAmount(null));
-        			drawText(contents, "Notas", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+        			drawText(contents, "Notas", x + 10, y, BLACK, helvetica(), FONT_SIZE);
         			y -= LITTLE_LINE_JUMP;
         			drawOrLine(notes);
 			}
 		
 			if ( !warnings.isEmpty() ) {
 			    	warnings.forEach(p -> p.setAmount(null));
-        			drawText(contents, "Avisos", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+        			drawText(contents, "Avisos", x + 10, y, BLACK, helvetica(), FONT_SIZE);
         			y -= LITTLE_LINE_JUMP;
         			drawOrLine(warnings);
 			}
@@ -503,8 +503,8 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		y -= 1;
 
-		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), paymentTotal, BLACK, HELVETICA, FONT_SIZE, 7, 1);
-		drawTextRight(contents, new PDRectangle(x + 150, y, 200, 25), paymentTotalTitle, BLACK, HELVETICA, FONT_SIZE, 5,1);
+		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), paymentTotal, BLACK, helvetica(), FONT_SIZE, 7, 1);
+		drawTextRight(contents, new PDRectangle(x + 150, y, 200, 25), paymentTotalTitle, BLACK, helvetica(), FONT_SIZE, 5,1);
 		drawTotalPaymentLine();
 	}
 	private float calculatePayments() throws IOException {
@@ -579,11 +579,11 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String entryTxt = safeString(pdfPayment.getDescription());
 		String entryValue = toLatinNumber(pdfPayment.getAmount().orElse(null))/* + " " + text("MONEDA")*/;
 
-		PdfText text = new PdfText(x + 10 + indent, y, 350 - indent, FONT_SIZE, contents, entryTxt, BLACK, HELVETICA,
+		PdfText text = new PdfText(x + 10 + indent, y, 350 - indent, FONT_SIZE, contents, entryTxt, BLACK, helvetica(),
 				FONT_SIZE, LEFT);
 		text.drawCroppableLine();
 		
-		PdfText t2 = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryValue, PdfColors.BLACK, HELVETICA,
+		PdfText t2 = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryValue, PdfColors.BLACK, helvetica(),
 				FONT_SIZE, RIGHT);
 		t2.draw();
 		drawPaymentLine(indent);
@@ -609,9 +609,9 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 		x = 23.5f;
 
-		drawText(contents, title, x - 5, y - 15, BLACK, HELVETICA, FONT_SIZE);
+		drawText(contents, title, x - 5, y - 15, BLACK, helvetica(), FONT_SIZE);
 		y -= NORMAL_LINE_JUMP;
-		drawText(contents, aportaciones, x, y - 15, BLACK, HELVETICA, FONT_SIZE);
+		drawText(contents, aportaciones, x, y - 15, BLACK, helvetica(), FONT_SIZE);
 		y -= NORMAL_LINE_JUMP;
 		
 		Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions = p.getDeductions();
@@ -637,7 +637,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		if ( !overtimeDeductions.isEmpty() || solidarityDeductions.isEmpty() ) {
 			y -= LITTLE_LINE_JUMP;
-			drawText(contents, "Horas extraordinarias", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Horas extraordinarias", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			
 			PDFDeduction strucDeduction = getSingleDeductionByType(allDeductions, DeductionType.STRUCTURAL_OVERTIME, "Fuerza mayor o Estructurales");
 			y -= LITTLE_LINE_JUMP;
@@ -650,7 +650,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		if ( !solidarityDeductions.isEmpty() ) {
 			y -= LITTLE_LINE_JUMP;
-			drawText(contents, "Solidaridad", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
+			drawText(contents, "Solidaridad", x + 10, y, BLACK, helvetica(), FONT_SIZE);
 			
 			solidarityDeductions = solidarityDeductions.stream().sorted((d1,d2) -> d1.getName().orElse("").compareTo(d2.getName().orElse(""))).toList();
 
@@ -685,22 +685,22 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		listDeductions(otherDeductions, false);
 		
 		y -= NORMAL_LINE_JUMP;
-		drawText(contents, deductionTotalTitle, x + 10 + 200, y, BLACK, HELVETICA, FONT_SIZE);
-		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), deductionTotal, BLACK, HELVETICA, FONT_SIZE, 7, 0);
+		drawText(contents, deductionTotalTitle, x + 10 + 200, y, BLACK, helvetica(), FONT_SIZE);
+		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), deductionTotal, BLACK, helvetica(), FONT_SIZE, 7, 0);
 		y -= 1;
 		drawTotalLine(210);
 		y -= NORMAL_LINE_JUMP;
-		drawText(contents, payrollTotalTitle, x + 10 + 150, y, BLACK, HELVETICA, FONT_SIZE);
-		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), payrollTotal, BLACK, HELVETICA, FONT_SIZE, 7, 0);
+		drawText(contents, payrollTotalTitle, x + 10 + 150, y, BLACK, helvetica(), FONT_SIZE);
+		drawTextRight(contents, new PDRectangle(x + 450, y, 100, 20), payrollTotal, BLACK, helvetica(), FONT_SIZE, 7, 0);
 		y -= 1;
 		drawTotalLine(160);
 		y -= NORMAL_LINE_JUMP;
-		drawText(contents, enterpriseSign, x + 10 + 120, y, BLACK, HELVETICA, FONT_SIZE - 1);
+		drawText(contents, enterpriseSign, x + 10 + 120, y, BLACK, helvetica(), FONT_SIZE - 1);
 		if (receivedDate != null) {
-			drawText(contents, receivedDate, x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);			
+			drawText(contents, receivedDate, x + 10 + 380, y, BLACK, helvetica(), FONT_SIZE - 1);			
 		}
 		y -= NORMAL_LINE_JUMP;
-		drawText(contents, "RECIBÍ", x + 10 + 380, y, BLACK, HELVETICA, FONT_SIZE - 1);
+		drawText(contents, "RECIBÍ", x + 10 + 380, y, BLACK, helvetica(), FONT_SIZE - 1);
 		if (logo.isPresent()) {
 			byte[]	 bytes = logo.get().readAllBytes();
 			PdfImage img   = new PdfImage(x + 120, y - 50, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
@@ -759,12 +759,12 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 	}
 	
 	private void drawOtherDeduction(String deductionName, double ccAmount, float indent) throws IOException {
-		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
+		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, helvetica(),
 				FONT_SIZE, LEFT);
 		text.drawCroppableLine();
 		if (ccAmount!= 0) {
 			String entryAmount = toLatinNumber(ccAmount);
-			PdfText amountText = new PdfText(x + 10 + 280, y, 70, FONT_SIZE, contents, entryAmount, BLACK, HELVETICA,
+			PdfText amountText = new PdfText(x + 10 + 280, y, 70, FONT_SIZE, contents, entryAmount, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			amountText.draw();
 		}
@@ -772,18 +772,18 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 	}
 	
 	private void drawDeduction(String deductionName, double ccPercent, double ccAmount, float indent) throws IOException {
-		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
+		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, helvetica(),
 				FONT_SIZE, LEFT);
 		text.drawCroppableLine();
 		if (ccPercent != 0) {
 			String entryPercent = toLatinNumber(ccPercent) + " % ";
-			PdfText percentText = new PdfText(x + 10 + 280, y, 40, FONT_SIZE, contents, entryPercent, BLACK, HELVETICA,
+			PdfText percentText = new PdfText(x + 10 + 280, y, 40, FONT_SIZE, contents, entryPercent, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			percentText.draw();
 		}
 		if (ccAmount != 0) {
 			String entryAmount = toLatinNumber(ccAmount);
-			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, HELVETICA,
+			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			amountText.draw();
 		}
@@ -791,24 +791,24 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 	}
 
 	private void drawDeduction(String deductionName, double ccPercent, double ccBase, double ccAmount, float indent) throws IOException {
-		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
+		PdfText text = new PdfText(x + 10 + indent, y, 290 - indent, FONT_SIZE, contents, deductionName, BLACK, helvetica(),
 				FONT_SIZE, LEFT);
 		text.drawCroppableLine();
 		if (ccBase != 0) {
 			String entryBase = toLatinNumber(ccBase);
-			PdfText percentText = new PdfText(x + 10 + 235, y, 40, FONT_SIZE, contents, entryBase, BLACK, HELVETICA,
+			PdfText percentText = new PdfText(x + 10 + 235, y, 40, FONT_SIZE, contents, entryBase, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			percentText.draw();
 		}
 		if (ccPercent != 0) {
 			String entryPercent = toLatinNumber(ccPercent) + " % ";
-			PdfText percentText = new PdfText(x + 10 + 280, y, 40, FONT_SIZE, contents, entryPercent, BLACK, HELVETICA,
+			PdfText percentText = new PdfText(x + 10 + 280, y, 40, FONT_SIZE, contents, entryPercent, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			percentText.draw();
 		}
 		if (ccAmount != 0) {
 			String entryAmount = toLatinNumber(ccAmount);
-			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, HELVETICA,
+			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			amountText.draw();
 		}
@@ -820,12 +820,12 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 	}
 	
 	private void drawDeductionNoPercent(String deductionName, double ccAmount, float indent) throws IOException {
-		PdfText text = new PdfText(x + 10 + indent, y, 350 - indent, FONT_SIZE, contents, deductionName, BLACK, HELVETICA,
+		PdfText text = new PdfText(x + 10 + indent, y, 350 - indent, FONT_SIZE, contents, deductionName, BLACK, helvetica(),
 				FONT_SIZE, LEFT);
 		text.drawCroppableLine();
 		if (ccAmount != 0) {
 			String entryAmount = toLatinNumber(ccAmount);
-			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, HELVETICA,
+			PdfText amountText = new PdfText(x + 360, y, 100, FONT_SIZE, contents, entryAmount, BLACK, helvetica(),
 					FONT_SIZE, RIGHT);
 			amountText.draw();
 		}
@@ -954,81 +954,81 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			int index = 1;
 			
 			drawBorderedBox(contents, 10, 10, 575, 182, LIGHT_GRAY);
-			drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+			drawText(contents, title, x, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 
 			y -= 10;
-			drawText(contents, title2, x, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+			drawText(contents, title2, x, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 
 			y -= 18;
 			drawBox(contents, x + 480, y, 70, 20, LIGHT_GRAY);
-			drawTextRight(contents, new PDRectangle(x + 480, y, 70, 20), apEnt, BLACK, HELVETICA, FONT_SIZE - 1, 5, 7);
+			drawTextRight(contents, new PDRectangle(x + 480, y, 70, 20), apEnt, BLACK, helvetica(), FONT_SIZE - 1, 5, 7);
 
 			drawBox(contents, x + 408, y, 70, 20, LIGHT_GRAY);
-			drawTextRight(contents, new PDRectangle(x + 408, y, 70, 20), type, BLACK, HELVETICA, FONT_SIZE - 1, 5, 7);
+			drawTextRight(contents, new PDRectangle(x + 408, y, 70, 20), type, BLACK, helvetica(), FONT_SIZE - 1, 5, 7);
 
 			drawBox(contents, x + 336, y, 70, 20, LIGHT_GRAY);
-			drawTextRight(contents, new PDRectangle(x + 336, y, 70, 20), base, BLACK, HELVETICA, FONT_SIZE - 1, 5, 7);
+			drawTextRight(contents, new PDRectangle(x + 336, y, 70, 20), base, BLACK, helvetica(), FONT_SIZE - 1, 5, 7);
 
-			drawText(contents, index++ + ". " + commonContingenciesTitle, x, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+			drawText(contents, index++ + ". " + commonContingenciesTitle, x, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 
 			y -= 9;
 			x += 15;
-			drawText(contents, monthlyAmmountTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, HELVETICA, FONT_SIZE - 3,
+			drawText(contents, monthlyAmmountTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, helvetica(), FONT_SIZE - 3,
 					5, 1);
 
-			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
 
 			y -= 8;
-			drawText(contents, extraHourProrrationTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,
+			drawText(contents, extraHourProrrationTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
 
 			y -= 12;
-			drawText(contents, index++ + ". " + meiTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
-			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), commContBase, BLACK, HELVETICA,
+			drawText(contents, index++ + ". " + meiTitle, x - 15, y, BLACK, helveticaBold(), 7);
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), commContBase, BLACK, helvetica(),
 				FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y, 70, 70), meiType, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 396, y, 70, 70), meiType, BLACK, helvetica(),
     				FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y, 70, 70), meiApEnt, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 465, y, 70, 70), meiApEnt, BLACK, helvetica(),
     				FONT_SIZE - 3, 5, 1);
 
 			y -= 12;
-			drawText(contents, index++ + ". " + profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, FONT_SIZE -1);
+			drawText(contents, index++ + ". " + profContingenciesTitle, x - 15, y, BLACK, helveticaBold(), FONT_SIZE -1);
 
 			y -= 10;
-			drawText(contents, atEpTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), atEpType, BLACK, HELVETICA, FONT_SIZE - 3,
+			drawText(contents, atEpTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), atEpType, BLACK, helvetica(), FONT_SIZE - 3,
 					5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), atEpApEnt, BLACK, HELVETICA, FONT_SIZE - 3,
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), atEpApEnt, BLACK, helvetica(), FONT_SIZE - 3,
 					5, 1);
 
 			y -= 8;
-			drawText(contents, unemploymentTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), unemploymentType, BLACK, HELVETICA,
+			drawText(contents, unemploymentTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), unemploymentType, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), unemploymentApEnt, BLACK, HELVETICA,
-					FONT_SIZE - 3, 5, 1);
-
-			y -= 8;
-			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, HELVETICA,
-					FONT_SIZE - 3, 5, 1);
-			drawText(contents, profesFormTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), profesFormType, BLACK, HELVETICA,
-					FONT_SIZE - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), profesFormApEnt, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), unemploymentApEnt, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
 
 			y -= 8;
-			drawText(contents, fogasaTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), fogasaType, BLACK, HELVETICA, FONT_SIZE - 3,
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, helvetica(),
+					FONT_SIZE - 3, 5, 1);
+			drawText(contents, profesFormTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), profesFormType, BLACK, helvetica(),
+					FONT_SIZE - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), profesFormApEnt, BLACK, helvetica(),
+					FONT_SIZE - 3, 5, 1);
+
+			y -= 8;
+			drawText(contents, fogasaTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), fogasaType, BLACK, helvetica(), FONT_SIZE - 3,
 					5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, HELVETICA,
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, helvetica(),
 					FONT_SIZE - 3, 5, 1);
 
 			List<PDFDeduction> solidarityCosts = getDeductionsByType(p.getCosts(), DeductionType.SOLIDARITY);
@@ -1036,40 +1036,40 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			
 			if ( extraHours > 0d || solidarityCosts.isEmpty()  ) {
 				y -= 12;
-				drawText(contents, index++ + ". " + extraHoursTitle, x - 15, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+				drawText(contents, index++ + ". " + extraHoursTitle, x - 15, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 	
 				y -= 10;
-				drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-				drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA,
+				drawText(contents, forceMajeureTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+				drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
-				drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA,
+				drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
-				drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA,
+				drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
 	
 				y -= 8;
-				drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-				drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA,
+				drawText(contents, noStructTitle, x, y, BLACK, helvetica(), FONT_SIZE - 3);
+				drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
-				drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA,
+				drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
-				drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA,
+				drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, helvetica(),
 						FONT_SIZE - 3, 5, 1);
 			}
 			
 			if ( !solidarityCosts.isEmpty()  ) {
 				y -= 12;
-				drawText(contents, index++ + ". " + solidarityTitle, x - 15, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+				drawText(contents, index++ + ". " + solidarityTitle, x - 15, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 				solidarityCosts = solidarityCosts.stream()
 						.sorted((c1, c2) -> c2.getName().orElse("").compareTo(c1.getName().orElse(""))).toList();
 				for ( PDFDeduction solidarityCost : solidarityCosts ) {
 					y -= 8;
-					drawText(contents, solidarityCost.getDescription().orElse(""), x, y, BLACK, HELVETICA, FONT_SIZE - 3);
-					drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), solidarityCost.getBase().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("")  , BLACK, HELVETICA,
+					drawText(contents, solidarityCost.getDescription().orElse(""), x, y, BLACK, helvetica(), FONT_SIZE - 3);
+					drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), solidarityCost.getBase().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("")  , BLACK, helvetica(),
 							FONT_SIZE - 3, 5, 1);
-					drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), solidarityCost.getPercent().map( b -> toLatinNumber(b) + " %").orElse(""), BLACK, HELVETICA,
+					drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), solidarityCost.getPercent().map( b -> toLatinNumber(b) + " %").orElse(""), BLACK, helvetica(),
 							FONT_SIZE - 3, 5, 1);
-					drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), solidarityCost.getAmount().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("") , BLACK, HELVETICA,
+					drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), solidarityCost.getAmount().map( b -> toLatinNumber(b) + " " + text("MONEDA")).orElse("") , BLACK, helvetica(),
 							FONT_SIZE - 3, 5, 1);
 				}
 			}
@@ -1077,21 +1077,21 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 
 			y -= 12;
 			x -= 15;
-			drawText(contents, index++ + ". " + irpfTitle, x, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
+			drawText(contents, index++ + ". " + irpfTitle, x, y, BLACK, helveticaBold(), FONT_SIZE - 1);
 			drawBox(contents, x, y - 2, 405, .2f, BLACK);
-			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, FONT_SIZE - 3,
+			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, helvetica(), FONT_SIZE - 3,
 					5, 5);
 			drawTextRight(contents, new PDRectangle(x + 451, y - 5, 30, 10), totalContingenciesTitle, BLACK,
-					HELVETICA_BOLD, 6.5f, 5, 5);
+					helveticaBold(), 6.5f, 5, 5);
 			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK,
-					HELVETICA_BOLD, 6.5f, 3, 5);
+					helveticaBold(), 6.5f, 3, 5);
 
 			drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK,
-					HELVETICA_BOLD,
+					helveticaBold(),
 
 					6.5f, 5, 5);
 			drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK,
-					HELVETICA_BOLD, 6.5f, 3, 5);
+					helveticaBold(), 6.5f, 3, 5);
 		}
 
 	}

@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.in.pdf.api.component.basic;
 
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.BLACK;
-import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.HELVETICA;
+import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.helvetica;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfSettings.ALIGNMENT.JUSTIFY;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfSettings.VERTICAL_ALIGNMENT.DOWN;
 import static net.aonsolutions.aon.in.pdf.api.toolkit.DataToolkit.safeFloat;
@@ -526,7 +526,7 @@ public class PdfText extends PdfComponent {
 			component.stream(this.stream);
 			component.content(safeString(this.content, ""));
 			component.color((Color) safeValue(this.color, BLACK));
-			component.font((PDFont) safeValue(this.font, HELVETICA));
+			component.font((PDFont) safeValue(this.font, helvetica()));
 			component.fontSize(safeFloat(this.fontSize, 10f));
 			component.lineSpacing(safeFloat(this.lineSpacing, 4f));
 			component.horizontalAlignment((ALIGNMENT) safeValue(this.horizontalAlignment, JUSTIFY));

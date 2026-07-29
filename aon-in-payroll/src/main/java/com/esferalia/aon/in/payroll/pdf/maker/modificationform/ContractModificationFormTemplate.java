@@ -35,8 +35,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractModificationFormTemplate implements AutoCloseable {
-	private static final PDFont DEFAULT_FONT = PdfFonts.HELVETICA;
-	private static final PDFont DEFAULT_BOLD_FONT = PdfFonts.HELVETICA_BOLD;
+	private final PDFont DEFAULT_FONT = PdfFonts.helvetica();
+	private final PDFont DEFAULT_BOLD_FONT = PdfFonts.helveticaBold();
 	private static final float TITLE_FONT_SIZE = 12f;
 	private static final float DATA_FONT_SIZE = 11f;
 	private static final float MARGIN_RIGHT = 55;

@@ -5,8 +5,8 @@ import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GRAY;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GREEN;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.ORANGE;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.RED;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helveticaBold;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.CENTER;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
@@ -86,7 +86,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 					"com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.bundle.EnterprisePayrollBundle",
 					language.orElse(new Locale("Es")));
 			template = new EnterprisePayrollTemplate(7.5f, 500, new PDDocument(), words, out, payroll, 75f);
-			template.setDefaults(HELVETICA, 10f, BLACK, GRAY);
+			template.setDefaults(helvetica(), 10f, BLACK, GRAY);
 			template.newPage(HORIZONTAL);
 			
 			template.start = startDate;
@@ -122,7 +122,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 				drawError(template);
 
 			new PdfText(720, 8, 100, 20, template.contents, template.text("PAGE") + " " + template.page, GRAY,
-					HELVETICA, template.fontsize, RIGHT).draw();
+					helvetica(), template.fontsize, RIGHT).draw();
 			template.print();
 			template.close();
 		} catch (Exception e)
@@ -168,7 +168,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	
 
 	private static void drawError(EnterprisePayrollTemplate t) {
-		PdfText msg = new PdfText(t.x() + 15, t.y() - 215, 800, 50, t.contents, "No hay datos disponibles", BLACK, HELVETICA, 24f, CENTER);
+		PdfText msg = new PdfText(t.x() + 15, t.y() - 215, 800, 50, t.contents, "No hay datos disponibles", BLACK, helvetica(), 24f, CENTER);
 		msg.draw();
 
 		byte[] b = getErrLogo();
@@ -187,11 +187,11 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		template.x(7);
 		template.y(550);
 
-		PdfText header = new PdfText(template.x(), template.y(), 200, 30, 5, 8, template.contents, headerTxt, BLACK, HELVETICA_BOLD, 18f,LEFT);
+		PdfText header = new PdfText(template.x(), template.y(), 200, 30, 5, 8, template.contents, headerTxt, BLACK, helveticaBold(), 18f,LEFT);
 		template.down(20);
 
-		PdfText	subheader = new PdfText(template.x(), template.y(), 600, 20, 5, 5, template.contents, subheaderTxt, BLACK, HELVETICA_BOLD,12f, LEFT);
-		PdfText	date	  = new PdfText(template.x() - 62, 8, 130, 20, 5, 5, template.contents, dateTxt, GRAY, HELVETICA, 9f, RIGHT);
+		PdfText	subheader = new PdfText(template.x(), template.y(), 600, 20, 5, 5, template.contents, subheaderTxt, BLACK, helveticaBold(),12f, LEFT);
+		PdfText	date	  = new PdfText(template.x() - 62, 8, 130, 20, 5, 5, template.contents, dateTxt, GRAY, helvetica(), 9f, RIGHT);
 		template.down(30);
 
 		try
@@ -322,8 +322,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		entries.entrySet().stream().forEach(category ->
 		{
 
-			PdfText	categoryTitle = new PdfText(t.x() + 100, table.y(), 100, 20, 5, 6, t.contents, category.getKey(),	BLACK, HELVETICA_BOLD, 9f, RIGHT);
-			PdfText	monthTitle	   = new PdfText(t.x(), table.y(), 110, 20, 5, 6, t.contents,t.periodStr, BLACK,HELVETICA_BOLD, 9f, LEFT);
+			PdfText	categoryTitle = new PdfText(t.x() + 100, table.y(), 100, 20, 5, 6, t.contents, category.getKey(),	BLACK, helveticaBold(), 9f, RIGHT);
+			PdfText	monthTitle	   = new PdfText(t.x(), table.y(), 110, 20, 5, 6, t.contents,t.periodStr, BLACK,helveticaBold(), 9f, LEFT);
 
 			categoryTitle.draw();
 			monthTitle.draw();
@@ -370,7 +370,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.drawLine();
 		table.jump(15f);
 		table.alignCell(0, CENTER);
-		table.font = HELVETICA_BOLD;
+		table.font = helveticaBold();
 		table.fontsize = 7.5f;
 
 		boolean painted = false;
@@ -408,7 +408,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			table.newRow();
 		}
 		table.alignCell(0, LEFT);
-		table.font = HELVETICA;
+		table.font = helvetica();
 	}
 
 	private static void drawEntry(
@@ -705,7 +705,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private static void check(EnterprisePayrollTemplate t, PdfTable table) throws IOException {
 		if (t.jump())
 		{
-			new PdfText(720, 8, 100, 20, t.contents, t.text("PAGE") + " " + t.page, GRAY, HELVETICA, t.fontsize, RIGHT).draw();
+			new PdfText(720, 8, 100, 20, t.contents, t.text("PAGE") + " " + t.page, GRAY, helvetica(), t.fontsize, RIGHT).draw();
 			t.newPage(HORIZONTAL);
 			table.stream(t.contents);
 
@@ -727,7 +727,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 
 		ArrayList<Double> totalAon	= t.mg.getAonTotal();
 		ArrayList<Double> totalSs	= t.mg.getSsTotal();
-		table.font = HELVETICA_BOLD;
+		table.font = helveticaBold();
 		table.fontsize = 7.5f;
 
 		boolean painted = false;
@@ -762,7 +762,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			}
 			table.newRow();
 		}
-		table.font = HELVETICA;
+		table.font = helvetica();
 		table.alignCell(0, LEFT);
 	}
 

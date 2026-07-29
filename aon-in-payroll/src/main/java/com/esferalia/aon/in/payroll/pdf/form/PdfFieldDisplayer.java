@@ -79,7 +79,7 @@ public class PdfFieldDisplayer {
 						PDPageContentStream contents = PDFToolkit.openInAppendMode(doc, current_page);
 
 						PDFToolkit.drawBox(contents, x, y, w, h, PdfColors.WHITE);
-						PDFToolkit.drawText(contents, name, x + 3, y + h / 2 - 1.5f, PdfColors.BLUE, PdfFonts.HELVETICA_BOLD, 4f);
+						PDFToolkit.drawText(contents, name, x + 3, y + h / 2 - 1.5f, PdfColors.BLUE, PdfFonts.helveticaBold(), 4f);
 
 						contents.close();
 					}
