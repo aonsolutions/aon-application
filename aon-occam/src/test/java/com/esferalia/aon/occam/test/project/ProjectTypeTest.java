@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import org.junit.Test;
 
@@ -60,7 +60,7 @@ public class ProjectTypeTest extends AbstractOccamTest {
 		ProjectType auxDescription = projectType.setDescription("Updated Description");
 		projectType = ProjectTypeDAO.save(ctx, auxDescription);
 		ProjectType auxDescription2 = ProjectTypeDAO.get(ctx, f -> f.getIdProperty().eq(projectTypeId));
-		assertEquals("Updated Description", auxDescription2.getDescription());
+		assertEquals(auxDescription2.getDescription(), "Updated Description");
 		
 		ProjectType auxActive = projectType.setActive(!projectType.isActive());
 		projectType = ProjectTypeDAO.save(ctx, auxActive);

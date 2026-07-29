@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod421;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import org.junit.Test;
 
@@ -20,20 +20,20 @@ public class Mod421MarkAsCustomerCheckTest extends Mod421AbstractTest {
 			Mod421 mod421 = MODEL421.get(getOccam(), model.getId());
 			mod421 = MODEL421.initializeForFinish(getOccam(), mod421);
 			double result0 = mod421.getDeclarationResult();
-			assertNotNull("Mod421. Tipo resultado NULL",mod421.getDeclarationResultType());
+			assertNotNull(mod421.getDeclarationResultType(), "Mod421. Tipo resultado NULL");
 			boolean finance = mod421.getDeclarationResultType().mustCreateFinance() || mod421.isAeatRectification(); 
 			MODEL421.markAsCustomerCheck(getOccam(), mod421);
 			Mod421 mod421Bis = MODEL421.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(mod421Bis);			
-			assertEquals("Status not CUSTOMER_CHECK", FiscalStatus.CUSTOMER_CHECK, mod421Bis.getStatus());
+			assertEquals(FiscalStatus.CUSTOMER_CHECK, mod421Bis.getStatus(), "Status not CUSTOMER_CHECK");
 			Asserts.assertEqualsDouble("Mod421. Resultado no coincide."
 					, result0
 					, mod421Bis.getDeclarationResult());
-			assertNotNull("Mod421. Tipo resultado NULL",mod421Bis.getDeclarationResultType());
+			assertNotNull(mod421Bis.getDeclarationResultType(), "Mod421. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod421. Finance NULL",mod421Bis.getFinance());	
+				assertNotNull(mod421Bis.getFinance(), "Mod421. Finance NULL");	
 			} else {
-				assertNull("Mod421. Finance NOT NULL",mod421Bis.getFinance());
+				assertNull(mod421Bis.getFinance(), "Mod421. Finance NOT NULL");
 			}
 		}
 	}

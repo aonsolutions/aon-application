@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.product;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import java.util.List;
 

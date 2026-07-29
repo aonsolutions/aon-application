@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod349;
 
-import static org.junit.Assert.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
 
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class Mod349MarkAsPendingTest extends AbstractOccamTest {
 			Mod349 mod349 = MODEL349.get(getOccam(), model.getId());
 			MODEL349.changeStatus(getOccam(), mod349, FiscalStatus.PENDING );
 			Mod349 mod349Bis = MODEL349.get(getOccam(), model.getId());
-			assertEquals("Status not PENDING", FiscalStatus.PENDING, mod349Bis.getStatus());
+			assertEquals(FiscalStatus.PENDING, mod349Bis.getStatus(), "Status not PENDING");
 		}
 	}
 	

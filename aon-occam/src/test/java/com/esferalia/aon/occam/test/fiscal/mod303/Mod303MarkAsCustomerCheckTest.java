@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import org.junit.Test;
 
@@ -20,20 +20,20 @@ public class Mod303MarkAsCustomerCheckTest extends Mod303AbstractTest {
 			Mod303 mod303 = MODEL303.get(getOccam(), model.getId());
 			mod303 = MODEL303.initializeForFinish(getOccam(), mod303);
 			double result0 = mod303.getDeclarationResult();
-			assertNotNull("Mod303. Tipo resultado NULL",mod303.getDeclarationResultType());
+			assertNotNull(mod303.getDeclarationResultType(), "Mod303. Tipo resultado NULL");
 			boolean finance = mod303.getDeclarationResultType().mustCreateFinance() || mod303.isAeatRectification(); 
 			MODEL303.markAsCustomerCheck(getOccam(), mod303);
 			Mod303 mod303Bis = MODEL303.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(mod303Bis);			
-			assertEquals("Status not CUSTOMER_CHECK", FiscalStatus.CUSTOMER_CHECK, mod303Bis.getStatus());
+			assertEquals(FiscalStatus.CUSTOMER_CHECK, mod303Bis.getStatus(), "Status not CUSTOMER_CHECK");
 			Asserts.assertEqualsDouble("Mod303. Resultado no coincide."
 					, result0
 					, mod303Bis.getDeclarationResult());
-			assertNotNull("Mod303. Tipo resultado NULL",mod303Bis.getDeclarationResultType());
+			assertNotNull(mod303Bis.getDeclarationResultType(), "Mod303. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod303. Finance NULL",mod303Bis.getFinance());	
+				assertNotNull(mod303Bis.getFinance(), "Mod303. Finance NULL");	
 			} else {
-				assertNull("Mod303. Finance NOT NULL",mod303Bis.getFinance());
+				assertNull(mod303Bis.getFinance(), "Mod303. Finance NOT NULL");
 			}
 		}
 	}

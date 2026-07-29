@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.accounting.analytical;
 
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileWriter;

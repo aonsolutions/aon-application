@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry;
 
-import static org.junit.Assert.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
 
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class ValidationSaveLegalEntity extends AbstractOccamTest {
 		registry.setLegalPerson( !entity );
 		registry = RegistryDAO.save(ctx, registry);
 		String msg = "Doc: " + registry.getDocument() + " must be "  + AonDocumentUtil.isEntity( registry.getDocument() ) +  " --> " + registry.isLegalPerson(); 
-		assertEquals(msg,entity, registry.isLegalPerson() );
+		assertEquals(entity, registry.isLegalPerson(), msg);
 	}
 
 }

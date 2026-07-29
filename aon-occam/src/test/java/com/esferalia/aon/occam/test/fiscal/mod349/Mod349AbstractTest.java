@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod349;
 
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -85,8 +85,8 @@ public abstract class Mod349AbstractTest extends AbstractOccamTest {
 						+ (params.isReplacement()?" (S)":"")
 						+ " >> Out of range value Exception");
 			} else {
-				assertNotNull("Declaracion Nula", mod349);
-				assertNotNull("Declaracion con ID Nulo", mod349.getId());
+				assertNotNull(mod349, "Declaracion Nula");
+				assertNotNull(mod349.getId(), "Declaracion con ID Nulo");
 				throw e;		
 			}
 		}

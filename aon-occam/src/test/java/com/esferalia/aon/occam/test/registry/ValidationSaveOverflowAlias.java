@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.registry;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertThrows;
 
 import org.junit.Test;
 

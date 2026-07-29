@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertThrows;
 
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 			MODEL303.delete(getOccam(), original);
 	    });
 		String expected = AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 				mod.setStatus( status );
 				MODEL303.delete(getOccam(), mod);
 				Mod303 model = MODEL303.get(getOccam(), mod.getId());
-				assertNull("Modelo no nulo!", model );
+				assertNull(model, "Modelo no nulo!");
 				return params;
 			}
 			
@@ -115,11 +115,11 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 				deleteAllModels();
 				Mod303 mod = insertMod303( params );
 				mod.setStatus(status);
-				Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
+				Exception e = assertThrows(AonCoreException.class, () -> {
 					MODEL303.delete(getOccam(), mod);
-				});
+				}, "Status: " + status.getName());
 				String expected = AonError.FISCAL_WRONG_STATUS_DELETION.format(mod.getStatus());
-				assertEquals("Wrong Exception", expected, e.getMessage());
+				assertEquals(expected, e.getMessage(), "Wrong Exception");
 				return params;
 			}
 			
