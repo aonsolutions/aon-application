@@ -19,17 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
-import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
-import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFix;
-import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
+import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
+import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
-import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
-import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -634,7 +628,10 @@ public class Up2Date {
 			// ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
 			// UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
 			// ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
-			EreFzaExoneradoFix.EREFZAEXONERADOFIX,
+			// EreFzaExoneradoFix.EREFZAEXONERADOFIX,
+			EreFzaExoneradoFixII.EREFZAEXONERADOFIXII,
+			ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
+			
 
 
 			// ----------------------------------------------------------------
