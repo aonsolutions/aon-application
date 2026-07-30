@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
@@ -47,6 +48,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
@@ -54,7 +56,6 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
-import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -216,6 +217,10 @@ public interface IAccounting {
 	public LinkedList<AmortizationInvoice> getAmortizationInvoices(AONContext ctx, Integer domain, Integer amortizationId);
 	public void linkAmortizationInvoices(AONContext ctx, Integer domain, Integer amotizationId, Integer[] invoiceIds);
 	public void unlinkAmortizationInvoice(AONContext ctx, Integer domain, Integer amortizationId, Integer invoiceId);
+	public Invoice changeInvestment(CloseableAONContext ctx, Integer domain, Integer invoiceId);
+	public Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params);
+	public void recordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids);
+	public void unrecordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids);
 	
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params);

@@ -291,7 +291,7 @@ export class AonNewMenu extends AonElement {
 					GWT.iLoad(GWT.PRODUCT_CATALOGUE_MODULE);
 					break;
 				case CONTENT_INDEX.app:
-					window.open('https://portal.aonsolutions.info/', '_blank');
+					window.open('https://portal.aonsolutions.info/', 'portalTab');
 					//this.rootPanel(new HELP.AonSiteHelpPortal());
 					//this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 					break;
@@ -1132,8 +1132,7 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isPayrollUser();
 		if (MenuApps.COMUNICA.app === app.app)
 			return !this.getDur().isPayroll()
-				&& (this.getDur().isComunica()
-					|| this.getDur().isSaltra());
+				&& (this.getDur().isComunica());
 		if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		if (MenuApps.TIMECONTROL.app === app.app)

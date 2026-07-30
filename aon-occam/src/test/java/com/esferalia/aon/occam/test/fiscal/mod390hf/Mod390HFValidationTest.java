@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertThrows;
 
 import java.util.Date;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 			insertModel( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 			insertModel( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 			insertModel( params );
 	    });
 		String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod.getModelFullName());
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 			MODEL390HF.delete(getOccam(), original);
 	    });
 		String expected = AonError.FISCAL_WRONG_REPLACED_DELETION.getMessage();
-		assertEquals("Wrong Exception", expected, e.getMessage());
+		assertEquals(expected, e.getMessage(), "Wrong Exception");
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 				mod.setStatus( status );
 				MODEL390HF.delete(getOccam(), mod);
 				Mod390HF model = MODEL390HF.get(getOccam(), mod.getId());
-				assertNull("Modelo no nulo!", model );
+				assertNull(model, "Modelo no nulo!");
 				return params;
 			}
 			
@@ -117,11 +117,11 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 				deleteAllModels();
 				Mod390HF mod = insertModel( params );
 				mod.setStatus(status);
-				Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
+				Exception e = assertThrows(AonCoreException.class, () -> {
 					MODEL390HF.delete(getOccam(), mod);
-				});
+				}, "Status: " + status.getName());
 				String expected = AonError.FISCAL_WRONG_STATUS_DELETION.format(mod.getStatus());
-				assertEquals("Wrong Exception", expected, e.getMessage());
+				assertEquals(expected, e.getMessage(), "Wrong Exception");
 				return params;
 			}
 			

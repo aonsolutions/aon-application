@@ -20,6 +20,9 @@ public class JsDomainInvoiceStat extends JavaScriptObject {
 	public final native String getDescription() /*-{
 		return this.description;
 	}-*/;
+	public final native String getCompanyId() /*-{
+		return this.companyId;
+	}-*/;
 	public final native String getCompanyDocument() /*-{
 		return this.companyDocument;
 	}-*/;

@@ -1,7 +1,10 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonStringUtils.containsIgnoreCase;
+import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.normalized;
+import static com.esferalia.aon.watson.util.AonStringUtils.notEquals;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -215,9 +218,9 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
 			case "17": //APORT.NO OBL.SUS.EMP
-			    	// clean all different from 'Indicador'
-				b.clear( d-> "C".equalsIgnoreCase(d.getTipoDato()));
-				b.clear( d-> "H".equalsIgnoreCase(d.getTipoDato()));
+			    // clean all different from 'Indicador'
+				b.clear( d-> equalsIgnoreCase("C",d.getTipoDato()));
+				b.clear( d-> equalsIgnoreCase("H",d.getTipoDato()));
 				addExpedienteRegulacionEmpleoTotal(b);
 				return;
 			case "21": //IT.CC.PAGO DELEGADO
@@ -238,18 +241,24 @@ public class CretaListener implements IdcParserListener {
 					addIncapacidadTemporalATEPPagoDelegadoEstandar(b);
 				return;
 			case "29": //IT.CC.COLAB.EXCL.15D
-				b.clear();
+				// clean all except Base 301 
+				b.clear( d -> notEquals("301",d.getCodigo()));
 				addIncapacidadTemporal15PrimerosDiasEstandar(b);
 				return;
 			case "31": //31 MATERN/PATERN.T.COMP
 				b.clear();
 				addMaternidadPaternidadTiempoCompleto(b);
 				return;
-
+			case "58": // 58 RED.PLAN.PENS.EMPLEO
+				addPlanPensionesEmpleo(b);
+				break;
+			
 			default:
 				break;
 			}
-			if ( !b.hasDato(d -> "C".equalsIgnoreCase(d.getTipoDato()) ))
+			// Not has any concept 'dato' (type C) other than Base 301 
+			if ( !b.hasDato(d -> equalsIgnoreCase(d.getTipoDato(), "C") 
+					&& !containsIgnoreCase("301", d.getCodigo() ) ) )
 			    onNoEmployeeQuotePEC(ssNum, ccc, start, end);
 		});
 	}
@@ -578,5 +587,13 @@ public class CretaListener implements IdcParserListener {
 
 	private static void addExpedienteRegulacionEmpleoTotal(TramoBuilder tramoBuilder) {
 	    addMaternidadPaternidadTiempoCompleto(tramoBuilder);
+	}
+	private static void addPlanPensionesEmpleo(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Base de cotización sin Condicional aportación al plan de pensiones de empleo
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("301");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 }

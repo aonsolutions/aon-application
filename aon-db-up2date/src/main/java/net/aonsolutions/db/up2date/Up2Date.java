@@ -19,13 +19,16 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.ContractCostExpressionText;
-import net.aonsolutions.db.up2date.payroll.ContractCostSeaExpressionFix;
+import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFix;
+import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
+import net.aonsolutions.db.up2date.security.MigrateApp23To9;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBaseCgcJornadasTotalesFix;
-import net.aonsolutions.db.up2date.tgss.CgcEMinInsert;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -105,7 +108,7 @@ public class Up2Date {
 			// IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE,
 			// EreFzaInsert.EREFZAINSERT,
 			// SMIWarn2020Delete.SMIWARN2020DELETE,
-			// AyudaTWarnDelete.AYUDATWARNDELETE,
+			// AyudaTWarnDelete.AYUDATWARNDELETE,SMI2026Update
 			// EreFzaExoneradoInsert.EREFZAEXONERADOINSERT,
 			// AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
 			// EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE[] 
@@ -158,7 +161,7 @@ public class Up2Date {
 			// IntegrityFix.INTEGRITYFIX,
 			// RetirementInsert.RETIREMENTINSERT,
 			// NotificationCreation.NOTIFICATION_CREATION,
-			// NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,
+			// NotificationReceiverCreation.NOTIFICATION_RECEIVER_CREATION,SMI2026Update
 			// Bases2021UpdateII.BASES2021UPDATEII,
 			// InKindDeductionInsert.INKIND_DEDUCTION_INSERT,
 			// WorkAccidentInsuranceInsert.WORKACCIDENTINSURANCEINSERT
@@ -619,14 +622,18 @@ public class Up2Date {
 			// MaxEmbargable4DailyFix.MAXEMBARGABLE4DAILYFIX,
 			// OneCnaeTableToRuleThemAll.ONECNAETABLETORULETHEMALL,
 			// InsertTarifaPrimasDF_1_3_RDL_3_2026.INSERTTARIFAPRIMASDF_1_3_RDL_3_2026,
-			//AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
-			//SalaryTypeUpdate.ALL,
+			// AddColumnCustomerFiscalStatus.ADD_COLUMN_CUSTOMER_FISCAL_STATUS,
+			// SalaryTypeUpdate.ALL,
 			// BonificEntrenadoresYMonitoresFix.BONIFICENTRENADORESYMONITORESFIX,
 			// DropNoJustifiedFix.DROPNOJUSTIFIEDFIX,
-			CgcEMinInsert.CGCEMININSERT,
-			ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
-			ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
-			AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+			// CgcEMinInsert.CGCEMININSERT,
+			// ContractCostExpressionText.CONTRACT_COST_EXPRESSION_TEXT,
+			// ContractCostSeaExpressionFix.CONTRACT_COST_SEA_EXPRESSION_FIX,
+			// AgriculturalBaseCgcJornadasTotalesFix.AGRICULTURALBASECGCJORNADASTOTALESFIX,
+			// ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
+			// UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
+			// ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
+			EreFzaExoneradoFix.EREFZAEXONERADOFIX,
 
 
 			// ----------------------------------------------------------------
@@ -661,6 +668,9 @@ public class Up2Date {
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+			DeleteDomainAppApp10.DELETE_DOMAIN_APP_APP10,
+			DeleteDomainAppApp19.DELETE_DOMAIN_APP_APP19,
+			MigrateApp23To9.MIGRATE_APP_23_TO_9,
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			

@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry.task_holder;
 
-import static org.junit.Assert.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
 
 import org.junit.Test;
 

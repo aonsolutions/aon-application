@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -64,9 +64,9 @@ public class EmployeeTestSuite extends AbstractOccamTest  {
 		addDatas.forEach(( name, datas ) -> {
 		    datas.forEach( data -> {
 			    getDatas.get(name).forEach( getData-> {
-				Assert.assertEquals(data.getEndDate(), getData.getEndDate());
-				Assert.assertEquals(data.getStartDate(), getData.getStartDate());
-				Assert.assertEquals(data.getExpression(), getData.getExpression());
+				assertEquals(data.getEndDate(), getData.getEndDate());
+				assertEquals(data.getStartDate(), getData.getStartDate());
+				assertEquals(data.getExpression(), getData.getExpression());
 			    });
 		    });
 		});
@@ -109,14 +109,14 @@ public class EmployeeTestSuite extends AbstractOccamTest  {
 		addDatas.forEach(( name, datas ) -> {
 		    datas.forEach( data -> {
 			newDatas.get(name).forEach( newData-> {
-				Assert.assertEquals(data.getEndDate(), newData.getEndDate());
-				Assert.assertEquals(data.getStartDate(), newData.getStartDate());
+				assertEquals(data.getEndDate(), newData.getEndDate());
+				assertEquals(data.getStartDate(), newData.getStartDate());
 				if ( name.equals("TC2")) {
-				    Assert.assertEquals(tc2.getExpression(), newData.getExpression());
+				    assertEquals(tc2.getExpression(), newData.getExpression());
 				} else if (name.equals("GRUPO_COTIZACION")) {
-				    Assert.assertEquals(group.getExpression(), newData.getExpression());
+				    assertEquals(group.getExpression(), newData.getExpression());
 				} else {
-				    Assert.assertEquals(data.getExpression(), newData.getExpression());
+				    assertEquals(data.getExpression(), newData.getExpression());
 				}
 			    });
 		    });

@@ -422,13 +422,13 @@ class Calculations {
 		variables.put("coVgRutaLocalJS", "/ControlRecaudacion/js");
 		variables.put("skVgSubtituloAplicacion", "ServicioConsultadeCalculos");
 
-		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
-			WebConnectionWrapper wrapper =HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables) ){
-			
-
-    		HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables);
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType) ){
 			
 			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			
+			HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables);
+
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
 			try {
 				authorized = authorized.trim().replaceFirst("^0*", "");

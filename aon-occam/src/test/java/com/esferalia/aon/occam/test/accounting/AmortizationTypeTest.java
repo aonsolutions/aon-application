@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.accounting;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;

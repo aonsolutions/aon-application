@@ -40,6 +40,7 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 	private ListBox outputBox;
 	
 	private ListBox investmentBox;
+	private ListBox alreadyBindedBox;
 	
 	AmortizationInvoiceSelectionFilterPanel( AmortizationModuleOptions opts ) {
 		initYearBox(opts);
@@ -50,6 +51,7 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 		initRegistryBox(opts);
 		initOutputBox(opts);
 		initInvestmentBox(opts);
+		initAlreadyBindedBox(opts);
 		
 		paint( opts);
 	}
@@ -78,6 +80,7 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 		addPair(container,AON.MSG.reference() ,referenceCodeBox);
 		addPair(container,AON.MSG.titular() ,registryBox);
 		addPair(container,AON.MSG.investment() ,investmentBox);
+		addPair(container,AON.MSG.status() ,alreadyBindedBox);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
@@ -86,15 +89,15 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 		setWidget( scrollPanel );
 		
 	}
-
 	private void addPair(FlowPanel container, String label, Widget widget) {
 		FlowPanel blockContainer = new FlowPanel();
+		blockContainer.setStyleName(AON.CSS.aonAlignItemsCenter());
 		blockContainer.getElement().getStyle().setProperty("display", "flex");
 		blockContainer.getElement().getStyle().setProperty("flex-grow", "0");
 		Label l = new Label(label);
-		l.setStyleName(AON.CSS.aonSearchPanelLabel());
-		l.addStyleName(AON.CSS.aonCustomTextBoxTitle());
-		widget.addStyleName(AON.CSS.aonCustomTextBoxInput());
+		l.setStyleName(AON.CSS.aonNowrap());
+		l.addStyleName(AON.CSS.aonBold());
+		l.addStyleName(AON.CSS.aonMarginRight());
 		widget.setWidth("100%");
 		widget.getElement().getStyle().setProperty("padding", "0");
 		blockContainer.add(l);
@@ -186,6 +189,8 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 
 	private void initRegistryBox(AmortizationModuleOptions opts) {
 		registryBox = new InvoiceRegistryNameBox(opts);
+		registryBox.setVisibleLength(50);
+		registryBox.setMaxLength(50);
 		registryBox.setRequired(false);
 		registryBox.addSelectionHandler(event -> fire(opts));
 	}
@@ -199,6 +204,16 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 		investmentBox.addChangeHandler(event -> fire(opts));
 	}
 	
+	private void initAlreadyBindedBox(AmortizationModuleOptions opts) {
+		alreadyBindedBox = new ListBox();
+		alreadyBindedBox.setWidth(PX100);
+		alreadyBindedBox.addItem(TODAS);
+		alreadyBindedBox.addItem(AON.MSG.alreadyLinked());
+		alreadyBindedBox.addItem(AON.MSG.notYetLinked());
+		alreadyBindedBox.setSelectedIndex(2); 
+		alreadyBindedBox.addChangeHandler(event -> fire(opts));
+	}
+
 	InvoiceConsoleParams getWidgetParams(AmortizationModuleOptions opts) {
 		InvoiceConsoleParams params = new InvoiceConsoleParams()
 			.setDomain(opts.getDomain())
@@ -219,7 +234,9 @@ class AmortizationInvoiceSelectionFilterPanel extends SimpleLayoutPanel implemen
 		if (investmentBox.getSelectedIndex() == 1) params.setInvestment(false);
 		if (investmentBox.getSelectedIndex() == 2) params.setInvestment(true);
 		
-		params.setAmortizationBinded(false);
+		if (alreadyBindedBox.getSelectedIndex() == 1) params.setAmortizationBinded(true);
+		if (alreadyBindedBox.getSelectedIndex() == 2) params.setAmortizationBinded(false);
+
 		params.setLimit( 15 ); 
 		return params;
 	}

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.json.JSONArray;
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
@@ -57,7 +57,7 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 										
 										private String arrayNotNull() {
 											JSONArray array = new JSONArray(info);
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 											return null;
 										}
 										
@@ -75,7 +75,7 @@ public class Mod130ScriptTest extends AbstractOccamTest {
 										
 										@Override 
 										public String visitNone() { 
-											Assert.assertEquals(AonStringUtils.EMPTY,info);
+											assertEquals(AonStringUtils.EMPTY,info);
 											return null;
 										}
 										

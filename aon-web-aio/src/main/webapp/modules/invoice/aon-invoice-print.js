@@ -127,6 +127,8 @@ export class AonInvoicePrint extends AonElement {
     if(!viewer){
       let fileDiv = this.getElement(this.FILE);
       viewer = new AonViewer();
+      this.clearElement(fileDiv);
+      fileDiv.appendChild(viewer);
       let objeto = {
         domain_id: LS.getDomainId(),
         domain_name: LS.getDomainName(),
@@ -137,8 +139,6 @@ export class AonInvoicePrint extends AonElement {
       viewer.type = 'application/pdf';
       viewer.width = fileDiv.offsetWidth;
       viewer.file = '/ms/api/download_invoice_pdf_ak?json=' + json;
-      this.clearElement(fileDiv);
-      fileDiv.appendChild(viewer);
     } else viewer.printPdf();
   }
 

@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
@@ -142,6 +143,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	}
 	
 	private void onSearch() {
+		onShowLoadingMessage("Cargando ... (si tiene muchos agentes/clientes, puede tardar un poco)");
 		enableMoreData();
 		search();
 	}
@@ -166,71 +168,35 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	}
 	
 	private void checkPeriodHeader() {
-		Date currentDate = new Date();
-		
-		if(params.getPeriod() == 0) {
-			Date lastMonth = DateUtils.addMonths2Date(currentDate, -1);
-			String lastMonthFormat = AonDateUtils.formatMonthYear(lastMonth);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Bruta (" + lastMonthFormat + ")"), "8rem", COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Neta (" + lastMonthFormat + ")"), "8rem", COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			
-		} else if(params.getPeriod() == 1) {
-			Date lastMonth = DateUtils.addMonths2Date(currentDate, -1);
-			String lastMonthFormat = AonDateUtils.formatMonthYear(lastMonth);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Bruta (" + lastMonthFormat + ")"), "8rem", COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Neta (" + lastMonthFormat + ")"), "8rem", COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			
-			DateUtils.addMonths2Date(currentDate, 1);
-			String currentdDateFormat = AonDateUtils.formatMonthYear(currentDate);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles());
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles());
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles());
-			tab.addHeader(new Label("F. Bruta (" + currentdDateFormat + ")"), "8rem", COLS.TOT.getStyles());
-			tab.addHeader(new Label("F. Neta (" + currentdDateFormat + ")"), "8rem", COLS.AMO.getStyles());
-		} else if(params.getPeriod() == 2) {
-			String currentdDateFormat = AonDateUtils.formatMonthYear(currentDate);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles());
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles());
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles());
-			tab.addHeader(new Label("F. Bruta (" + currentdDateFormat + ")"), "8rem", COLS.TOT.getStyles());
-			tab.addHeader(new Label("F. Neta (" + currentdDateFormat + ")"), "8rem", COLS.AMO.getStyles());
-		} else if(params.getPeriod() == 3) {
-			String currentdDateFormat = AonDateUtils.formatMonthYear(currentDate);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles());
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles());
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles());
-			tab.addHeader(new Label("F. Bruta (" + currentdDateFormat + ")"), "8rem", COLS.TOT.getStyles());
-			tab.addHeader(new Label("F. Neta (" + currentdDateFormat + ")"), "8rem", COLS.AMO.getStyles());
-			
-			Date nextMonth = DateUtils.addMonths2Date(currentDate, 1);
-			String nextMonthFormat = AonDateUtils.formatMonthYear(nextMonth);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Bruta (" + nextMonthFormat + ")"), "8rem", COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Neta (" + nextMonthFormat + ")"), "8rem", COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");	
-		} else if(params.getPeriod() == 4) {
-			Date nextMonth = DateUtils.addMonths2Date(currentDate, 1);
-			String nextMonthFormat = AonDateUtils.formatMonthYear(nextMonth);
-			
-			tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Bruta (" + nextMonthFormat + ")"), "8rem", COLS.TOT.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
-			tab.addHeader(new Label("F. Neta (" + nextMonthFormat + ")"), "8rem", COLS.AMO.getStyles() + "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;");
+		Date periodStart = params.getPeriodStart();
+		Date periodEnd = params.getPeriodEnd();
+
+		Date startMonth = periodStart != null ? DateUtils.getFirstDayOfMonth(periodStart) : DateUtils.getFirstDayOfMonth(new Date());
+		Date endMonth = periodEnd != null ? DateUtils.getFirstDayOfMonth(periodEnd) : startMonth;
+
+		int monthsBetween = DateUtils.getMonths(endMonth, startMonth);
+		if (monthsBetween < 0) {
+			monthsBetween = 0;
 		}
+
+		for (int i = 0; i <= monthsBetween; i++) {
+			Date monthDate = DateUtils.addMonths2Date(DateUtils.copyDateOnly(startMonth), i);
+			String monthLabel = AonDateUtils.formatMonthYear(monthDate);
+			boolean grayBackground = (i % 2 != 0);
+			addPeriodColumns(monthLabel, grayBackground);
+		}
+	}
+
+	private void addPeriodColumns(String monthLabel, boolean grayBackground) {
+		String extraStyle = grayBackground
+				? "background-color: #f4f4f4; height: 2rem; display: flex; align-items: center; justify-content: end; padding-right: 0.4rem;"
+				: AonStringUtils.EMPTY;
+
+		tab.addHeader(new Label(COLS.CUS.getHeaderLabel()), COLS.CUS.getColWidth(), COLS.CUS.getStyles() + extraStyle);
+		tab.addHeader(new Label(COLS.FEE.getHeaderLabel()), COLS.FEE.getColWidth(), COLS.FEE.getStyles() + extraStyle);
+		tab.addHeader(new Label(COLS.INV.getHeaderLabel()), COLS.INV.getColWidth(), COLS.INV.getStyles() + extraStyle);
+		tab.addHeader(new Label("F. Bruta (" + monthLabel + ")"), "8rem", COLS.TOT.getStyles() + extraStyle);
+		tab.addHeader(new Label("F. Neta (" + monthLabel + ")"), "8rem", COLS.AMO.getStyles() + extraStyle);
 	}
 
 	private void searchData() {
@@ -266,9 +232,11 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			}
 			enableSearch();
 			
+			onHideMessage();
+			
 		});
 	}
-	
+
 	private void paintRow(SellerWorkload sellerWorkload) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
@@ -416,6 +384,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	protected abstract void onShowErrorMessage(String errorMessage);
 	protected abstract void onShowLoadingMessage(String loadingMessage);
 	protected abstract void onSellerWorkloadOpen(SellerWorkload sellerWorkload);
+	protected abstract void onHideMessage();
 	
 }
 

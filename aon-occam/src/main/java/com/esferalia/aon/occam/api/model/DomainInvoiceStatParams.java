@@ -16,7 +16,9 @@ public class DomainInvoiceStatParams implements Serializable {
 	private Date toDate;
 	private Integer active;
 	private String query;
+	private Integer impersonatedUser;
 	private Integer scope;
+	private Integer scoredFilter;
 	private FiscalModelType fiscalModelType;
 	
 	private Boolean invoices;
@@ -66,11 +68,27 @@ public class DomainInvoiceStatParams implements Serializable {
 		return this;
 	}
 	
+	public Optional<Integer> getImpersonatedUser() {
+		return Optional.ofNullable(impersonatedUser);
+	}
+	public DomainInvoiceStatParams setImpersonatedUser(Integer impersonatedUser) {
+		this.impersonatedUser = impersonatedUser;
+		return this;
+	}
+	
 	public Optional<Integer> getScope() {
 		return Optional.ofNullable(scope);
 	}
 	public DomainInvoiceStatParams setScope(Integer scope) {
 		this.scope = scope;
+		return this;
+	}
+	
+	public Optional<Integer> getScoredFilter() {
+		return Optional.ofNullable(scoredFilter);
+	}
+	public DomainInvoiceStatParams setScoredFilter(Integer scoredFilter) {
+		this.scoredFilter = scoredFilter;
 		return this;
 	}
 	

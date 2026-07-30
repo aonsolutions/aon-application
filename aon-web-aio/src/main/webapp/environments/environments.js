@@ -2,10 +2,16 @@
 export const API_URL = 'ms/api';
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
-export const PDFJS_URL = "https://mozilla.github.io/pdf.js/legacy/";
-export const PDFJS_PDF_URL = `${PDFJS_URL}/build/pdf.mjs`;
-export const PDFJS_WORKER_URL = `${PDFJS_URL}/build/pdf.worker.mjs`;
-export const PDFJS_VIEWER_STYLESHEET_URL = `${PDFJS_URL}/web/viewer.css`;
+// Pinned to a fixed pdf.js version served from a CDN that also hosts the WASM
+// image decoders (jbig2/ccitt/openjpeg). The previous rolling gh-pages build
+// (mozilla.github.io/pdf.js/legacy) upgraded to v6 -- which decodes CCITTFax /
+// JBIG2 image masks via WASM -- but does not host the wasm/ directory, so those
+// images (e.g. the black text on scanned invoices) silently failed to render.
+export const PDFJS_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/";
+export const PDFJS_PDF_URL = `${PDFJS_URL}legacy/build/pdf.mjs`;
+export const PDFJS_WORKER_URL = `${PDFJS_URL}legacy/build/pdf.worker.mjs`;
+export const PDFJS_VIEWER_STYLESHEET_URL = `${PDFJS_URL}legacy/web/pdf_viewer.css`;
+export const PDFJS_WASM_URL = `${PDFJS_URL}wasm/`;
 
 //export const URL_PDF_VIEWER = "https://sig.aonsolutions.org/html/build/pdf.js";
 

@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -1340,6 +1341,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.assignSellerUserScopes(domainName, domain, user, userScopeAssign, new AsyncCallbackWrapper<>(callback));
+	}
 	
 	@Override
 	public void getUserScopeList(String domainName, Integer domain, String user, Integer scopeId, AsyncCallback<List<UserScopeFull>> callback) throws AonCoreException {
@@ -1387,6 +1394,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getUsers(String domainName, int domainId, String user, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getUsers(domainName, domainId, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getUsers(String domainName, int domainId, String user, String description, AsyncCallback<ArrayList<User>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getUsers(domainName, domainId, user, description, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************

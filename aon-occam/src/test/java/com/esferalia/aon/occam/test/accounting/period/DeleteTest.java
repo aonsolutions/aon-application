@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.accounting.period;
 
 
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import java.util.Date;
 

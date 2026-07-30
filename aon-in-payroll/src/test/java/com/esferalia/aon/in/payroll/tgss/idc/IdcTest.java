@@ -569,7 +569,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 
 			Calendar calendar = Calendar.getInstance();
@@ -656,7 +656,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 
 			Calendar calendar = Calendar.getInstance();
@@ -749,7 +749,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssV.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(2, ssBonuses.size());
+			assertEquals(2, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 			// EXONE.ERE.F.MAY.PARC ( 55,00%)
 
@@ -905,7 +905,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf")) {
 			Collection<PEC> ssBonuses = Idc.getSSPECs(is);
-			assertEquals(4, ssBonuses.size());
+			assertEquals(4, ssBonuses.stream().filter(PEC::isBonus).count());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -1261,7 +1261,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssIII.pdf")) {
 			Collection<PEC> ssBonuses = Idcplnss.getSSBonuses(is);
-			assertEquals(1, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(PEC::isBonus).count());
 			// EXONE.ERE.F.MAY.COMP (100,00%)
 
 			Salary salary = calculate(ssBonuses);
@@ -3487,6 +3487,106 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		}
 	}
+
+	@Test
+	public void testIdcplnssTrabajadoresTramosPPE()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnss-ppe.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is,
+					new TrabajadoresTramosCallback() {
+					});
+
+			marshal(trabajadoresTramos, System.out);
+
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("29", liquidacion.getCcc().getProvincia());
+			assertEquals("139775555", liquidacion.getCcc().getNumero());
+
+			assertEquals("06", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2026", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("06", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2026", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("06", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2026", liquidacionesMes.getMesLiquidativo().getAnho());
+
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+
+				assertEquals("071051445730", trabajador.getNaf());
+
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("09", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("06", tramo.getFechaDesde().getMes());
+				assertEquals("2026", tramo.getFechaDesde().getAnho());
+				assertEquals("30", tramo.getFechaHasta().getDia());
+				assertEquals("06", tramo.getFechaHasta().getMes());
+				assertEquals("2026", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				assertDatosSolicitado(tramo, "C", "301", "P");
+			}
+
+		}
+	}
+	
+	
+	@Test
+	public void testIdcplcccTrabajadoresTramosPPE()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc-ppe.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("29", liquidacion.getCcc().getProvincia());
+			assertEquals("139775555", liquidacion.getCcc().getNumero());
+
+			assertEquals("06", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2026", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("06", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2026", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("06", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2026", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			//assertEquals(3, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				if ( !Arrays.asList(
+						"081113125788",	// 21 IT.CC.PAGO DELEGADO 
+						"111077900895",	// 31 MATERN/PATERN.T.COMP
+						"141039248468",	// 23 IT.AT.PAGO DELEGADO
+						"291036247280"	// 21 IT.CC.PAGO DELEGADO, 22 IT.CC.PAGO DIRECTO
+						)
+						.contains(trabajador.getNaf())) {
+					System.out.println(trabajador.getNaf() + ":");
+					for ( Tramo tramo : trabajador.getTramos().getTramo()) {
+						System.out.println("\t" + tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia() );
+						assertDatosSolicitado(tramo, "C", "301", "P");
+					}
+				}
+			}
+	
+		}
+	}
+
 
 	@Test
 	public void testIdcplcccTrabajadoresTramosXIX()
@@ -8191,6 +8291,72 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 	
+	@Test
+	public void testIdcEreExonerado() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcEreExonerado.pdf")) {
+			Collection<PEC> ssPECs = Idc.getSSPECs(is);
+			// 17 APORT.NO OBL.SUS.EMP		100,00	08	CUOTA OBRERA			23-06-2026	31-07-2026 
+			// 37 EXONE.ERE.F.MAY.COMP		 90,00	07	C.C.,O.C.- C.EMPRESA	23-06-2026	31-07-2026 
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() + "[" + sspec.getStartDate() + " .. " + sspec.getEndDate() + "]" ));
+			
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("23-06-2026");
+
+			Salary salary = calculate(ssPECs, Collections.emptyList(), date );
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+			
+			System.out.println("CGC_E = " + cgcBase / 30 * 22 * ( 23.60  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 23.60 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("CGC_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("FP_E = " + cgcBase / 30 * 22 * ( 0.60  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 0.60 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("FP_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("DESMPL_E = " + cgcBase / 30 * 22 * ( 5.50  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 5.50 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("DESMPL_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("IT = " + cgcBase / 30 * 22 * ( 1.40  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 1.40 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("IT_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("IMS = " + cgcBase / 30 * 22 * ( 2.20  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 2.20 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("IMS_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("FOGASA = " + cgcBase / 30 * 22 * ( 0.20  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 0.20 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("FOGASA_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			System.out.println("MEI = " + cgcBase / 30 * 22 * ( 0.50  )/ 100.00 + " + " + cgcBase / 30 * 8 * ( 0.50 / 100.00) );
+			salary.getCostS().stream().filter( d -> d.getName().equals("MEI_E")).forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+
+			//salary.getDeductionS().forEach( deduction -> System.out.println(deduction.getName() + " : " + deduction.getAmount() + " (" + deduction.getExpression() + ")" + "," + deduction.getDescription() ));
+			
+//			PORCENTAJE_CGC=		 4.70
+//			PORCENTAJE_CGC_E=	23.60
+
+//			PORCENTAJE_FP=		 0.10
+//			PORCENTAJE_FP_E=	 0.60
+
+//			PORCENTAJE_DESMPL=	 1.55
+//			PORCENTAJE_DESMPL_E= 5.50
+
+//			OCUPACION_IT=		 0.80
+//			OCUPACION_IMS=		 0.70
+//			PORCENTAJE_FOGASA=	 0.20
+
+//			PORCENTAJE_MEI=		 0.10
+//			PORCENTAJE_MEI_E=	 0.50
+			
+
+			assertEquals(cgcBase / 30 * 22 * ( 4.70 + 0.10 + 1.55 + 0.10 ) / 100.00  , salary.getSocialSecurityContributions(), DELTA);
+			assertEquals(cgcBase / 30 * 22 * ( 23.60 + 0.60 + 5.50 + 1.40 + 2.20 + 0.20 + 0.50 )/ 100.00 
+						+ cgcBase / 30 * 8 * ( 23.60 + 0.60 + 5.50 + 1.40 + 2.20 + 0.20 + 0.50 )/ 100.00 * 0.10 
+					, salary.getTotalEnterprise(), DELTA);
+			
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+			}
+
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			}
+		}
+	}
+
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}

@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.mod421;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import org.junit.Test;
 
@@ -19,8 +19,8 @@ public class Mod421MarkAsCustomerAcceptedTest extends Mod421AbstractTest {
 			MODEL421.markAsCustomerAccepted(getOccam(), mod421);
 			Mod421 mod421Bis = MODEL421.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(mod421Bis);
-			assertEquals("Status not CUSTOMER_ACCEPTED", FiscalStatus.CUSTOMER_ACCEPTED, mod421Bis.getStatus());
-			assertNotNull("Mod421. Tipo resultado NULL",mod421Bis.getDeclarationResultType());
+			assertEquals(FiscalStatus.CUSTOMER_ACCEPTED, mod421Bis.getStatus(), "Status not CUSTOMER_ACCEPTED");
+			assertNotNull(mod421Bis.getDeclarationResultType(), "Mod421. Tipo resultado NULL");
 		}
 	}
 	

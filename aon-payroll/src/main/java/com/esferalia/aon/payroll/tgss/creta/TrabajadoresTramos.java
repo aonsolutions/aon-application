@@ -2318,7 +2318,7 @@ public class TrabajadoresTramos {
 		
 		boolean formacion = false; //"420".equals(tc2) ;
 		
-		boolean fijoDiscontinuo = AonStringUtils.contains("300",tc2) ;
+		boolean fijoDiscontinuo = AonStringUtils.startsWith(tc2, "3") ;
 
 		boolean formacionEnAlternancia = AonStringUtils.contains("421,521",tc2) ;
 		

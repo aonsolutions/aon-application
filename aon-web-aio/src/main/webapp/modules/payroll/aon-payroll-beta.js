@@ -6,7 +6,7 @@ import { AonPayrollMenu } from './aon-payroll-menu.js';
 import * as JSF from '../aon-jsf-app.js';
 import * as GWT from '../../gwt/gwt.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
-import { AON_SALTRA, COMUNICA } from "../../services/app.js";
+import { COMUNICA } from "../../services/app.js";
 
 export class AonPayrollBeta extends AonElement {
 	
@@ -169,14 +169,7 @@ export class AonPayrollBeta extends AonElement {
 				
 		}
 			
-		if (this.getDur().isSaltraManager()) {
-			paramsOptions.push({
-				id: AON_SALTRA.title,
-				name: AON_SALTRA.title,
-				icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
-				fn: () => this.buildComunicaConfiguration(),
-			});
-		} else if (this.getDur().isComunicaManager()) {
+		if (this.getDur().isComunicaManager()) {
 			paramsOptions.push({
 				id: COMUNICA.title,
 				name: COMUNICA.title,

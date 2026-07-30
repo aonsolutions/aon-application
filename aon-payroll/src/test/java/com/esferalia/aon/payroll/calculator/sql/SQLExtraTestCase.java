@@ -9568,6 +9568,125 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testExtraAtSalaryXXI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPaga = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.concept = conceptPaga.getId();
+							this.expression = "/*NAVIDAD*/PAGA_EXTRA";
+							this.month = Month.DECEMBER;
+							this.start = "01/07";
+							this.end = "31/12";
+							this.issue = "30/12";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPaga.getId();
+							this.expression = "/*VERANO*/PAGA_EXTRA";
+							this.month = Month.JULY;
+							this.start = "01/01";
+							this.end = "30/06";
+							this.issue = "31/07";
+						}
+					}
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "SALARIO_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("SALARIO_MENSUAL", "1000.00");
+			}
+		});
+		
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday()); 
+
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfYear 
+				, new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30.00");
+						put("PAGA_EXTRA", "1000.00");
+					}
+				}				
+				,category);
+		
+		
+		Date startDate = firstDayOfYear;
+		while ( get(startDate, Calendar.MONTH) < Calendar.JULY  )  
+		{
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection) {
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description,
+						java.util.Date startDate, java.util.Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				}
+			};
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(startDate, Calendar.MONTH,1);
+		}
+
+		//@formatter:off
+		
+
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract);
+
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+		
+				@Override
+				public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
+					IPayment payment, Map<String, ITimedVariable<?>> context) {
+        			System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: 0.00, " + quote );
+				super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+				}
+			
+        		@Override
+        		public void addPayment(Double amount, Double quote, Double tax, String description,
+        				java.util.Date startDate, java.util.Date endDate, IPayment payment,
+        				Map<String, ITimedVariable<?>> context) {
+        			//System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: " + amount + ", " + quote );
+        			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+        		}
+		};
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(salaryBuilder).calculate(ctx);
+
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() + ", " + p.getQuote() ));
+
+		assertEquals(2000.00, salary.getTotalPayment(), 0.005, ContextVariable.TOTAL_PAYMENT.getName());
+
+		assertEquals(1000.00 + 1000.00 / 6.00, salary.getCommonBase(), 0.005, ContextVariable.CGC_BASE.getName());
+		assertEquals(1000.00 / 6.00 , salary.getExtraPayProration(), 0.005);
+	}
+
+	@Test
 	@Disabled
 	public void testOverridePayments() throws ExpressionException,
 			SQLException, SalaryException {

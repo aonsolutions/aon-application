@@ -76,6 +76,7 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(15000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			
 			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
 
@@ -93,36 +94,22 @@ public class HtmlUnitToolkit {
 	        KeyStore keyStore = KeyStore.getInstance(certificateType);
 	        keyStore.load(certificateInputStream, password);
 
-	        // Solo completar cadena si es necesario
+	        // Completar la cadena solo si el keystore trae el leaf suelto.
 	        KeyStore finalKeyStore = needsChainCompletion(keyStore, password)
 	                ? addChainFromAIA(keyStore, password)
 	                : keyStore;
 
-	        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-	        kmf.init(finalKeyStore, password);
-
-	        TrustManager[] trustAll = new TrustManager[]{
-	            new X509TrustManager() {
-	                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-	                public void checkClientTrusted(X509Certificate[] c, String a) {}
-	                public void checkServerTrusted(X509Certificate[] c, String a) {}
-	            }
-	        };
-
-	        SSLContext sslContext = SSLContext.getInstance("TLS");
-	        sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
-	        
 	        WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 	        disableLogging(webClient);
 	        webClient.getOptions().setCssEnabled(false);
 	        webClient.getOptions().setDownloadImages(false);
 	        webClient.getOptions().setUseInsecureSSL(true);
+	        webClient.getOptions().setRedirectEnabled(true);
 	        webClient.setJavaScriptTimeout(15000);
 	        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
-	        SSLContext.setDefault(sslContext);
-	        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-
+	        // Persistimos el keystore (ya con la cadena completa) a un .p12 temporal
+	        // y se lo damos a HtmlUnit: esto es lo ÚNICO que presenta el certificado.
 	        Path tempCert = Files.createTempFile("cert_", ".p12");
 	        try (OutputStream os = Files.newOutputStream(tempCert)) {
 	            finalKeyStore.store(os, password);

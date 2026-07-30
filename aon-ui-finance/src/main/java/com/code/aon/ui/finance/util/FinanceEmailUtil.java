@@ -81,9 +81,9 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		Address[] addresses = new Address[emails.length];
 		for( int i = 0; i < emails.length; i++ ) {
 			if ( i == 0 ) {
-				addresses[i] = new InternetAddress( emails[i], name );
+				addresses[i] = new InternetAddress( emails[i].trim(), name );
 			} else {
-				addresses[i] = new InternetAddress( emails[i] );	
+				addresses[i] = new InternetAddress( emails[i].trim() );	
 			}
 		} 
 		return addresses;
@@ -353,10 +353,10 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 					String fromEmail = isVerifiedForSendingStatus(getEmailSender().getMailAccount().getEmail())
 							? getEmailSender().getMailAccount().getEmail() : "no-reply@aon.solutions";
 					
-					String from = getEmailSender().getMailAccount().getDisplayName() + "<" + fromEmail + ">";
+					String displayName = getEmailSender().getMailAccount().getDisplayName();
 		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
-		            message.setFrom(new InternetAddress(from));
-		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail());
+		            message.setFrom(new InternetAddress(fromEmail.trim(), displayName));
+		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail().trim());
 		            if(getEmailSender().getMailAccount().getReplyToMail() != null)
 		            	message.addRecipient(RecipientType.BCC, replyTo);
 		            Address[] addresses = {replyTo};

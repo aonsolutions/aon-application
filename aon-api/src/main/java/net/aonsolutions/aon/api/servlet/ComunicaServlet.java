@@ -478,7 +478,9 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "SEPE");
 		
-		return Sepe.getContratoPdf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ipf, date, date);
+		// Need to get CIF from front
+		
+		return Sepe.getContratoPdf(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), null, ipf, date, date);
 	}
 	
 	private byte[] getCopyBasicSepe(AonApiData api) throws Exception {

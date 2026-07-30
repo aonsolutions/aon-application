@@ -272,6 +272,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 				salaryOptions.add("Finiquito");
 				salaryOptions.add("Atrasos");
 				salaryOptions.add("Sal. Tramitaci\u00f3n");
+				salaryOptions.add("Liquidaciones");
 				salaryType.setOptions(salaryOptions);
 				salaryType.addBlurHandler(new BlurHandler() {
 		            @Override
@@ -279,7 +280,11 @@ public class SalaryWidget extends AonCustomDockLayout {
 		            	onSearch();
 		            }
 		        });
-				salaryType.setSelectedOptions(salaryOptions);
+				Set<String> defaultOptions = salaryOptions.stream().filter(option -> !option.contains("Liquidaciones")).collect(Collectors.toSet());
+				salaryType.setSelectedOptions(defaultOptions); // Select all except "Liquidaciones" by default
+				
+				salaryOptions.add("Liquidaciones");
+				
 				addFilterWidget(salaryType);
 				
 				sort.addItem("Empresa", "enterprise");
@@ -377,6 +382,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		salaryOptions.add("Finiquito");
 		salaryOptions.add("Atrasos");
 		salaryOptions.add("Sal. Tramitaci\u00f3n");
+		salaryOptions.add("Liquidaciones");
 		salaryType.setSelectedOptions(salaryOptions);
 		
 		//onSearch();
@@ -593,6 +599,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 				.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
 				.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
 				.setProcedural(salaryType.getSelectedOptions().contains("Sal. Tramitaci\u00f3n"))
+				.setLiquidations(salaryType.getSelectedOptions().contains("Liquidaciones"))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				

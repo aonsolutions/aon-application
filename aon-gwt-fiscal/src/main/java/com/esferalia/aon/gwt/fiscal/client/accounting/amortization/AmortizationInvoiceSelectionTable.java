@@ -5,9 +5,8 @@ import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable.AonFlexTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationPanel.AmortizationPanelCallback;
@@ -44,9 +43,11 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 		InvoiceConsoleServiceAsync fiscalServiceRaw = GWT.create(InvoiceConsoleService.class);
 		INVOICE_SERVICE = new InvoiceConsoleAsyncDecorator(fiscalServiceRaw);
 	}
+	private static final String[] COLUMN_WIDTHS = new String[] {
+		"40px","40px","40px","40px","100px","80px","80px","150px","300px","100px" };
 
 	FlowPanel containerPanel = new FlowPanel();
-	AonDisplayGrid grid = new AonDisplayGrid();
+	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
 	
 	private static final int LIMIT = 50;
 	private final MutableInt offset = new MutableInt(0);
@@ -59,10 +60,8 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 		
 		setWidget(containerPanel);
 		
-		grid.addStyleName(AON.CSS.aonMarginTop());
-		grid.addStyleName(AON.CSS.aonBlockCenter());
 		containerPanel.add(grid);
-		AmortizationInvoiceSelectionTableRow.fillHeader( grid.addHeaderRow() );
+		fillHeader();
 		
 		addScrollHandler(event -> {
 			// ------------------------------------ Ignore scroll up.
@@ -133,7 +132,7 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 				AonMessageDialog.error( "Error inexperado: " + e.getMessage());
 			}
 			
-			public AonDisplayGridRow addRow(InvoiceConsole invConsole) {
+			public AonFlexTableRow addRow(InvoiceConsole invConsole) {
 				AmortizationInvoiceSelectionTableRow row = new AmortizationInvoiceSelectionTableRow(opts, callback, invConsole);
 				grid.add( row );
 				row.addInvoiceCheckedHandler(e -> AonInvoiceCheckedEvent.fire(AmortizationInvoiceSelectionTable.this, e.getInvoice()));
@@ -143,6 +142,21 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 		});
 	}
 	
+	private void fillHeader() {
+		grid
+			.addHeaderCell(new Label(""))
+			.addHeaderCell(new Label("Ver"))
+			.addHeaderCell(new Label("Cont"))
+			.addHeaderCell(new Label("Tipo"))
+			.addHeaderCell(new Label("N\u00BA Referencia"),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label("Fec. Fac."),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label("Total"),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label("Doc.Tit."))
+			.addHeaderCell(new Label("Nombre/raz\u00F3n social"),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label("N\u00BA.Doc"),AON.CSS.aonNowrap())
+		;
+	}
+
 	@Override
 	public HandlerRegistration addInvoiceCheckedHandler(AonInvoiceCheckedHandler handler) {
 		return super.addHandler(handler, AonInvoiceCheckedEvent.getType());
@@ -153,7 +167,7 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 		return super.addHandler(handler, AonInvoiceUncheckedEvent.getType());
 	}
 	
-	static class AmortizationInvoiceSelectionTableRow extends AonDisplayGridRow implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
+	static class AmortizationInvoiceSelectionTableRow extends AonFlexTableRow implements HasInvoiceCheckedHandlers, HasInvoiceUncheckedHandlers{
 		
 		AmortizationInvoiceSelectionTableRow(AmortizationModuleOptions opts, AmortizationPanelCallback callback, InvoiceConsole invConsole) {
 			Invoice inv = invConsole.getInvoice();
@@ -202,22 +216,6 @@ class AmortizationInvoiceSelectionTable extends ScrollPanel implements HasInvoic
 				? defaultValue
 				: supplier.get();
 		}
-
-		static void fillHeader(AonDisplayGridHeaderRow headerRow) {
-			headerRow
-				.addCell(new Label(""),AON.CSS.aonWidth20())
-				.addCell(new Label("Ver"),AON.CSS.aonWidth20())
-				.addCell(new Label("Cont"),AON.CSS.aonWidth40())
-				.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
-				.addCell(new Label("N\u00BA Referencia"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
-				.addCell(new Label("Fec. Fac."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
-				.addCell(new Label("Total"),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
-				.addCell(new Label("Doc.Tit."),AON.CSS.aonWidthAuto())
-				.addCell(new Label("Nombre/raz\u00F3n social"),AON.CSS.aonWidth300(),AON.CSS.aonNowrap())
-				.addCell(new Label("N\u00BA.Doc"),AON.CSS.aonWidth100(),AON.CSS.aonNowrap())
-			;
-		}
-		
 
 		private void viewInvoice(AmortizationModuleOptions opts, AmortizationPanelCallback callback, InvoiceConsole invConsole) {
 			INVOICE_SERVICE.getInvoice( opts.getOccam(), opts.getDomain(), invConsole.getId(), new AsyncCallback<Invoice>() {

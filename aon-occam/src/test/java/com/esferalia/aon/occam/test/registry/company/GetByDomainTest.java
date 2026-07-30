@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry.company;
 
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import org.junit.Test;
 

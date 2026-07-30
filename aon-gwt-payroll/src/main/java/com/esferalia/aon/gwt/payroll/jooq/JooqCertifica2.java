@@ -55,6 +55,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sepe.certifica.CertificaFill;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
@@ -393,7 +394,7 @@ public class JooqCertifica2 {
 		if (null == endDate) {
 			ereRecords = dslContext.select().from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.NAME.eq("COEFICIENTE_ERE"))
+					.and(CONTRACT_DATA.NAME.in(ContextVariable.ERE_FACTORS_NAMES))
 					.orderBy(CONTRACT_DATA.START_DATE)
 					.fetch();
 			
@@ -647,7 +648,8 @@ public class JooqCertifica2 {
 				.fetch(CONTRACT_INFO.EXPRESSION);
 
 		if (AonStringUtils.isBlank(representativeDocument))
-			representativeDocument = staffDocuments.get(0);
+			if(staffDocuments.isEmpty()) throw new IllegalArgumentException("No existe documento del representante de la empresa");
+			else representativeDocument = staffDocuments.get(0);
 		
 		// Get from contract
 		String staffCharge = dslContext.select(CONTRACT_INFO.EXPRESSION).from(CONTRACT_INFO)
@@ -1247,16 +1249,34 @@ public class JooqCertifica2 {
 	// methods
 
 	private static int getAgrarianDays(DSLContext dslContext, Integer salaryId) {
-		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.SALARY.eq(salaryId))
-				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES")).fetch();
+		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(salaryId))
+				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES")
+				)
+				.fetch();
 
 		int agrarian = 0;
 
 		if (agrarianRecords.isEmpty())
+			agrarianRecords = dslContext.select().from(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(salaryId))
+					.and(SALARY_DATA.NAME.eq("JORNADAS_REALES_TOTALES")
+					)
+					.fetch();
+		
+		if (agrarianRecords.isEmpty())
 			return agrarian;
 
 		for (Record agrarianRecord : agrarianRecords) {
-			int itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			
+			int itValue = 0;
+			try {
+				itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			} catch (Exception e) {
+				Double itValueDouble = Double.parseDouble(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+				itValue = itValueDouble.intValue();
+			}
+			
 			agrarian += itValue;
 		}
 		return agrarian;

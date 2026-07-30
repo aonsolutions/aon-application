@@ -241,7 +241,7 @@ export class AonBooking extends AonElement {
 				this.buildApps(content, BookingApps, dur);
 			}
 			this.buildTitle(content, MSG.SERVICES);
-			if(this.isConsole() || this.isBeta()) {
+			if(this.isConsole()) {
 				this.buildApps(content, ConsoleServices, dur);
 				this.buildTitle(content, MSG.CLASSIC_APPLICATIONS);
 				this.buildApps(content, ClassicApps, dur);

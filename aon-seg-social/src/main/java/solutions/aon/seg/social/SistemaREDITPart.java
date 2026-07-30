@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import javax.xml.transform.TransformerException;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
+import org.htmlunit.ScriptException;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
@@ -38,6 +40,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableBody;
 import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.javascript.JavaScriptErrorListener;
 import org.htmlunit.util.WebConnectionWrapper;
 import org.htmlunit.xml.XmlPage;
 
@@ -124,16 +127,19 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType);
 			WebConnectionWrapper wrapper = HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType, Collections.emptyMap(), SistemaREDITPart::skipDateFormatError)) {
 			
+			webClient.getOptions().setCssEnabled(true);
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setRedirectEnabled(true);
 			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setFetchPolyfillEnabled(true);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-
+			
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
-
+			
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_4")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			if (job.isPresent()) {		
 				HtmlInput jobInput = form.getInputByName("puestoTrabajo");
@@ -200,7 +206,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
-			
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
@@ -408,25 +413,22 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			Date dateProcess)
 			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException, TransformerException {
 		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		byte [] certificateData = certificateInputStream.readAllBytes();
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
-			HtmlPage htmlPage = null;
-			XmlPage xmlPage = null;
+			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			
-			Page page = webClient.getPage(BASE_URI);
-			if(page instanceof XmlPage)
-				htmlPage = HtmlUnitToolkit.transformXmlPage((XmlPage) page);
-			else if(page instanceof HtmlPage)
-				htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.transformXmlPage(webClient, certificateData, certificatePassword, certificateType);
+
 			
-//			XmlPage xmlPage = webClient.getPage(BASE_URI);
-//			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			xmlPage = htmlPage.getElementById("PEST_3").click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			htmlPage = htmlPage.getElementById("PEST_3").click();
 		
 			wait4(htmlPage, p -> p.querySelector("[name=\"regimenConsulta\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
@@ -439,8 +441,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedConsulta").setValue(d));
 			
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_CONSULTA\"]")).orElseThrow();
-			xmlPage = continueIn.click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			htmlPage = continueIn.click();
 			
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
@@ -448,8 +449,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			List<HtmlTableBody> tableBodies = table.getBodies();
 			HtmlTableBody firstRow = tableBodies.get(0);
 			List<HtmlAnchor> anchor = firstRow.getByXPath(".//a");
-			xmlPage= anchor.get(0).click();
-			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			htmlPage= anchor.get(0).click();
 			
 			return getPdfProcess2(htmlPage);
 		}
@@ -555,8 +555,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		formTwo.getInputByName(ARQ_SPM_OUT).remove(); //PREVENT XML
 
 		HtmlButton doc = (HtmlButton) wait4(htmlPage, p ->p.getElementByName("SPM.ACC.GENERAR_INFORME_EMISION")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-		XmlPage xmlPage = doc.click();
-		htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+		htmlPage = doc.click();
 
 		wait4(htmlPage, p -> p.getElementById("prevdocumentoseinformes"));
 		

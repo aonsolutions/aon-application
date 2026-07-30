@@ -167,8 +167,8 @@ public class TediParser {
 	}
 	
 	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {
-		Integer activity = ai.getInvoice().getActivity() != null ? ai.getInvoice().getActivity().getId() : null;
-		if (aonCtx != null && activity == null) {
+		Integer activity = ai.getInvoice().optActivity().map( a -> a.getId()).orElse(null);
+		if (aonCtx != null && activity == null && !aonCtx.isMultiActivity()) {
 			EnterpriseActivity ea = aonCtx.getMainActivity();
 			activity = (ea==null?null:ea.getId());
 		}

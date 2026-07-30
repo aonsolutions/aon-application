@@ -185,6 +185,11 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		SellerWorkloadParams sellerWorkloadListParams = getWidgetParams( getSellerWorkloadListParams() );
 		
 		json.put("period", new JSONString(sellerWorkloadListParams.getPeriod().toString()));
+		if(null != sellerWorkloadListParams.getPeriodStart())
+			json.put("periodStart", new JSONString(Long.toString(sellerWorkloadListParams.getPeriodStart().getTime())));
+
+		if(null != sellerWorkloadListParams.getPeriodEnd())
+			json.put("periodEnd", new JSONString(Long.toString(sellerWorkloadListParams.getPeriodEnd().getTime())));
 		
 		if(null != sellerWorkloadListParams.getTaskHolder())
 			json.put("taskHolder", new JSONString(sellerWorkloadListParams.getTaskHolder().toString()));
@@ -241,6 +246,8 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	public SellerWorkloadParams getWidgetParams( SellerWorkloadParams params ) {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams();
 		sellerWorkloadParams.setPeriod(params.getPeriod());
+		sellerWorkloadParams.setPeriodStart(params.getPeriodStart());
+		sellerWorkloadParams.setPeriodEnd(params.getPeriodEnd());
 		sellerWorkloadParams.setCustomers(params.getCustomers());
 		
 		sellerWorkloadParams.setCustomerActive(customerStatus.getSelectedOptions().contains("Activo"));

@@ -19,7 +19,9 @@ public class AonCustomSuggestBox extends HTMLPanel {
 		addStyleName(AON.CSS.aonFlexColumn2());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
-		createTitle(title);
+		if (AonStringUtils.isNotEmpty(title)) {
+			createTitle(title);
+		}
 		createInput();
 	}
 	

@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.registry.address;
 
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import org.junit.Test;
 

@@ -126,6 +126,10 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 				public void onAccept(Scope scopeDB) {
 					onScopeCreate(scopeDB);
 				}
+				
+				public boolean existsScopeWithDescription(String description) {
+					return scopePanel.existsScopeWithDescription(description);
+				}
 		});
 	}
 	
@@ -232,7 +236,12 @@ public abstract class ScopeModulePanel extends AonCustomDockLayout {
 		});
 	}
 	
+	public boolean existsScopeWithDescription(String description) {
+		return null == scopePanel ? false : scopePanel.existsScopeWithDescription(description);
+	}
+	
 	protected abstract void onScopeSelect(Scope scope);
 	protected abstract void onScopeCreate(Scope scope);
+
 
 }

@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, EVENT, TAG, PDFJS_WORKER_URL, PDFJS_VIEWER_STYLESHEET_URL, CSS, PDFJS_PDF_URL } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG, PDFJS_WORKER_URL, PDFJS_VIEWER_STYLESHEET_URL, CSS, PDFJS_PDF_URL, PDFJS_WASM_URL } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 import { AonIconButton } from './aon-icon-button.js';
 
@@ -339,11 +339,7 @@ export class AonViewer extends AonElement {
 		const width = this.getAttribute('width');
 		
 		this.wait4PdfJsLib().then(pdfjsLib => {
-			
-		    pdfjsLib.pageColorsBackground="#000";
-		    pdfjsLib.pageColorsForeground="#FFF";
-		    pdfjsLib.forcePageColors=true; 
-    			
+
 			pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
 			
 	
@@ -358,7 +354,10 @@ export class AonViewer extends AonElement {
 			//	,withCredentials: true
 			// ))});
 			const url = new URL(this.file, window.location.href);
-			const loadingTask = pdfjsLib.getDocument({ url: url.toString() });
+			// wasmUrl is required by pdf.js v6 to decode CCITTFax / JBIG2 image
+			// masks (e.g. black text on scanned invoices); without it those
+			// images fail to initialize and are silently dropped.
+			const loadingTask = pdfjsLib.getDocument({ url: url.toString(), wasmUrl: PDFJS_WASM_URL });
 			
 			loadingTask.promise.then( (pdf) =>  {
 				this.PDF = pdf;

@@ -59,6 +59,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Locale;
@@ -220,6 +221,14 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord []contracts,
+			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), Arrays.stream(contracts).map(ContractRecord::getId).toList());
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 		Date startDate, Date endDate, Date issueDate, Date chargeDate, ContractRecord contract ) throws ExpressionException, SQLException {
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
@@ -238,6 +247,12 @@ public abstract class AbstractSQLTestCase {
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
 			throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
+	}
+
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord ...contracts)
+			throws ExpressionException, SQLException {
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contracts, null);
 	}
 	// ------------------------------------------------------- static 'library'
 
@@ -562,6 +577,10 @@ public abstract class AbstractSQLTestCase {
 		return System.getProperty("dbUseSSL", "false");
 	}
 
+	public static String getAllowPublicKeyRetrieval() {
+		return System.getProperty("dbAllowPublicKeyRetrieval", "true");
+	}
+
 	public static String getDbTimeZone() {
 		return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());
 	}
@@ -607,11 +626,14 @@ public abstract class AbstractSQLTestCase {
 		String dbPasswd = getDbPasswd();
 		String dbUseSSL = getDbUseSSL();
 		String dbTimeZone = getDbTimeZone();
+		String dbAllowPublicKeyRetrieval = getAllowPublicKeyRetrieval();
 
 		Properties properties = new Properties();
 		properties.setProperty("user", dbUser);
 		properties.setProperty("password", dbPasswd);
 		properties.setProperty("useSSL", dbUseSSL);
+		properties.setProperty("allowPublicKeyRetrieval", dbAllowPublicKeyRetrieval);
+		
 		properties.setProperty("serverTimezone", dbTimeZone);
 		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
 		Connection connection = DriverManager.getConnection(url, properties);
@@ -643,6 +665,14 @@ public abstract class AbstractSQLTestCase {
 		return aonContext.getDslContext().insertInto(DOMAIN)
 				.set(DOMAIN.NAME, java.util.UUID.randomUUID().toString()).set(DOMAIN.OWNER, "")
 				.set(DOMAIN.PARENT, parent).set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
+	}
+
+	public static final DomainRecord newDomain(AONContext aonContext, String domainName, String domainDescription) {
+		return aonContext.getDslContext().insertInto(DOMAIN)
+				.set(DOMAIN.OWNER, "")
+				.set(DOMAIN.NAME, domainName)
+				.set(DOMAIN.DESCRIPTION, domainDescription)
+				.returning().fetchOne();
 	}
 
 	public static final AgreementRecord newAgreement(AONContext aonContext) {
@@ -1009,6 +1039,31 @@ public abstract class AbstractSQLTestCase {
 
 		return contract;
 	}
+
+	public static final RegistryRecord newEnterprise(AONContext aonContext, int domainId, String enterpriseName,String document, String documentCountry, DocumentType documentType, int scopeId) {
+
+		RegistryRecord enterprise = aonContext.getDslContext()
+				.insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, enterpriseName)
+				.set(REGISTRY.ALIAS, enterpriseName)
+				.set(REGISTRY.DOCUMENT, document)
+				.set(REGISTRY.DOCUMENT_COUNTRY, documentCountry)
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) documentType.ordinal())
+				.set(REGISTRY.TYPE, (byte) RegistryType.LEGAL.ordinal()).returning()
+				.fetchOne();
+
+		aonContext.getDslContext()
+		.insertInto(ENTERPRISE)
+		.set(ENTERPRISE.DOMAIN, domainId)
+		.set(ENTERPRISE.REGISTRY, enterprise.getId())
+		.set(ENTERPRISE.SCOPE, scopeId) // Assuming scopeId is defined elsewhere in your code
+		.execute();
+
+		return enterprise;
+
+	}
+	
+
 	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, int domainId, int scopeId,
 			SSRegimeType ssRegimeType) {
 		return newEnterpriseActivity(aonContext, domainId, scopeId, ssRegimeType, null);

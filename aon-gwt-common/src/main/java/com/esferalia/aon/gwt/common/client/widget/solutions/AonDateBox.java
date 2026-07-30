@@ -105,7 +105,7 @@ public class AonDateBox extends com.google.gwt.user.datepicker.client.DateBox {
 		super(new DatePicker(), null, DEFAULT_FORMAT);
 		setFireNullValues(true);
 		setStyleName(AON.CSS.aonInputText());
-		setWidth("80px");
+		setWidth("85px");
 	}
 
 	public String format() {

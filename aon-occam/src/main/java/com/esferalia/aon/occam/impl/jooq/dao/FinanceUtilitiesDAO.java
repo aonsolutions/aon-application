@@ -35,17 +35,23 @@ import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class FinanceUtilitiesDAO {
 
-	private static byte TRUE = 1;
-	private static byte FALSE = 0;
+	private static final byte TRUE = 1;
+	private static final byte FALSE = 0;
+	private static final EnterpriseActivity INVOICE_ACTIVITY = ENTERPRISE_ACTIVITY.as("invoice_activity");
+	private static final EnterpriseActivity ACCOUNT_ENTRY_ACTIVITY = ENTERPRISE_ACTIVITY.as("account_entry_activity");
 
-	public static FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx, FinanceUtilitiesParams params) {
+	private FinanceUtilitiesDAO() {
+	}
+
+	 public static FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx, FinanceUtilitiesParams params) {
 		FinanceUtilitiesResult result = new FinanceUtilitiesResult();
 		missingFinanceInvoices(ctx,params,result);
 		return result;
@@ -95,67 +101,67 @@ public class FinanceUtilitiesDAO {
 	private static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
-		public Invoice apply(Record record) {
+		public Invoice apply(Record rec) {
 			return new Invoice()
-					.setId(record.getValue(INVOICE.ID))
-					.setDomain(record.getValue(INVOICE.DOMAIN))
-					.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
-					.setSeries(record.getValue(INVOICE.SERIES))
-					.setNumber(record.getValue(INVOICE.NUMBER))
-					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
-					.setTotal(record.getValue(INVOICE.TOTAL))
-					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
-					.setRegistry(record.getValue(INVOICE.REGISTRY))
-					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
-					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
-					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-					.setRegistryName(record.getValue(INVOICE.RNAME))
+					.setId(rec.getValue(INVOICE.ID))
+					.setDomain(rec.getValue(INVOICE.DOMAIN))
+					.setType(AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE)))
+					.setSeries(rec.getValue(INVOICE.SERIES))
+					.setNumber(rec.getValue(INVOICE.NUMBER))
+					.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
+					.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
+					.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+					.setTotal(rec.getValue(INVOICE.TOTAL))
+					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,rec.getValue(INVOICE.SECURITY_LEVEL)))
+					.setRegistry(rec.getValue(INVOICE.REGISTRY))
+					.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,rec.getValue(INVOICE.RDOCUMENT_TYPE)))
+					.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+					.setRegistryName(rec.getValue(INVOICE.RNAME))
 				;
 		}
 		
 	}
 	private static class FinanceFiller  implements Function<Record,Finance> {
 		@Override
-		public Finance apply(Record record) {
+		public Finance apply(Record rec) {
 			return new Finance()
-				.setId(record.getValue(FINANCE.ID))
-				.setDomain(record.getValue(FINANCE.DOMAIN))
-				.setPayment(AonEnumUtils.getBoolean( record.getValue(FINANCE.PAYMENT)) )
-				.setRegistry(record.getValue(INVOICE.REGISTRY)==null?null:new Registry().setId(record.getValue(INVOICE.REGISTRY)))
-				.setRegistryDocument(record.getValue(FINANCE.RDOCUMENT))
-				.setRegistryDocumentType(DocumentType.safeValueOf(record.getValue(FINANCE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(FINANCE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(record.getValue(FINANCE.RNAME))
-				.setAmount(record.getValue(FINANCE.AMOUNT))
-				.setExpenses(record.getValue(FINANCE.EXPENSES))
-				.setConcept(record.getValue(FINANCE.CONCEPT))
-				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new MinimalInvoiceFiller().apply(record)) 
-				.setDueDate(record.getValue(FINANCE.DUE_DATE))
-				.setPayMethod(record.getValue(FINANCE.PAY_METHOD))
-				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
-				.setPayMethodType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)))
-				.setBankAccount( new BankAccount(record.getValue(FINANCE.BANK_ACCOUNT)) )
-				.setBankAlias(record.getValue(FINANCE.BANK_ALIAS))
-				.setBic(record.getValue(FINANCE.BIC))
-				.setChequeNumber(record.getValue(FINANCE.CHEQUE_NUMBER))
-				.setFinanceStatus(FinanceStatus.safeValueOf( record.getValue(FINANCE.STATUS)))
-				.setSecurityLevel( SecurityLevel.safeValueOf( record.getValue(FINANCE.SECURITY_LEVEL)))
-				.setRemarks(record.getValue(FINANCE.REMARKS))
-				.setScope(new Scope().setId(record.getValue(FINANCE.SCOPE)))
-				.setManual(AonEnumUtils.getBoolean( record.getValue(FINANCE.MANUAL)))
-				.setAdvance(AonEnumUtils.getBoolean( record.getValue(FINANCE.ADVANCE)))
-				.setPayroll(AonEnumUtils.getBoolean( record.getValue(FINANCE.PAYROLL)))
-				.setPrepayment(AonEnumUtils.getBoolean( record.getValue(FINANCE.PREPAYMENT)))
-				.setSourceId(record.getValue(FINANCE.SOURCE_ID))
-				.setFinanceGroup(record.getValue(FINANCE.FINANCE_GROUP))
-				.setCreationUser(record.getValue(FINANCE.CREATION_USER))
-				.setCreationDate(record.getValue(FINANCE.CREATION_DATE))
-				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
-				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
-				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
+				.setId(rec.getValue(FINANCE.ID))
+				.setDomain(rec.getValue(FINANCE.DOMAIN))
+				.setPayment(AonEnumUtils.getBoolean( rec.getValue(FINANCE.PAYMENT)) )
+				.setRegistry(rec.getValue(INVOICE.REGISTRY)==null?null:new Registry().setId(rec.getValue(INVOICE.REGISTRY)))
+				.setRegistryDocument(rec.getValue(FINANCE.RDOCUMENT))
+				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(FINANCE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(FINANCE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(rec.getValue(FINANCE.RNAME))
+				.setAmount(rec.getValue(FINANCE.AMOUNT))
+				.setExpenses(rec.getValue(FINANCE.EXPENSES))
+				.setConcept(rec.getValue(FINANCE.CONCEPT))
+				.setInvoice(rec.getValue(FINANCE.INVOICE)==null?null : new MinimalInvoiceFiller().apply(rec)) 
+				.setDueDate(rec.getValue(FINANCE.DUE_DATE))
+				.setPayMethod(rec.getValue(FINANCE.PAY_METHOD))
+				.setPayMethodName(rec.getValue(PAY_METHOD.NAME))
+				.setPayMethodType(PayMethodType.safeValueOf( rec.getValue(PAY_METHOD.TYPE)))
+				.setBankAccount( new BankAccount(rec.getValue(FINANCE.BANK_ACCOUNT)) )
+				.setBankAlias(rec.getValue(FINANCE.BANK_ALIAS))
+				.setBic(rec.getValue(FINANCE.BIC))
+				.setChequeNumber(rec.getValue(FINANCE.CHEQUE_NUMBER))
+				.setFinanceStatus(FinanceStatus.safeValueOf( rec.getValue(FINANCE.STATUS)))
+				.setSecurityLevel( SecurityLevel.safeValueOf( rec.getValue(FINANCE.SECURITY_LEVEL)))
+				.setRemarks(rec.getValue(FINANCE.REMARKS))
+				.setScope(new Scope().setId(rec.getValue(FINANCE.SCOPE)))
+				.setManual(AonEnumUtils.getBoolean( rec.getValue(FINANCE.MANUAL)))
+				.setAdvance(AonEnumUtils.getBoolean( rec.getValue(FINANCE.ADVANCE)))
+				.setPayroll(AonEnumUtils.getBoolean( rec.getValue(FINANCE.PAYROLL)))
+				.setPrepayment(AonEnumUtils.getBoolean( rec.getValue(FINANCE.PREPAYMENT)))
+				.setSourceId(rec.getValue(FINANCE.SOURCE_ID))
+				.setFinanceGroup(rec.getValue(FINANCE.FINANCE_GROUP))
+				.setCreationUser(rec.getValue(FINANCE.CREATION_USER))
+				.setCreationDate(rec.getValue(FINANCE.CREATION_DATE))
+				.setModificationUser(rec.getValue(FINANCE.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(FINANCE.MODIFICATION_DATE))
+				.setPayMethodName(rec.getValue(PAY_METHOD.NAME))
+				.setPayMethodType( PayMethodType.safeValueOf(  rec.getValue(PAY_METHOD.TYPE)))
 				.setDirty(false)
 				;
 		}
@@ -179,7 +185,7 @@ public class FinanceUtilitiesDAO {
 				.setDomainName(ctx.getDomainName())
 				.setMessage((finance.isPayment()?"COBRO marcado como PAGO":"PAGO marcado como COBRO")))
 			.peek(item -> item.setTracking( FinanceTrackingDAO.getLastTracking(ctx, item.getFinance().getId() ) ) )
-			.forEach(item -> result.add( item ) )
+			.forEach( result::add )
 		;
 		return result;
 	}
@@ -240,9 +246,6 @@ public class FinanceUtilitiesDAO {
 	}
 
 	public static FinanceUtilitiesResult activityIntegrity(AONContext ctx, Integer domain) {
-		EnterpriseActivity INVOICE_ACTIVITY = ENTERPRISE_ACTIVITY.as("invoice_activity");
-		EnterpriseActivity ACCOUNT_ENTRY_ACTIVITY = ENTERPRISE_ACTIVITY.as("account_entry_activity");
-		
 		FinanceUtilitiesResult result = new FinanceUtilitiesResult();
 		ctx.getDslContext().select(
 					INVOICE.ID, INVOICE.ACTIVITY,
@@ -256,7 +259,7 @@ public class FinanceUtilitiesDAO {
 			.innerJoin( ACCOUNT_ENTRY ).on( ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
 			.leftOuterJoin(ACCOUNT_ENTRY_ACTIVITY).on(ACCOUNT_ENTRY_ACTIVITY.ID.eq(ACCOUNT_ENTRY.ACTIVITY))
 			.where( INVOICE.DOMAIN.eq( domain))
-			.and( INVOICE.ACTIVITY.ne(ACCOUNT_ENTRY.ACTIVITY))
+			.and( INVOICE.ACTIVITY.isDistinctFrom(ACCOUNT_ENTRY.ACTIVITY))
 			.limit( 500 )
 			.fetch()
 			.stream()
@@ -275,6 +278,7 @@ public class FinanceUtilitiesDAO {
 					)
 					.setInvoiceActivityId( r.getValue(INVOICE.ACTIVITY) )
 					.setInvoiceActivityRef( r.getValue(INVOICE_ACTIVITY.DESCRIPTION) )
+					.setInvoiceDeclared(AonCollectionUtils.isNotEmpty(AlcatrazDAO.isInvoiceDeclared(ctx, r.getValue(INVOICE.ID))))
 					.setAccountEntryId( r.getValue(ACCOUNT_ENTRY.ID) )
 					.setAccountEntryActivityId( r.getValue(ACCOUNT_ENTRY.ACTIVITY) )
 					.setAccountEntryActivityRef( r.getValue(ACCOUNT_ENTRY_ACTIVITY.DESCRIPTION) )

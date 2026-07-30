@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.fiscal.mod111;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import org.junit.Test;
 
@@ -20,19 +20,19 @@ public class Mod111MarkAsCustomerCheckTest extends AbstractOccamTest {
 			Mod111 mod111 = MODEL111.get(getOccam(), model.getId());
 			mod111 = MODEL111.initializeForFinish(getOccam(), mod111);
 			double result0 = mod111.getDeclarationResult();
-			assertNotNull("Mod111. Tipo resultado NULL",mod111.getDeclarationResultType());
+			assertNotNull(mod111.getDeclarationResultType(), "Mod111. Tipo resultado NULL");
 			boolean finance = mod111.getDeclarationResultType().mustCreateFinance(); 
 			MODEL111.markAsCustomerCheck(getOccam(), mod111);
 			Mod111 mod111Bis = MODEL111.get(getOccam(), model.getId());
-			assertEquals("Status not CUSTOMER_CHECK", FiscalStatus.CUSTOMER_CHECK, mod111Bis.getStatus());
+			assertEquals(FiscalStatus.CUSTOMER_CHECK, mod111Bis.getStatus(), "Status not CUSTOMER_CHECK");
 			Asserts.assertEqualsDouble("Mod111. Resultado no coincide."
 					, result0
 					, mod111Bis.getDeclarationResult());
-			assertNotNull("Mod111. Tipo resultado NULL",mod111Bis.getDeclarationResultType());
+			assertNotNull(mod111Bis.getDeclarationResultType(), "Mod111. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod111. Finance NULL",mod111Bis.getFinance());	
+				assertNotNull(mod111Bis.getFinance(), "Mod111. Finance NULL");	
 			} else {
-				assertNull("Mod111. Finance NOT NULL",mod111Bis.getFinance());
+				assertNull(mod111Bis.getFinance(), "Mod111. Finance NOT NULL");
 			}
 		}
 	}

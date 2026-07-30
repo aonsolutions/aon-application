@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.marketing.question;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.util.List;
 

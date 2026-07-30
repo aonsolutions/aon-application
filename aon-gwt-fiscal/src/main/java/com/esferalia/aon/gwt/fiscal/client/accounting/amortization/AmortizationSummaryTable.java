@@ -7,9 +7,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable.AonFlexTableRow;
 import com.esferalia.aon.gwt.fiscal.client.accounting.amortization.AmortizationFormPanel.AmortizationFormPanelCallback;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
@@ -26,6 +27,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 class AmortizationSummaryTable extends ScrollPanel {
+	private static final String[] COLUMN_WIDTHS = new String[] {
+			"120px","120px","80px","150px","150px","150px","150px","150px","150px","150px" };
+	
+	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
 	
 	AmortizationSummaryTable( AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk ) {
 		setStyleName( AON.CSS.aonScrollArea() );
@@ -77,37 +82,36 @@ class AmortizationSummaryTable extends ScrollPanel {
 	}
 	
 	private Widget getTable(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk) {
-		AonDisplayGrid grid = new AonDisplayGrid();
-		grid.addStyleName( AON.CSS.aonBlockCenter() );
-		grid.addHeaderRow()
-			.addCell( new Label(AON.MSG.from()), AON.CSS.aonWidth120())
-			.addCell( new Label(AON.MSG.until()), AON.CSS.aonWidth120())
-			.addCell( new Label(AON.MSG.percent()), AON.CSS.aonWidth80())
-			.addCell( new Label(AON.MSG.allocation()) , AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.accumulated()), AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.pending()), AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.allocation()), AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.accumulated()), AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.pending()), AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.taxAdjust()), AON.CSS.aonWidth150())
+		grid
+			.addHeaderCell( new Label(AON.MSG.from()))
+			.addHeaderCell( new Label(AON.MSG.until()))
+			.addHeaderCell( new Label(AON.MSG.percent()))
+			.addHeaderCell( new Label(AON.MSG.allocation()))
+			.addHeaderCell( new Label(AON.MSG.accumulated()))
+			.addHeaderCell( new Label(AON.MSG.pending()))
+			.addHeaderCell( new Label(AON.MSG.allocation()))
+			.addHeaderCell( new Label(AON.MSG.accumulated()))
+			.addHeaderCell( new Label(AON.MSG.pending()))
+			.addHeaderCell( new Label(AON.MSG.taxAdjust()))
 		;
 		LinkedList<AmortizationDetail> details = summary(cbk);
 		AonCollectionUtils.stream( details)
 		.forEach( d -> {
-			addRow(opts, grid, cbk, d);
+			addRow(opts, cbk, d);
 		});
 		return grid;
 	}
 	
-	private void addRow(AmortizationModuleOptions opts, AonDisplayGrid grid, AmortizationFormPanelCallback cbk, AmortizationDetail d) {
+	private void addRow(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk, AmortizationDetail d) {
 		String fromDate = ensure(d.getFromDate(), () -> AON.DATE_FORMAT.format(d.getFromDate()), AonStringUtils.EMPTY);
 		Label fromDateLabel = new Label(fromDate);
 		String toDate = ensure(d.getToDate(), () -> AON.DATE_FORMAT.format(d.getToDate()), AonStringUtils.EMPTY);
 		Label toDateLabel = new Label(toDate);
 		AonDoubleBox fiscalAllocation = new AonDoubleBox( );
 		fiscalAllocation.setValue( d.getFiscalAllocation() );
-		fiscalAllocation.addValueChangeHandler(v -> changeFiscalAllocation(opts, cbk, d, fiscalAllocation ) );
-		grid.addRow()
+		fiscalAllocation.addValueChangeHandler(v -> cbk.changeFiscalAllocation(opts, d, fiscalAllocation ) );
+		AonFlexTableRow row = grid.addRow();
+		row
 			.addCell( fromDateLabel)
 			.addCell( toDateLabel )
 			.addCell( new AonDoubleLabel( d.getCoefficient() ) )
@@ -120,34 +124,7 @@ class AmortizationSummaryTable extends ScrollPanel {
 			.addCell( new AonDoubleLabel( AonMathUtils.round(  d.getAllocation() - d.getFiscalAllocation() ) ) )
 		;
 	}
-
-	private void changeFiscalAllocation(AmortizationModuleOptions opts, AmortizationFormPanelCallback cbk, AmortizationDetail d, AonDoubleBox fiscalAllocation) {
-		double newFiscalAllocation = fiscalAllocation.getValue();
-		AonConfirmDialog.showConfirm( "Continuar con la modificaci\u00F3n de la asignaci\u00F3n fiscal?" , new AonConfirmDialogCallback() {
-			
-			@Override
-			public void onAccept() {
-				d.setFiscalAllocation( newFiscalAllocation );
-				AmortizationModule.SERVICE.saveFiscalAllocation(opts.getOccam(), d, new AsyncCallback<Amortization>() {
-					@Override
-					public void onSuccess(Amortization result) {
-						cbk.onChange( result );
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						cbk.onError(caught.getMessage());;
-					}
-				});
-			}
-			
-			@Override
-			public void onCancel() {
-				fiscalAllocation.setValue( d.getFiscalAllocation() );
-			}
-		});
-	}
-
+	
 	private <T> T ensure(Object nullable, Supplier<T>  supplier, T defaultValue) {
 		return (nullable == null) 
 			? defaultValue

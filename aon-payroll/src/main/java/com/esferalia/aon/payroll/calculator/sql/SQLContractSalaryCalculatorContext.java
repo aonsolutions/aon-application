@@ -1305,9 +1305,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
-	private Map<Double, Double> solveLiquids;
-	private Map<Double, Double> solvePayments;
 
+	private Set<IContractCost> contextCost;
 	private Set<IContractBonus> contextBonus;
 	private Set<IContractDeduction> contextDeduction;
 
@@ -1420,8 +1419,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.liquids = new HashMap<>();
 		this.payments = new HashMap<>();
-		this.solveLiquids = new HashMap<>();
-		this.solvePayments = new HashMap<>();
+		this.contextCost = new HashSet<>();
 		this.contextBonus = new HashSet<>();
 		this.contextDeduction = new HashSet<>();
 
@@ -1751,7 +1749,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ResultSet rs = costStmt.executeQuery();
 			this.sqlContractCost.setResultSet(rs);
 			CompositeCosts hierarchyCosts = new CompositeCosts(this.sqlContractCost, getCCCCosts(),
-					getSSRegimeCosts()) {
+					getSSRegimeCosts(), this.contextCost ) {
 				@Override
 				protected int getLevel(IContractCost item) {
 					return ((ISystemCost) item).getDomain();
@@ -1862,8 +1860,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		liquids.clear();
 		payments.clear();
-		solveLiquids.clear();
-		solvePayments.clear();
 		
 		if (next) {
 			initContractExpressionCtx(hook);
@@ -2302,28 +2298,119 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		contextDeduction.add(deduction);
 	}
 
-	// protected Collection<ISystemPayment> getDefaultAgreementPayments() {
-//		
-//		
-//		if ( getAgreementKey() != null ) 
-//			return Collections.emptyList();
-//		
-//		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
-//			@Override
-//			public Iterator<ISystemPayment> iterator() {
-//				return new DelegateIterator<ISystemPayment>(super.iterator()) {
-//					@Override
-//					public boolean hasNext() {
-//						try {
-//							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
-//						} catch (SQLException e) {
-//							return false;
-//						}
-//					}
-//				};
-//			}
-//		};
-//	}
+	public void addCost(String name, String description, String expression) {
+		addCost(name, getStartDate(), null, description, expression);
+	}
+
+	public void addCost(String name, Date startDate, Date endDate, String description, String expression) {
+
+		IContractCost cost = new ISystemCost() {
+
+			@Override
+			public int getDomain() {
+				return 0;
+			}
+
+			@Override
+			public Date getStartDate() {
+				return startDate;
+			}
+
+			@Override
+			public Date getEndDate() {
+				return endDate;
+			}
+
+			@Override
+			public DeductionType getType() {
+				switch (name) {
+				case "MEI_E":
+					return DeductionType.MEI;
+				case "FP_E":
+					return DeductionType.JOB_TRAINING;
+				case "DESMPL_E":
+					return DeductionType.UNEMPLOYMENT;
+				case "CGC_E":
+					return DeductionType.COMMON_CONTINGENCY;
+				case "FOGASA_E":
+					return DeductionType.FOGASA;
+				case "IT_E":
+					return DeductionType.PROFESSIONAL_CONTINGENCY;
+				case "IMS_E":
+					return DeductionType.PROFESSIONAL_CONTINGENCY;
+				case "BONIF", "RED_SS_E":
+					return DeductionType.BONUS;
+				default:
+					return DeductionType.OTHER;
+				}
+			}
+
+			@Override
+			public double getAmount() {
+				return 0;
+			}
+
+			@Override
+			public boolean isReadOnly() {
+				return true;
+			}
+
+			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.SYSTEM;
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public Integer getId() {
+				return (int) (Math.random() * Integer.MAX_VALUE);
+			}
+
+			@Override
+			public String getExpression() {
+				return String.format("/*read-only*/%s/**/", expression);
+			}
+
+			@Override
+			public String getDescription() {
+				return description;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj)
+					return true;
+
+				if (!(obj instanceof IContractDeduction))
+					return false;
+
+				IContractDeduction deduction = (IContractDeduction) obj;
+				return (AonUtils.equals(this.getStartDate(), deduction.getStartDate())
+						&& AonUtils.equals(this.getEndDate(), deduction.getEndDate())
+						&& AonUtils.equals(this.getExpression(), deduction.getExpression())
+						&& AonUtils.equals(this.getDescription(), deduction.getDescription()));
+
+			}
+
+			@Override
+			public int hashCode() {
+				int hash = 7;
+				hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
+				hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
+				hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
+				hash = 31 * hash + (description == null ? 0 : description.hashCode());
+				return hash;
+			}
+
+		};
+
+		contextCost.add(cost);
+	}
+
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double solve, final double liquid) {
 
@@ -2960,11 +3047,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		UnivariateFunction univariateFunction = new UnivariateFunction() {
 
+			private Map<Double, Double> solveLiquids = new HashMap<>();
+
 			@Override
 			public double value(double solve) {
 				try {
-					if (SQLContractSalaryCalculatorContext.this.solveLiquids.containsKey(solve)) {
-						return SQLContractSalaryCalculatorContext.this.solveLiquids.get(solve);
+					if (this.solveLiquids.containsKey(solve)) {
+						return this.solveLiquids.get(solve);
 					}
 
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
@@ -2999,7 +3088,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					if (Math.abs(zero) <= solver.getAbsoluteAccuracy())
 						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
 
-					SQLContractSalaryCalculatorContext.this.solveLiquids.put(solve, zero);
+					this.solveLiquids.put(solve, zero);
 					
 					return zero;
 
@@ -3023,8 +3112,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		result = solver.solve(Byte.MAX_VALUE, univariateFunction, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
-		
-		solveLiquids.clear();
 
 		return result;
 	}
@@ -3040,12 +3127,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
 
+			private Map<Double, Double> solvePayments = new HashMap<>();
+
 			@Override
 			public double value(double solve) {
 
 				try {
-					if ( SQLContractSalaryCalculatorContext.this.solvePayments.containsKey(solve)) {
-						return SQLContractSalaryCalculatorContext.this.solvePayments.get(solve);
+					if ( this.solvePayments.containsKey(solve)) {
+						return this.solvePayments.get(solve);
 					}
 					
 					ISQLContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
@@ -3063,7 +3152,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					ISalary salary = calculator.calculate(ctx);
 					
 					double zero = payment - salary.getTotalPayment();
-					SQLContractSalaryCalculatorContext.this.solvePayments.put(solve, zero);
+					this.solvePayments.put(solve, zero);
 					
 					return zero;
 				} catch (SalaryException e) {

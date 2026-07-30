@@ -911,9 +911,19 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 			double v4 = AonMathUtils.floor((double) callback.getActivity().getSpouseHours() / yh);
 			double v5 = AonMathUtils.floor((double) callback.getActivity().getChildMen18Hours() / yh);
 			
+			// PARECE QUE EN 2026 SE REDONDEA SOLO AL FINAL
+			if (callback.getModel().getYear() >= 2026) {
+				v3 = (double) callback.getActivity().getOwnerHours() / yh;
+				v4 = (double) callback.getActivity().getSpouseHours() / yh;
+				v5 = (double) callback.getActivity().getChildMen18Hours() / yh;
+			}
+			
 			// Contribuyente discapacitado en grado igual o superior al 33 por 100 se computa al 75 por 100
 			if (callback.getActivity().isDis()) {
-				v3 = AonMathUtils.floor((double) callback.getActivity().getOwnerHours() / yh * 0.75);
+				if (callback.getModel().getYear() >= 2026)
+					v3 = (double) callback.getActivity().getOwnerHours() / yh * 0.75;
+				else
+					v3 = AonMathUtils.floor((double) callback.getActivity().getOwnerHours() / yh * 0.75);
 			}
 			
 			// Cuando el cónyuge o los hijos menores tengan la condición de no asalariados se computarán
@@ -924,8 +934,13 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 				staffValue = callback.getActivity().getModules().get(staffIndex).getValue();
 			}
 			if (callback.getActivity().getOwnerHours() >= yh && staffValue <= 1.0) {
-				v4 = AonMathUtils.floor((((double) callback.getActivity().getSpouseHours() / yh) * 0.50));
-				v5 = AonMathUtils.floor((((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50));
+				if (callback.getModel().getYear() >= 2026) {
+					v4 = (((double) callback.getActivity().getSpouseHours() / yh) * 0.50);
+					v5 = (((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50);
+				} else {
+					v4 = AonMathUtils.floor((((double) callback.getActivity().getSpouseHours() / yh) * 0.50));
+					v5 = AonMathUtils.floor((((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50));
+				}
 			}
 			double value = AonMathUtils.round(AonMathUtils.floor(v3 + v4 + v5 , 2));
 			if (noStaffIndex >= 0 && noStaffIndex <= 5 )  {
@@ -937,7 +952,6 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 		}
 	}
 	
-
 	private int staffModuleIndex( IModel131ActivityCallback callback ) {
 		for (int x = 0; x < callback.getActivity().getModules().size(); x++) {
 			String desc = callback.getActivity().getModules().get(x).getDescription();

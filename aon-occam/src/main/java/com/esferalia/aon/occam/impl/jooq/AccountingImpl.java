@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
@@ -52,6 +53,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
@@ -81,6 +83,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainInvoiceStatDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization.AmortizationDAO;
@@ -784,6 +787,31 @@ public class AccountingImpl implements IAccounting {
 		ctx.getDslContext().transaction(
 			configuration -> AmortizationDAO.unlinkInvoice(ctx, domain, amortizationId, invoiceId) );	
 	}
+	
+	@Override
+	public Invoice changeInvestment(CloseableAONContext ctx, Integer domain, Integer invoiceId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.changeInvestment(ctx, domain, invoiceId) );	
+	}
+	
+	@Override
+	public Stream<AccountingAmortization> getAccountingAmortizations(AONContext ctx, Integer domain, AmortizationParams params) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AmortizationDAO.getAccountingAmortizations(ctx, domain, params) );		
+	}
+	
+	@Override
+	public void recordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids) {
+		ctx.getDslContext().transaction(
+			configuration -> AmortizationDAO.recordAmortizationDetails(ctx, domain, ids) );
+	}
+	
+	@Override
+	public void unrecordAmortizationDetails(AONContext ctx, Integer domain, Integer[] ids) {
+		ctx.getDslContext().transaction(
+				configuration -> AmortizationDAO.unrecordAmortizationDetails(ctx, domain, ids) );
+	}
+	
 
 	// ********************************** [INVOICES CONUNTERS]
 	public Stream<DomainInvoiceStat> getDomainInvoiceStats(AONContext ctx, DomainInvoiceStatParams params) {

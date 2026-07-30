@@ -52,6 +52,7 @@ public class AonInvestAssetBox extends AonCustomListBox implements HasSelectionH
 	}
 	public void setInvestAsset(Integer activityId, boolean fireEvents) {
 		int index = -1;
+		this.investAsset = null;
 		for ( int i = 0; i < investAssets.size(); i++ ) {
 			if ( AonNumberUtils.equals( investAssets.get(i).getId(), activityId) ) {
 				this.investAsset = investAssets.get(i);

@@ -515,7 +515,7 @@ public class DeliveryDAO {
 				.set(DELIVERY_DETAIL.WAREHOUSE, deliveryDetail.getWarehouse()) 
 				.set(DELIVERY_DETAIL.QUANTITY, deliveryDetail.getQuantity())
 				.set(DELIVERY_DETAIL.PRICE, deliveryDetail.getPrice())
-				.set(DELIVERY_DETAIL.DISCOUNT_EXPR, deliveryDetail.getDiscountExpression())
+				.set(DELIVERY_DETAIL.DISCOUNT_EXPR, deliveryDetail.getDiscountExpression().getDiscountExpr())
 				.set(DELIVERY_DETAIL.SALES_DETAIL, deliveryDetail.getSalesDetail())
 				.set(DELIVERY_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.set(DELIVERY_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))

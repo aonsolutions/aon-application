@@ -1542,7 +1542,12 @@ const PDFViewerApplication = {
     }
 
     if (triggerAutoPrint) {
-      this.triggerPrinting();
+      // AON: auto-impresión desactivada. Algunos PDFs (p.ej. facturas de
+      // proveedor) traen una OpenAction "Print" o JavaScript con print(),
+      // lo que hacía que se abriera el diálogo de imprimir del navegador
+      // solo al mostrar el documento en el visor embebido. El usuario debe
+      // pulsar imprimir explícitamente.
+      // this.triggerPrinting();
     }
   },
 

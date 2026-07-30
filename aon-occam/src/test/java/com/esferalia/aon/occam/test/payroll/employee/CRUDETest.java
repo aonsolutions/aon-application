@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -79,7 +79,7 @@ public class CRUDETest extends AbstractOccamTest {
 				)
 		.collect(Collectors.toMap(e -> e.getNaf(), e -> e ));
 		
-		Assert.assertEquals(addEmployees.length, getEmployeesMap.size());
+		assertEquals(addEmployees.length, getEmployeesMap.size());
 		
 		for ( int i = 0; i < addEmployees.length; i++ ) {
 			Employee addEmployee = addEmployees[i];
@@ -99,7 +99,7 @@ public class CRUDETest extends AbstractOccamTest {
 		.collect(Collectors.toMap(e -> e.getNaf(), e -> e ));
 		
 		
-		Assert.assertEquals(cccEmployeesLength, getEmployeesMap.size());
+		assertEquals(cccEmployeesLength, getEmployeesMap.size());
 		for (int i = 0; i < cccEmployeesLength; i++) {
 			Employee addEmployee = addEmployees[i];
 			Employee getEmployee = getEmployeesMap.get(addEmployee.getNaf());

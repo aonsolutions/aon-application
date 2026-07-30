@@ -20,6 +20,7 @@ import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonParent } from './aon-parent.js';
 import { AonDesktop } from './company/aon-desktop.js';
+import { AonInvoiceRecord } from './invoice/aon-invoice-record.js';
 
 import * as GWT from '../gwt/gwt.js';
 import { favicon, title, loadCustomView } from '../css/aon-customView.js';
@@ -1207,7 +1208,11 @@ export class AonHeader extends AonElement {
 		}
 	}
 
-	companySelection(company, onlyOne, callback = (company) => this.showCompany(company)) {
+	companySelectionToPendingAccounting(company) {
+	   this.companySelection(company, false, () => this.rootPanel(new AonInvoiceRecord()));
+	 }
+	 
+	 companySelection(company, onlyOne, callback = (company) => this.showCompany(company)) {
 		localStorage.setItem('company', JSON.stringify(company));
 		LS.setDomainId(company.id);
 		LS.setDomainName(company.domain);

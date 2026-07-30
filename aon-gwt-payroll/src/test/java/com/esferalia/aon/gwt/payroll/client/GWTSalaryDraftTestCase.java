@@ -699,7 +699,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeCto(String currentDomainName, String currentUser, String document,
+			public void getEmployeeCto(String currentDomainName, String currentUser, String cif, String document,
 					Integer contractId, Date startDate, Date endDate, String sepeIde, AsyncCallback<String> callback)
 					throws IllegalArgumentException {
 				// TODO Auto-generated method stub

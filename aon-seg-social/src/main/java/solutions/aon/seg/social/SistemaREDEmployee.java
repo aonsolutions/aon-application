@@ -756,7 +756,7 @@ class SistemaREDEmployee {
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SegSocialException(e);
 		}
 		return null;
 	}
@@ -816,9 +816,10 @@ class SistemaREDEmployee {
 			UnexpectedPage docPage = linkElement.dblClick();
 			return docPage.getWebResponse().getContentAsStream().readAllBytes();
 		} catch (IOException e) {
-			// Exception
 			throw new IllegalArgumentException(e.getMessage());
-		}
+		}catch ( ClassCastException e) {
+			throw new IllegalArgumentException(" El informe requerido excede el límite de información de transmisión permitido. Solicítelo en Diferido");
+		} 
 	}
 
 	private static String domElementExists(DomElement domEl) {

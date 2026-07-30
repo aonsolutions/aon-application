@@ -35,7 +35,7 @@
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{bundle.finance_add_batch}"
 			rendered="#{financeList.checkedCount > 0}"
-			actionListener="#{fbatch.onBatchSelected}" reRender="financeBatchForm,fbatchPanelTabSet">
+			actionListener="#{fbatch.onBatchSelected}" reRender="fbatchToolbar, financeBatchForm,fbatchPanelTabSet">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
      	</aon:commandButton>	

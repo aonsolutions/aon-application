@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class SellerWorkloadParams extends SellerParams implements Serializable{
 	
@@ -8,6 +9,8 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 	
 	private Byte customers;
 	private Byte period;
+	private Date periodStart;
+	private Date periodEnd;
 	private Integer seller;
 	private Integer taskHolder;
 	
@@ -34,6 +37,24 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 
 	public SellerWorkloadParams setPeriod(Byte period) {
 		this.period = period;
+		return this;
+	}
+
+	public Date getPeriodStart() {
+		return periodStart;
+	}
+
+	public SellerWorkloadParams setPeriodStart(Date periodStart) {
+		this.periodStart = periodStart;
+		return this;
+	}
+
+	public Date getPeriodEnd() {
+		return periodEnd;
+	}
+
+	public SellerWorkloadParams setPeriodEnd(Date periodEnd) {
+		this.periodEnd = periodEnd;
 		return this;
 	}
 	
@@ -82,6 +103,13 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 		return this;
 	}
 	
+	@Override
+	public String toString() {
+		return "SellerWorkloadParams [customers=" + customers + ", period=" + period + ", periodStart=" + periodStart
+				+ ", periodEnd=" + periodEnd + ", seller=" + seller + ", taskHolder=" + taskHolder
+				+ ", customerActive=" + customerActive + ", customerInactive=" + customerInactive
+				+ ", customerBlocked=" + customerBlocked + "]";
+	}
 	
 	
 }

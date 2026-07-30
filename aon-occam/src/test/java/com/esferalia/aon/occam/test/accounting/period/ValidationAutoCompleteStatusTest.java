@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.accounting.period;
 
 
-import static org.junit.Assert.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
 
 import java.util.Date;
 

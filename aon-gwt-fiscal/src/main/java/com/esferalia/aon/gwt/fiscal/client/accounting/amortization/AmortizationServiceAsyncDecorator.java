@@ -5,11 +5,13 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.accounting.AccountingAmortization;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetail;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationDetailFlat;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationInvoice;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsync {
@@ -109,4 +111,29 @@ public class AmortizationServiceAsyncDecorator implements AmortizationServiceAsy
 		AON.start();
 		serviceAsync.unlinkInvoice(occam, domain, amortizationId, invoiceId, new AsyncCallbackWrapper<>(asyncCallback));
 	}
+	
+	@Override
+	public void changeInvestment(Occam occam, Integer domain, Integer invoiceId, AsyncCallback<Invoice> asyncCallback) {
+		AON.start();
+		serviceAsync.changeInvestment(occam, domain, invoiceId, new AsyncCallbackWrapper<>(asyncCallback));
+	}
+	
+	@Override
+	public void getAccountingAmortizations(Occam occam, Integer domain, AmortizationParams params, AsyncCallback<LinkedList<AccountingAmortization>> callback) {
+		AON.start();
+		serviceAsync.getAccountingAmortizations(occam, domain, params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void recordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.recordAmortizationDetails(occam, domain, ids, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void unrecordAmortizationDetails(Occam occam, Integer domain, Integer[] ids, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.unrecordAmortizationDetails(occam, domain, ids, new AsyncCallbackWrapper<>(callback));
+	}
+	
 }

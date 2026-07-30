@@ -53,7 +53,10 @@ public class AonCustomTextBox extends HTMLPanel {
 	}
 
 	public void setValue(String value) {
-		this.textBox.setValue(value);
+		setValue(value, false);
+	}
+	public void setValue(String value, boolean fireEvents) {
+		this.textBox.setValue(value, fireEvents);
 	}
 
 	public String getValue() {

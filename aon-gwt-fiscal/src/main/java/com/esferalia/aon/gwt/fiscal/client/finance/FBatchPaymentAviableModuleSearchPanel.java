@@ -201,7 +201,9 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 		
 		if(AonStringUtils.equals(financeShow.getValue(), "1")) {
 			params.setPayment(true);
-			params.setPayMethodType(this.fbatch.getType() == (byte)0 ? PayMethodType.CREDIT_CARD : PayMethodType.BANK_TRANSFER);
+			if(this.fbatch.getType() != (byte)0)
+				params.setPayMethodType(PayMethodType.BANK_TRANSFER);
+//			params.setPayMethodType(this.fbatch.getType() == (byte)0 ? PayMethodType.CREDIT_CARD : PayMethodType.BANK_TRANSFER);
 		} else if(AonStringUtils.equals(financeShow.getValue(), "0")) {
 			params.setCharge(true);
 		} else

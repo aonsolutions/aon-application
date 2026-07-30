@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -129,6 +130,7 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -476,6 +478,7 @@ public interface CommonService extends RemoteService {
 	List<UserScopeFull> getUserScopesByUser(String domainName, Integer domain, String user, Integer userId) throws AonCoreException;
 	void authorizateUserScopes(String currentDomainName, int currentDomain, String currentUser, UserScopeAuthorization userScopeAuthorization) throws AonCoreException;
 	void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) throws AonCoreException;
+	void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign) throws AonCoreException;
 	
 	List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException;
 	void saveUserScope(String domainName, Integer domainId, String user, UserScope userScope) throws AonCoreException;
@@ -488,7 +491,8 @@ public interface CommonService extends RemoteService {
 	List<Domain> getDomains(String domainName, Integer domainId, String user) throws AonCoreException;
 	
 	ArrayList<User> getUsers(String currentDomainName, int currentDomain, String currentUser) throws AonCoreException;
-
+	ArrayList<User> getUsers(String currentDomainName, int currentDomain, String currentUser, String description) throws AonCoreException;
+	
 	// **************************************************
 	// ******************************************** [TAG]
 	// **************************************************

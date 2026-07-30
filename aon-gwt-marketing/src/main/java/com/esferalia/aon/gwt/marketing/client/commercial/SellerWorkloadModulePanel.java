@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
@@ -36,7 +35,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	
 	private AonSearchPanelButton cleanButton;
 	
-	private AonCustomListBox period = new AonCustomListBox("Periocidad");
+	private AonCustomListBox month = new AonCustomListBox("Mes");
+	private AonCustomListBox year = new AonCustomListBox("A\u00f1o");
+	private AonCustomListBox compareWith = new AonCustomListBox("Comparar con");
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Estado Agente");
 	private AonCustomListBox customer = new AonCustomListBox("Agentes");
@@ -68,16 +69,31 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		setSearchPlaceholder("Buscar por nombre ...");
 		
 		Date date = DateUtils.getFirstDayOfMonth(new Date());
-		
-		period.addItem( "Mes anterior ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, -1)) + ")", "0");
-		period.addItem( "Mes anterior y actual", "1");
-		period.addItem( "Mes actual ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, 1)) + ")", "2");
-		period.addItem( "Mes actual y pr\u00f3ximo mes", "3");
-		period.addItem( "Pr\u00f3ximo mes ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, 1)) + ")", "4");
-		period.setValue("2");
-		period.getListBox().addChangeHandler(event -> {
-			onSearch( options );
-		});
+		int currentMonth = DateUtils.getMonth(date);
+		int currentYear = DateUtils.getYear(date);
+
+		String[] monthNames = new String[] {
+			"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+		};
+
+		for (int i = 0; i < monthNames.length; i++) {
+			month.addItem(monthNames[i], Integer.toString(i));
+		}
+		month.setValue(Integer.toString(currentMonth));
+		month.getListBox().addChangeHandler(event -> onSearch(options));
+
+		for (int y = currentYear; y >= currentYear - 3; y--) {
+			year.addItem(Integer.toString(y), Integer.toString(y));
+		}
+		year.setValue(Integer.toString(currentYear));
+		year.getListBox().addChangeHandler(event -> onSearch(options));
+
+		compareWith.addItem("Sin comparativa", "none");
+		compareWith.addItem("Con mes anterior", "previous");
+		compareWith.addItem("Con mes siguiente", "next");
+		compareWith.setValue("none");
+		compareWith.getListBox().addChangeHandler(event -> onSearch(options));
 		
 		scope.addItem("-", "");
 		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
@@ -132,7 +148,14 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			onSearch( options );
 		});
 		
-		addFilterWidget(period);
+		HTMLPanel monthYearPanel = new HTMLPanel("");
+		monthYearPanel.addStyleName(AON.CSS.aonItemFlex());
+		monthYearPanel.addStyleName("month");
+		monthYearPanel.add(month);
+		monthYearPanel.add(year);
+
+		addFilterWidget(monthYearPanel);
+		addFilterWidget(compareWith);
 		addFilterWidget(scope);
 		addFilterWidget(active);
 		addFilterWidget(customer);
@@ -164,6 +187,8 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		
 		add(container);
 		
+		AonMessagePanel.showLoading(messagePanel, "Cargando ... (si tiene muchos agentes/clientes, puede tardar un poco)");
+		
 		onSearch( options );
 	}
 	
@@ -176,7 +201,10 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		Set<String> selectedOptions = new LinkedHashSet<String>();
 		selectedOptions.add("Activo");
 		customerStatus.setSelectedOptions(selectedOptions);
-		period.setValue("2");
+		Date now = new Date();
+		month.setValue(Integer.toString(DateUtils.getMonth(now)));
+		year.setValue(Integer.toString(DateUtils.getYear(now)));
+		compareWith.setValue("none");
 		
 		sellerWorkloadPanel.resetSearchOffset();
 		
@@ -210,6 +238,12 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			
 			if(null != sellerWorkloadListParams.getCustomerBlocked())
 				json.put("customerBlocked", new JSONString( Boolean.toString( sellerWorkloadListParams.getCustomerBlocked() )));
+
+			if(null != sellerWorkloadListParams.getPeriodStart())
+				json.put("periodStart", new JSONString(Long.toString(sellerWorkloadListParams.getPeriodStart().getTime())));
+
+			if(null != sellerWorkloadListParams.getPeriodEnd())
+				json.put("periodEnd", new JSONString(Long.toString(sellerWorkloadListParams.getPeriodEnd().getTime())));
 			
 			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 			json.put("isSellersWorkload", new JSONString("true"));
@@ -254,6 +288,11 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			protected void onShowLoadingMessage(String loadingMessage) {
 				AonMessagePanel.showLoading(messagePanel, loadingMessage);
 			}
+			
+			@Override
+			protected void onHideMessage() {
+				AonMessagePanel.hideMessage(messagePanel);
+			}
 		
 		};
 			
@@ -263,7 +302,9 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	public SellerWorkloadParams getWidgetParams( SellerModuleOptions options) {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams()
 			.setCustomers(AonStringUtils.isBlank(customer.getValue()) ? null : Byte.parseByte(customer.getValue()))
-			.setPeriod(Byte.parseByte(period.getValue()))
+			.setPeriod(getSelectedPeriod())
+			.setPeriodStart(getSelectedPeriodStart())
+			.setPeriodEnd(getSelectedPeriodEnd())
 			.setCustomerActive(customerStatus.getSelectedOptions().contains("Activo"))
 			.setCustomerInactive(customerStatus.getSelectedOptions().contains("Inactivo"))
 			.setCustomerBlocked(customerStatus.getSelectedOptions().contains("Bloqueado"))
@@ -281,6 +322,61 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			;
 		
 		return sellerWorkloadParams;
+	}
+
+	private Date getSelectedPeriodStart() {
+		Date selectedStart = DateUtils.getDate(Integer.parseInt(month.getValue()), Integer.parseInt(year.getValue()));
+
+		if ("previous".equals(compareWith.getValue())) {
+			selectedStart = DateUtils.addMonths2Date(selectedStart, -1);
+		}
+
+		return DateUtils.getFirstDayOfMonth(selectedStart);
+	}
+
+	private Date getSelectedPeriodEnd() {
+		Date selectedEnd = DateUtils.getDate(Integer.parseInt(month.getValue()), Integer.parseInt(year.getValue()));
+
+		if ("next".equals(compareWith.getValue())) {
+			selectedEnd = DateUtils.addMonths2Date(selectedEnd, 1);
+		}
+
+		selectedEnd = DateUtils.getLastDayOfMonth(selectedEnd);
+		selectedEnd.setHours(23);
+		selectedEnd.setMinutes(59);
+		selectedEnd.setSeconds(59);
+
+		return selectedEnd;
+	}
+
+	private Byte getSelectedPeriod() {
+		Date currentDate = DateUtils.getFirstDayOfMonth(new Date());
+		Date selectedDate = DateUtils.getDate(Integer.parseInt(month.getValue()), Integer.parseInt(year.getValue()));
+
+		int monthDiff = DateUtils.getMonths(selectedDate, currentDate);
+
+		String compareValue = compareWith.getValue();
+		if ("previous".equals(compareValue)) {
+			if (monthDiff >= 1) {
+				return (byte) 3;
+			}
+			return (byte) 1;
+		}
+
+		if ("next".equals(compareValue)) {
+			if (monthDiff <= -1) {
+				return (byte) 1;
+			}
+			return (byte) 3;
+		}
+
+		if (monthDiff <= -1) {
+			return (byte) 0;
+		}
+		if (monthDiff >= 1) {
+			return (byte) 4;
+		}
+		return (byte) 2;
 	}
 	
 	public void getSellerListCount(Consumer<Integer> finish) {

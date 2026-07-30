@@ -390,7 +390,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadCtoContract(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
+		employeesService.getEmployeeCto(contractData.getEnterpriseCIF(), employeeData.getDocument(), contractData.getContractId(), contractData.getStartDate(), contractData.getStartDate(), contractData.getSepeId(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);

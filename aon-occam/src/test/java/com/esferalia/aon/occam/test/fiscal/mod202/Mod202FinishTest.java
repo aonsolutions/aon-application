@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.test.fiscal.mod202;
 
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import java.util.Objects;
 
@@ -34,22 +34,22 @@ public class Mod202FinishTest extends AbstractOccamTest {
 					.orElse(null);
 			mod202 = MODEL202.initializeForFinish(getOccam(), mod202);
 			double result0 = mod202.getDeclarationResult();
-			assertNotNull("Mod202. Tipo resultado NULL",mod202.getDeclarationResultType());
+			assertNotNull(mod202.getDeclarationResultType(), "Mod202. Tipo resultado NULL");
 			boolean finance = mod202.getDeclarationResultType().mustCreateFinance(); 
 			MODEL202.markAsFinished(getOccam(), mod202);
 			Mod202 mod202Bis = MODEL202.get(getOccam(), model.getId());
-			assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod202Bis.getStatus());
+			assertEquals(FiscalStatus.FINISHED, mod202Bis.getStatus(), "Status not FINISHED");
 			Asserts.assertEqualsDouble("Mod202. Resultado no coincide."
 					, result0
 					, mod202Bis.getDeclarationResult());
-			assertNotNull("Mod202. Tipo resultado NULL",mod202Bis.getDeclarationResultType());
+			assertNotNull(mod202Bis.getDeclarationResultType(), "Mod202. Tipo resultado NULL");
 			if (finance) {
-				assertNotNull("Mod202. Finance NULL",mod202Bis.getFinance());	
+				assertNotNull(mod202Bis.getFinance(), "Mod202. Finance NULL");	
 			} else {
-				assertNull("Mod202. Finance NOT NULL",mod202Bis.getFinance());
+				assertNull(mod202Bis.getFinance(), "Mod202. Finance NOT NULL");
 			}
 			if (oldFinanceId != null) {
-				assertNull("Mod202. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!", FinanceDAO.getFinance(ctx, oldFinanceId));	
+				assertNull(FinanceDAO.getFinance(ctx, oldFinanceId), "Mod202. PREVIOUS Finance ["+ oldFinanceId +"] NOT DELETED!");	
 			}
 		}
 	}

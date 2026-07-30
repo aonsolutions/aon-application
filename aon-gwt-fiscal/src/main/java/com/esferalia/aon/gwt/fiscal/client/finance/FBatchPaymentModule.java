@@ -67,7 +67,7 @@ public class FBatchPaymentModule  implements EntryPoint {
 		fBatchPaymentList = new FBatchPaymentList(opt, this.fbatchType) {
 			
 			@Override
-			protected void onFBatchSelect(FBatch fBatch) {
+			protected void onFBatchSelect(FBatch fBatch, boolean isNewFBatch) {
 				fBatchPaymentPayrollEntryModule = new FBatchPaymentEntryModule(fbatchType) {
 					
 					@Override
@@ -84,6 +84,7 @@ public class FBatchPaymentModule  implements EntryPoint {
 				
 				deckLayoutPanel.showWidget(fBatchPaymentPayrollEntryModule);
 				fBatchPaymentPayrollEntryModule.onModuleLoad(opt, fBatch);
+				fBatchPaymentPayrollEntryModule.setHasSaved(isNewFBatch);
 			}
 			
 		};
@@ -93,6 +94,7 @@ public class FBatchPaymentModule  implements EntryPoint {
 			
 			@Override
 			public void back(boolean refresh) {
+				Window.alert("back - refresh: " + refresh);
 				if(refresh) fBatchPaymentList.onSearch();
 				deckLayoutPanel.showWidget(0);
 			}

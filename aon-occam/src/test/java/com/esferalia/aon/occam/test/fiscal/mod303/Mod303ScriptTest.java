@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
@@ -230,7 +230,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									
 									private String arrayNotNull() {
 										JSONArray array = new JSONArray(info);
-										Assert.assertNotNull(array);
+										assertNotNull(array);
 										return null;
 									}
 			
@@ -246,19 +246,19 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									public String visitComputeKey() {
 										Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 										if (key != null && dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals(info, "");
 										} else  if (key != null && Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals(info, "");
 										} else if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
-											Assert.assertNotNull(info);
-											Assert.assertNotEquals(info, "");
+											assertNotNull(info);
+											assertNotEquals(info, "");
 										} else if (key != null) {
 											JSONObject json = new JSONObject(info);
-											Assert.assertNotNull(json);
+											assertNotNull(json);
 											JSONArray array = json.getJSONArray("messages");
-											Assert.assertNotNull(array);
+											assertNotNull(array);
 										}
 			
 										return null;
@@ -266,7 +266,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 									
 									@Override 
 									public String visitNone() { 
-										Assert.assertEquals(AonStringUtils.EMPTY,info);
+										assertEquals(AonStringUtils.EMPTY,info);
 										return null;
 									}
 									

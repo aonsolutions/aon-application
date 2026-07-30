@@ -1,16 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.amortization;
 
 import java.util.LinkedList;
+import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleLabel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFlexTable.AonFlexTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.occam.api.model.accounting.Amortization;
 import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -18,12 +21,16 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amortization>{
 	
+	private static final String[] COLUMN_WIDTHS = new String[] {
+			"100px","100px","300px","300px","120px","200px","300px"};
+
 	private FlowPanel containerPanel = new FlowPanel();
-	private AonDisplayGrid grid = new AonDisplayGrid();
+	private AonFlexTable grid = new AonFlexTable(COLUMN_WIDTHS, AON.CSS.aonBlockCenter());
 	
 	private static final int LIMIT = 50;
 	private final MutableInt offset = new MutableInt(0);
@@ -33,13 +40,12 @@ class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amor
 	
 	AmortizationTable(AmortizationModuleOptions opts, AmortizationParams params ) {
 		setStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginTop());
 		
 		setWidget(containerPanel);
 		
-		grid.addStyleName(AON.CSS.aonMarginTop());
-		grid.addStyleName(AON.CSS.aonBlockCenter());
 		containerPanel.add(grid);
-		AmortizationTableRow.fillHeader( grid.addHeaderRow() );
+		fillHeader( );
 		
 		addScrollHandler(event -> {
 			// ------------------------------------ Ignore scroll up.
@@ -88,7 +94,13 @@ class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amor
 			@Override
 			public void onSuccess(LinkedList<Amortization> list) {
 				int size = AonCollectionUtils.size(list);
-				AonCollectionUtils.stream(list).forEach(this::addRow);
+				
+				AonCollectionUtils.stream(list).forEach( am -> {
+					AonFlexTableRow row = grid.addRow();
+					fillRow(row, am);
+					row.addClickHandler(event -> SelectionEvent.fire(AmortizationTable.this, am ));
+				});
+				
 				offset.add( size );
 				enableMoreData();
 				if ( size < params.getLimit() ) {
@@ -110,17 +122,62 @@ class AmortizationTable extends ScrollPanel implements HasSelectionHandlers<Amor
 				AonMessageDialog.error( "Error inexperado: " + e.getMessage());
 			}
 			
-			public AonDisplayGridRow addRow(Amortization amortization) {
-				AmortizationTableRow row = new AmortizationTableRow(opts, amortization);
-				grid.add( row );
-				row.addClickHandler(event -> SelectionEvent.fire(AmortizationTable.this, amortization ));
-				return row;
+			private AonFlexTableRow fillRow(AonFlexTableRow row, Amortization am) {
+				String initialDate = ensure(am.getInitialDate(), () -> AON.DATE_FORMAT.format(am.getInitialDate()), AonStringUtils.EMPTY);
+				Label initialDateLabel = new Label(initialDate);
+				String deadline = ensure(am.getDeadline(), () -> AON.DATE_FORMAT.format(am.getDeadline()), AonStringUtils.EMPTY);
+				Label deadlineLabel = new Label(deadline);
+				String description = ensure(am.getDescription(), am::getDescription, AonStringUtils.EMPTY);
+				description = AonStringUtils.abbreviate(description, 60);
+				Label descriptionLabel = new Label(description);
+				String fixedAssetAccount = ensure(am.getFixedAssetAccount(), () -> am.getFixedAssetAccount().getFullName(), AonStringUtils.EMPTY);
+				fixedAssetAccount = AonStringUtils.abbreviate(fixedAssetAccount, 40);
+				Label fixedAssetAccountLabel = new Label(fixedAssetAccount);
+				Label investAssetLabel = new Label();
+				String investAsset = ensure(am.getInvestAsset(), () -> am.getInvestAsset().getDescription(), AonStringUtils.EMPTY);
+				investAssetLabel.setTitle(investAsset);
+				investAssetLabel.setText(AonStringUtils.abbreviate(investAsset, 50));
+				
+				String comments = ensure(am.getComments(), am::getComments, AonStringUtils.EMPTY);
+				Label commentsLabel = new Label();
+				commentsLabel.setTitle(comments);
+				commentsLabel.setText(AonStringUtils.abbreviate(comments, 50));
+				return row
+					.addCell(initialDateLabel)
+					.addCell(deadlineLabel)
+					.addCell(descriptionLabel)
+					.addCell(fixedAssetAccountLabel,AON.CSS.aonNowrap())
+					.addCell(new AonDoubleLabel(am.getAmount()), AON.CSS.aonTextRight())
+					.addCell(investAssetLabel,AON.CSS.aonNowrap())
+					.addCell(commentsLabel,AON.CSS.aonNowrap())
+				;
+			}
+			
+			private <T> T ensure(Object nullable, Supplier<T>  supplier, T defaultValue) {
+				return (nullable == null) 
+					? defaultValue
+					: supplier.get();
 			}
 		});
 	}
+	
+	private void fillHeader() {
+		grid
+			.addHeaderCell(new Label(AON.MSG.from()),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label(AON.MSG.until()),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label(AON.MSG.description()))
+			.addHeaderCell(new Label(AON.MSG.fixedAssetAccount()),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label(AON.MSG.amount()),AON.CSS.aonTextRight())
+			.addHeaderCell(new Label(AON.MSG.investAsset()),AON.CSS.aonNowrap())
+			.addHeaderCell(new Label(AON.MSG.comments()),AON.CSS.aonNowrap())
+		;
+	}
+	
+	
 	
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Amortization> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
+	
 }

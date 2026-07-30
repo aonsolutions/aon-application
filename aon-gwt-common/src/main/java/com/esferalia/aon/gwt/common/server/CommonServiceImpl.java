@@ -56,8 +56,10 @@ import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.EmployeeSegSocial;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -74,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.ProjectParams;
+import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Relationship;
@@ -153,6 +156,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -1474,6 +1478,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) throws AonCoreException {
 		AON.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate);
 	}
+
+	@Override
+	public void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign) throws AonCoreException {
+		AON.assignSellerUserScopes(domainName, domain, user, userScopeAssign);
+	}
 	
 	@Override
 	public List<UserScopeFull> getUserScopeList(String domainName, Integer domain, String user, Integer scopeId) throws AonCoreException {
@@ -1527,6 +1536,43 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public ArrayList<User> getUsers(String domainName, int domainId, String user) throws AonCoreException {
 		return AON.getUserStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getActiveProperty().eq((byte)1))).collect(Collectors.toCollection(ArrayList::new));
 	}
+	
+
+	@Override
+	public ArrayList<User> getUsers(String domainName, int domainId, String user, String description)
+	        throws AonCoreException {
+
+	    UserFilter filter = new UserFilter() {
+	        @Override
+	        public Filter filter(UserProperties p) {
+
+	            Filter f = p.getDomainProperty().eq(Integer.valueOf(domainId))
+	                    .and(p.getActiveProperty().eq(Byte.valueOf((byte) 1)));
+
+	            if (AonStringUtils.isNotBlank(description)) {
+	                String desc = "%" + description + "%";
+
+	                Filter nameOrLogin =
+	                        p.getNameProperty().like(desc)
+	                        .or(p.getLoginProperty().like(desc));
+
+	                f = f.and(nameOrLogin);
+	            }
+
+	            return f;
+	        }
+	    };
+
+	    Options options = new Options()
+	            .setFull(true)
+	            .setOffset(0)
+	            .setLimit(100);
+
+	    return AON.getUserStream(domainName, domainId, user, filter, options)
+	              .collect(Collectors.toCollection(ArrayList<User>::new));
+	}
+
+
 	
 	// **************************************************
 	// ******************************************** [TAG]

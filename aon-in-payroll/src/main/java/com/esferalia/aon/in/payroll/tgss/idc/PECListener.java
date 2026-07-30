@@ -226,7 +226,8 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> COST_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("43", "-CGC_E"); 								// Contingencias Comunes  
+			put("43", "-CGC_E"); 																// Contingencias Comunes  
+			put("07", "-( CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E + MEI_E )"); 		// Contingencias Comunes  
 		}
 	};
 
@@ -250,7 +251,6 @@ class PECListener  implements IdcParserListener {
 			put("08", REMOVE_ALL_DEDUCTIONS);
 			put("10", collection(
 				newCgcITDeduction(ContextVariable.CGC_EMPLOYEE),
-				//newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.MEI_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
 				newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)
@@ -328,6 +328,19 @@ class PECListener  implements IdcParserListener {
 	};
 
 	@SuppressWarnings("serial")
+	static final Map<String, Collection<DeductionProvider>> UNKNOWN_DEDUCTION_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<DeductionProvider>>() {
+		{
+			put("17-08", collection(
+					newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
+					newRemoveDeduction(ContextVariable.MEI_EMPLOYEE),
+					newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
+					newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE),
+					newRemoveDeduction(ContextVariable.SOLIDARITY_EMPLOYEE)
+					));
+		}
+	};
+
+	@SuppressWarnings("serial")
 	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
@@ -369,6 +382,7 @@ class PECListener  implements IdcParserListener {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("03", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
+			put("07", "( %s ) * %.2f / 100.00"); 															// 
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("16",  String.format(Locale.ROOT,
 					"TOTAL_BONF_SEPE_E=(isdef TOTAL_BONF_SEPE_E ? TOTAL_BONF_SEPE_E : 0.00); "
@@ -490,6 +504,14 @@ class PECListener  implements IdcParserListener {
 			UNKNOWN_COST_QUOTA_PROVIDERS_MAP.get( code+"-"+ quota ).forEach(f -> {
 				try {
 					f.newCost(nss, ccc, code, quota, portTipo,  description, start, pecEnd).addTo(PECListener.this);
+				} catch (ParseException e) {
+				}
+			});
+		}
+		if ( UNKNOWN_DEDUCTION_QUOTA_PROVIDERS_MAP.containsKey(code+"-"+quota)) {
+			UNKNOWN_DEDUCTION_QUOTA_PROVIDERS_MAP.get( code+"-"+ quota ).forEach(f -> {
+				try {
+					f.newDeduction(nss, ccc, code, quota, portTipo,  description, start, pecEnd).addTo(PECListener.this);
 				} catch (ParseException e) {
 				}
 			});

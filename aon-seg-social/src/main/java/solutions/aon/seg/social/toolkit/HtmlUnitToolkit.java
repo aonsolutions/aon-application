@@ -56,6 +56,7 @@ import org.htmlunit.IncorrectnessListener;
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.ScriptException;
+import org.htmlunit.SgmlPage;
 import org.htmlunit.StringWebResponse;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebClientOptions;
@@ -90,6 +91,11 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 
 public class HtmlUnitToolkit {
+	
+	public static final String PGIS_LOGIN_URL = "https://idp.seg-social.es/PGIS/Login";
+	public static final String MENU_AFI_DIRECTO = "menuAFI-DIRECTO";
+	public static final String MENU_AFI_DIRECTO_URL = "https://w2sp.seg-social.es/M/menuAFI-DIRECTO.html";
+
 
 	// WAIT FOR A SPECIFIC HTML ELEMENT
 	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
@@ -178,6 +184,8 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			webClient.getOptions().setSSLClientCertificateKeyStore(certificateInputStream, certificatePassword,
 					certificateType);
@@ -248,6 +256,71 @@ public class HtmlUnitToolkit {
 	        e.printStackTrace();
 	        throw new InvalidCertificateException();
 	    }
+	}
+	
+
+	 
+	/**
+	 * Variante que además entra en el servicio concreto: busca en el menú
+	 * AFI-DIRECTO el enlace cuyo href contiene el ARQ.IDAPP indicado y lo pulsa.
+	 * Devuelve la página del servicio ya transformada a HtmlPage.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient, String idApp)
+			throws Exception {
+	 
+		HtmlPage menuPage = connectTgss(webClient);
+		
+		HtmlAnchor appAnchor = menuPage.getAnchors().stream()
+				.filter(a -> a.getHrefAttribute().contains("ARQ.IDAPP=" + idApp))
+				.findFirst()
+				.orElseThrow(() -> new SegSocialException(
+						"menuAFI-DIRECTO: no se encontró el enlace con ARQ.IDAPP=" + idApp));
+	 
+		Page page = appAnchor.click();
+		webClient.waitForBackgroundJavaScript(5000);
+	 
+		if (page instanceof XmlPage)
+			return transformXmlPage((XmlPage) page);
+		return asHtmlPage(page);
+	}
+	 
+	/** Localiza el botón/enlace "DNIe o certificado" en la página de PGIS. */
+	private static DomElement findCertificateAccess(HtmlPage loginPage) {
+		// a) Por texto visible del enlace
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String text = anchor.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return anchor;
+		}
+		// b) Por texto de cualquier botón
+		for (DomElement button : loginPage.getElementsByTagName("button")) {
+			String text = button.asNormalizedText().toLowerCase();
+			if (text.contains("certificado") || text.contains("dnie"))
+				return button;
+		}
+		// c) Por href que sugiera login por certificado
+		for (HtmlAnchor anchor : loginPage.getAnchors()) {
+			String href = anchor.getHrefAttribute().toLowerCase();
+			if (href.contains("cert") || href.contains("dnie"))
+				return anchor;
+		}
+		return null;
+	}
+	 
+	/** Convierte cualquier Page devuelta por HtmlUnit en HtmlPage. 
+	 * @throws IOException */
+	private static HtmlPage asHtmlPage(Page page) throws SegSocialException, IOException {
+		if (page instanceof HtmlPage)
+			return (HtmlPage) page;
+		if (page instanceof XmlPage) {
+			try {
+				return transformXmlPage((XmlPage) page);
+			} catch (TransformerException e) {
+				throw new SegSocialException(e);
+			}
+		}
+		throw new SegSocialException("Página inesperada: " + page.getClass().getName());
 	}
 
 	private static boolean needsChainCompletion(KeyStore keyStore, char[] password) throws Exception {
@@ -349,8 +422,8 @@ public class HtmlUnitToolkit {
 	    HtmlPage result = webClient.getPage(target);
 
 	    if (result.getElementById("IPCEIdP") != null) {
-	        Toolkit.buildFile(result.asXml().getBytes(),
-	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
+//	        Toolkit.buildFile(result.asXml().getBytes(),
+//	                System.getProperty("user.home") + "/Desktop/clave_debug.html");
 	        throw new Exception("La autenticación con certificado en Cl@ve no se completó. "
 	                + "Revisa clave_debug.html y verifica la cadena del certificado.");
 	    }
@@ -671,6 +744,68 @@ public class HtmlUnitToolkit {
 		}
 	}
 
+	@Deprecated
+	public static HtmlPage transformPage(Page page) throws IOException, TransformerException  {
+		if(page instanceof HtmlPage)
+			return HtmlUnitToolkit.secureTransformHtmlPage((HtmlPage) page);
+		return HtmlUnitToolkit.transformXmlPage((XmlPage) page);
+	}
+
+	@Deprecated
+	public static HtmlPage secureTransformHtmlPage(HtmlPage htmlXmlPage)  {
+		try {
+			return transformHtmlPage(htmlXmlPage);
+		} catch ( Exception e ) {
+			return htmlXmlPage; 
+		}
+	}
+
+	@Deprecated
+	public static HtmlPage transformHtmlPage(HtmlPage htmlXmlPage) throws IOException, TransformerException {
+		WebClient webClient = htmlXmlPage.getWebClient();
+	    
+	    String xslStylesheet = getXslStylesheet(htmlXmlPage);
+
+	    XmlPage xslPage = webClient.getPage(xslStylesheet);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new StreamSource( new StringReader(htmlXmlPage.getElementById("xml").getTextContent()));
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URL xslUrl = xslPage.getWebResponse().getWebRequest().getUrl();
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = htmlXmlPage.getWebResponse().getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    HtmlPage htmlPage = loadHtmlAndJsCodeIntoCurrentWindow(webClient, out.toString(), xmlUrl);
+	    return htmlPage;
+	}
+	
+	@Deprecated
 	public static HtmlPage transformXmlPage(XmlPage xmlPage) throws IOException, TransformerException {
 		WebClient webClient = xmlPage.getWebClient();
 	    
@@ -715,6 +850,82 @@ public class HtmlUnitToolkit {
 	    return htmlPage;
 	}
 	
+	public static WebResponse transformHtmlPage(WebClient webClient, WebResponse response, Map<String,String> variables, Map<URI,String> uriCache ) throws IOException, TransformerException {
+
+	    URL xslUrl = getXslScript(response);
+
+	    XmlPage xslPage = webClient.getPage(xslUrl);
+	    Source xslSource = new DOMSource(xslPage.getXmlDocument());
+
+	    Source xmlSource = new StreamSource( new StringReader(getXmlScript(response)));
+
+	    StringWriter out = new StringWriter();
+	    Result outputTarget = new StreamResult(out);
+
+	    URIResolver uriResolver = (href, base) -> {
+		try {
+//			URI hrefURI = new URI(base).resolve(href);
+//		    
+//		    if ( uriCache.containsKey(hrefURI )) {
+//			    return new StreamSource(new StringReader(uriCache.get(hrefURI)), hrefURI.toURL().toExternalForm());
+//		    }
+
+		    XmlPage hrefPage = webClient.getPage(new URL( xslUrl, href));
+		    return new DOMSource(hrefPage.getXmlDocument());
+		} catch ( MalformedURLException e ) {
+		    throw new TransformerException(e);
+		}
+		catch (FailingHttpStatusCodeException | IOException e) {
+		    throw new TransformerException(e);
+		}
+	    };
+
+	    TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+	    transformerFactory.setURIResolver(uriResolver);
+
+	    Transformer transformer = transformerFactory.newTransformer(xslSource);
+	    transformer.setURIResolver(uriResolver);
+
+	    transformer.transform(xmlSource, outputTarget);
+
+	    URL xmlUrl = response.getWebRequest().getUrl();
+	    
+	    String path = xmlUrl.getPath().substring ( 0, xmlUrl.getPath().lastIndexOf("/"));
+	    webClient.getPage(String.format("%s://%s%s", xmlUrl.getProtocol(), xmlUrl.getHost(), path));
+	    
+	    return new WebResponseWrapper(response) {
+
+	    	private String content = out.toString();
+	    	
+	    	@Override
+	    	public String getContentType() {
+	    		return super.getContentType();
+	    	}
+	    	
+	    	@Override
+	    	public long getContentLength() {
+	    		return content.getBytes().length;
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString() {
+	    		return getContentAsString(getContentCharset());
+	    	}
+	    	
+	    	@Override
+	    	public String getContentAsString(Charset encoding) {
+	    		return new String(content.getBytes(encoding));
+	    	}
+
+	    	@Override
+	    	public InputStream getContentAsStream() throws IOException {
+	    		return new ByteArrayInputStream(content.getBytes());
+	    	}
+	    	
+	    };
+	    
+	}
+
 	public static WebResponse transformXmlPage(WebClient webClient, WebResponse response, Map<String,String> variables, Map<URI,String> uriCache ) throws IOException, TransformerException {
 	    URL xslURL = getXslStylesheet(response);
 	    
@@ -800,8 +1011,26 @@ public class HtmlUnitToolkit {
 	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
 	    final HtmlPage page = new HtmlPage(webResponse, webWindow);
 	    webWindow.setEnclosedPage(page);
+	    
+	    webClient.getJavaScriptEngine().initialize(webWindow, page);
+	    
+	    htmlParser.parse(webClient, webResponse, page, false, true);
+	    return page;
+	}	
 
-	    htmlParser.parse(webClient, webResponse, page, false, false);
+
+	public static HtmlPage loadHtmlAndJsCodeIntoCurrentWindow(final WebClient webClient,  final String htmlCode, final URL url) throws IOException {
+
+        // 1. Ensure JavaScript is enabled (true by default, but good to enforce)
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+        // 2. Wrap your raw HTML string into a WebResponse object
+	    final StringWebResponse webResponse = new StringWebResponse(htmlCode,url);
+
+        // 3. Load the page via the WebClient window to trigger the JS engine
+        HtmlPage page = (HtmlPage) webClient.loadWebResponseInto(webResponse, webClient.getCurrentWindow());
+
 	    return page;
 	}	
 	
@@ -826,9 +1055,71 @@ public class HtmlUnitToolkit {
 	    return Pattern.compile("xml-stylesheet\\s*type=\"text/xsl\"\\s*href\\s*=\\s*\"(?<href>.*)\"").matcher(response.getContentAsString()).find();
 	}
 
+	public static String getXslStylesheet (HtmlPage htmlPage) throws MalformedURLException {
+		
+	    
+	    return getXslScript(htmlPage.getWebResponse()).toString();
+	    
+	}
+	
+	public static boolean isXmlScriptPage ( Page page ) {
+		return ( page instanceof HtmlPage htmlPage) && htmlPage.getElementById("xml") != null ;
+	}
+
+	public static XmlPage getXmlScriptPage ( Page page ) {
+		HtmlPage htmlPage = (HtmlPage) page;
+		String xml = htmlPage.getElementById("xml").getTextContent();
+		try {
+			return new XmlPage(new StringWebResponse(xml, htmlPage.getUrl()), htmlPage.getEnclosingWindow());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static boolean hasXslScript (WebResponse response) throws MalformedURLException {
+	    return Pattern.compile("script\\s*id=\"xslUri\"\\s*href\\s*=\\s*\"(?<href>[^\"]*)\"").matcher(response.getContentAsString()).find();
+	}
+
+	public static URL getXslScript (WebResponse response) throws MalformedURLException {
+		
+		//<script id="xslUri" href="/ServiciosAfiliacionRED/templates/afrd/fw4/CU300_ATR66ConsultaNumeroSegSocial/AfrdPaConsultaNumeroSegSocial_ES.xsl" type="text/plain">
+	    
+	    Matcher matcher = Pattern.compile("script\\s*id=\"xslUri\"\\s*href\\s*=\\s*\"(?<href>[^\"]*)\"").matcher(response.getContentAsString());
+	    matcher.find();
+	    String href = matcher.group("href");
+
+	    URL url = response.getWebRequest().getUrl();
+	    return new URL(url, href);
+	    
+	}
+
+	public static String getXmlScript (WebResponse response) throws MalformedURLException {
+		
+		//<script id="xml" type="text/plain">
+		// <ProsaXMLData FechaCreacion="09/07/2026 11:45:36.062" Version="1.0">
+		// <SPM arqobj="ed"><ARQ.ANALYTICS id="ARQ.ANALYTICS"><content><page_name><![CDATA[fw4/crtr/nuevaconsultacalculos/CrtrPaObtencionAutorizacion]]></page_name>
+		// ...
+		// ...
+		// </ProsaXMLData>
+	    
+		//Pattern prosaXmlDatapattern = Pattern.compile("script\\s*id=\"xml\"\\s*type=\"text/plain\">(?<xml>.*)</script>", Pattern.DOTALL);
+		Pattern prosaXmlDatapattern = Pattern.compile("<ProsaXMLData.*</ProsaXMLData>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	    Matcher prosaXmlDataMatcher = prosaXmlDatapattern.matcher(response.getContentAsString());
+	    prosaXmlDataMatcher.find();
+	    String prosaXmlData = prosaXmlDataMatcher.group();
+
+	    return prosaXmlData;
+	    
+	}
+
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
 			String certificateType, Map<String,String> variables) {
 		return transformXmlPage(webClient, certificateData, certificatePassword, certificateType, variables, (request, response ) -> response );
+	}
+
+	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
+			String certificateType) {
+		return transformXmlPage(webClient, certificateData, certificatePassword, certificateType, new HashMap<>(), (request, response ) -> response );
 	}
 
 	public static WebConnectionWrapper transformXmlPage(WebClient webClient, byte[] certificateData, String certificatePassword,
@@ -853,6 +1144,17 @@ public class HtmlUnitToolkit {
 								
 								response = transformXmlPage(xmlClient, response, variables, cache);
 							} 
+						} else if ("text/html".equals(response.getContentType()) && hasXslScript(response) ){
+							try (WebClient xmlClient = getWebClient(certificateData, certificatePassword, certificateType) ) {
+								xmlClient.getOptions().setCssEnabled(false);
+								xmlClient.getOptions().setDownloadImages(false);
+								xmlClient.getOptions().setUseInsecureSSL(true);
+								
+								xmlClient.getOptions().setJavaScriptEnabled(true);
+								xmlClient.getOptions().setThrowExceptionOnScriptError(false);
+								
+								response = transformHtmlPage(xmlClient, response, variables, cache);
+							} 
 						} 
 						
 						return response;
@@ -865,6 +1167,37 @@ public class HtmlUnitToolkit {
 				
 			}
 		};
+	}
+	
+	/**
+	 * Pasos comunes de entrada al Sistema RED:
+	 *   1. Entra en https://idp.seg-social.es/PGIS/Login
+	 *   2. Pulsa "DNIe o certificado" (la autenticación la resuelve el keystore
+	 *      del WebClient)
+	 *   3. Pulsa el enlace cuyo href apunta a
+	 *      https://w2sp.seg-social.es:443/M/menuAFI-DIRECTO.html
+	 *
+	 * Devuelve la página del menú AFI-DIRECTO, ya autenticada, desde la que
+	 * cada servicio puede pulsar su propio enlace ARQ.IDAPP.
+	 * @throws Exception 
+	 */
+	public static HtmlPage connectTgss(WebClient webClient) throws Exception {
+	 
+		webClient.getOptions().setJavaScriptEnabled(true);
+		webClient.getOptions().setRedirectEnabled(true);
+		webClient.getOptions().setUseInsecureSSL(true);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		
+		// 1. Pedimos el recurso PROTEGIDO. El servidor redirige a Cl@ve/PGIS si hace falta.
+	    HtmlPage page = asHtmlPage(webClient.getPage(MENU_AFI_DIRECTO_URL));
+
+	    // 2. Si estamos en la pantalla Cl@ve, autenticamos con certificado.
+	    //    ensureClaveAuth vuelve a pedir 'target' y devuelve el recurso ya autenticado.
+	    page = ensureClaveAuth(webClient, page, MENU_AFI_DIRECTO_URL);
+
+	    webClient.waitForBackgroundJavaScript(10000);
+	    
+	    return page; // ya es el menuAFI-DIRECTO autenticado
 	}
 	
 	private static void trace(WebClient webClient) {

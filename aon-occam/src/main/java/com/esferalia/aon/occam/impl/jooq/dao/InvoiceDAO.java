@@ -51,6 +51,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -84,6 +85,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
@@ -97,6 +99,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
@@ -111,8 +114,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RMediaPropertyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.amortization.AmortizationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
@@ -165,6 +170,7 @@ public class InvoiceDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }
 	}
 
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
@@ -2029,6 +2035,34 @@ public class InvoiceDAO {
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(INVOICE.ID.equal( invoiceId))
 			.execute();
+	}
+
+	public static Invoice changeInvestment(CloseableAONContext ctx, Integer domain, Integer invoiceId) {
+		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (invoiceId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("Factura"));
+		Invoice invoice = getFullInvoice(ctx, invoiceId);
+		if (invoice == null || invoice.getId() == null) {
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		}
+		List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared( ctx, invoiceId);
+		if (AonCollectionUtils.isNotEmpty(models)) {
+			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
+				models.stream()
+					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+					.toString()
+					));
+		}
+		InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), invoice);
+		invoice.setInvestment(!invoice.isInvestment());
+		ctx.getDslContext()
+			.update(INVOICE)
+				.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( invoice.isInvestment() ) )
+				.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+				.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.where(INVOICE.ID.equal( invoice.getId()))
+				.execute();
+		return getFullInvoice(ctx, invoiceId);
 	}
 }
 

@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.sales;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class SalesDetailAllTests extends AbstractOccamTest {
 		String discount = null;
 		sales.setDiscountExpression(discount);
 
-		assertEquals("0.0", sales.getDiscountExpression().getDiscountExpr());
+		assertEquals(sales.getDiscountExpression().getDiscountExpr(), "0.0");
 	}
 	
 	private void getCarrierTest() {

@@ -125,6 +125,11 @@ public class ScopeModule extends MainEntryPoint {
 			protected ScopeParams getScopeListParams() {
 				return scopeModulePanel.getScopeParams();
 			}
+
+			@Override
+			protected boolean existsScopeDescription(String description, Integer scopeId) {
+				return scopeModulePanel.existsScopeWithDescription(description) && !scopeModulePanel.getScopeListPosition(scopeId).equals(-1);
+			}
 		};
 
 		deckLayoutPanel.add(scopeModulePanel);

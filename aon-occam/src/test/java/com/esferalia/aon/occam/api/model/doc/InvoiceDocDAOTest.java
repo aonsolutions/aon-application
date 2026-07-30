@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.api.model.doc;
 
 import static com.esferalia.aon.jooq.tables.InvoiceDoc.INVOICE_DOC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertThrows;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Date;
@@ -233,14 +233,14 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), inserted.getInvoice());
-		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(inserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AON, inserted.getExternalStorage());
 		assertNull(inserted.getS3Bucket());
 		assertNull(inserted.getS3Key());
 		assertNull(inserted.getDriveId());
 		assertEquals(attachId, inserted.getAonId());
 		assertEquals(invoice.getIssueDate(), inserted.getDate());
-		assertEquals("Factura", inserted.getDescription());
+		assertEquals(inserted.getDescription(), "Factura");
 		assertTrue( AonStringUtils.startsWith(inserted.getUrl(), "https://"+DOMAIN_NAME));
 
 	}
@@ -278,7 +278,7 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), inserted.getInvoice());
-		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(inserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AWS, inserted.getExternalStorage());
 		assertEquals(S3BUCKET,inserted.getS3Bucket());
 		assertEquals(s3Key,inserted.getS3Key());
@@ -323,7 +323,7 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), inserted.getInvoice());
-		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(inserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AWS, inserted.getExternalStorage());
 		assertEquals(S3BUCKET,inserted.getS3Bucket());
 		assertEquals(s3Key,inserted.getS3Key());
@@ -372,7 +372,7 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), inserted.getInvoice());
-		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(inserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AWS, inserted.getExternalStorage());
 		assertEquals(S3BUCKET,inserted.getS3Bucket());
 		assertEquals(s3Key,inserted.getS3Key());
@@ -407,7 +407,7 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), otherInserted.getInvoice());
-		assertEquals("invoice_doc", otherInserted.getAonTable());
+		assertEquals(otherInserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AWS, otherInserted.getExternalStorage());
 		assertEquals(S3BUCKET,otherInserted.getS3Bucket());
 		assertEquals(otherS3Key,otherInserted.getS3Key());
@@ -453,7 +453,7 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		
 		// Compare
 		assertEquals(invoice.getId(), inserted.getInvoice());
-		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(inserted.getAonTable(), "invoice_doc");
 		assertEquals(ExternalStorage.AWS, inserted.getExternalStorage());
 		assertEquals(S3BUCKET,inserted.getS3Bucket());
 		assertEquals(s3Key,inserted.getS3Key());

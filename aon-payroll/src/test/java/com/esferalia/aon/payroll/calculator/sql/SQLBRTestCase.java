@@ -31,6 +31,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +55,9 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.payment.IPayment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -672,7 +675,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					{
 						this.expression = "P_0 + P_1 + P_2";
 						this.month = Month.DECEMBER;
-						this.start = "01/12";
+						this.start = "01/01";
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
@@ -685,38 +688,56 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						this.issue = "01/07";
 					}
 				}, });
-		ContractRecord contract = newContract(aonContext, 
-				new String[] {
-				format("BRUTO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
-				new String[] {
-				"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
-		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
-				"TRACE('BASE_REGULADORA=%f\r\n',DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA); "
-				+"0.00 ", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 		//@formatter:on
 
 		Date startITDate = getToday();
-		int itDays = (int) (Math.random() * (getMax(startITDate, DAY_OF_MONTH) - get(
-				startITDate, DAY_OF_MONTH))) + 1;
-		Date endITDate = addDays(startITDate, itDays - 1);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
-				endITDate, null);
+		int maxItDays = (int) ((getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH))) + 1;
+		for ( int itDays = 1; itDays <= maxItDays; itDays++) {
 
-		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(startDate);
-		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, contract);
+			ContractRecord contract = newContract(aonContext, 
+					new String[] {
+					format("BRUTO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+					new String[] {
+					"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+			addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
+					"TRACE('BASE_REGULADORA=%f\r\n',DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA); "
+					+"0.00 ", 
+					"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 
-		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
-		calculator.setSalaryBuilder(new SalaryBuilder());
+			Date endITDate = addDays(startITDate, itDays - 1);
+			addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+					endITDate, null);
+			
+			System.out.println("IT [" + startITDate + "..." + endITDate + "]" + " days: " + itDays);
 
-		ISalary salary = calculator.calculate(ctx);
+			Date startDate = getFirstDayOfMonth(getToday());
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
 
-		int monthDays = get(endDate, DAY_OF_MONTH);
-		assertEquals(2000.00
-				* (monthDays - itDays) / monthDays, salary.getTotalPayment(), DELTA, format("%s :", TOTAL_LIQUID));
-		assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
+			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+			calculator.setSalaryBuilder(new SalaryBuilder() {
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description,
+						java.util.Date startDate, java.util.Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println("Payment [" + description + "] : " + amount + " quote: " + quote + " tax: " + tax + " startDate: " + startDate + " endDate: " + endDate);
+					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				}
+			});
+
+			Salary salary = calculator.calculate(ctx);
+			
+//			salary.getSalaryPayments().stream().forEach(payment->{
+//				System.out.println("Payment [" + payment.getExpression() + "] : " + payment.getAmount());
+//			});
+
+			int monthDays = get(endDate, DAY_OF_MONTH);
+			assertEquals(2000.00
+					* (monthDays - itDays) / monthDays, salary.getTotalPayment(), DELTA, format("%s :", TOTAL_LIQUID));
+			assertEquals(2000.00, salary.getCommonBase(), DELTA, format("%s :", CGC_BASE));
+		}
+		
 
 	}
 

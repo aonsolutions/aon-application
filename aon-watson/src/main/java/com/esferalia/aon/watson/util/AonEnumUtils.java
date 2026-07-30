@@ -16,6 +16,11 @@ public class AonEnumUtils {
 		return (enume == null) ? null : (byte) enume.ordinal();
 	}
 	
+	public static Boolean safeBoolean(Integer value) {
+		if (value == null || value < 0 || value > 1) return null;
+		return (value == 1);
+	}
+	
 	public static boolean getBoolean(Byte value) {
 		if (value == null)
 			return false;
@@ -52,5 +57,6 @@ public class AonEnumUtils {
 		return values[i];
 	}
 	 */
+
 
 }

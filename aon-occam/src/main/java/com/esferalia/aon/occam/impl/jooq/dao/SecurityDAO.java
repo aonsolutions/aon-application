@@ -56,7 +56,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.Record8;
 import org.jooq.Result;
@@ -102,6 +101,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -126,6 +126,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDA
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.scope.SellerAssignHelper;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -1717,12 +1718,8 @@ public class SecurityDAO {
 			.collect(Collectors.toList());
 		
 		list.forEach(us -> {
-			Result<Record2<Integer, String>> scopeDomains = ctx.getDslContext().select(DOMAIN.ID, DOMAIN.DESCRIPTION)
-				.from(DOMAIN)
-				.where(DOMAIN.SCOPE.eq(us.getScope().getId()))
-				.fetch();
-			
-			scopeDomains.forEach(r -> us.getScope().getScopeDomains().put(r.get(DOMAIN.ID), r.get(DOMAIN.DESCRIPTION)));
+			LinkedList<Domain> domainsScope = DomainDAO.getDomainList(ctx, f -> f.getScopeProperty().eq(us.getScope().getId()));
+			domainsScope.forEach(r -> us.getScope().getScopeDomains().put(r.getId(), r));
 		});
 		
 		return list;
@@ -1744,6 +1741,12 @@ public class SecurityDAO {
 				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
 				.execute();
 		});
+	}
+	
+	public static void assignSellerUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAssign userScopeAssign) {
+		
+		SellerAssignHelper.assignSellerUserScopes(ctx, domain, user, userScopeAssign);
+		
 	}
 	
 	public static void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {

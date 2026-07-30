@@ -232,7 +232,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 		double f1 = ((q - reductions) * percent / 100) + comisiones;
 		f1 = f1 * tempIndex;
-		f1 = AonMathUtils.round(f1 * daysTrim / diasActividad);
+		f1 = AonMathUtils.round(f1 * (daysTrim / diasActividad));  
 		return f1;
 	}
 	

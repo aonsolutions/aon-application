@@ -619,7 +619,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 						
 						@Override
 						public void onSuccess(EmployeeContractInfo employeeDB) {
-							impl.getEmployeeCto(employeeDB.getEmployeeInfo().getDocument(), employeeDB.getContractInfo().getContractId(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getSepeId(), new AsyncCallback<String>() {
+							impl.getEmployeeCto(employeeDB.getContractInfo().getEnterpriseCIF(), employeeDB.getEmployeeInfo().getDocument(), employeeDB.getContractInfo().getContractId(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getSepeId(), new AsyncCallback<String>() {
 								@Override
 								public void onSuccess(String dataURI) {
 									AonMessagePanel.hideMessage(messagePanel);
