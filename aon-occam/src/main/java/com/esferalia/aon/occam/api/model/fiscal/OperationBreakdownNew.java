@@ -45,6 +45,8 @@ public class OperationBreakdownNew implements Serializable {
 	private String cadasdralReference; 		// Referencia Catastral del Inmueble
 	private int entryId;                    // ID del asiento
 	private int entryJournal;               // Número de Diario del asiento
+	private String conceptDescription; 		// Descripción Concepto de Ingreso o Gasto
+	private String accountCode; 			// Código Cuenta Contable
 	
 	public String getActivityCode() {
 		return activityCode;
@@ -310,6 +312,20 @@ public class OperationBreakdownNew implements Serializable {
 	}
 	public OperationBreakdownNew setEntryJournal(int entryJournal) {
 		this.entryJournal = entryJournal;
+		return this;
+	}
+	public String getConceptDescription() {
+		return conceptDescription;
+	}
+	public OperationBreakdownNew setConceptDescription(String conceptDescription) {
+		this.conceptDescription = conceptDescription;
+		return this;
+	}
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public OperationBreakdownNew setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
 		return this;
 	}
 	

@@ -2,13 +2,12 @@
 // - Libro Registro de IVA: Facturas contabilizadas, desglosadas por tipo de IVA y bien afecto (alquileres), cobros y pagos RECC van aparte de la factura
 // - Libro Registro de IRPF: Apuntes (sean facturas o no), de las cuentas de los grupos 6 y 7
 // - Libro Unificado de IVA e IRPF: Facturas contabilizadas y apuntes de los grupos 6 y 7 que no son facturas
-
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
-import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -32,6 +31,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
@@ -209,6 +210,36 @@ public class AccountingOperationNewDAO {
 		,FINANCE.RDOCUMENT
 		,FINANCE.RNAME
 	};
+	
+	private static final HashMap<String,String> CONCEPT_DESCRIPTION_MAP = new HashMap<>();
+
+	static {		
+		CONCEPT_DESCRIPTION_MAP.put("I01", "Ingresos de explotación");
+		CONCEPT_DESCRIPTION_MAP.put("I02", "Ingresos financieros derivados del aplazamiento o fraccionamiento de operaciones");
+		CONCEPT_DESCRIPTION_MAP.put("I03", "Ingresos por subvenciones corrientes");
+		CONCEPT_DESCRIPTION_MAP.put("I04", "Imputación de ingresos por subvenciones de capital");
+		CONCEPT_DESCRIPTION_MAP.put("I06", "Variación de existencias (incremento de existencias finales)");
+		CONCEPT_DESCRIPTION_MAP.put("I07", "Otros ingresos");
+		CONCEPT_DESCRIPTION_MAP.put("G01", "Compra de existencias");
+		CONCEPT_DESCRIPTION_MAP.put("G02", "Variación de existencias (disminución de existencias finales)");
+		CONCEPT_DESCRIPTION_MAP.put("G04", "Sueldos y salarios");
+		CONCEPT_DESCRIPTION_MAP.put("G05", "Seguridad Social a cargo de la empresa");
+		CONCEPT_DESCRIPTION_MAP.put("G07", "Indemnizaciones");
+		CONCEPT_DESCRIPTION_MAP.put("G10", "Otros gastos de personal");
+		CONCEPT_DESCRIPTION_MAP.put("G12", "Arrendamientos y cánones");
+		CONCEPT_DESCRIPTION_MAP.put("G13", "Reparaciones y conservación");
+		CONCEPT_DESCRIPTION_MAP.put("GY4", "Suministros (electricidad, agua, gas, telefonía e internet)");
+		CONCEPT_DESCRIPTION_MAP.put("G19", "Servicios de profesionales independientes");
+		CONCEPT_DESCRIPTION_MAP.put("G20", "Primas de seguros");
+		CONCEPT_DESCRIPTION_MAP.put("G22", "Otros servicios exteriores");
+		CONCEPT_DESCRIPTION_MAP.put("G23", "Intereses de deudas");
+		CONCEPT_DESCRIPTION_MAP.put("G24", "Otros gastos financieros");
+		CONCEPT_DESCRIPTION_MAP.put("G26", "Otros tributos fiscalmente deducibles");
+		CONCEPT_DESCRIPTION_MAP.put("G34", "Pérdidas por insolvencias de deudores");
+		CONCEPT_DESCRIPTION_MAP.put("G37", "Otros conceptos fiscalmente deducibles");
+		CONCEPT_DESCRIPTION_MAP.put("G38", "Dotaciones del ejercicio para amortización del inmovilizado inmaterial");
+		CONCEPT_DESCRIPTION_MAP.put("GY8", "Dotaciones del ejercicio para amortización del inmovilizado material");
+	}
 	
 	private AccountingOperationNewDAO() {
 		
@@ -454,7 +485,6 @@ public class AccountingOperationNewDAO {
 			.select(SELECT_FIELDS_FAC)
 			.from(INVOICE_DETAIL)
 			.join(INVOICE).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-//			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value())))
 			.join(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) // Facturas contabilizadas
 			.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
 			.leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value())))
@@ -474,7 +504,6 @@ public class AccountingOperationNewDAO {
 						.and(params.isDistributeInvoice() ? DSL.trueCondition() :  DSL.falseCondition()) // PARA QUE SE APLIQUE O NO EL LEFT JOIN
 			)
 			.leftOuterJoin(otherIae).on(otherIae.ID.equal(allEnterpriseActivity.IAE))
-			
 			;
 	}
 	
@@ -504,10 +533,8 @@ public class AccountingOperationNewDAO {
 			.leftAntiJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(ACCOUNT_ENTRY.ID)) // Apuntes que no son facturas
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-//			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE_ACTIVITY.ENTERPRISE))
 			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.equal(ACCOUNT_ENTRY_DETAIL.DOMAIN))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(ENTERPRISE.REGISTRY))
-			
 			.leftOuterJoin(ACCOUNT_ENTRY_FINANCE_TRACKING).on(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))
 			.leftOuterJoin(FINANCE_TRACKING).on(FINANCE_TRACKING.ID.equal(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING))
 			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
@@ -517,8 +544,16 @@ public class AccountingOperationNewDAO {
 	// Facturas 
 	private static Condition getWhereFac(AONContext ctx, OperationParamsNew params) {
 
-		// Todas las facturas del periodo indicado		
-		Condition condition1 = INVOICE.TAX_DATE.between(AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate()));
+		// Todas las facturas del periodo indicado
+		// Libro de IVA y Unificado: Facturas según Fecha de IVA de la factura
+		// Libro de IRPF: Facturas según fecha de asiento
+//		Condition condition1 = INVOICE.TAX_DATE.between(AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate()));
+		Condition condition1 = null;
+		if (params.getBookType() == 1) {
+			condition1 = ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate()));
+		} else {
+			condition1 = INVOICE.TAX_DATE.between(AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate()));
+		}
 		
 		// Facturas RECC de antes del periodo indicado, que tengan pagos RECC en el periodo indicado o fecha limite devengo el último día del ejercicio (excepto Libro de IRPF)
 
@@ -629,6 +664,9 @@ public class AccountingOperationNewDAO {
 		else 
 			condition = condition.and(ACCOUNT.CODE.startsWith("6")); // Gastos
 		
+		// Asientos que no son de explotación
+		condition = condition.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPERATING.value()));
+		
 		return condition;
 	}
 	
@@ -678,9 +716,9 @@ public class AccountingOperationNewDAO {
 			boolean isp = !isSales && isIsp; // ISP Recibidas
 			
 			String conceptCode = getConceptCode(rec.getValue(accountCodeField));
-			// LA BASE SE COGE DE INVOICE_DETAIL, PORQUE LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, NO CREAN REGISTRO EN INVOICE_TAX
-//			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.BASE));
-			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
+			double conceptAmount = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE)); // La base se coge de INVOICE_DETAIL, porque las facturas de gastos no deducibles en IVA, no crean registro en INVOICE_TAX
+			String conceptDescription = getConceptDescription(conceptCode);
+			String accountCode = rec.getValue(accountCodeField);
 			
 			// Compras y Gastos: Si lleva bien afecto, comprobar si grado de afectación IRPF es menor de 100%
 			if (!isSales && rec.getValue(INVEST_ASSET.TYPE) != null) {
@@ -704,7 +742,6 @@ public class AccountingOperationNewDAO {
 			}
 			
 			// Total factura = base + IVA + REQ (excepto recibidas ISP o intracomunitarias o UOSS)
-//			double base = rec.getValue(INVOICE_TAX.BASE);
 			double base = AonNumberUtils.todouble(rec.getValue(INVOICE_DETAIL.TAXABLE_BASE));
 			double total = isp || isIntracommunity || isVatUnion ? base : base + getQuota(rec) + getSurchargeQuota(rec);
 			
@@ -761,15 +798,20 @@ public class AccountingOperationNewDAO {
 				name = "VENTAS A CONSUMIDOR FINAL";
 			}
 			
+			// Fecha para el ejercicio y periodo de autoliquidación: Si Libro de IRPF, se coge la fecha del asiento, si no, la fecha de IVA de la factura
+			Date taxDate = params.getBookType() == 1 ? rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE) : rec.getValue(INVOICE.TAX_DATE);
+			
 			return new OperationBreakdownNew()
 				.setActivityCode(activityCode) 									// Actividad: Código
 				.setActivityType(activityType) 									// Actividad: Tipo
 				.setActivityIAE(activityIAE) 									// Actividad: Grupo o Epígrafe del IAE
 				.setInvoiceType(invoiceType) 									// Tipo de Factura	
 				.setConceptCode(conceptCode) 									// Codigo Concepto de Ingreso o Gasto
+				.setConceptDescription(conceptDescription) 					    // Descripción Concepto de Ingreso o Gasto
+				.setAccountCode(accountCode) 									// Código de la cuenta contable
 				.setConceptAmount(conceptAmount) 								// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(INVOICE.ISSUE_DATE)) 				// Fecha Expedición
-				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))        				// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
+				.setTaxDate(taxDate)        									// Fecha Iva (Ejercicio y Periodo de Autoliquidación)
 				.setInvoiceSeries(isSales ? getSalesInvoiceSeries(rec) : "") 									// Identificación de la Factura: Serie (Emitidas)
 				.setInvoiceNumber(isSales ? getSalesInvoiceNumber(rec) : rec.getValue(INVOICE.REFERENCE_CODE)) 	// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
 				.setReceptionNumber(isSales ? "" : FinanceUtil.getDocumentNumber(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)), rec.getValue(INVOICE.SERIES), rec.getValue(INVOICE.NUMBER))) 	// Número recepción (Recibidas)
@@ -1100,6 +1142,8 @@ public class AccountingOperationNewDAO {
 			String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 			String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
 			String conceptCode = getConceptCode(rec.getValue(ACCOUNT.CODE));
+			String conceptDescription = getConceptDescription(conceptCode);
+			String accountCode = rec.getValue(ACCOUNT.CODE);
 			
 			double debit = AonNumberUtils.todouble(rec.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT));
 			double credit = AonNumberUtils.todouble(rec.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT));
@@ -1139,6 +1183,8 @@ public class AccountingOperationNewDAO {
 				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 				// Actividad: Grupo o Epígrafe del IAE
 				.setInvoiceType(invoiceType) 								// Tipo de Factura (Asientos sin factura)	
 				.setConceptCode(conceptCode)								// Codigo Concepto de Ingreso o Gasto
+				.setConceptDescription(conceptDescription) 				    // Descripción Concepto de Ingreso o Gasto
+				.setAccountCode(accountCode) 								// Código de la cuenta contable
 				.setConceptAmount(amount) 									// Ingreso computable o Gasto deducible 	
 				.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE)) 		// Fecha Expedición
 				.setTaxDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))        	// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
@@ -1272,6 +1318,16 @@ public class AccountingOperationNewDAO {
 				else
 					return "G37"; // Otros conceptos fiscalmente deducibles (excepto provisiones) (RESTO)					
 			}
+		}
+		return "";
+		
+	}
+
+	// Descripción del concepto de Ingreso o Gasto
+	private static String getConceptDescription(String code) {
+		
+		if (CONCEPT_DESCRIPTION_MAP.containsKey(code)) {
+			return CONCEPT_DESCRIPTION_MAP.get(code);
 		}
 		return "";
 		

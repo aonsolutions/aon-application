@@ -29,6 +29,8 @@ class OperationReportTabPanelNew extends ScrollPanel{
 	
 	public OperationReportTabPanelNew(OperationReportModuleOptionsNew options, OperationParamsNew params, JsOperationGridPanelNew grid) {
 		setStyleName(AON.CSS.aonScrollArea());
+		addStyleName("salary-scroll"); // Forzar scroll horizontal visible
+		
 		rootPanel.add(grid);
 		setWidget(rootPanel);
 		

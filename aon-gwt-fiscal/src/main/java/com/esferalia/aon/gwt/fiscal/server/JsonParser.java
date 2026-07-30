@@ -724,6 +724,11 @@ public class JsonParser {
 			params.setTabType(tabType.intValue());
 		}
 		
+		Long draft = (Long) jsonParams.get(IRequestParamsNames.DRAFT);
+		if (draft != null) {
+			params.setDraft(draft==1);
+		}
+		
 		return params;
 	}
 

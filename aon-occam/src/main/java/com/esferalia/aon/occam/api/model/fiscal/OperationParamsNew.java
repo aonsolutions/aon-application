@@ -16,7 +16,8 @@ public class OperationParamsNew implements Serializable {
 	private double lastProratePercentage; // Porcentaje de prorrata del último modelo 303
 	private String lastProrateType;       // Tipo de prorrata del último modelo 303
 	private boolean distributeInvoice;    // Repartir factura, cuando factura de compra o gasto está imputada a todas las actividades y se debe repartir entre las actividades de la empresa (por ahora, solo cuando hay unicamente 2 actividades, una de ellas régimen exento de IVA y la otra no y se aplica la regla de prorrata) 
-
+	private boolean draft;      // Documento Borrador 
+	
 	public int getDomain() {
 		return domain;
 	}
@@ -31,13 +32,6 @@ public class OperationParamsNew implements Serializable {
 		this.activity = activity;
 		return this;
 	}
-//	public String getActivityDescription() {
-//		return activityDescription;
-//	}
-//	public OperationParamsNew setActivityDescription(String activityDescription) {
-//		this.activityDescription = activityDescription;
-//		return this;
-//	}
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -85,6 +79,13 @@ public class OperationParamsNew implements Serializable {
 	}
 	public OperationParamsNew setDistributeInvoice(boolean distributeInvoice) {
 		this.distributeInvoice = distributeInvoice;
+		return this;
+	}
+	public boolean isDraft() {
+		return draft;
+	}
+	public OperationParamsNew setDraft(boolean draft) {
+		this.draft = draft;
 		return this;
 	}
 	

@@ -110,9 +110,6 @@ public class OperationReportNew implements EntryPoint {
 	
 	private void loadModule( OperationReportModuleOptionsNew opts ) {
 		this.options = opts;
-//		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
-//		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-//		aonLayoutPanel.addNorth(getFilterPanel(), 70);
 		dockLayoutPanel.addNorth(getFilterPanel(), 110);
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
@@ -130,13 +127,8 @@ public class OperationReportNew implements EntryPoint {
 			onSearch();
 		});
 		content.setWidget(tabLayout);
-//		aonLayoutPanel.add(content);
-//		initialize();
-//		options.getParentWidget().add(aonLayoutPanel);
 		dockLayoutPanel.add(content);
 		initialize();
-//		options.getParentWidget().add(dockLayoutPanel);
-		
 	}
 	
 	private Widget getToolbarPanel() {
@@ -152,10 +144,15 @@ public class OperationReportNew implements EntryPoint {
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refresh.addClickHandler(event -> onSearch());
 		toolbarPanel.add(refresh);
+		
+		// Botón exportar a Excel (Borrador)
+		final AonToolbarButton draft = new AonToolbarButton(AON.MSG.export() + " (Borrador)",AON.CSS.aonIconExcel());
+		draft.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams(true)));
+		toolbarPanel.add(draft);
 
-		// Botón exportar a Excel
-		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export(),AON.CSS.aonIconExcel());
-		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams()));
+		// Botón exportar a Excel (Libros Oficiales)
+		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export() + " (Libros Oficiales)",AON.CSS.aonIconExcel());
+		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams(false)));
 		toolbarPanel.add(export);
 		
 		diskForm = new FormPanel("_blank");
@@ -323,12 +320,13 @@ public class OperationReportNew implements EntryPoint {
 		diskForm.submit();
 	}
 
-	private OperationParamsNew getWidgetParams() {
+	private OperationParamsNew getWidgetParams(boolean draft) {
 		OperationParamsNew params = new OperationParamsNew()
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
 			.setBookType(type.getSelectedIndex())
+			.setDraft(draft)
 			;
 		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
 			if (activity.getSelectedIndex() > 0) {
@@ -343,9 +341,9 @@ public class OperationReportNew implements EntryPoint {
 	private void onSearch() {
 		paintTextTab();
 		if (tabLayout.getSelectedIndex() == TAB_0) {
-			refreshTab0(getWidgetParams());
+			refreshTab0(getWidgetParams(false));
 		} else if (tabLayout.getSelectedIndex() == TAB_1) {
-			refreshTab1(getWidgetParams() );
+			refreshTab1(getWidgetParams(false) );
 		}
 	}
 

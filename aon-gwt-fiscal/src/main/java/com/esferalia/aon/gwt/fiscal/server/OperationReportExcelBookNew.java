@@ -74,7 +74,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			}
 			companyName = sb.toString();
 			
-			// NOMBRE DEL FICHERO			
+			// NOMBRE DEL FICHERO (Libros Oficiales):			
             //	El nombre del fichero será formado por la concatenación de los siguientes campos y en el siguiente orden:
             //	 1) Ejercicio
             //	 2) NIF
@@ -82,25 +82,26 @@ public class OperationReportExcelBookNew extends HttpServlet {
             //	    - C: Todos los Libros Registro del IVA requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una C, correspondiente a la presentación de todos los libros del IVA, incluyendo las facturas expedidas en una pestaña denominada EXPEDIDAS, las facturas recibidas en otra pestaña denominada RECIBIDAS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
             //	    - D: Todos los Libros Registro del IRPF requerido en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una D,	correspondiente a la presentación de todos los libros del IRPF, incluyendo las ventas e ingresos en una pestaña denominada INGRESOS, las compras y gastos en otra pestaña denominada GASTOS y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
             //	    - T: Todos los Libros Registro Unificados del IRPF e IVA requeridos en un solo fichero Excel (XLSX), en cuyo caso en la posición del Tipo del Libro debe consignar una T, correspondiente a la presentación conjunta de todos los libros de ambos impuestos, incluyendo las "facturas expedidas" y "ventas e ingresos" en una pestaña denominada EXPEDIDAS_INGRESOS, las "facturas recibidas" y "compras y gastos" en otra pestaña denominada RECIBIDAS_GASTOS, y, en su caso, los bienes de inversión en otra pestaña denominada BIENES-INVERSIÓN.
-            //	 4) Nombre o Razón social				
+            //	 4) Nombre o Razón social			
+			// El nombre del fichero y el nombre de las pestañas cambian si es borrador, para evitar que se pueda importar como libro oficial
 			String sheetName1 = "";
 			String sheetName2 = "";
 			String filename = AonDateUtils.getYear(params.getFromDate()) + companyDocument;
 			
 			if (params.getBookType() == 0) {
-				filename = filename + "C";   // Libros Registro del IVA
-			    sheetName1 = "EXPEDIDAS";
-				sheetName2 = "RECIBIDAS";
+				filename = params.isDraft() ? "LibroRegistroIVA" + filename : filename + "C";   // Libros Registro del IVA
+			    sheetName1 = params.isDraft() ? "Facturas Emitidas" : "EXPEDIDAS";
+				sheetName2 = params.isDraft() ? "Facturas Recibidas" : "RECIBIDAS";
 			}
 			else if (params.getBookType() == 1) {
-				filename = filename + "D";   // Libros Registro del IRPF
-			    sheetName1 = "INGRESOS";
-				sheetName2 = "GASTOS";
+				filename = params.isDraft() ? "LibroRegistroIRPF" + filename : filename + "D";   // Libros Registro del IRPF
+			    sheetName1 = params.isDraft() ? "Ingresos" : "INGRESOS";
+				sheetName2 = params.isDraft() ? "Gastos" : "GASTOS";
 			}
 			else {
-				filename = filename + "T";   // Libros Registro Unificados del IRPF e IVA
-			    sheetName1 = "EXPEDIDAS_INGRESOS";
-				sheetName2 = "RECIBIDAS_GASTOS";
+				filename = params.isDraft() ? "LibroRegistroUnificado" + filename : filename + "T";   // Libros Registro Unificados del IRPF e IVA
+			    sheetName1 = params.isDraft() ? "Facturas Emitidas e Ingresos" : "EXPEDIDAS_INGRESOS";
+				sheetName2 = params.isDraft() ? "Facturas Recibidas y Gastos" : "RECIBIDAS_GASTOS";
 			}
 			
 			filename = filename + companyName;
@@ -136,6 +137,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		private OperationParamsNew params;
 		private XSSFCellStyle headerCellStyleDisabled;
 		private XSSFCellStyle headerCellStyleSmall;
+		private XSSFCellStyle draftHeaderCellStyle;
 		
 		public ExcelAction(OperationParamsNew params) {
 			this.params = params;
@@ -164,6 +166,11 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			Font topHeaderFontSmall = workbook.createFont();
 			topHeaderFontSmall.setBold(true);
 			topHeaderFontSmall.setFontHeightInPoints((short) 8);
+			
+			Font draftHeaderFont = workbook.createFont();
+			draftHeaderFont.setBold(true);
+			draftHeaderFont.setFontHeightInPoints((short) 16);
+			draftHeaderFont.setColor(IndexedColors.RED.index);
 			
 		    headerCellStyle.setBorderBottom(BorderStyle.THIN);
 		    headerCellStyle.setBorderTop(BorderStyle.THIN);
@@ -197,14 +204,33 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		    headerCellStyleSmall.setFont(topHeaderFontSmall);
 		    headerCellStyleSmall.setWrapText(true);
 		    
-		    sheet.setRandomAccessWindowSize(2);  // La cabecera lleva 2 filas
+		    draftHeaderCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+			draftHeaderCellStyle.setAlignment( HorizontalAlignment.CENTER );
+			draftHeaderCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+		    draftHeaderCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		    draftHeaderCellStyle.setBorderBottom(BorderStyle.THIN);
+		    draftHeaderCellStyle.setBorderTop(BorderStyle.THIN);
+		    draftHeaderCellStyle.setBorderLeft(BorderStyle.THIN);
+		    draftHeaderCellStyle.setBorderRight(BorderStyle.THIN);
+		    draftHeaderCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
+		    draftHeaderCellStyle.setFont(draftHeaderFont);
+		    draftHeaderCellStyle.setWrapText(false);
+		    
+		    sheet.setRandomAccessWindowSize(params.isDraft() ? 3 : 2);  // La cabecera lleva 2 o 3 filas
 		    sheet.setDefaultColumnWidth(10);
 		    sheet.trackAllColumnsForAutoSizing();
 		    
 		    rowCount = 0;
+		    
+		    // CABECERA PARA INDICAR QUE ES BORRADOR Y NO ES VÁLIDO PARA PRESENTACIÓN OFICIAL
+		    if (params.isDraft()) {
+		    	row = sheet.createRow(rowCount++);
+		    	String bookType = params.getBookType() == 0 ? "D E   I V A" : params.getBookType() == 1 ? "D E   I R P F" : "U N I F I C A D O   D E   I V A   E   I R P F";
+		    	addHorizontalMergedRegion("* * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *", workbook.getNumberOfSheets() == 1 ? 38 : 44, draftHeaderCellStyle);
+		    }
+		    
 		    row = sheet.createRow(rowCount++);
 		    row2 = sheet.createRow(rowCount++);
-		    
 			cellCount = 0;
 						
 			if (workbook.getNumberOfSheets() == 1)
@@ -227,6 +253,10 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
     		addVerticalMergedRegion("Concepto de Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		if (params.isDraft()) {
+    			addVerticalMergedRegion("Descripción del Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    			addVerticalMergedRegion("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		}
     		addVerticalMergedRegion("Ingreso Computable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
@@ -273,6 +303,10 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
     		addVerticalMergedRegion("Concepto de Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		if (params.isDraft()) {
+    			addVerticalMergedRegion("Descripción del Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    			addVerticalMergedRegion("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		}
     		addVerticalMergedRegion("Gasto Deducible", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
@@ -345,6 +379,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
 			
 			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Ingreso (excepto Libro de IVA)
+
+			if (params.isDraft()) {
+    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription());                          // Descripción del Ingreso (excepto Libro de IVA)
+    			if (params.getBookType() != 0)
+    				sheet.autoSizeColumn(cellCount-1);
+    			addCell(params.getBookType() == 0 ? "" : op.getAccountCode()).setCellStyle(centerCellStyle);   // Cuenta Contable (excepto Libro de IVA)
+    		}
+
 			if (params.getBookType() == 0) {
 				// Libro de IVA
 				addCell(""); // Ingreso computable
@@ -431,6 +473,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);                                             // Tipo de Factura
 			
 			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
+			
+    		if (params.isDraft()) {
+    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription());                         // Descripción del Gasto (excepto Libro de IVA)
+    			if (params.getBookType() != 0)
+    				sheet.autoSizeColumn(cellCount-1);
+    			addCell(params.getBookType() == 0 ? "" : op.getAccountCode()).setCellStyle(centerCellStyle);  // Cuenta Contable (excepto Libro de IVA)
+    		}
+
 			if (params.getBookType() == 0) {
 				// Libro de IVA
 				addCell(""); // Gasto Deducible
@@ -535,8 +585,8 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			addHorizontalMergedRegion(value, cellsNumber, headerCellStyle);
 		}
 		private void addHorizontalMergedRegion(String value, int cellsNumber, XSSFCellStyle cellStyle) {
-			CellUtil.createCell(row, cellCount, value, cellStyle);			
-			sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(0, 0, cellCount, cellCount+cellsNumber-1)));
+			CellUtil.createCell(row, cellCount, value, cellStyle);
+			sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount, cellCount+cellsNumber-1)));
 		}
 		
 		private void addVerticalMergedRegion(String value) {
@@ -544,7 +594,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		}
 		private void addVerticalMergedRegion(String value, CellStyle cellStyle) {
 		    CellUtil.createCell(row, cellCount, value, cellStyle);
-			sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(0, 1, cellCount, cellCount)));
+		    sheet.addMergedRegion(setBordersToMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum()+1, cellCount, cellCount)));
 			cellCount++;
 		}
 		

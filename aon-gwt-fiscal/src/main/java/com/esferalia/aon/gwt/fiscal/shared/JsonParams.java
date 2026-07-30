@@ -258,6 +258,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToDate()   	== null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDate())));
 		json.put(IRequestParamsNames.BOOK_TYPE		,new JSONNumber(params.getBookType()));
 		json.put(IRequestParamsNames.TAB_TYPE		,new JSONNumber(params.getTabType()));
+		json.put(IRequestParamsNames.DRAFT			,new JSONNumber(params.isDraft()?1:0));
 		return json.toString();
 	}
 	

@@ -65,6 +65,7 @@ public interface IRequestParamsNames {
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_PARAMS = "domainParams";
 	String DOMAINS = "domains";
+	String DRAFT = "draft";
 	String ENABLE_HEREDITY = "enableHeredity";
 	String EXPENSES = "expenses";
 	String FARMER_REGIME = "farmerRegime";

@@ -97,5 +97,13 @@ public class JsOperationBreakdownNew extends JavaScriptObject {
 	public final native double getPayAmount() /*-{
 		return this.payAmount;
 	}-*/;
+
+	public final native String getConceptDescription() /*-{
+		return this.conceptDescription;
+	}-*/;
+	
+	public final native String getAccountCode() /*-{
+		return this.accountCode;
+	}-*/;
 	
 }

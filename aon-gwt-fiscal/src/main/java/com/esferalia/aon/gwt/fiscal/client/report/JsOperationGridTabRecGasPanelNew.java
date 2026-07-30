@@ -13,12 +13,14 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 	private void paintHeader() {
 		
 		AonDisplayGridHeaderRow row = getGrid().addHeaderRow()
-				.addCell(new Label("Fecha IVA."), AON.CSS.aonWidth80())
+				.addCell(new Label("Fecha Liq."), AON.CSS.aonWidth80())
 				.addCell(new Label("Ep. IAE."), AON.CSS.aonWidth40());
 
 		if (getParams().getBookType() != 0) {
-			row.addCell(new Label("Concepto Gasto"), AON.CSS.aonWidth40())
-				.addCell(new Label("Gasto Deducible"), AON.CSS.aonWidth80());
+			row.addCell(new Label("Concepto Gasto"), AON.CSS.aonWidth40());
+			row.addCell(new Label("Descripci\u00F3n Gasto"), AON.CSS.aonWidth100());
+			row.addCell(new Label("Cuenta Contable"), AON.CSS.aonWidth80());
+			row.addCell(new Label("Gasto Deducible"), AON.CSS.aonWidth80());
 		}
 		
 		row.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
@@ -60,6 +62,8 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 		
 		if (getParams().getBookType() != 0) {
 			addCell(row, br.getConceptCode(), AON.CSS.aonTextCenter());
+			addCell(row, br.getConceptDescription());
+			addCell(row, br.getAccountCode());
 			addCell(row, br.getConceptAmount());
 		}
 		
@@ -109,6 +113,8 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
 				
 				if (getParams().getBookType() != 0) {
 					row.addCell(new Label())
+					   .addCell(new Label())
+					   .addCell(new Label())
 					   .addCell(new Label());
 				}
 				
