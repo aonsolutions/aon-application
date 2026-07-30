@@ -49,10 +49,11 @@ public class EreFzaExoneradoFixII implements Update {
 				.set(SYSTEM_PAYMENT.EXPRESSION, 
 						"/*read-only*/"
 						+ "SELF.addCost('RED_SS_E'"
-										+ ",'EXONE.ERE.F.MAY.COMP'"
-										+ ",'-1*(CGC_E+FP_E+DESMPL_E+FOGASA_E) * COEFICIENTE_ERE_FZA_EXONERADO * IFNDEF(\"PORCENTAJE_EXONERADO\", 100.00)/100.00'"
+										//+ ",'EXONE.ERE.F.MAY.COMP (@{IFNDEF(\"PORCENTAJE_EXONERADO\", 100.00)}%)'"
+										+ ",'EXONE.ERE.F.MAY.COMP (@{PORCENTAJE_EXONERADO}%)'"
+										+ ",'-1*(CGC_E+FP_E+DESMPL_E+FOGASA_E) * COEFICIENTE_ERE_FZA_EXONERADO * (PORCENTAJE_EXONERADO=IFNDEF(\"PORCENTAJE_EXONERADO\", 100.0))/100.0'"
 										+ ");"
-						+ "DIAS_ERE_FZA_EXONERADO*0.00"
+						+ "DIAS_ERE_FZA_EXONERADO*0.0"
 						+ "/**/")
 				.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(concept.getId()))
 				.execute(); 
