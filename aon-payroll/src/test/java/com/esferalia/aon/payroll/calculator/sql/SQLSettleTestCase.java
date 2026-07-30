@@ -557,6 +557,67 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testSettleNotice() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						//put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
+		//@formatter:off
+		
+//		addSSRegimePayment(aonContext, 
+//				SSRegimeType.GENERAL, 
+//				add(contractStart, Calendar.YEAR, -3),
+//				PaymentType.CRA_0054, 
+//				"/*read-only*/DIAS_PREAVISO * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )/**/",
+//				"_P" ,
+//				"_P", 
+//				SalaryType.SETTLE);
+		addSSRegimeStuff(aonContext);
+		
+		Date endDate = getToday();
+		
+		setData(aonContext, contract, 
+				contractStart
+				, endDate
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_PREAVISO", format("%d", 4));
+			}
+		});
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, endDate, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		settle.getSalaryPayments().forEach(p -> System.out.println( p.getExpression() + ":" + p.getAmount() + "," + p.getQuote() ));	
+		
+		double br = (1750.00 * 1.10)  * 12 / 365; 
+		
+		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		assertEquals( br * 4 , settle.getTotalPayment(), DELTA);
+		
+		
+	}
+
+	@Test
 	public void testSettleVacationsII() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
@@ -3992,6 +4053,15 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				"_P", 
 				SalaryType.SETTLE);
 		
+		// CANTIDADES FALTA PREAVISO
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL, 
+				startDate, 
+				PaymentType.CRA_0054, 
+				"/*read-only*/DIAS_PREAVISO * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )/**/",
+				"_P" ,
+				"_P", 
+				SalaryType.SETTLE);
 	}
 	
 	@Test

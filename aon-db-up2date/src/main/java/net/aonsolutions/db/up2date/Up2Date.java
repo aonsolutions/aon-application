@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
 import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
+import net.aonsolutions.db.up2date.payroll.FixPreavisoQuote;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
@@ -631,6 +632,7 @@ public class Up2Date {
 			// EreFzaExoneradoFix.EREFZAEXONERADOFIX,
 			EreFzaExoneradoFixII.EREFZAEXONERADOFIXII,
 			ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
+			FixPreavisoQuote.FIXPREAVISOQUOTE,	
 			
 
 
