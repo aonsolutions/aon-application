@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import static org.junit.Assert.fail;
+import static com.esferalia.aon.occam.test.OccamAssertions.fail;
 
 import org.junit.Test;
 

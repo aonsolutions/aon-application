@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.test.accounting.account;
 
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import java.util.List;
 import java.util.Set;

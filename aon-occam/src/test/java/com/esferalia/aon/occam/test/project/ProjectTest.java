@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.test.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
 
 import java.util.Date;
 
@@ -66,12 +66,12 @@ public class ProjectTest extends AbstractOccamTest {
 		Project auxName = project.setName("Updated Name");
 		project = ProjectDAO.save(ctx, auxName);
 		Project auxName2 = ProjectDAO.get(ctx, f -> f.getIdProperty().eq(projectId));
-		assertEquals("Updated Name", auxName2.getName());
+		assertEquals(auxName2.getName(), "Updated Name");
 		
 		Project auxAlias = project.setAlias("Updated Alias");
 		project = ProjectDAO.save(ctx, auxAlias);
 		Project auxAlias2 = ProjectDAO.get(ctx, f -> f.getIdProperty().eq(projectId));
-		assertEquals("Updated Alias", auxAlias2.getAlias());
+		assertEquals(auxAlias2.getAlias(), "Updated Alias");
 		
 		Date date = AonDateUtils.getDate(2021, 10, 12);
 		Project auxDate = project.setDate(date);

@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.test.rawdoc;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertFalse;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -69,7 +69,7 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		JSONObject jsonRejected = jsonRejectedLog.getJSONObject( jsonRejectedLog.length() - 1);
 		assertFalse( JsonUtils.isEmpty( jsonRejected) );
 		String rRejected = jsonRejected.getString(IJsonNames.REASON);
-		assertEquals( "Reason", reason, rRejected );
+		assertEquals(reason, rRejected, "Reason");
 		RawdocStatus sRejected = RawdocStatus.safeValueOf( jsonRejected.getString(IJsonNames.STATUS) );
 		assertEquals( RawdocStatus.REJECTED, sRejected );
 		

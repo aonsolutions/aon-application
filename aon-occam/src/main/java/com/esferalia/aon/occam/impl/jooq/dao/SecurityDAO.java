@@ -101,6 +101,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -125,6 +126,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDA
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.scope.SellerAssignHelper;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -1739,6 +1741,12 @@ public class SecurityDAO {
 				.set(USER_SCOPE.CREATION_DATE, DSL.currentTimestamp())
 				.execute();
 		});
+	}
+	
+	public static void assignSellerUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAssign userScopeAssign) {
+		
+		SellerAssignHelper.assignSellerUserScopes(ctx, domain, user, userScopeAssign);
+		
 	}
 	
 	public static void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {

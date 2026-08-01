@@ -503,7 +503,7 @@ public class WarehouseDAO {
 						detail.getLine(), detail.getItem().getId(),
 						detail.getDescription(), detail.getWarehouse(),
 						detail.getQuantity(), detail.getPrice(),
-						detail.getDiscountExpression(),
+						detail.getDiscountExpression().getDiscountExpr(),
 						detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 						ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 	}
@@ -527,7 +527,7 @@ public class WarehouseDAO {
 							detail.getLine(), detail.getItem().getId(),
 							detail.getDescription(), detail.getWarehouse(),
 							detail.getQuantity(), detail.getPrice(),
-							detail.getDiscountExpression(),
+							detail.getDiscountExpression().getDiscountExpr(),
 							detail.getSalesDetail(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
 							ctx.getUser(), AonDateUtils.toTimestamp(new Date())).execute();
 		});

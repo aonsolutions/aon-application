@@ -173,7 +173,7 @@ export class AonTable extends AonElement {
     this.addColumn(column.name, column.type, column.id, column.width, column.textAlign);
   }
 
-  addColumn(name, type, id, width, textAlign) {
+  addColumn(name, type, id, width, textAlign, ellipsis) {
     if (this.hasAttribute("selectable")) {
       this.paintCheckboxHeader();
     }
@@ -182,6 +182,8 @@ export class AonTable extends AonElement {
     th.innerHTML = name;
     th.style.width = width;
     this.columns.push({ name, type, id, width, textAlign });
+
+	if (ellipsis) th.classList.add("aonTableEllipsis");
 
     if(type == "number") th.style.textAlign = "right";
 
@@ -281,6 +283,7 @@ export class AonTable extends AonElement {
       td.style.width = item.width;
       td.style.textAlign = item.textAlign;
       if(value.color) td.style.color = value.color;
+      if (item.ellipsis) td.classList.add("aonTableEllipsis");
 
       let id = item.id;
       if ("option" === id && value[id]) {

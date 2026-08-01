@@ -1,9 +1,9 @@
 package com.esferalia.aon.occam.test.registry.recordData;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 			RecordData recordData = buildRecordData(registry.getId());
 			RecordData saved = RecordDataDAO.save(ctx, recordData);
 
-			assertNotNull("Id after insert", saved.getId());
+			assertNotNull(saved.getId(), "Id after insert");
 			assertEqualsRecordData(recordData, saved);
 
 			RecordDataDAO.delete(ctx, recordData.getId());
@@ -45,7 +45,7 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 			RecordData recordData = RecordDataDAO.save(ctx, buildRecordData(registry.getId()));
 			RecordData fetched = RecordDataDAO.get(ctx, recordData.getId());
 
-			assertNotNull("RecordData not found", fetched);
+			assertNotNull(fetched, "RecordData not found");
 			assertEqualsRecordData(recordData, fetched);
 
 			RecordDataDAO.delete(ctx, recordData.getId());
@@ -88,9 +88,9 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 			List<RecordData> list = RecordDataDAO.getStream(ctx, registry.getId())
 					.collect(Collectors.toList());
 
-			assertTrue("At least 2 results", list.size() >= 2);
-			assertTrue("Contains rd1", list.stream().anyMatch(r -> r.getId().equals(rd1.getId())));
-			assertTrue("Contains rd2", list.stream().anyMatch(r -> r.getId().equals(rd2.getId())));
+			assertTrue(list.size() >= 2, "At least 2 results");
+			assertTrue(list.stream().anyMatch(r -> r.getId().equals(rd1.getId())), "Contains rd1");
+			assertTrue(list.stream().anyMatch(r -> r.getId().equals(rd2.getId())), "Contains rd2");
 
 			RecordDataDAO.delete(ctx, rd1.getId());
 			RecordDataDAO.delete(ctx, rd2.getId());
@@ -101,9 +101,9 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 			List<RecordData> list2 = RecordDataDAO.getStream(ctx, RecordDataType.COMPANY_NAME_CHANGE, registry.getId())
 					.collect(Collectors.toList());
 
-			assertTrue("At least 2 results", list2.size() >= 2);
-			assertTrue("Contains rd3", list2.stream().anyMatch(r -> r.getId().equals(rd3.getId())));
-			assertTrue("Contains rd4", list2.stream().anyMatch(r -> r.getId().equals(rd4.getId())));
+			assertTrue(list2.size() >= 2, "At least 2 results");
+			assertTrue(list2.stream().anyMatch(r -> r.getId().equals(rd3.getId())), "Contains rd3");
+			assertTrue(list2.stream().anyMatch(r -> r.getId().equals(rd4.getId())), "Contains rd4");
 
 			RecordDataDAO.delete(ctx, rd3.getId());
 			RecordDataDAO.delete(ctx, rd4.getId());		
@@ -117,10 +117,10 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 		Registry registry = saveRegistry();
 		try {
 			RecordData recordData = RecordDataDAO.save(ctx, buildRecordData(registry.getId()));
-			assertNotNull("Exists before delete", RecordDataDAO.get(ctx, recordData.getId()));
+			assertNotNull(RecordDataDAO.get(ctx, recordData.getId()), "Exists before delete");
 
 			RecordDataDAO.delete(ctx, recordData.getId());
-			assertNull("Null after delete", RecordDataDAO.get(ctx, recordData.getId()));
+			assertNull(RecordDataDAO.get(ctx, recordData.getId()), "Null after delete");
 		} finally {
 			RegistryDAO.delete(ctx, registry.getId());
 		}
@@ -153,19 +153,19 @@ public class RecordDataCRUDETest extends AbstractOccamTest {
 
 	private static void assertEqualsRecordData(RecordData expected, RecordData actual) {
 		assertNotNull(actual);
-		assertEquals("Domain",                expected.getDomain(),                actual.getDomain());
-		assertEquals("Registry",              expected.getRegistry(),              actual.getRegistry());
-		assertEquals("Description",           expected.getDescription(),           actual.getDescription());
-		assertEquals("Notary",                expected.getNotary(),                actual.getNotary());
-		assertEquals("Number",                expected.getNumber(),                actual.getNumber());
-		assertEquals("Volume",                expected.getVolume(),                actual.getVolume());
-		assertEquals("Section",               expected.getSection(),               actual.getSection());
-		assertEquals("Page",                  expected.getPage(),                  actual.getPage());
-		assertEquals("Sheet",                 expected.getSheet(),                 actual.getSheet());
-		assertEquals("Registration",          expected.getRegistration(),          actual.getRegistration());
-		assertEquals("Type",                  expected.getType(),                  actual.getType());
-		assertEquals("Irus",                  expected.getIrus(),                  actual.getIrus());
-		assertEquals("CommercialRegistryCode",expected.getCommercialRegistryCode(),actual.getCommercialRegistryCode());
+		assertEquals(expected.getDomain(), actual.getDomain(), "Domain");
+		assertEquals(expected.getRegistry(), actual.getRegistry(), "Registry");
+		assertEquals(expected.getDescription(), actual.getDescription(), "Description");
+		assertEquals(expected.getNotary(), actual.getNotary(), "Notary");
+		assertEquals(expected.getNumber(), actual.getNumber(), "Number");
+		assertEquals(expected.getVolume(), actual.getVolume(), "Volume");
+		assertEquals(expected.getSection(), actual.getSection(), "Section");
+		assertEquals(expected.getPage(), actual.getPage(), "Page");
+		assertEquals(expected.getSheet(), actual.getSheet(), "Sheet");
+		assertEquals(expected.getRegistration(), actual.getRegistration(), "Registration");
+		assertEquals(expected.getType(), actual.getType(), "Type");
+		assertEquals(expected.getIrus(), actual.getIrus(), "Irus");
+		assertEquals(expected.getCommercialRegistryCode(), actual.getCommercialRegistryCode(), "CommercialRegistryCode");
 	}
 
 }

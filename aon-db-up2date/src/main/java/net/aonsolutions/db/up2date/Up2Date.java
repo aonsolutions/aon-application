@@ -668,6 +668,9 @@ public class Up2Date {
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
+			DeleteDomainAppApp10.DELETE_DOMAIN_APP_APP10,
+			DeleteDomainAppApp19.DELETE_DOMAIN_APP_APP19,
+			MigrateApp23To9.MIGRATE_APP_23_TO_9,
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			

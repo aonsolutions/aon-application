@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.mod190;
 
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import java.util.Date;
 
@@ -26,24 +26,24 @@ public class Mod190InsertTest extends AbstractOccamTest {
 		System.out.println( "\t ---------------------");
 		
 		Mod190 aeat = insertModel( Administration.COMMON_TERRITORY, date);
-		assertNotNull("Declaracion AEAT Nula",aeat);
-		assertNotNull("Declaracion AEAT Nula",aeat.getId());
+		assertNotNull(aeat, "Declaracion AEAT Nula");
+		assertNotNull(aeat.getId(), "Declaracion AEAT Nula");
 		
 		Mod190 araba = insertModel( Administration.ALAVA, date);
-		assertNotNull("Declaracion ALAVA Nula",araba);
-		assertNotNull("Declaracion ALAVA Nula",araba.getId());
+		assertNotNull(araba, "Declaracion ALAVA Nula");
+		assertNotNull(araba.getId(), "Declaracion ALAVA Nula");
 
 		Mod190 bizkaia = insertModel( Administration.BIZKAIA, date);
-		assertNotNull("Declaracion BIZKAIA Nula",bizkaia);
-		assertNotNull("Declaracion BIZKAIA Nula",bizkaia.getId());
+		assertNotNull(bizkaia, "Declaracion BIZKAIA Nula");
+		assertNotNull(bizkaia.getId(), "Declaracion BIZKAIA Nula");
 
 		Mod190 gipuzkoa = insertModel( Administration.GIPUZKOA, date);
-		assertNotNull("Declaracion GIPUZKOA Nula",gipuzkoa);
-		assertNotNull("Declaracion GIPUZKOA Nula",gipuzkoa.getId());
+		assertNotNull(gipuzkoa, "Declaracion GIPUZKOA Nula");
+		assertNotNull(gipuzkoa.getId(), "Declaracion GIPUZKOA Nula");
 
 		Mod190 navarra = insertModel( Administration.NAVARRA, date);
-		assertNotNull("Declaracion NAVARRA Nula",navarra);
-		assertNotNull("Declaracion NAVARRA Nula",navarra.getId());
+		assertNotNull(navarra, "Declaracion NAVARRA Nula");
+		assertNotNull(navarra.getId(), "Declaracion NAVARRA Nula");
 		
 		// AHORA NO TIENEN PORQUE SER IGUALES LAS DE DISTINTAS ADMINISTRACIONES
 //		Asserts.assertEqualsCollection("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), araba.getDetails());

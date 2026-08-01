@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -299,6 +300,12 @@ public class SecurityImpl implements ISecurity {
 	public void closeUserScopeAuthorizations(CloseableAONContext ctx, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate) {
 		ctx.getDslContext().transaction( 
 				configuration -> SecurityDAO.closeUserScopeAuthorizations(ctx, domain, user, authUserScopes, endDate));
+	}
+	
+	@Override
+	public void assignSellerUserScopes(CloseableAONContext ctx, int domain, String user, UserScopeAssign userScopeAssign) {
+		ctx.getDslContext().transaction( 
+				configuration -> SecurityDAO.assignSellerUserScopes(ctx, domain, user, userScopeAssign));
 	}
 	
 	@Override

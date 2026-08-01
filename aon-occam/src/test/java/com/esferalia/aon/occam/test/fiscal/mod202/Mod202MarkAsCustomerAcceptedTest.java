@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.mod202;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import org.junit.Test;
 
@@ -18,8 +18,8 @@ public class Mod202MarkAsCustomerAcceptedTest extends AbstractOccamTest {
 			Mod202 mod202 = MODEL202.get(getOccam(), model.getId());
 			MODEL202.markAsCustomerAccepted(getOccam(), mod202);
 			Mod202 mod202Bis = MODEL202.get(getOccam(), model.getId());
-			assertEquals("Status not CUSTOMER_ACCEPTED", FiscalStatus.CUSTOMER_ACCEPTED, mod202Bis.getStatus());
-			assertNotNull("Mod202. Tipo resultado NULL",mod202Bis.getDeclarationResultType());
+			assertEquals(FiscalStatus.CUSTOMER_ACCEPTED, mod202Bis.getStatus(), "Status not CUSTOMER_ACCEPTED");
+			assertNotNull(mod202Bis.getDeclarationResultType(), "Mod202. Tipo resultado NULL");
 		}
 	}
 	

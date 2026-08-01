@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.fiscal.mod390hf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotNull;
 
 import org.junit.Test;
 
@@ -20,8 +20,8 @@ public class Mod390HFSentTest extends AbstractOccamTest {
 			MODEL390HF.markAsSent(getOccam(), mod);
 			Mod390HF modBis = MODEL390HF.get(getOccam(), model.getId());
 			FiscalTestSuite.printModel(mod);
-			assertEquals("Status not SENT", FiscalStatus.SENT, modBis.getStatus());
-			assertNotNull("Mod390HF. Tipo resultado NULL",modBis.getDeclarationResultType());
+			assertEquals(FiscalStatus.SENT, modBis.getStatus(), "Status not SENT");
+			assertNotNull(modBis.getDeclarationResultType(), "Mod390HF. Tipo resultado NULL");
 		}
 	}
 	

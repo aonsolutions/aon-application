@@ -314,6 +314,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }
 	}
 	
 	public static class RegistrySellerPropertiesDAO implements RegistrySellerProperties {
@@ -413,6 +414,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getAdvertisingProperty() {return new FilterDAO.PropertyDAO<>(TARGET.ADVERTISING);}
 		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(TARGET.SURCHARGE);}
 		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }
 	}
 	
 	public static class PersonPropertiesDAO implements PersonProperties {
@@ -447,6 +449,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getSecondSurnameProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SECOND_SURNAME);}
 		
 		@Override public Property<String> getEmailProperty() { return new FilterDAO.PropertyValueDAO(RMEDIA.MEDIA,(byte)0); }
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }
 	}
 	
 	public static class CategoryPropertiesDAO implements CategoryProperties {
@@ -537,6 +540,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
 		@Override public Property<String> getEmailProperty() { return new RMediaPropertyDAO(MediaType.EMAIL); }
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }
 	}
 	
 	public static class RItemPropertiesDAO implements RegistryItemProperties{

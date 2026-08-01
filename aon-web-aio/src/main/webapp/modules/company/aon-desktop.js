@@ -18,7 +18,6 @@ import * as LS from "../../services/localStorageService.js";
 import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
 import { AonFiscal } from '../fiscal/aon-fiscal.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
-import { AonSaltra } from '../laboral/aon-saltra.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import { getOfficeProjects } from '../../services/projectService.js';
@@ -294,8 +293,6 @@ export class AonDesktop extends AonElement {
 		this.innerHTML = /*html*/`
           <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
           <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>`;
-        //   <aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
-		// let aonDesktop = this.getElement(this.AON_DESKTOP);
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
 		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({ target }) => {
@@ -306,183 +303,6 @@ export class AonDesktop extends AonElement {
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({ target }) => {
 			this.uploadDocumentsDesktop(undefined, target.files);
 		});
-
-		// let divLogo = this.createElement(TAG.DIV);
-		// divLogo.id = this.id + 'Logo';
-		// aonDesktop.getSidenav().appendChild(divLogo);
-		// if (LS.isNewTheme()) {
-		// 	aonDesktop.getSidenav().style.display = 'none';
-		// }
-		// let filter = {
-		// 	attachType: 'registry',
-		// 	attachModule: company.registry,
-		// 	type: 0
-		// };
-
-		// let parentFilter = {
-		// 	attachType: 'registry',
-		// 	domainId: company.parentId,
-		// 	type: 0
-		// };
-		// let f = this.getDur().hasCustomView() || this.getDur().isEmployee()
-		// 	? filter : parentFilter;
-
-		// getAttach(f).then(r => {
-		// 	let attach = new Attach(r);
-		// 	if (attach && attach.id && attach.getContentType().includes("image")) {
-		// 		divLogo.style.maxHeight = '60px';
-		// 		divLogo.style.margin = '10px';
-		// 		divLogo.style.justifyContent = 'center';
-
-		// 		let data = {
-		// 			domain_id: attach.getDomain().getId(),
-		// 			attach_type: attach.getAttachType(),
-		// 			domain_name: attach.getDomain().getName(),
-		// 			id: attach.getId()
-		// 		};
-		// 		let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
-
-		// 		let img = this.createElement(TAG.IMG);
-		// 		img.id = this.id + 'LogoImg';
-		// 		img.style.maxHeight = '60px';
-		// 		img.style.maxWidth = '100%';
-		// 		img.style.borderRadius = '10px';
-		// 		img.src = url;
-		// 		divLogo.appendChild(img);
-		// 	}
-		// });
-
-		/*if(this.getDur().hasCustomView()){
-			getAttach(parentFilter).then(r => {
-				let attach = new Attach(r);
-				if(attach && attach.id && attach.getContentType().includes("image")){
-					let data = {
-						domain_id: attach.getDomain().getId(),
-						attach_type: attach.getAttachType(),
-						domain_name: attach.getDomain().getName(),
-						id: attach.getId()
-					};
-					let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
-					let headerLogo = this.getElement('aonLogo');
-					headerLogo.style.backgroundImage = `url(${url})`;
-					headerLogo.style.backgroundSize = 'contain';
-				}
-			});
-		}*/
-
-		// if (this.isBeta() && !this.getDur().hasOffice()) {
-		// 	let myGestor = {
-		// 		id: 'Gestor',
-		// 		name: MSG.MY_MANAGER,
-		// 		options: []
-		// 	};
-		// 	aonDesktop.addSidenavOptions3(myGestor);
-		// 	getOfficeProjects({}).then(offices => {
-		// 		this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
-		// 		offices.forEach(office => {
-		// 			if (office.projects.length > 0) {
-		// 				office.projects.forEach((item, idx) => {
-		// 					let p = new Project(item);
-		// 					let h = p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
-		// 					let option = {
-		// 						name: p.getType().getDescription() + (h ? ' - ' + h : ''),
-		// 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
-		// 						fn: () => { },
-		// 						actions: [{
-		// 							id: 'Contact' + idx,
-		// 							icon: 'chat',
-		// 							action: () => {
-		// 								let aonMessengerChat = new AonMessenger();
-		// 								aonMessengerChat.data = { source: TASK_SOURCE.QUERY, project: item, domain: item.domain };
-		// 								this.rootPanel(aonMessengerChat);
-		// 							}
-		// 						}]
-		// 					};
-		// 					aonDesktop.addSidenavOptionsListValue(myGestor, option);
-		// 				});
-		// 			}
-		// 		});
-		// 	});
-		// }
-
-		// if (company.parentId || company.type !== 'CONSULTANCY') {
-		// 	this.getSidenavActivity();
-		// }
-
-		// let classicOptions = [];
-
-		// if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
-		// 	classicOptions.push({
-		// 		name: 'aonSolutions',
-		// 		img: 'assets/apps/aon.png',
-		// 		fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
-		// 	});
-		// }
-		// if(localStorage.getItem('aon_jsf')){
-		// 	classicOptions.push({
-		// 		name: 'aonGestion',
-		// 		img: 'assets/apps/aon.png',
-		// 		fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
-		// 	});
-		// }
-
-		// if (this.getDur().isAon()) {
-		// 	classicOptions.push({
-		// 		name: 'aonSolutions',
-		// 		img: 'assets/aon.png',
-		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION_AON,
-		// 		fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
-		// 	});
-		// }
-
-		// if (this.getDur().isBidoq()) {
-		// 	classicOptions.push({
-		// 		name: 'Bidoq',
-		// 		img: 'assets/apps/bidoq.png',
-		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-		// 		fn: () => {
-		// 			getAccessBidoq().then(r => {
-		// 				const { datos } = r;
-		// 				if (datos && datos.ruta) {
-		// 					open(datos.respuesta);
-		// 				} else {
-		// 					open('https://mispapeles.es/');
-		// 				}
-		// 			});
-		// 		}
-		// 	});
-		// }
-
-		// if (this.getDur().isSelfconta()) {
-		// 	classicOptions.push({
-		// 		name: 'Selfconta',
-		// 		img: 'assets/apps/selfconta.png',
-		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-		// 		fn: () => open('https://mispapeles.es/selfconta/')
-		// 	});
-		// }
-
-		// if (this.getDur().isSaltra()) {
-		// 	classicOptions.push({
-		// 		name: 'Saltra',
-		// 		img: 'assets/apps/saltra.png',
-		// 		style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-		// 		fn: () => open('https://app.saltra.es/')
-		// 	});
-		// }
-
-		// if (classicOptions.length > 0)
-		// 	aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
-
-		// if (this.getDur().isTimecontrol() && !LS.isNewTheme()) {
-		// 	getTimeControl().then(r => {
-		// 		let aonSign = new AonSign();
-		// 		aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
-		// 		aonSign.buildSignin(r);
-		// 		let aonHeader = this.getElement('aonHeader');
-		// 		aonHeader.timeControlStatus(r);
-		// 	});
-		// }
 
 		// Content
 		let content = this.createElement(TAG.DIV);
@@ -1618,10 +1438,6 @@ export class AonDesktop extends AonElement {
 
 		if (appsOpen && appsOpen.length === 1) {
 			let app = appsOpen[0];
-			if (app.app === Apps.AON_SALTRA.app) {
-				this.rootPanel(new AonSaltra())
-				this.appOption = false;
-			}
 		}
 	}
 
@@ -1835,9 +1651,6 @@ export class AonDesktop extends AonElement {
 				case Apps.MESSENGER.app:
 					this.rootPanel(new AonMessenger());
 					break;
-				case Apps.AON_SALTRA.app:
-					this.rootPanel(new AonSaltra());
-					break;
 				case Apps.WAREHOUSE.app:
 					this.rootPanel(new AonWarehouse());
 					break;
@@ -1902,8 +1715,6 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isInvoice();
 		else if (Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if (Apps.AON_SALTRA.app === app.app)
-			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
 		else if (Apps.WAREHOUSE.app === app.app) {
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
@@ -1913,8 +1724,6 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isAon();
 		} else if (ClassicApps.BIDOQ.app === app.app) {
 			return this.getDur().isBidoq();
-		} else if (ClassicApps.SELFCONTA.app === app.app) {
-			return this.getDur().isSelfconta();
 		} else return false;
 	}
 

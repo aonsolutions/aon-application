@@ -328,6 +328,10 @@ public class ServalInvoiceImport extends ImportUtils{
 		return compare(value, IConstants.TOTAL, IConstants.TOTAL_FACTURA);
 	}
 	
+	private boolean isTotalAmount(String value) {
+		return compare(value, IConstants.IMPORTE_TOTAL);
+	}
+	
 	private boolean isClaveRetencion(String value) {
 		return compare(value, IConstants.CLAVE_RETENCION);
 	}
@@ -578,6 +582,11 @@ public class ServalInvoiceImport extends ImportUtils{
 			return;
 		}
 		
+		if(isTotalAmount(title)) {
+			inv.setTotalAmount(Utils.parseDouble(o));
+			return;
+		}
+		
 		if(isClaveRetencion(title)) {
 			inv.setRetentionKey(InvoiceClaveRetencion.safeValueOf(o.toString()));
 			return;
@@ -739,7 +748,7 @@ public class ServalInvoiceImport extends ImportUtils{
 			&& iic.getRetentionQuota() != 0);
 		invoice.setRemarks(iic.getConcept());
 		invoice.setSurcharge(iic.getRePercentage() != null && iic.getPercentage() > 0);
-		if(iic.getTotal() < 0) {
+		if(iic.getTotal() != null &&  iic.getTotal() < 0) {
 			invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		}
 		
@@ -870,6 +879,12 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setPrepayment(aux.isSuplido())
 						.setSource(InvoiceSource.DIRECT_INVOICE);
 				
+				if(AonStringUtils.isBlank(detail.getDescription()) &&  item.getProduct() != null && AonStringUtils.isNotBlank(item.getProduct().getName())) {
+					String description = AonStringUtils.isNotBlank(item.getProduct().getCode()) ? 
+							item.getProduct().getCode() + " - " + item.getProduct().getName() : item.getProduct().getName();
+					detail.setDescription(description);
+				}
+				
 				if(aonCtx.getWorkplaces() == null || aonCtx.getWorkplaces().isEmpty()) {
 					throw new Exception("No existe ningún centro de trabajo.");
 				} else detail.setWorkplace(aonCtx.getWorkplaces().get(0));
@@ -912,9 +927,13 @@ public class ServalInvoiceImport extends ImportUtils{
 				
 				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
 				
-				total = total + (invoice.isIsp() 
+				if(aux.getTotalAmount() != null && aux.getTotalAmount() != 0.0) {
+					total = aux.getTotalAmount();
+				} else {
+					total = total + (invoice.isIsp() 
 						? aux.getBase() - retentionQuota
 						: aux.getTotal());
+				}
 				base = base + aux.getBase();
 				checkCuotas(domain, aux);
 				invoice.getDetails().add(detail);

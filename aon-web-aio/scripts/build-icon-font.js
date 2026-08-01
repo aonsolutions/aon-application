@@ -721,7 +721,6 @@ const ICONS = [
     'russian-ruble',
     'sailboat',
     'salad',
-    'saltra',
     'sandwich',
     'save',
     'scale',

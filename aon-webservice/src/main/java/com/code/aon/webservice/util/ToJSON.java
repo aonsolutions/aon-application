@@ -498,7 +498,7 @@ public class ToJSON {
 			.put(MSG.DOMAIN, deliveryDetail.getDomain())
 			.put("price", deliveryDetail.getPrice())
 			.put("quantity", deliveryDetail.getQuantity())
-			.put("discount_expr", deliveryDetail.getDiscountExpression())
+			.put("discount_expr", deliveryDetail.getDiscountExpression().getDiscountExpr())
 			.put("line", deliveryDetail.getLine())
 			.put("item", deliveryDetail.getItem())
 			.put("description", deliveryDetail.getDescription())

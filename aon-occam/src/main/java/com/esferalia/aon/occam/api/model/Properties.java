@@ -975,6 +975,7 @@ public interface Properties {
 		Property<Byte> getSecurityLevelProperty();
 		
 		Property<String> getEmailProperty();
+		Property<String> getCelullarProperty();
 	}
 	
 	public interface CarrierProperties extends RegistryProperties {

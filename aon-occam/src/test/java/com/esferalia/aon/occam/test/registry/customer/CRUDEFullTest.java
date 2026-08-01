@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.registry.customer;
 
 
-import static org.junit.Assert.assertFalse;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertFalse;
 
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class CRUDEFullTest extends AbstractOccamTest {
 		
 		if (inserted.hasMedias()) {
 			for (RegistryMedia media : inserted.getMedias()) {
-				assertFalse("Registry Media must be not dirty", media.isDirty());
+				assertFalse(media.isDirty(), "Registry Media must be not dirty");
 			}
 		}
 		if (inserted.hasMedias()) {
@@ -60,7 +60,7 @@ public class CRUDEFullTest extends AbstractOccamTest {
 		
 		if (inserted.hasAddresses()) {
 			for (RegistryAddress address : inserted.getAddresses()) {
-				assertFalse("Registry Address must be not dirty", address.isDirty());
+				assertFalse(address.isDirty(), "Registry Address must be not dirty");
 			}
 		}
 		if (inserted.hasAddresses()) {

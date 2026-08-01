@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.test.sales;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertFalse;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNotEquals;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertNull;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;

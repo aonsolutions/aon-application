@@ -704,7 +704,6 @@ export const RULER = 'ruler';
 export const RUSSIAN_RUBLE = 'russian-ruble';
 export const SAILBOAT = 'sailboat';
 export const SALAD = 'salad';
-export const SALTRA = 'saltra';
 export const SANDWICH = 'sandwich';
 export const SAVE = 'save';
 export const SCALE = 'scale';

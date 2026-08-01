@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RMediaPropertyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -118,7 +119,8 @@ public class TaskOldDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
-		@Override public Property<String> getEmailProperty() {return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL); }		
+		@Override public Property<String> getEmailProperty() {return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL); }
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }		
 	}
 	
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {

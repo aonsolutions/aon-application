@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.test.accounting.period;
 
 
-import static org.junit.Assert.assertTrue;
+import static com.esferalia.aon.occam.test.OccamAssertions.assertTrue;
 
 import java.util.Date;
 import java.util.LinkedList;

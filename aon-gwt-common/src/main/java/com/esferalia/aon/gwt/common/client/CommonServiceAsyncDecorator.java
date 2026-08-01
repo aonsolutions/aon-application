@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.scope.ScopeParams;
+import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAuthorization;
 import com.esferalia.aon.occam.api.model.scope.UserScopeFull;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
@@ -1339,6 +1340,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void closeUserScopeAuthorizations(String domainName, int domain, String user, List<UserScopeFull> authUserScopes, Date endDate, AsyncCallback<Void> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.closeUserScopeAuthorizations(domainName, domain, user, authUserScopes, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void assignSellerUserScopes(String domainName, int domain, String user, UserScopeAssign userScopeAssign, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.assignSellerUserScopes(domainName, domain, user, userScopeAssign, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override

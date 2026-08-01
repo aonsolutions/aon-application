@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RMediaPropertyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderValidation;
@@ -66,7 +67,8 @@ public class TaskHolderDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.ALIAS);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER_ALIAS.SECURITY_LEVEL);}
-		@Override public Property<String> getEmailProperty() {return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL); }		
+		@Override public Property<String> getEmailProperty() {return new RegistryDAO.RMediaPropertyDAO(MediaType.EMAIL); }	
+		@Override public Property<String> getCelullarProperty() { return new RMediaPropertyDAO(MediaType.CELLULAR); }	
 	}
 
 	

@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.test.fiscal.mod421;
 import java.util.Arrays;
 
 import org.json.JSONArray;
-import org.junit.Assert;
+import static com.esferalia.aon.occam.test.OccamAssertions.*;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL421;
@@ -61,7 +61,7 @@ public class Mod421ScriptTest extends Mod421AbstractTest {
 								
 								private String arrayNotNull() {
 									JSONArray array = new JSONArray(info);
-									Assert.assertNotNull(array);
+									assertNotNull(array);
 									return null;
 								}
 		
@@ -75,14 +75,14 @@ public class Mod421ScriptTest extends Mod421AbstractTest {
 								
 								@Override 
 								public String visitComputeKey() {
-									Assert.assertNotNull(info);
-									Assert.assertNotEquals(info, "");
+									assertNotNull(info);
+									assertNotEquals(info, "");
 									return null;
 								}
 								
 								@Override 
 								public String visitNone() { 
-									Assert.assertEquals(AonStringUtils.EMPTY,info);
+									assertEquals(AonStringUtils.EMPTY,info);
 									return null;
 								}
 								

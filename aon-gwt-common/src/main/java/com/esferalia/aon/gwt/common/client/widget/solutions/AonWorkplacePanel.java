@@ -185,7 +185,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 		if(workplace.getId() != null) {
 			description.setValue(workplace.getDescription());
 			statusLB.setValue(workplace.isActive());
-			economicAgreementLB.setValue(workplace.getEconomicAgreement().getDescription());
+			if(null != workplace.getEconomicAgreement()) economicAgreementLB.setValue(workplace.getEconomicAgreement().getDescription());
 			scopeLB.setValue(workplace.getScope().toString());
 			addressLB.setValue(workplace.getAddress().toString());
 			
@@ -213,7 +213,7 @@ public class AonWorkplacePanel extends HTMLPanel {
     		workplace
 				.setDescription(description.getValue())
 				.setActive(statusLB.getValue())
-				.setEconomicAgreement(Administration.safeValueOf(economicAgreementLB.getValue()))
+				.setEconomicAgreement(null == Administration.safeValueOf(economicAgreementLB.getValue()) ? Administration.COMMON_TERRITORY : Administration.safeValueOf(economicAgreementLB.getValue()))
 				.setScope(Integer.parseInt(scopeLB.getValue()))
 				.setAddress(Integer.parseInt(addressLB.getValue()))
 				;

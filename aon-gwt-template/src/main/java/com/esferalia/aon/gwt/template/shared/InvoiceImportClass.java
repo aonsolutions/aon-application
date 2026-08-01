@@ -50,6 +50,7 @@ public class InvoiceImportClass implements IsSerializable {
 	Double retentionPercentage;
 	Double retentionQuota;
 	Double total;
+	Double totalAmount;
 	InvoiceClaveRetencion retentionKey;
 	InvoiceSubClaveRetencion retentionSubKey;
 	Integer line;
@@ -262,6 +263,15 @@ public class InvoiceImportClass implements IsSerializable {
 		return this;
 	}
 
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+	
+	public InvoiceImportClass setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+		return this;
+	}
+	
 	public InvoiceClaveRetencion getRetentionKey() {
 		return retentionKey;
 	}

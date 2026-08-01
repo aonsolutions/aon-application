@@ -1623,6 +1623,15 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 /* ========================== Table Styles  ========================== */
 
+.aonTable { width: 100%; table-layout: fixed; }
+
+.aonTable thead tr,
+.aonTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;   /* <- la pieza que falta: fuerza los anchos declarados */
+}
+
 .aonTable th {
 	border: none
  }
@@ -1665,6 +1674,12 @@ i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
 
 .aonTable tbody tr:hover, .aonTableTrChecked {
   background-color: var(--aonBackgroundColor2);
+}
+
+.aonTable .aonTableEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ========================== TimeControl Styles  ========================== */

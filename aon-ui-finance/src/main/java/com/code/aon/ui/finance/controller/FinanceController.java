@@ -340,6 +340,13 @@ public class FinanceController extends FinanceListController implements IFinance
 		this.financeGroup = financeGroup;
 	}
 
+	public void onFinanceGroupChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (Boolean.TRUE.equals(event.getNewValue())) {
+			refreshFinanceGroupList();
+		}
+		((Finance) getTo()).setAmount(0.0);
+	}
+
 	public boolean isShowFinancePayrollWindow() {
 		return showFinancePayrollWindow;
 	}

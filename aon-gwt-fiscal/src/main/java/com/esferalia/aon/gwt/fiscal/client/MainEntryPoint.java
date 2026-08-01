@@ -49,6 +49,7 @@ import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryCompanyEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModuleNew;
 import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
+import com.esferalia.aon.gwt.fiscal.client.scope.ScopeAssignEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.scope.ScopeTemporaryAuthorizationEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
 import com.esferalia.aon.gwt.fiscal.client.target.TargetEnterpriseModule;
@@ -378,7 +379,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== SCOPE TEMPORARY AUTHORIZATION ENTRY
 	//
 	private static final String SCOPE_TEMPORARY_AUTHORIZATION_ENTRY_POINT = "ScopeTemporaryAuthorizationEntryModule";
-	
+	//
+	//    ================================================================== SELLER REASSIGN SCOPE ENTRY
+	//
+	private static final String SELLER_REASSIGN_SCOPE_ENTRY_POINT = "SellerReassignScopeEntryModule";
 	
 	
 	@Override
@@ -1215,6 +1219,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					ScopeTemporaryAuthorizationEntryModule scopeTemporaryAuthorizationEntryModule = new ScopeTemporaryAuthorizationEntryModule();
 					scopeTemporaryAuthorizationEntryModule.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(SELLER_REASSIGN_SCOPE_ENTRY_POINT) ) {
+			GWT.runAsync(ScopeAssignEntryModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					ScopeAssignEntryModule scopeAssignEntryModule = new ScopeAssignEntryModule();
+					scopeAssignEntryModule.onModuleLoad();
 				}
 				
 			});

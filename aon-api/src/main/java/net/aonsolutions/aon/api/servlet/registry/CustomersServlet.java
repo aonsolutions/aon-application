@@ -159,9 +159,19 @@ public class CustomersServlet extends AonApiHttpServlet {
 								api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage))
 						: CustomerJSON.toJSON(AON.getSigCustomerNotLinkedStream(api.getDomain().getName(), api.getDomain().getId(),
 									api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
-			} else
-				return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
-						api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage));
+			} else {
+			    JSONArray array = new JSONArray();
+
+			    AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(),
+			            api.getUser().getLogin(), f -> customerFilter(api, f), perPage * (page - 1), perPage)
+			        .forEach(customer -> {
+			            JSONObject object = CustomerJSON.toJSON(customer);
+			            array.put(RegistryServlet.getRegistryAdditionalInfo(
+			                    object, api, api.getData(), customer.getId(), null));
+			        });
+
+			    return array;
+			}
 		}
 			
 	}
@@ -221,7 +231,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 			String value = api.getData().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getNameProperty().like("%" + value + "%")
 					.or(f.getDocumentProperty().like("%" + value + "%"))
-					.or(f.getAliasProperty().like("%" + value + "%"));
+					.or(f.getAliasProperty().like("%" + value + "%"))
+					.or(f.getEmailProperty().like("%" + value + "%"))
+					.or(f.getCelullarProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
 		}
 
