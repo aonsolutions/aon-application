@@ -24,6 +24,9 @@ import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
 import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
 import net.aonsolutions.db.up2date.payroll.FixPreavisoQuote;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
+import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
+import net.aonsolutions.db.up2date.security.MigrateApp23To9;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
