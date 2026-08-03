@@ -41,8 +41,9 @@ import net.aonsolutions.aon.in.pdf.api.toolkit.PDFToolkit;
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
 
 public class DeliveryTemplate implements AutoCloseable  {
-	private static final PDFont DEFAULT_FONT = PdfFonts.HELVETICA;
-	private static final PDFont DEFAULT_BOLD_FONT = PdfFonts.HELVETICA_BOLD;
+	// per instance, not static: a PDFont cannot be shared between documents
+	private final PDFont DEFAULT_FONT = PdfFonts.helvetica();
+	private final PDFont DEFAULT_BOLD_FONT = PdfFonts.helveticaBold();
 	private static final Color DEFAULT_FONT_COLOR = PdfColors.DARKEST;
 	
 	private static final float TITLEFONTSIZE = 9f;

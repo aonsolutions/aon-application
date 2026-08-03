@@ -122,8 +122,8 @@ public class InvoiceTemplate {
 	
 	private static final String STANDARD_DATE_FORMAT = "dd/MM/yyyy";
 
-	public static final PDFont FONT = PdfFonts.HELVETICA;
-	public static final PDFont BOLD_FONT = PdfFonts.HELVETICA_BOLD;
+	public final PDFont FONT = PdfFonts.helvetica();
+	public final PDFont BOLD_FONT = PdfFonts.helveticaBold();
 	
 	OutputStream filename;
 	float height;

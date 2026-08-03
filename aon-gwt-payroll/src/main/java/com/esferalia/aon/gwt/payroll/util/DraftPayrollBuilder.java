@@ -148,7 +148,7 @@ public class DraftPayrollBuilder {
 				String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 				if (description.length() > 50) {
 					try {
-						description = croppedString(description, 999, PdfFonts.HELVETICA, 9f);
+						description = croppedString(description, 999, PdfFonts.helvetica(), 9f);
 					} catch (IOException ignored) {}	
 				}
 				

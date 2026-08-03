@@ -3,8 +3,8 @@ package com.esferalia.aon.in.payroll.pdf.maker.budget;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GRAY;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helveticaBold;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.JUSTIFY;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
@@ -64,7 +64,7 @@ public class BudgetTemplate extends PdfFile {
 			ResourceBundle words = ResourceBundle.getBundle(
 					"com.esferalia.aon.in.payroll.pdf.maker.budget.bundle.BudgetBundle", config.getLanguage());
 			template = new BudgetTemplate(10, 810, new PDDocument(), words, out, bg, 30);
-			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
+			template.setDefaults(helvetica(), 10f, BLACK, PdfColors.GRAY);
 			template.limitY = 20;
 
 			drawClientInfo(template);
@@ -74,7 +74,7 @@ public class BudgetTemplate extends PdfFile {
 			PdfTextBuilder builder = new PdfTextBuilder();
 
 			builder.x(560).y(10).width(10).height(15).stream(template.contents).content(template.page + "").color(GRAY)
-					.font(HELVETICA).fontSize(template.fontsize).horizontalAlignment(RIGHT);
+					.font(helvetica()).fontSize(template.fontsize).horizontalAlignment(RIGHT);
 
 			PdfText page = builder.build();
 			page.draw();
@@ -127,86 +127,86 @@ public class BudgetTemplate extends PdfFile {
 		PdfTextBuilder builder = new PdfTextBuilder();
 
 		builder.x(template.x()).y(template.y()).width(100).height(15).stream(template.contents).content(numberTitleTxt)
-				.color(BLACK).font(HELVETICA_BOLD).fontSize(template.fontsize).horizontalAlignment(LEFT);
+				.color(BLACK).font(helveticaBold()).fontSize(template.fontsize).horizontalAlignment(LEFT);
 		PdfText numberTitle = builder.build();
 
-		builder.x(template.x() + 100).content(numberTxt).font(HELVETICA);
+		builder.x(template.x() + 100).content(numberTxt).font(helvetica());
 		PdfText number = builder.build();
 		template.down(15);
 
-		builder.x(template.x()).y(template.y()).content(dateTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).content(dateTitleTxt).font(helveticaBold());
 		PdfText dateTitle = builder.build();
 
-		builder.x(template.x() + 100).content(dateTxt).font(HELVETICA);
+		builder.x(template.x() + 100).content(dateTxt).font(helvetica());
 		PdfText date = builder.build();
 		template.down(25);
 
-		builder.x(template.x()).y(template.y()).width(575).content(clientDataTitleTxt).font(HELVETICA);
+		builder.x(template.x()).y(template.y()).width(575).content(clientDataTitleTxt).font(helvetica());
 
 		PdfText clientDataTitle = builder.build();
 		template.down(25);
 
-		builder.x(template.x()).y(template.y()).width(75).content(enterpriseNameTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).width(75).content(enterpriseNameTitleTxt).font(helveticaBold());
 		PdfText enterpriseNameTitle = builder.build();
 
-		builder.x(template.x() + 75).y(template.y()).width(300).content(enterpriseNameTxt).font(HELVETICA);
+		builder.x(template.x() + 75).y(template.y()).width(300).content(enterpriseNameTxt).font(helvetica());
 		PdfText enterpriseName = builder.build();
 
-		builder.x(template.x() + 375).y(template.y()).width(55).content(nifTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 375).y(template.y()).width(55).content(nifTitleTxt).font(helveticaBold());
 		PdfText nifTitle = builder.build();
 
-		builder.x(template.x() + 430).y(template.y()).width(143).content(nifTxt).font(HELVETICA);
+		builder.x(template.x() + 430).y(template.y()).width(143).content(nifTxt).font(helvetica());
 		PdfText nif = builder.build();
 		template.down(15);
 
-		builder.x(template.x()).y(template.y()).width(75).content(addressTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).width(75).content(addressTitleTxt).font(helveticaBold());
 		PdfText addressTitle = builder.build();
 
-		builder.x(template.x() + 75).y(template.y()).width(300).content(addressTxt).font(HELVETICA);
+		builder.x(template.x() + 75).y(template.y()).width(300).content(addressTxt).font(helvetica());
 		PdfText address = builder.build();
 
-		builder.x(template.x() + 375).y(template.y()).width(55).content(cityTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 375).y(template.y()).width(55).content(cityTitleTxt).font(helveticaBold());
 		PdfText cityTitle = builder.build();
 
-		builder.x(template.x() + 430).y(template.y()).width(143).content(cityTxt).font(HELVETICA);
+		builder.x(template.x() + 430).y(template.y()).width(143).content(cityTxt).font(helvetica());
 		PdfText city = builder.build();
 		template.down(15);
 
-		builder.x(template.x()).y(template.y()).width(75).content(postalCodeTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).width(75).content(postalCodeTitleTxt).font(helveticaBold());
 		PdfText postalCodeTitle = builder.build();
 
-		builder.x(template.x() + 75).y(template.y()).width(90).content(postalCodeTxt).font(HELVETICA);
+		builder.x(template.x() + 75).y(template.y()).width(90).content(postalCodeTxt).font(helvetica());
 		PdfText postalCode = builder.build();
 
-		builder.x(template.x() + 165).y(template.y()).width(55).content(provinceTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 165).y(template.y()).width(55).content(provinceTitleTxt).font(helveticaBold());
 		PdfText provinceTitle = builder.build();
 
-		builder.x(template.x() + 220).y(template.y()).width(155).content(provinceTxt).font(HELVETICA);
+		builder.x(template.x() + 220).y(template.y()).width(155).content(provinceTxt).font(helvetica());
 		PdfText province = builder.build();
 
-		builder.x(template.x() + 375).y(template.y()).width(55).content(phoneTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 375).y(template.y()).width(55).content(phoneTitleTxt).font(helveticaBold());
 		PdfText phoneTitle = builder.build();
 
-		builder.x(template.x() + 430).y(template.y()).width(143).content(phoneTxt).font(HELVETICA);
+		builder.x(template.x() + 430).y(template.y()).width(143).content(phoneTxt).font(helvetica());
 		PdfText phone = builder.build();
 		template.down(15);
 
-		builder.x(template.x()).y(template.y()).width(75).content(mobileTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x()).y(template.y()).width(75).content(mobileTitleTxt).font(helveticaBold());
 		PdfText mobileTitle = builder.build();
 
-		builder.x(template.x() + 75).y(template.y()).width(90).content(mobileTxt).font(HELVETICA);
+		builder.x(template.x() + 75).y(template.y()).width(90).content(mobileTxt).font(helvetica());
 		PdfText mobile = builder.build();
 
-		builder.x(template.x() + 165).y(template.y()).width(55).content(emailTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 165).y(template.y()).width(55).content(emailTitleTxt).font(helveticaBold());
 		PdfText emailTitle = builder.build();
 
-		builder.x(template.x() + 220).y(template.y()).width(155).content(emailTxt).font(HELVETICA);
+		builder.x(template.x() + 220).y(template.y()).width(155).content(emailTxt).font(helvetica());
 		PdfText email = builder.build();
 
-		builder.x(template.x() + 375).y(template.y()).width(55).content(contactTitleTxt).font(HELVETICA_BOLD);
+		builder.x(template.x() + 375).y(template.y()).width(55).content(contactTitleTxt).font(helveticaBold());
 		PdfText contactTitle = builder.build();
 
-		builder.x(template.x() + 430).y(template.y()).width(143).content(contactTxt).font(HELVETICA);
+		builder.x(template.x() + 430).y(template.y()).width(143).content(contactTxt).font(helvetica());
 		PdfText contact = builder.build();
 		template.down(30);
 
@@ -271,18 +271,18 @@ public class BudgetTemplate extends PdfFile {
 		PdfTextBuilder builder = new PdfTextBuilder();
 
 		builder.x(template.x()).y(template.y()).width(575).height(15).stream(template.contents)
-				.content(productDescriptionTitleTxt).color(BLACK).font(HELVETICA).fontSize(template.fontsize)
+				.content(productDescriptionTitleTxt).color(BLACK).font(helvetica()).fontSize(template.fontsize)
 				.horizontalAlignment(LEFT);
 
 		PdfText productDescriptionTitle = builder.build();
 		template.down(20);
 
 		builder.x(template.x()).y(template.y()).width(200).stream(template.contents).content(productServiceTitleTxt)
-				.font(HELVETICA_BOLD);
+				.font(helveticaBold());
 		PdfText productServiceTitle = builder.build();
 
 		builder.x(template.x() + 370).y(template.y()).stream(template.contents).content(amountTitleTxt)
-				.font(HELVETICA_BOLD).horizontalAlignment(RIGHT);
+				.font(helveticaBold()).horizontalAlignment(RIGHT);
 		PdfText amountTitle = builder.build();
 		template.down(8);
 
@@ -301,7 +301,7 @@ public class BudgetTemplate extends PdfFile {
 				newPage(template);
 
 			builder.x(template.x()).y(template.y()).stream(template.contents).width(200).content(p.getName().orElse(""))
-					.color(BLACK).font(HELVETICA).horizontalAlignment(LEFT);
+					.color(BLACK).font(helvetica()).horizontalAlignment(LEFT);
 			PdfText product = builder.build();
 
 			builder.x(template.x() + 370).y(template.y()).content(toLatinNumber(p.getPrice().orElse(0.00)) + currency)
@@ -335,7 +335,7 @@ public class BudgetTemplate extends PdfFile {
 		PdfText tax = builder.build();
 		template.down(12);
 
-		builder.x(template.x() + 280).y(template.y()).width(200).content(taxTitleTxt).font(HELVETICA_BOLD)
+		builder.x(template.x() + 280).y(template.y()).width(200).content(taxTitleTxt).font(helveticaBold())
 				.fontSize(template.fontsize + 1).horizontalAlignment(RIGHT);
 
 		PdfText totalAmountTitle = builder.build();
@@ -362,7 +362,7 @@ public class BudgetTemplate extends PdfFile {
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 		builder.x(template.x()).y(template.y()).width(575).height(15).stream(template.contents)
-				.content(conditionsTitleTxt).color(BLACK).font(HELVETICA).fontSize(template.fontsize)
+				.content(conditionsTitleTxt).color(BLACK).font(helvetica()).fontSize(template.fontsize)
 				.horizontalAlignment(LEFT);
 
 		PdfText conditionsTitle = builder.build();
@@ -378,7 +378,7 @@ public class BudgetTemplate extends PdfFile {
 			
 			String termTxt = term.getTitle() + " : " + term.getDescription();
 			builder.x(template.x()).y(template.y()).width(570).height(15).stream(template.contents).content(termTxt)
-					.color(BLACK).font(HELVETICA).lineSpacing(4f).fontSize(template.fontsize - 2)
+					.color(BLACK).font(helvetica()).lineSpacing(4f).fontSize(template.fontsize - 2)
 					.horizontalAlignment(JUSTIFY);
 
 			PdfText	text		= builder.build();
@@ -403,7 +403,7 @@ public class BudgetTemplate extends PdfFile {
 		{
 			PdfTextBuilder builder = new PdfTextBuilder();
 			builder.x(560).y(10).width(10).stream(template.contents).content(template.page + "").color(GRAY)
-					.font(HELVETICA).fontSize(template.fontsize).horizontalAlignment(RIGHT);
+					.font(helvetica()).fontSize(template.fontsize).horizontalAlignment(RIGHT);
 
 			PdfText page = builder.build();
 			page.draw();
