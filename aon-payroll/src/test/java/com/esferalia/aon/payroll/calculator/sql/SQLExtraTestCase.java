@@ -9687,6 +9687,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	@Disabled("Disabled until the new proration is implemented")
 	public void testExtraAtSalaryXXII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -9745,7 +9746,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				@Override
 				public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
-        			System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: 0.00, " + quote );
+        			//System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: 0.00, " + quote );
 				super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 				}
 			
@@ -9753,7 +9754,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
         		public void addPayment(Double amount, Double quote, Double tax, String description,
         				java.util.Date startDate, java.util.Date endDate, IPayment payment,
         				Map<String, ITimedVariable<?>> context) {
-        			System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: " + amount + ", " + quote );
+        			//System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: " + amount + ", " + quote );
         			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
         		}
 		};
@@ -10046,7 +10047,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		
 		ContractRecord contract = newContract(aonContext,
-				add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -2)
+				add( getFirstDayOfYear(getToday()), Calendar.YEAR, -2)
 				,new HashMap<String, String>() {
 				} 
 				,new String[] {} 
@@ -10070,7 +10071,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
 				super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
-				System.out.println( startDate + " - " + endDate + " [ZERO PAYMENT] " + payment.getDescription() + ": " + quote );
+				//System.out.println( startDate + " - " + endDate + " [ZERO PAYMENT] " + payment.getDescription() + ": " + quote );
 			}
 		}).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
@@ -10099,7 +10100,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				})
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
 		
-		extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+		//extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
 		
 		assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
 		

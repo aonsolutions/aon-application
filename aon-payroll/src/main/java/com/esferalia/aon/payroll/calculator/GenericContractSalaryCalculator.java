@@ -94,6 +94,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.naming.Context;
+
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
@@ -1782,184 +1784,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return contractPayment.getType();
 	}
 
-	protected List<ITimedResult<Double>> resolvePayment(IContractPayment contractPayment,
-			Date start,
-			Date end,
-			Date issueDate,
-			ExpressionContext expressionContext, 
-			List<Period> leavePeriods, 
-			List<Period> strikePeriods)
-			throws AonException {
-		
-		String name = contractPayment.getName();
-		Date paymentStart = Period.max(contractPayment.getStartDate(), start);
-		Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
-		
-		List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
-				paymentEnd, Double.class);
-		
-		// Fix variable with same name than payment. Remove variable.?
-		results.stream()
-		.filter(r->r.getContext().containsKey(name))
-		.findAny().ifPresent( r-> expressionContext.removeVariable(name));
-		
-		PaymentType contractPaymentType = getPaymentType(contractPayment);
-		
-		if (isLog(name) ) {
-			// Nothing at all
-		} else if ( isExtra(expressionContext)
-			//&& contractPaymentType != PaymentType.CRA_0000
-			&& contractPayment.getScope() == ExpressionScope.SALARY ) {
-			; // Skip EXTRA Concepts
-		} else if ( contractPayment.getScope() == APPLICATION ) {
-			; // Skip APPLICATION Concepts
-		} else if (contractPaymentType != PaymentType.CRA_0008
-				&& contractPaymentType != PaymentType.CRA_0055 
-				&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
-				&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
-				&& !AonStringUtils.equals(ContextVariable.MATERNITY.getName(), name)
-				&& !AonStringUtils.equals(ContextVariable.MEDICAL_INSURANCE, name)
-				&& !AonStringUtils.equals(ContextVariable.LACK_PERIOD.getName(), name)
-				&& !ContextVariable.FLEXIBLES.contains(name)
-				&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
-						.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
-			try {
-				results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
-			} catch (UnsupportedOperationException e) {
-				onCheckError(contractPayment, e.getMessage());
-			}
-		} else if ( contractPaymentType != PaymentType.CRA_0006
-				&& !AonStringUtils.equals(ContextVariable.IMPROVEMENT, name)
-				&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
-				.map(r -> r.getPeriod()).iterator(), strikePeriods.iterator())) {
-			try {
-				results = fixStrikeResults(contractPayment, results, strikePeriods, start, end, expressionContext);
-			} catch (UnsupportedOperationException e) {
-				onCheckError(contractPayment, e.getMessage());
-			}
-		} else  if ((contractPaymentType == PaymentType.CRA_0055
-				|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
-				&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
-						.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
-			// GARANTIZADO... at NO I.T
-			results = fixGuaranteedResults(contractPayment, results, leavePeriods, start, end, expressionContext);
-		} else  if ((contractPaymentType == PaymentType.CRA_0056
-				|| AonStringUtils.equals(ContextVariable.IMPROVEMENT, name))) {
-			// MEJORAS... at NO 
-			try {
-				results = fixImprovementResults(contractPayment, results, strikePeriods, start, end, expressionContext);
-			} catch (NullPointerException e) {
-			}
-		} else if ( results.size() == 1 && 
-				results.get(0).getValue() != null && 
-				results.get(0).getValue() > 0.00 && 
-				results.get(0).getContext().size() == 0 ) {
-			try {
-				results = fixConstantResult(contractPayment, results.get(0), start, end, expressionContext);
-			} catch (UnsupportedOperationException e) {
-				onCheckError(contractPayment, e.getMessage());
-			}
-		} else if ( results.size() == 1 && 
-				results.get(0).getValue() != null && 
-				results.get(0).getValue() > 0.00 &&
-				isExtra(expressionContext) &&
-				(contractPaymentType == PaymentType.CRA_0004) &&
-				allAgreementConstants(results.get(0).getContext()) ) {
-			results = fixConstantExtraResult(contractPayment, results.get(0), paymentStart, paymentEnd, expressionContext);
-		} else if ( results.size() == 1 && 
-				results.get(0).getValue() != null && 
-				results.get(0).getValue() > 0.00 && 
-				( 
-				isPartialMonth(results.get(0))  
-				|| isPartial(expressionContext, results.get(0).getPeriod())
-				) &&
-				allAgreementConstants(results.get(0).getContext()) ) {
-			try {
-				results = fixConstantAgreementResult(contractPayment, results.get(0), start, end, expressionContext);
-			} catch (UnsupportedOperationException e) {
-				onCheckError(contractPayment, e.getMessage());
-			}
-		} else if ( results.size() == 1 && 
-				results.get(0).getValue() != null && 
-				results.get(0).getValue() > 0.00 && 
-				(contractPaymentType == PaymentType.CRA_0055) &&
-				contractPayment.getScope() == ExpressionScope.AGREEMENT &&
-				allAgreementConstants(results.get(0).getContext()) ) {
-			try {
-				results = fixConstantAgreementGuaranteed(contractPayment, results.get(0), leavePeriods, start, end, expressionContext);
-			} catch (UnsupportedOperationException e) {
-				onCheckError(contractPayment, e.getMessage());
-			}
-		} 
-		
-		
-		if ( !results.isEmpty() && 
-				contractPaymentType == PaymentType.CRA_0004 && 
-				contractPayment.getSalaryType() == SalaryType.SALARY ) {
-			if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
-				results = fixExtraResults(contractPayment, results, start, end, expressionContext);
-		} else if ( AonUtils.equals(name, ContextVariable.GUARENTEED) ||
-						contractPaymentType == PaymentType.CRA_0055) {
-			results = checkCra0055Results(contractPayment, results, start, end, expressionContext);
-			
-		}
-		
-		return results;
-
-	}
-
-	protected double quotePayment(IContractPayment contractPayment,
-			ExpressionContext expressionContext, 
-			QuoteCalculator quoteCalculator, 
-			ITimedResult<Double> result )
-			throws AonException {
-		Date resultStart = result.getPeriod().getStart();
-		Date resultEnd = result.getPeriod().getEnd();
-
-		Double resultDouble = result.getValue();
-		double resultValue = AonNumberUtils.isValid(resultDouble) ? resultDouble : 0.00;
-
-		// Here we add 'all' variables involved in quote.
-		double quote = 0.00;
-		List<ITimedResult<Double>> quoteResults = quoteCalculator.quote(contractPayment, resultStart, resultEnd,
-				resultValue);
-
-		for (ITimedResult<Double> quoteResult : quoteResults) {
-			try {
-				for (Entry<String, ITimedVariable<?>> entry : quoteResult.getContext().entrySet()) {
-					if ( !isFillData(entry.getKey())) {
-						salaryBuilder.addData(entry.getKey(), entry.getValue());
-					}
-				}
-			} catch (ExpressionExceptionWrapper e) {
-				if (e.getCause() instanceof UndefinedVariablesException)
-					onInvalidData(((UndefinedVariablesException) e.getCause()).getVariableNames());
-			}
-			quote += quoteResult.getValue();
-		}
-		return quote;
-	}
-
-	protected String resolveDescription(IContractPayment contractPayment, ExpressionContext expressionContext,
-			Date resultStart, Date resultEnd) {
-		String description = null;
-		try {
-			description = expressionContext.evalTemplate(contractPayment.getDescription(), resultStart,
-					resultEnd);
-			// TODO ¿ Append period to description ?
-			// description = getDescriptionPeriod(description,
-			// paymentStart, paymentEnd, amountStart,
-			// amountEnd);
-		} catch (CompileException e) {
-			onCompileError(contractPayment, DESCRIPTION_SYNTAX_ERROR);
-		} catch (UndefinedVariablesException e) {
-			onCheckError(contractPayment, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0]));
-		} catch (Exception e) {
-			onCheckError(contractPayment, DESCRIPTION_UNKNOWN_ERROR);
-		}
-		return description;
-	}
-
 	protected void resolvePayment(IContractPayment contractPayment,
 			Date start,
 			Date end,
@@ -1991,8 +1815,115 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		
 		try {
-			List<ITimedResult<Double>> results = resolvePayment(contractPayment, paymentStart, paymentEnd, issueDate, expressionContext, leavePeriods, strikePeriods);			
-
+			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
+					paymentEnd, Double.class);
+			
+			// Fix variable with same name than payment. Remove variable.?
+			results.stream()
+			.filter(r->r.getContext().containsKey(name))
+			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
+			
+			PaymentType contractPaymentType = getPaymentType(contractPayment);
+			
+			if (isLog(name) ) {
+				// Nothing at all
+			} else if ( isExtra(expressionContext)
+				//&& contractPaymentType != PaymentType.CRA_0000
+				&& contractPayment.getScope() == ExpressionScope.SALARY ) {
+				; // Skip EXTRA Concepts
+			} else if ( contractPayment.getScope() == APPLICATION ) {
+				; // Skip APPLICATION Concepts
+			} else if (contractPaymentType != PaymentType.CRA_0008
+					&& contractPaymentType != PaymentType.CRA_0055 
+					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
+					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
+					&& !AonStringUtils.equals(ContextVariable.MATERNITY.getName(), name)
+					&& !AonStringUtils.equals(ContextVariable.LACK_PERIOD.getName(), name)
+					&& !AonStringUtils.equals(ContextVariable.MEDICAL_INSURANCE, name)
+					&& !ContextVariable.FLEXIBLES.contains(name)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
+							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
+				try {
+					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else if ( contractPaymentType != PaymentType.CRA_0006
+					&& !AonStringUtils.equals(ContextVariable.IMPROVEMENT, name)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+					.map(r -> r.getPeriod()).iterator(), strikePeriods.iterator())) {
+				try {
+					results = fixStrikeResults(contractPayment, results, strikePeriods, start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else  if ((contractPaymentType == PaymentType.CRA_0055
+					|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
+					&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
+				// GARANTIZADO... at NO I.T
+				results = fixGuaranteedResults(contractPayment, results, leavePeriods, start, end, expressionContext);
+			} else  if ((contractPaymentType == PaymentType.CRA_0056
+					|| AonStringUtils.equals(ContextVariable.IMPROVEMENT, name))) {
+				// MEJORAS... at NO 
+				try {
+					results = fixImprovementResults(contractPayment, results, strikePeriods, start, end, expressionContext);
+				} catch (NullPointerException e) {
+				}
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 && 
+					results.get(0).getContext().size() == 0 ) {
+				try {
+					results = fixConstantResult(contractPayment, results.get(0), start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 &&
+					isExtra(expressionContext) &&
+					(contractPaymentType == PaymentType.CRA_0004) &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				results = fixConstantExtraResult(contractPayment, results.get(0), paymentStart, paymentEnd, expressionContext);
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 && 
+					( 
+					isPartialMonth(results.get(0))  
+					|| isPartial(expressionContext, results.get(0).getPeriod())
+					) &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				try {
+					results = fixConstantAgreementResult(contractPayment, results.get(0), start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} else if ( results.size() == 1 && 
+					results.get(0).getValue() != null && 
+					results.get(0).getValue() > 0.00 && 
+					(contractPaymentType == PaymentType.CRA_0055) &&
+					contractPayment.getScope() == ExpressionScope.AGREEMENT &&
+					allAgreementConstants(results.get(0).getContext()) ) {
+				try {
+					results = fixConstantAgreementGuaranteed(contractPayment, results.get(0), leavePeriods, start, end, expressionContext);
+				} catch (UnsupportedOperationException e) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+			} 
+			
+			
+			if ( !results.isEmpty() && 
+					contractPaymentType == PaymentType.CRA_0004 && 
+					contractPayment.getSalaryType() == SalaryType.SALARY ) {
+				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
+					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
+			} else if ( AonUtils.equals(name, ContextVariable.GUARENTEED) ||
+							contractPaymentType == PaymentType.CRA_0055) {
+				results = checkCra0055Results(contractPayment, results, start, end, expressionContext);
+				
+			}
+			
 			double resultsDouble = results.stream().filter( r -> r.getValue() != null ).collect(Collectors.summingDouble( r -> r.getValue() ));		
 
 			for (ITimedResult<Double> result : results) {
@@ -2008,7 +1939,23 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				expressionContext.setVariable(ALL, resultValue, resultStart, resultEnd);
 
 				// Here we add 'all' variables involved in quote.
-				double quote = quotePayment(contractPayment, expressionContext, quoteCalculator, result);
+				double quote = 0.00;
+				List<ITimedResult<Double>> quoteResults = quoteCalculator.quote(contractPayment, resultStart, resultEnd,
+						resultValue);
+
+				for (ITimedResult<Double> quoteResult : quoteResults) {
+					try {
+						for (Entry<String, ITimedVariable<?>> entry : quoteResult.getContext().entrySet()) {
+							if ( !isFillData(entry.getKey())) {
+								salaryBuilder.addData(entry.getKey(), entry.getValue());
+							}
+						}
+					} catch (ExpressionExceptionWrapper e) {
+						if (e.getCause() instanceof UndefinedVariablesException)
+							onInvalidData(((UndefinedVariablesException) e.getCause()).getVariableNames());
+					}
+					quote += quoteResult.getValue();
+				}
 
 				try {
 					Double tax ;
@@ -2042,8 +1989,21 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						Arrays.stream(e.getVariableNames()).collect(Collectors.joining(",")))
 						);
 					}
-					String description = resolveDescription(contractPayment, expressionContext, resultStart, resultEnd);
-					
+					String description = null;
+					try {
+						description = expressionContext.evalTemplate(contractPayment.getDescription(), resultStart,
+								resultEnd);
+						// TODO ¿ Append period to description ?
+						// description = getDescriptionPeriod(description,
+						// paymentStart, paymentEnd, amountStart,
+						// amountEnd);
+					} catch (CompileException e) {
+						onCompileError(contractPayment, DESCRIPTION_SYNTAX_ERROR);
+					} catch (UndefinedVariablesException e) {
+						onCheckError(contractPayment, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0]));
+					} catch (Exception e) {
+						onCheckError(contractPayment, DESCRIPTION_UNKNOWN_ERROR);
+					} 
 					salaryBuilder.addPayment(resultValue, quote, tax, description, resultStart, resultEnd,
 							contractPayment, result.getContext());
 
@@ -2105,7 +2065,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} 
 
 	}
-
 
 	private void saveResult(IContractPayment contractPayment, ExpressionContext expressionContext, Date resultStart,
 			Date resultEnd, double resultValue) {
