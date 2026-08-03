@@ -19,12 +19,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.ContractForeignKeysAddIfNotExist;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFix;
-import net.aonsolutions.db.up2date.payroll.ImporteHoraFormacion2026Update;
+import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
+import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
+import net.aonsolutions.db.up2date.payroll.FixPreavisoQuote;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
-import net.aonsolutions.db.up2date.scope.UserScopeStartDateNotNull;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
 import net.aonsolutions.db.up2date.security.MigrateApp23To9;
@@ -633,7 +632,11 @@ public class Up2Date {
 			// ImporteHoraFormacion2026Update.IMPORTEHORAFORMACION2026UPDATE,
 			// UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
 			// ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
-			EreFzaExoneradoFix.EREFZAEXONERADOFIX,
+			// EreFzaExoneradoFix.EREFZAEXONERADOFIX,
+			EreFzaExoneradoFixII.EREFZAEXONERADOFIXII,
+			ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
+			FixPreavisoQuote.FIXPREAVISOQUOTE,	
+			
 
 
 			// ----------------------------------------------------------------

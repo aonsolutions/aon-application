@@ -3709,7 +3709,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("ERE COMPLETO, FZA EXONERACION ( TIEMPO COMPLETO )");
 		calculate(Calendar.AUGUST,2026);
-		assertText("totalEnterpriseLabel", 0.00);
+		double cgcBase = getValue("cgcBaseLabel");
+		
+		assertText("totalEnterpriseLabel", cgcBase * 2.25 / 100.00);
 		
 	}
 
