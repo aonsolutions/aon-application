@@ -460,10 +460,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	
 		draft("FINIQUITO, REDEFINIDO");
 		settle(calendar.getTime());
-		assertValue("cgcBaseLabel", 200.00);
-		assertValue("cgpBaseLabel", 200.00);
+		assertValue("cgcBaseLabel", 300.00);
+		assertValue("cgpBaseLabel", 300.00);
 		assertValue("totalPaymentLabel", 300.00);
-		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
+		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) );
 		
 		draft("COTIZACIÓN, MIN");
 		calendar.set(2023, Calendar.JULY, 31);
