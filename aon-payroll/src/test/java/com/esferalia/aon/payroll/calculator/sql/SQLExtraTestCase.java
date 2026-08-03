@@ -9687,7 +9687,6 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Disabled("Disabled until the new proration is implemented")
 	public void testExtraAtSalaryXXII() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();

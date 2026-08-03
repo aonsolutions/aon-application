@@ -1960,7 +1960,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					Double tax ;
 					try {
-						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 					} catch ( YesExtraException e ) {
 						tax = e.getTax();
 						resultValue = e.getTax();
@@ -1980,7 +1980,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							public String getIrpfExpression() {
 								return irpfExpression;
 							};
-						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 						onCheckError(
 						contractPayment,
 						String.format(
