@@ -76,14 +76,12 @@ export class AonFiscalBeta extends AonElement {
 
 			aonFiscalBeta.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
 		}
-
-		this.buildFiscalMenu();
-
+		
 		// Load fiscal matrix by default if its Entorno
 		if (this.getDur().isDomainManagementAvailable()) {
 			GWT.iLoad(GWT.MODEL_MATRIX, this.getApplication().CONTENT);
 			this.getApplication().closeSidenav();
-		}
+		} else this.buildFiscalMenu();
 		
 	}
 
