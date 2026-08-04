@@ -68,6 +68,11 @@ export class AonTaxDetail extends AonElement {
   SELECTED_INVOICE_TYPE;
   SELECTED_TYPE;
 
+  // Tab spans returned by AonTab.addOption
+  receivedInvoiceTab;
+  issuedInvoiceTab;
+  salaryTab;
+
   _roles;
   applicationEl;
   tax;
@@ -379,33 +384,29 @@ export class AonTaxDetail extends AonElement {
         if(this.SELECTED_INVOICE_TYPE == 'received'){
           // ReceivedInvoice
           let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.SELECTED_FILTER);
-          if(recievedInvoiceCount){
-            let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
-            aonReceivedInvoiceTab.innerHTML =  `F. Recibidas (${recievedInvoiceCount.count || 0})`;
+          if(recievedInvoiceCount && this.receivedInvoiceTab){
+            this.receivedInvoiceTab.textContent =  `F. Recibidas (${recievedInvoiceCount.count || 0})`;
           }
         } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
           // IssuedInvoice
           let issuedInvoiceCount = await getFiscalModelsInvoincesCount(this.SELECTED_FILTER);
-          if(issuedInvoiceCount){
-            let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
-            aonIssuedInvoiceTab.innerHTML = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
+          if(issuedInvoiceCount && this.issuedInvoiceTab){
+            this.issuedInvoiceTab.textContent = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
           }
         }
       } else if (this.type == "future") {
         if(this.SELECTED_INVOICE_TYPE == 'received'){
           // ReceivedInvoice
           let recievedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.SELECTED_FILTER);
-          if(recievedInvoiceCount){
-            let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
-            aonReceivedInvoiceTab.innerHTML = `F. Recibidas (${recievedInvoiceCount.count || 0})`;
+          if(recievedInvoiceCount && this.receivedInvoiceTab){
+            this.receivedInvoiceTab.textContent = `F. Recibidas (${recievedInvoiceCount.count || 0})`;
           }
         } else if(this.SELECTED_INVOICE_TYPE == 'issued'){
           // IssuedInvoice
           let issuedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.SELECTED_FILTER);
-          if(issuedInvoiceCount){
-            let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
-            console.log(aonIssuedInvoiceTab);
-            aonIssuedInvoiceTab.innerHTML = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
+          if(issuedInvoiceCount && this.issuedInvoiceTab){
+            console.log(this.issuedInvoiceTab);
+            this.issuedInvoiceTab.textContent = `F. Emitidas (${issuedInvoiceCount.count || 0})`;
           }
         }
       }
@@ -413,16 +414,14 @@ export class AonTaxDetail extends AonElement {
       if (this.type == "tax") {
         // Salaies
         let salaryCount = await getFiscalModelsSalariesCount(this.SELECTED_FILTER);
-        if(salaryCount){
-          let aonSalaryTab = this.getElement("aonSalaryTab");
-          aonSalaryTab.innerHTML =  `Nóminas (${salaryCount.count || 0})`;
+        if(salaryCount && this.salaryTab){
+          this.salaryTab.textContent =  `Nóminas (${salaryCount.count || 0})`;
         }
       } else if (this.type == "future") {
         // Salaries
         let salaryCount = await getEstimationModelsFiscalSalariesCount(this.SELECTED_FILTER);
-        if(salaryCount){
-          let aonSalaryTab = this.getElement("aonSalaryTab");
-          aonSalaryTab.innerHTML =  `Nóminas (${salaryCount.count || 0})`;
+        if(salaryCount && this.salaryTab){
+          this.salaryTab.textContent =  `Nóminas (${salaryCount.count || 0})`;
         }
       }
     }
@@ -490,8 +489,7 @@ export class AonTaxDetail extends AonElement {
       let recievedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterReceivedInvoice);
       if(recievedInvoiceCount && recievedInvoiceCount.count !== 0){
         this.receivedInvoicesCount = recievedInvoiceCount.count;
-        aonTab.addOption({
-          id: "aonReceivedInvoiceTab",
+        this.receivedInvoiceTab = aonTab.addOption({
           title: `F. Recibidas (${recievedInvoiceCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -505,8 +503,7 @@ export class AonTaxDetail extends AonElement {
       let issuedInvoiceCount = await getFiscalModelsInvoincesCount(this.filterIssuedInvoice);
       if(issuedInvoiceCount && issuedInvoiceCount.count !== 0){
         this.issuedInvoicesCount = issuedInvoiceCount.count;
-        aonTab.addOption({
-          id: "aonIssuedInvoiceTab",
+        this.issuedInvoiceTab = aonTab.addOption({
           title: `F. Emitidas (${issuedInvoiceCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -520,8 +517,7 @@ export class AonTaxDetail extends AonElement {
       let salaryCount = await getFiscalModelsSalariesCount(this.filterSalary);
       if(salaryCount && salaryCount.count !== 0){
         this.salariesCount = salaryCount.count;
-        aonTab.addOption({
-          id: "aonSalaryTab",
+        this.salaryTab = aonTab.addOption({
           title: `Nóminas (${salaryCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -562,8 +558,7 @@ export class AonTaxDetail extends AonElement {
       let recievedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.filterReceivedInvoice);
       if(recievedInvoiceCount && recievedInvoiceCount.count && recievedInvoiceCount.count !== 0){
         this.receivedInvoicesCount = recievedInvoiceCount.count;
-        aonTab.addOption({
-          id: "aonReceivedInvoiceTab",
+        this.receivedInvoiceTab = aonTab.addOption({
           title: `F. Recibidas (${recievedInvoiceCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -572,13 +567,12 @@ export class AonTaxDetail extends AonElement {
           }
         });
       }
-        
+
       // IssuedInvoice
       let issuedInvoiceCount = await getEstimationModelsFiscalInvoincesCount(this.filterIssuedInvoice);
       if(issuedInvoiceCount && issuedInvoiceCount.count && issuedInvoiceCount.count !== 0){
         this.issuedInvoicesCount = issuedInvoiceCount.count;
-        aonTab.addOption({
-          id: "aonIssuedInvoiceTab",
+        this.issuedInvoiceTab = aonTab.addOption({
           title: `F. Emitidas (${issuedInvoiceCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -592,8 +586,7 @@ export class AonTaxDetail extends AonElement {
       let salaryCount = await getEstimationModelsFiscalSalariesCount(this.filterSalary);
       if(salaryCount && salaryCount.count && salaryCount.count !== 0){
         this.salariesCount = salaryCount.count;
-        aonTab.addOption({
-          id: "aonSalaryTab",
+        this.salaryTab = aonTab.addOption({
           title: `Nóminas (${salaryCount.count})`,
           fn: () => {
             this.resetSearchFilter();
@@ -616,26 +609,18 @@ export class AonTaxDetail extends AonElement {
   }
 
   startLoader(){
-    let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
-    let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
-    let aonSalaryTab = this.getElement("aonSalaryTab");
-
-    if(aonReceivedInvoiceTab) aonReceivedInvoiceTab.classList.add('blocked');
-    if(aonIssuedInvoiceTab) aonIssuedInvoiceTab.classList.add('blocked');
-    if(aonSalaryTab) aonSalaryTab.classList.add('blocked');
+    if(this.receivedInvoiceTab) this.receivedInvoiceTab.classList.add('blocked');
+    if(this.issuedInvoiceTab) this.issuedInvoiceTab.classList.add('blocked');
+    if(this.salaryTab) this.salaryTab.classList.add('blocked');
 
     this.getApplication().startLoader();
   }
 
   stopLoader(){
-    let aonReceivedInvoiceTab = this.getElement("aonReceivedInvoiceTab");
-    let aonIssuedInvoiceTab = this.getElement("aonIssuedInvoiceTab");
-    let aonSalaryTab = this.getElement("aonSalaryTab");
+    if(this.receivedInvoiceTab) this.receivedInvoiceTab.classList.remove('blocked');
+    if(this.issuedInvoiceTab) this.issuedInvoiceTab.classList.remove('blocked');
+    if(this.salaryTab) this.salaryTab.classList.remove('blocked');
 
-    if(aonReceivedInvoiceTab) aonReceivedInvoiceTab.classList.remove('blocked');
-    if(aonIssuedInvoiceTab) aonIssuedInvoiceTab.classList.remove('blocked');
-    if(aonSalaryTab) aonSalaryTab.classList.remove('blocked');
-    
     this.getApplication().stopLoader();
   }
 
@@ -973,7 +958,7 @@ export class AonTaxDetail extends AonElement {
     
     if(this.SELECTED_TABLE){
       let visibilityButtons = this.querySelectorAll(`#${this.SELECTED_TABLE}Icon0`);
-      visibilityButtons.forEach((visibilityButton, i) => visibilityButton.innerHTML = "visibility");
+      visibilityButtons.forEach((visibilityButton, i) => visibilityButton.textContent = "visibility");
 
       let table = this.getElement(this.SELECTED_TABLE);
       if(table) table.addBackgroundTr();
@@ -997,18 +982,18 @@ export class AonTaxDetail extends AonElement {
 
     let visibilityButton = this.visibilityOffButton(visibilityButtonId, index);
 
-    let visible = "visibility_off" === visibilityButton.innerHTML;
+    let visible = "visibility_off" === visibilityButton.textContent;
 
     let fileDiv = this.getElement(this.FILE);
     let contentDiv = this.getElement(this.CONTENT);
 
     if (visible) {
-      visibilityButton.innerHTML = "visibility";
+      visibilityButton.textContent = "visibility";
       fileDiv.style.display = "none";
       contentDiv.style.width = "100%";
       toolbar.removeButton(ACTION.CLOSE_PDF.id);
     } else {
-      visibilityButton.innerHTML = "visibility_off";
+      visibilityButton.textContent = "visibility_off";
       fileDiv.style.display = "block";
       fileDiv.style.width = "50%";
       contentDiv.style.width = "50%";
@@ -1061,7 +1046,7 @@ export class AonTaxDetail extends AonElement {
   visibilityOffButton(id, index) {
     let visibilityButtons = this.querySelectorAll(`#${id}Icon0`);
     visibilityButtons.forEach((visibilityButton, i) => {
-      if (i !== index) visibilityButton.innerHTML = "visibility";
+      if (i !== index) visibilityButton.textContent = "visibility";
     });
 
     return visibilityButtons[index];
@@ -1425,7 +1410,7 @@ export class AonTaxDetail extends AonElement {
       this.visibleFields(null);
       const tipodec = this.getElement("tipodec");
       if (tipodec) tipodec.disabled = true;
-      div.innerHTML = "";
+      div.textContent = "";
       textArea = new AonAutosizeTextarea();
       textArea.name = "reasonReject";
       textArea.title = "Motivo del rechazo";
@@ -1435,7 +1420,7 @@ export class AonTaxDetail extends AonElement {
       buttonAccept.disabled = false;
     }, false);
 
-    buttonCancel.innerHTML = "Rechazar";
+    buttonCancel.textContent = "Rechazar";
 
     buttonAccept = dialog.addSendAction(() => {
       if (textArea) {

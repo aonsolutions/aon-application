@@ -48,8 +48,8 @@ export class AonTab extends AonElement {
 
     printOption(option, i) {
         let span = this.createElement(TAG.SPAN);
-        span.id = option.id || this.SPAN + i;
-        span.innerHTML = option.title;
+        span.id = this.SPAN + i;
+        span.textContent = option.title;
         //span.style.padding = '10px';
         //span.style.paddingBottom = '5px';
         span.style.cursor = 'pointer';
@@ -73,6 +73,14 @@ export class AonTab extends AonElement {
         }
         this.getElement(this.DIV).appendChild(span);
         return span;
+    }
+
+    selectTab(i) {
+        this.querySelectorAll(TAG.SPAN).forEach(sp => {
+           sp.classList.remove("aonTabItemTextSelected");
+        });
+        this.selected = i;
+        this.getElement(this.SPAN + i).classList.add("aonTabItemTextSelected");
     }
 
     setOptions(options) {
