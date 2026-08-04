@@ -13,6 +13,7 @@
 			flex-direction: column;
 			padding: 1rem;
 			height: 585px;
+			overflow-y: auto;
 			min-width: 600px;
 			gap: 1rem;
 		}
@@ -122,7 +123,7 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel ui:field="extraPanel" styleName="{style.element} {style.maxWidth}">
 							<g:Label ui:field="extraLabel" styleName="{style.title}"/>
-							<g:TextBox ui:field="extraName" styleName="{style.uppercase} {style.maxWidth} {style.tbHeight}" />
+							<g:TextBox ui:field="extraName" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					
@@ -173,7 +174,7 @@
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Concepto</g:Label>
-					<g:TextBox ui:field="paymentConcept" maxLength="25" styleName="{style.uppercase}" />
+					<g:TextBox ui:field="paymentConcept" maxLength="25" />
 				</g:HTMLPanel>
 				<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.element}">
 					<g:Label styleName="{style.title}">Tipo CRA</g:Label>
