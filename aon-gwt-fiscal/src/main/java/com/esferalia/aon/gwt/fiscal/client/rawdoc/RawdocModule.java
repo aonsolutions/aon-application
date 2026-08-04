@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.rawdoc;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getParameter;
 import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
 
 import java.util.LinkedHashSet;
@@ -54,6 +55,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class RawdocModule  implements EntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(RawdocModule.class.getName());
+
+	private static final String RAWDOC_STATUS_PARAM = "rawdocStatus";
+	private static final RawdocStatus DEFAULT_RAWDOC_STATUS = RawdocStatus.PROCESSED;
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
@@ -163,9 +167,20 @@ public class RawdocModule  implements EntryPoint {
 			.setParams(new RawdocParams()
 				.setDomain(getCurrentDomain())
 				.setDomainName(getCurrentDomainName())
-				.setStatus(RawdocStatus.PROCESSED))
+				.setStatus(getRawdocStatusParam()))
 		;
 		this.onModuleLoad( options );
+	}
+
+	/**
+	 * Estado por el que se filtra al arrancar el m&oacute;dulo. Se recibe como par&aacute;metro
+	 * 'rawdocStatus' en la url del nocache (ver GWT.iLoad). Si no viene, se aplica el estado por
+	 * defecto; si viene un valor no reconocido (p.e. 'ALL'), no se filtra por estado.
+	 */
+	private static RawdocStatus getRawdocStatusParam() {
+		String status = getParameter(GWT.getModuleName(), RAWDOC_STATUS_PARAM);
+		if (AonStringUtils.isBlank(status)) return DEFAULT_RAWDOC_STATUS;
+		return RawdocStatus.safeValueOf(status);
 	}
 	
 	public void onModuleLoad( final RawdocModuleOptions opt ) {

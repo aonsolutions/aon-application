@@ -596,8 +596,7 @@ export const INVOICE_SIGNATURE = 'Sinatura de Facturas';
 export const INVOICE_SURCHARGES = 'Recargos en Facturas';
 export const IT_SICK_LEAVES = 'Baixas IT';
 export const IVA_SELF_ASSESSMENT = 'IVE Autoliquidación';
-export const ISSUEDS = 'Emitido';
-
+export const ISSUEDS = 'Emitidas';
 
 // ----- J
 
@@ -1150,6 +1149,7 @@ export const USER_DATA = 'Datos do Usuario';
 export const USER_MANAGEMENT = 'Xestión de Usuarios';
 export const USERS = 'Usuarios';
 export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
+export const UNDEDUCTIBLE_EXPENSES = 'Gastos non Deducibles';
 export const UNDEDUCTIBLE_VAT_EXPENSE = 'Gasto non deducible en IVA';
 export const UNDEDUCTIBLE_VAT_EXPENSES = 'Gastos non Deducibles en IVA';
 export const USER_GROUPS = 'Grupos de usuarios';

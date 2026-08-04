@@ -1156,6 +1156,7 @@ export const TYPES = 'Tipos';
 export const TARIFFS = 'Tarifas';
 export const TEACHERS = 'Profesores';
 export const TEMPLATE_HEADERS_FOOTERS = 'Cabeceras y Pies de Plantilla';
+export const UNDEDUCTIBLE_EXPENSES = 'Gastos no Deducibles';
 export const UNDEDUCTIBLE_VAT_EXPENSE = 'Gasto no deducible en IVA';
 export const UNDEDUCTIBLE_VAT_EXPENSES = 'Gastos no Deducibles en IVA';
 export const TRANSITION_TYPES = 'Tipos de Transiciones';

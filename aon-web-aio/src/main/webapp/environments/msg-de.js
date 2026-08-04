@@ -1146,6 +1146,7 @@ export const TYPES = 'Types';
 export const TARIFFS = 'Tarife';
 export const TEACHERS = 'Lehrer';
 export const TEMPLATE_HEADERS_FOOTERS = 'Vorlagen-Kopf- und Fußzeilen';
+export const UNDEDUCTIBLE_EXPENSES = 'Nicht abzugsfähige Ausgaben';
 export const UNDEDUCTIBLE_VAT_EXPENSE = 'Nicht abzugsfähige MwSt.-Ausgabe';
 export const UNDEDUCTIBLE_VAT_EXPENSES = 'Nicht abzugsfähige MwSt.-Ausgaben';
 export const TRANSITION_TYPES = 'Übergangstypen';
