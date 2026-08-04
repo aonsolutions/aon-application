@@ -54,6 +54,10 @@ import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 
 public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
+	private static final String FIRST_PAGE_HEIGHT = "530px";
+	private static final String FIRST_PAGE_EXTRA_HEIGHT = "680px";
+	private static final String GTZDO_PAGE_HEIGHT = "650px";
+
 	// -------------------------------------------- GtzdoWizard implementation
 
 	private class GtzdoWizardImplementation extends GtzdoWizard {
@@ -993,11 +997,15 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			setExtraPayFieldsVisible(true);
 			periodicityType.setEnabled(false);
 			paymentExpression.setEnabled(true);
+			container.setHeight(FIRST_PAGE_EXTRA_HEIGHT);
+			centerDialog();
 		} else {
 			paymentTypeListBox.setSelected(Payment.Type.CRA_0001);
 			setExtraPayFieldsVisible(false);
 			periodicityType.setEnabled(true);
 			paymentExpression.setEnabled(false);
+			container.setHeight(FIRST_PAGE_HEIGHT);
+			centerDialog();
 		}
 	}
 
@@ -1068,14 +1076,14 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 	private void showFirstPage() {
 		firstPage.setVisible(true);
 		gtzdoWizard.setVisible(false);
-		container.setHeight("530px");
+		container.setHeight(FIRST_PAGE_HEIGHT);
 		centerDialog();
 	}
 
 	private void showGtzdoPage() {
 		firstPage.setVisible(false);
 		gtzdoWizard.setVisible(true);
-		container.setHeight("650px");
+		container.setHeight(GTZDO_PAGE_HEIGHT);
 		centerDialog();
 	}
 

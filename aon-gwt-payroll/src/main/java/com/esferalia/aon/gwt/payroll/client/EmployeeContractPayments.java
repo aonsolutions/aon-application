@@ -841,7 +841,7 @@ public class EmployeeContractPayments extends Composite {
 				
 				@Override
 				protected void onExtraAccept(Payment payment, Extra extra) {
-					ContractConceptCalc contractConceptCalc = (ContractConceptCalc)payment;
+					ContractConceptCalc contractConceptCalc = new ContractConceptCalc(payment);
 					contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
 					contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
 					createAndGetPayments(contractConceptCalc);
