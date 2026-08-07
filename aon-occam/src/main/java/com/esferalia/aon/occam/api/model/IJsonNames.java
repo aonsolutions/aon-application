@@ -314,9 +314,11 @@ public final class IJsonNames {
 	public static final String FOOTER_TEXT = "footerText";
 	public static final String FORMULA = "formula";
 	public static final String FROM = "from";
+	public static final String FROM_CREATION = "fromCreation";
 	public static final String FROM_DATE = "fromDate";
 	public static final String FROM_DUE_DATE = "fromDueDate";
 	public static final String FROM_SALARY = "fromSalary";
+	public static final String FROM_MODIFICATION = "fromModification";
 	public static final String FROM_NUMBER = "fromNumber";
 	public static final String FULL = "full";
 	public static final String FULL_ADDRESS = "fullAddress";
@@ -798,8 +800,10 @@ public final class IJsonNames {
 	public static final String TITLE = "title";
 	public static final String TITLE_TEXT_COLOR = "titleTextColor";
 	public static final String TO = "to";
+	public static final String TO_CREATION = "toCreation";
 	public static final String TO_DATE = "toDate";
 	public static final String TO_DUE_DATE = "toDueDate";
+	public static final String TO_MODIFICATION = "toModification";
 	public static final String TO_NUMBER = "toNumber";
 	public static final String TOKEN = "token";
 	public static final String TOOLBAR = "toolbar";
@@ -819,8 +823,10 @@ public final class IJsonNames {
 	public static final String UNDECLARED_SIMPLIFIED = "undeclaredSimplified";
 	public static final String UNDEDUCTIBLE = "undeductible";
 	public static final String UNPAID_BALANCE = "unpaidBalance";
+	public static final String UNRECORDED_EXPENSED = "unrecordedExpensed";
 	public static final String UNRECORDED_ISSUED = "unrecordedIssued";
 	public static final String UNRECORDED_RECEIVED = "unrecordedReceived";
+	public static final String UNRECORDED_PURCHASED = "unrecordedPurchased";
 	public static final String UNRECORDED_SIMPLIFIED = "unrecordedSimplified";
 	public static final String UPDATED = "updated";
 	public static final String URL = "url";
