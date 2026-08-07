@@ -28,6 +28,7 @@ import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
 import net.aonsolutions.db.up2date.security.MigrateApp23To9;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
+import net.aonsolutions.db.up2date.tgss.DropNoJustifiedTGSSFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
 
 public class Up2Date {
@@ -633,9 +634,10 @@ public class Up2Date {
 			// UserScopeStartDateNotNull.USER_SCOPE_START_DATE_NOT_NULL,
 			// ContractForeignKeysAddIfNotExist.CONTRACTFOREIGNKEYSADDIFNOTEXITS,
 			// EreFzaExoneradoFix.EREFZAEXONERADOFIX,
-			EreFzaExoneradoFixII.EREFZAEXONERADOFIXII,
-			ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
-			FixPreavisoQuote.FIXPREAVISOQUOTE,	
+			// EreFzaExoneradoFixII.EREFZAEXONERADOFIXII,
+			// ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
+			// FixPreavisoQuote.FIXPREAVISOQUOTE,
+			DropNoJustifiedTGSSFix.DROPNOJUSTIFIEDTGSSFIX,
 			
 
 
