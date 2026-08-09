@@ -242,13 +242,13 @@ public class CertificateDAO {
 		            try {
 		            	enterprise = subjectDN.split("O=\"")[1].split("\"")[0];
 		            } catch (Exception e) {
-		            	e.printStackTrace();
+		            	//e.printStackTrace();
 		            }
 		            
 		            try {
 		            	cif = subjectDN.split("=VATES-")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	e.printStackTrace();
+		            	//e.printStackTrace();
 		            }
 		           
 		            try {
@@ -260,7 +260,7 @@ public class CertificateDAO {
 		            try {
 			            ocupation = subjectDN.split("OU=")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	e.printStackTrace();
+		            	//e.printStackTrace();
 		            }
 		            
 		            String surname = "";
@@ -269,21 +269,21 @@ public class CertificateDAO {
 			            surname = subjectDN.split("SURNAME=")[1].split(",")[0];
 			            name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
 		            } catch (Exception e) {
-		            	e.printStackTrace();
+		            	//e.printStackTrace();
 					}
 		            
 		            if(AonStringUtils.isBlank(name))
 		            	try {
 		            		name = subjectDN.split("O=")[1].split(",")[0];
 		            	}catch (Exception e) {
-		            		e.printStackTrace();
+		            		//e.printStackTrace();
 						}
 		            
 		            if(AonStringUtils.isBlank(enterprise))
 		            	try {
 		            		enterprise = subjectDN.split("O=")[1].split(",")[0];
 		            	}catch (Exception e) {
-		            		e.printStackTrace();
+		            		//e.printStackTrace();
 						}
 		            
 		            String document = "";
