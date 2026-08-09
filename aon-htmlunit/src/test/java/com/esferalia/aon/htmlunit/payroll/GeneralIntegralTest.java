@@ -3453,6 +3453,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
 		assertTrue(totalEnterpriseLabel > 0.00);
 		
+		draft("DIAS DE AUSENCIA, NO INFORMADOS");
+		calculate(Calendar.AUGUST,2026);
+		assertValue("cgcBaseLabel", 1424.40);
+		assertValue("cgpBaseLabel", 1424.40);
+		assertText("common_contingency", Math.round( 1424.40 * 4.70 ) / 100.00);
+		assertText("unemployment", Math.round( 1424.40 * 1.55 )/ 100.00);
 	}
 
 	@Test

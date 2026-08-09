@@ -30,7 +30,7 @@ public class Diary2Template {
 
 	public enum A3DiaryColumn {
 
-		REF_INT("REF.INT."), 
+		//REF_INT("REF.INT."), 
 		FECHA("FECHA"), 
 		ASIENTO("ASIENTO"), 
 		APUNTE("APUNTE"), 
