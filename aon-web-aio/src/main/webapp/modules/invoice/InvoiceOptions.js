@@ -667,3 +667,4 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
   export const getNewOptions = () => {
     return [NEW_ISSUED_INVOICE, NEW_RECEIVED_INVOICE, NEW_TICKET];
   }
+  

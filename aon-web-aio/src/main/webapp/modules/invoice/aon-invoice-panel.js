@@ -409,26 +409,20 @@ export class AonInvoicePanel extends AonElement {
 			// FACTURAS EMITIDAS 
 			if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
 				addCounter(OPTION.INVOICE_ISSUED_BETA, r.invoice.emitida);
-				addCounter(OPTION.FUTURE_INVOICE_ISSUED_BETA, r.invoice.emitida);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_ISSUED_BETA);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_ISSUED_BETA);
 
 			// FACTURAS RECIBIDAS
 			if (r.invoice && r.invoice.recibida && r.invoice.recibida > 0) {
 				addCounter(OPTION.INVOICE_RECEIVED_BETA, r.invoice.recibida);
-				addCounter(OPTION.FUTURE_INVOICE_RECEIVED_BETA, r.invoice.recibida);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_RECEIVED_BETA);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_RECEIVED_BETA);
 
 			// FACTURAS SIMPLIFICADAS / TICKETS
 			if (r.invoice && r.invoice.ticket && r.invoice.ticket > 0) {
 				addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
-				addCounter(OPTION.FUTURE_INVOICE_TICKET, r.invoice.ticket);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_TICKET);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_TICKET);
 
 			// if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0) {
 			//   addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
@@ -438,54 +432,41 @@ export class AonInvoicePanel extends AonElement {
 			// BORRADOR/PROFORMAS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0) {
 				addCounter(OPTION.PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
-				addCounter(OPTION.FUTURE_PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
 			}
 			this.updateCounterSpan(OPTION.PROFORMA_INVOICES);
-			this.updateCounterSpan(OPTION.FUTURE_PROFORMA_INVOICES);
 
 			// BORRADOR FACTURAS RECIBIDAS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0) {
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
-				addCounter(OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED_NEW);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW);
 
 			// BORRADOR FACTURAS SIMPLIFICADAS / TICKETS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0) {
 				addCounter(OPTION.RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
-				addCounter(OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET_NEW);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW);
 
 			// EN TRAMITE
 			if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
 				addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
-				addCounter(OPTION.FUTURE_RAWDOC_PROCESSING, r.rawdoc.processing.count);
 			}
 			if (r && r.rawdoc && r.rawdoc.processed && r.rawdoc.processed.count && r.rawdoc.processed.count > 0) {
 				addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processed.count);
-				addCounter(OPTION.FUTURE_RAWDOC_PROCESSING, r.rawdoc.processed.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_PROCESSING);
 			
 			// A REVISAR
 			if (r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
-				addCounter(OPTION.FUTURE_RAWDOC_REJECT, r.rawdoc.rejected.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_REJECT);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_REJECT);
 
 			// PAPELERA
 			if (r && r.rawdoc && r.rawdoc.trash && r.rawdoc.trash.count && r.rawdoc.trash.count > 0) {
 				addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.trash.count);
-				addCounter(OPTION.FUTURE_RAWDOC_TRASH, r.rawdoc.trash.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_TRASH);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_TRASH);
 
 			this.updateCounterHome();
 		});
