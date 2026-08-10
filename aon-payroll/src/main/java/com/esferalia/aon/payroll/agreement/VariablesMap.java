@@ -2563,6 +2563,12 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DIA_6_HORAS", "P_DIA6_H");
 		variablesMap.put("SALARIO_MINIMO_GARANTIZADO_DIARIO", "SAL_MIN_GAR_D");
 		
+		//Act. 02/08/26
+		variablesMap.put("HORA_EXTRA_DESCANSO_HORAS", "HEX_DESC_H");
+		variablesMap.put("PLUS_ALUMBRADO_DIARIO", "P_ALUM_D");
+		variablesMap.put("PLUS_CONSTRUCCION_Y_REPARACION_DE_BUQUES_ANUAL", "P_CONST_REP_BUQ_A");
+		variablesMap.put("PLUS_PELIGROSIDAD_PSIQUIATRIA_MENSUAL", "P_PELIG_PSIQ_M");
+		
 	}
 	
 	public static void main(String[] args) {

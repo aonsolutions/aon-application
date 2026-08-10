@@ -159,12 +159,16 @@ export class AonCustomerList extends AonRegistryList {
 		searchInput.value = searchValue ? searchValue : '';
 		
 		let scopeEl = this.getElement("scope");
-        getScopes().then(scopes=>{
-            scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
-
-            const value = this.filter.scope;
-			scopeEl.setValue(value);
-        })
+		
+		getScopes().then(scopes => {
+		    const options = [
+		        { name: 'Sin ámbito', value: -1 },
+		        ...scopes.map(c => ({ ...c, value: c.id }))
+		    ];
+		
+		    scopeEl.setOptions(options);
+		    scopeEl.setValue(this.filter.scope);
+		});
 
         let projectTypeEl = this.getElement("projectType");
         getProjectTypes({})

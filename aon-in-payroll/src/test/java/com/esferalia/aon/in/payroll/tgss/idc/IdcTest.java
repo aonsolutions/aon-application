@@ -8336,17 +8336,18 @@ public class IdcTest extends AbstractSQLTestCase {
 //			PORCENTAJE_DESMPL=	 1.55
 //			PORCENTAJE_DESMPL_E= 5.50
 
-//			OCUPACION_IT=		 0.80
-//			OCUPACION_IMS=		 0.70
 //			PORCENTAJE_FOGASA=	 0.20
 
+//			OCUPACION_IT=		 0.80
+//			OCUPACION_IMS=		 0.70
 //			PORCENTAJE_MEI=		 0.10
 //			PORCENTAJE_MEI_E=	 0.50
 			
 
 			assertEquals(cgcBase / 30 * 22 * ( 4.70 + 0.10 + 1.55 + 0.10 ) / 100.00  , salary.getSocialSecurityContributions(), DELTA);
 			assertEquals(cgcBase / 30 * 22 * ( 23.60 + 0.60 + 5.50 + 1.40 + 2.20 + 0.20 + 0.50 )/ 100.00 
-						+ cgcBase / 30 * 8 * ( 23.60 + 0.60 + 5.50 + 1.40 + 2.20 + 0.20 + 0.50 )/ 100.00 * 0.10 
+						+ cgcBase / 30 * 8 * (  1.40 + 2.20 + 0.50 )/ 100.00 
+						+ cgcBase / 30 * 8 * ( 23.60 + 0.60 + 5.50 + 0.20 )/ 100.00 * 0.10 
 					, salary.getTotalEnterprise(), DELTA);
 			
 			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {

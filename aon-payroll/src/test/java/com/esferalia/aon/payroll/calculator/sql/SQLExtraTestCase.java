@@ -9687,6 +9687,88 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtraAtSalaryXXII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPaga = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		Date firstDayOfYear = getFirstDayOfYear(getToday()); 
+
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfYear 
+				, new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}				
+				,null);
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "2000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), conceptPaga, "PAGA VERANO", "/*VERANO*/ 1500.00 * DIAS_TRABAJADOS/DIAS_MES", "_P", "PRORRATEAR(1,6)", PaymentType.CRA_0004, (byte) Month.JULY.getValue());
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), conceptPaga, "PAGA NAVIDAD", "/*NAVIDAD*/ 1500.00 * DIAS_TRABAJADOS/DIAS_MES",  "_P", "PRORRATEAR(7,12)", PaymentType.CRA_0004, (byte) Month.DECEMBER.getValue());
+		
+		Date startDate = firstDayOfYear;
+		while ( get(startDate, Calendar.MONTH) < Calendar.JULY  )  
+		{
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection) {
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description,
+						java.util.Date startDate, java.util.Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				}
+			};
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(startDate, Calendar.MONTH,1);
+		}
+
+		//@formatter:off
+		
+
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract);
+
+		SalaryBuilder salaryBuilder = new SalaryBuilder() {
+		
+				@Override
+				public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
+					IPayment payment, Map<String, ITimedVariable<?>> context) {
+        			//System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: 0.00, " + quote );
+				super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+				}
+			
+        		@Override
+        		public void addPayment(Double amount, Double quote, Double tax, String description,
+        				java.util.Date startDate, java.util.Date endDate, IPayment payment,
+        				Map<String, ITimedVariable<?>> context) {
+        			//System.out.println( startDate + ".." + endDate + "[" + payment.getExpression() + " ]: " + amount + ", " + quote );
+        			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+        		}
+		};
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(salaryBuilder).calculate(ctx);
+
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() + ", " + p.getQuote() ));
+
+		assertEquals(2000.00 + 1500.00 / 6, salary.getCommonBase(), 0.005, ContextVariable.CGC_BASE.getName());
+
+		assertEquals(2000.00 + 1500.00, salary.getTotalPayment(), 0.005, ContextVariable.TOTAL_PAYMENT.getName());
+
+	}
+
+	@Test
 	@Disabled
 	public void testOverridePayments() throws ExpressionException,
 			SQLException, SalaryException {
@@ -9964,7 +10046,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		
 		ContractRecord contract = newContract(aonContext,
-				add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -2)
+				add( getFirstDayOfYear(getToday()), Calendar.YEAR, -2)
 				,new HashMap<String, String>() {
 				} 
 				,new String[] {} 
@@ -9988,7 +10070,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
 					IPayment payment, Map<String, ITimedVariable<?>> context) {
 				super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
-				System.out.println( startDate + " - " + endDate + " [ZERO PAYMENT] " + payment.getDescription() + ": " + quote );
+				//System.out.println( startDate + " - " + endDate + " [ZERO PAYMENT] " + payment.getDescription() + ": " + quote );
 			}
 		}).calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
 		salary.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
@@ -10017,7 +10099,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				})
 				.calculate(getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate));
 		
-		extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
+		//extra.getPaymentS().forEach( p -> System.out.println(p.getExpression() + ": " + p.getAmount() + ", " + p.getQuote()  ));
 		
 		assertEquals( 1100.00, extra.getTotalPayment(), DELTA);
 		

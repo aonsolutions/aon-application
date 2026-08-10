@@ -4927,13 +4927,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //					}
 //				});
 
-		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
-				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
-					@Override
-					public Double create() {
-						return getAdvanceNoticeDays();
-					}
-				});
+//		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
+//				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
+//					@Override
+//					public Double create() {
+//						return getAdvanceNoticeDays();
+//					}
+//				});
 
 		this.implicitExpressionContext.putVariable("SALARIO_VARIABLE_DIA",
 				new LazyTimedExpressionConstant<Double>("SALARIO_VARIABLE_DIA", ExpressionScope.CONTRACT) {

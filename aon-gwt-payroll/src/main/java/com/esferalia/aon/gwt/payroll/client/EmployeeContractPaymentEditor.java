@@ -8,9 +8,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextArea;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -25,170 +29,117 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
-	// ----------------------------------------- UiBinder
-
-	interface Binder extends UiBinder<Widget, EmployeeContractPaymentEditor> {}
-
-	private static final Binder binder = GWT.create(Binder.class);
-
 	// ----------------------------------------- UiFields
 
-	@UiField
 	HTMLPanel messagePanel;
 	
-	@UiField
 	DeckPanel deckPanel;
 
 	// PAYMENT
 
-	@UiField
 	HTMLPanel paymentTable;
 
-	@UiField
 	HTMLPanel paymentTypePanel;
 
-	@UiField
-	SuggestBox paymentConceptSB;
+	AonCustomSuggestBox paymentConceptSB;
 
-	@UiField
-	TextBox paymentDescriptionTB;
+	AonCustomTextBox paymentDescriptionTB;
 
-	@UiField
-	TextArea paymentExpressionTB;
+	AonCustomTextArea paymentExpressionTB;
 	
-	@UiField
-	ListBox paymentSalaryTypeLB;
+	AonCustomListBox paymentSalaryTypeLB;
 
-	@UiField
-	ListBox paymentTaxedTypeLB;
+	AonCustomListBox paymentTaxedTypeLB;
 
-	@UiField
-	TextBox paymentTaxedExpression;
+	AonCustomTextBox paymentTaxedExpression;
 
-	@UiField
-	ListBox paymentQuoteTypeLB;
+	AonCustomListBox paymentQuoteTypeLB;
 
-	@UiField
-	TextBox paymentQuoteExpression;
+	AonCustomTextBox paymentQuoteExpression;
 	
-	@UiField
 	HTMLPanel paymentMonthPanel;
 
-	@UiField
-	ListBox paymentMonthLB;
+	AonCustomListBox paymentMonthLB;
 
-	@UiField
-	DateBoxEx paymentStartDateBx;
+	AonCustomDateBox paymentStartDateBx;
 
-	@UiField
-	DateBoxEx paymentEndDateBx;
+	AonCustomDateBox paymentEndDateBx;
 
 	// DEDUCTION
 
-	@UiField
 	HTMLPanel deductionTable;
 
-	@UiField
-	ListBox deductionTypeLB;
+	AonCustomListBox deductionTypeLB;
 
-	@UiField
-	SuggestBox deductionConceptSB;
+	AonCustomSuggestBox deductionConceptSB;
 
-	@UiField
-	TextBox deductionDescriptionTB;
+	AonCustomTextBox deductionDescriptionTB;
 
-	@UiField
-	TextArea deductionExpressionTB;
+	AonCustomTextArea deductionExpressionTB;
 
-	@UiField
-	DateBoxEx deductionStartDateBx;
+	AonCustomDateBox deductionStartDateBx;
 
-	@UiField
-	DateBoxEx deductionEndDateBx;
+	AonCustomDateBox deductionEndDateBx;
 	
 	// COST
 
-	@UiField
 	HTMLPanel costTable;
 
-	@UiField
-	ListBox costTypeLB;
+	AonCustomListBox costTypeLB;
 
-	@UiField
-	SuggestBox costCodeSB;
+	AonCustomSuggestBox costCodeSB;
 
-	@UiField
-	TextBox costDescriptionTB;
+	AonCustomTextBox costDescriptionTB;
 
-	@UiField
-	TextArea costExpressionTB;
+	AonCustomTextArea costExpressionTB;
 
-	@UiField
-	DateBoxEx costStartDateBx;
+	AonCustomDateBox costStartDateBx;
 
-	@UiField
-	DateBoxEx costEndDateBx;
+	AonCustomDateBox costEndDateBx;
 
 	// BONUS
 
-	@UiField
 	HTMLPanel bonusTable;
 
-	@UiField
 	HTMLPanel bonusTypePanel;
 
-	@UiField
-	SuggestBox bonusDescriptionSB;
+	AonCustomSuggestBox bonusDescriptionSB;
 
-	@UiField
-	TextArea bonusExpressionTB;
+	AonCustomTextArea bonusExpressionTB;
 
-	@UiField
-	DateBoxEx bonusStartDateBx;
+	AonCustomDateBox bonusStartDateBx;
 
-	@UiField
-	DateBoxEx bonusEndDateBx;
+	AonCustomDateBox bonusEndDateBx;
 	
 	// EMBARGO
 
-	@UiField
 	HTMLPanel embargoTable;
 
-	@UiField
-	TextBox embargoDescriptionTB;
+	AonCustomTextBox embargoDescriptionTB;
 
-	@UiField
-	TextArea embargoExpressionTB;
+	AonCustomTextArea embargoExpressionTB;
 	
-	@UiField
 	DoubleBox embargoAmountDB;
 
-	@UiField
-	DateBoxEx embargoStartDateBx;
+	AonCustomDateBox embargoStartDateBx;
 
-	@UiField
-	DateBoxEx embargoEndDateBx;
+	AonCustomDateBox embargoEndDateBx;
 
-	@UiField
 	HTMLPanel buttonsPanel;
 
 	// ----------------------------------------- Variables
@@ -211,7 +162,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType, Date contractStartDate, Date contractEndDate) {
 		setCaption(getCaption(paymentType));
-		setWidget(binder.createAndBindUi(this));
+		setWidget(createUi());
 		showCloseButton(true);
 		getFooterButtons();
 		this.paymentType = paymentType;
@@ -239,7 +190,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	protected EmployeeContractPaymentEditor(ContractConceptCalcType paymentType, ContractConceptCalc selectedPayment, Date contractStartDate, Date contractEndDate) {
 		setCaption(getCaption(paymentType));
-		setWidget(binder.createAndBindUi(this));
+		setWidget(createUi());
 		showCloseButton(true);
 		getFooterButtons();
 		this.paymentType = paymentType;
@@ -286,6 +237,199 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		}
 	}
 
+	private Widget createUi() {
+		HTMLPanel root = new HTMLPanel("");
+		root.getElement().getStyle().setProperty("display", "flex");
+		root.getElement().getStyle().setProperty("flexDirection", "column");
+		root.getElement().getStyle().setProperty("gap", ".5rem");
+		root.getElement().getStyle().setProperty("margin", "1rem 0");
+
+		messagePanel = new HTMLPanel("");
+		root.add(messagePanel);
+
+		HTMLPanel formPanel = new HTMLPanel("");
+		formPanel.getElement().getStyle().setProperty("width", "40rem");
+		formPanel.getElement().getStyle().setProperty("padding", ".7rem");
+		formPanel.getElement().getStyle().setProperty("display", "flex");
+		formPanel.getElement().getStyle().setProperty("flexDirection", "column");
+		formPanel.getElement().getStyle().setProperty("gap", ".5rem");
+		root.add(formPanel);
+
+		deckPanel = new DeckPanel();
+		formPanel.add(deckPanel);
+
+		buildPaymentTable();
+		buildDeductionTable();
+		buildCostTable();
+		buildBonusTable();
+		buildEmbargoTable();
+
+		buttonsPanel = new HTMLPanel("");
+		buttonsPanel.getElement().getStyle().setProperty("width", "100%");
+		buttonsPanel.getElement().getStyle().setProperty("display", "flex");
+		buttonsPanel.getElement().getStyle().setProperty("justifyContent", "flex-end");
+		buttonsPanel.getElement().getStyle().setProperty("gap", "3em");
+		formPanel.add(buttonsPanel);
+
+		return root;
+	}
+
+	private void buildPaymentTable() {
+		paymentTable = createColumnPanel();
+		paymentTypePanel = new HTMLPanel("");
+		paymentTypePanel.getElement().getStyle().setProperty("width", "100%");
+		paymentTable.add(createLabeledPanel("Tipo", paymentTypePanel));
+
+		paymentConceptSB = new AonCustomSuggestBox("Concepto");
+		paymentDescriptionTB = new AonCustomTextBox("Descripcion");
+		paymentExpressionTB = new AonCustomTextArea("Expresion");
+		paymentSalaryTypeLB = new AonCustomListBox("Tipo Nomina/Recibo");
+		paymentTaxedTypeLB = new AonCustomListBox("Tributa");
+		paymentTaxedExpression = new AonCustomTextBox("");
+		paymentQuoteTypeLB = new AonCustomListBox("Cotiza");
+		paymentQuoteExpression = new AonCustomTextBox("");
+		paymentMonthPanel = new HTMLPanel("");
+		paymentMonthPanel.getElement().getStyle().setProperty("width", "100%");
+		paymentMonthLB = new AonCustomListBox("Mes Cobro");
+		paymentMonthPanel.add(paymentMonthLB);
+		paymentStartDateBx = new AonCustomDateBox("Fecha Inicio");
+		paymentEndDateBx = new AonCustomDateBox("Fecha Fin");
+
+		paymentTable.add(paymentConceptSB);
+		paymentTable.add(paymentDescriptionTB);
+		paymentTable.add(paymentExpressionTB);
+		paymentTable.add(paymentSalaryTypeLB);
+
+		HTMLPanel taxedPanel = createRowPanel();
+		taxedPanel.add(paymentTaxedTypeLB);
+		taxedPanel.add(paymentTaxedExpression);
+		paymentTable.add(taxedPanel);
+
+		HTMLPanel quotePanel = createRowPanel();
+		quotePanel.add(paymentQuoteTypeLB);
+		quotePanel.add(paymentQuoteExpression);
+		paymentTable.add(quotePanel);
+
+		HTMLPanel datesPanel = createRowPanel();
+		datesPanel.add(paymentMonthPanel);
+		datesPanel.add(paymentStartDateBx);
+		datesPanel.add(paymentEndDateBx);
+		paymentTable.add(datesPanel);
+
+		deckPanel.add(paymentTable);
+	}
+
+	private void buildDeductionTable() {
+		deductionTable = createColumnPanel();
+		deductionTypeLB = new AonCustomListBox("Tipo");
+		deductionConceptSB = new AonCustomSuggestBox("Concepto");
+		deductionDescriptionTB = new AonCustomTextBox("Descripcion");
+		deductionExpressionTB = new AonCustomTextArea("Expresion");
+		deductionStartDateBx = new AonCustomDateBox("Fecha Inicio");
+		deductionEndDateBx = new AonCustomDateBox("Fecha Fin");
+
+		deductionTable.add(deductionTypeLB);
+		deductionTable.add(deductionConceptSB);
+		deductionTable.add(deductionDescriptionTB);
+		deductionTable.add(deductionExpressionTB);
+
+		HTMLPanel datesPanel = createRowPanel();
+		datesPanel.add(deductionStartDateBx);
+		datesPanel.add(deductionEndDateBx);
+		deductionTable.add(datesPanel);
+
+		deckPanel.add(deductionTable);
+	}
+
+	private void buildCostTable() {
+		costTable = createColumnPanel();
+		costTypeLB = new AonCustomListBox("Tipo");
+		costCodeSB = new AonCustomSuggestBox("Codigo");
+		costDescriptionTB = new AonCustomTextBox("Descripcion");
+		costExpressionTB = new AonCustomTextArea("Expresion");
+		costStartDateBx = new AonCustomDateBox("Fecha Inicio");
+		costEndDateBx = new AonCustomDateBox("Fecha Fin");
+
+		costTable.add(costTypeLB);
+		costTable.add(costCodeSB);
+		costTable.add(costDescriptionTB);
+		costTable.add(costExpressionTB);
+
+		HTMLPanel datesPanel = createRowPanel();
+		datesPanel.add(costStartDateBx);
+		datesPanel.add(costEndDateBx);
+		costTable.add(datesPanel);
+
+		deckPanel.add(costTable);
+	}
+
+	private void buildBonusTable() {
+		bonusTable = createColumnPanel();
+		bonusTypePanel = new HTMLPanel("");
+		bonusTypePanel.getElement().getStyle().setProperty("width", "100%");
+		bonusDescriptionSB = new AonCustomSuggestBox("Descripcion");
+		bonusExpressionTB = new AonCustomTextArea("Expresion");
+		bonusStartDateBx = new AonCustomDateBox("Fecha Inicio");
+		bonusEndDateBx = new AonCustomDateBox("Fecha Fin");
+
+		bonusTable.add(createLabeledPanel("Tipo", bonusTypePanel));
+		bonusTable.add(bonusDescriptionSB);
+		bonusTable.add(bonusExpressionTB);
+
+		HTMLPanel datesPanel = createRowPanel();
+		datesPanel.add(bonusStartDateBx);
+		datesPanel.add(bonusEndDateBx);
+		bonusTable.add(datesPanel);
+
+		deckPanel.add(bonusTable);
+	}
+
+	private void buildEmbargoTable() {
+		embargoTable = createColumnPanel();
+		embargoDescriptionTB = new AonCustomTextBox("Descripcion");
+		embargoExpressionTB = new AonCustomTextArea("Expresion");
+		embargoAmountDB = new DoubleBox();
+		embargoAmountDB.setWidth("100%");
+		embargoStartDateBx = new AonCustomDateBox("Fecha Inicio");
+		embargoEndDateBx = new AonCustomDateBox("Fecha Fin");
+
+		embargoTable.add(embargoDescriptionTB);
+		embargoTable.add(embargoExpressionTB);
+		embargoTable.add(createLabeledPanel("Importe", embargoAmountDB));
+
+		HTMLPanel datesPanel = createRowPanel();
+		datesPanel.add(embargoStartDateBx);
+		datesPanel.add(embargoEndDateBx);
+		embargoTable.add(datesPanel);
+
+		deckPanel.add(embargoTable);
+	}
+
+	private HTMLPanel createColumnPanel() {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.getElement().getStyle().setProperty("display", "flex");
+		panel.getElement().getStyle().setProperty("flexDirection", "column");
+		panel.getElement().getStyle().setProperty("gap", ".5rem");
+		return panel;
+	}
+
+	private HTMLPanel createRowPanel() {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.getElement().getStyle().setProperty("display", "flex");
+		panel.getElement().getStyle().setProperty("justifyContent", "space-between");
+		panel.getElement().getStyle().setProperty("gap", ".5rem");
+		return panel;
+	}
+
+	private HTMLPanel createLabeledPanel(String title, Widget content) {
+		HTMLPanel panel = createColumnPanel();
+		Label label = new Label(title);
+		label.getElement().getStyle().setProperty("fontWeight", "bold");
+		panel.add(label);
+		panel.add(content);
+		return panel;
+	}
+
 	// ----------------------------------------- DeckPanel
 
 	private void providedDeckPanel() {
@@ -329,8 +473,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		initializeSB(paymentConceptSB, paymentDescriptionTB, paymentExpressionTB);
 		initializeTaxed();
 		initializeQuote();
-		initializeMonth(paymentMonthLB);
-		initializeSalaryType(paymentSalaryTypeLB);
+		initializeMonth(paymentMonthLB.getListBox());
+		initializeSalaryType(paymentSalaryTypeLB.getListBox());
 		paymentMonthPanel.setVisible(false);
 	}
 
@@ -347,7 +491,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void initializeTaxed() {
-		paymentTaxedTypeLB.clear();
+		paymentTaxedTypeLB.clearItems();
 		paymentTaxedTypeLB.addItem("Importe integro", "FULL");
 		paymentTaxedTypeLB.addItem("Exento", "NONE");
 		paymentTaxedTypeLB.addItem("Personalizado", "CUSTOM");
@@ -357,29 +501,29 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			int selected = paymentTaxedTypeLB.getSelectedIndex();
 			switch (selected) {
 			case 0:
-				paymentTaxedExpression.setEnabled(false);
+				paymentTaxedExpression.setEnable(false);
 				paymentTaxedExpression.setValue("_P");
 				break;
 			case 1:
-				paymentTaxedExpression.setEnabled(false);
+				paymentTaxedExpression.setEnable(false);
 				paymentTaxedExpression.setValue("0.00");
 				break;
 			case 3:
-				paymentTaxedExpression.setEnabled(false);
+				paymentTaxedExpression.setEnable(false);
 				paymentTaxedExpression.setValue("BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P");
 				break;
 			default:
-				paymentTaxedExpression.setEnabled(true);
+				paymentTaxedExpression.setEnable(true);
 				paymentTaxedExpression.setValue("");
 				break;
 			}
 		});
 		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB.getListBox());
 	}
 
 	private void initializeQuote() {
-		paymentQuoteTypeLB.clear();
+		paymentQuoteTypeLB.clearItems();
 		paymentQuoteTypeLB.addItem("Importe integro", "FULL");
 		paymentQuoteTypeLB.addItem("Exento", "NONE");
 		paymentQuoteTypeLB.addItem("Prorratear", "PRORRAT");
@@ -389,25 +533,25 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			int selected = paymentQuoteTypeLB.getSelectedIndex();
 			switch (selected) {
 			case 0:
-				paymentQuoteExpression.setEnabled(false);
+				paymentQuoteExpression.setEnable(false);
 				paymentQuoteExpression.setValue("_P");
 				break;
 			case 1:
-				paymentQuoteExpression.setEnabled(false);
+				paymentQuoteExpression.setEnable(false);
 				paymentQuoteExpression.setValue("0.00");
 				break;
 			case 2:
-				paymentQuoteExpression.setEnabled(false);
+				paymentQuoteExpression.setEnable(false);
 				paymentQuoteExpression.setValue("PRORRATEAR()");
 				break;
 			default:
-				paymentQuoteExpression.setEnabled(true);
+				paymentQuoteExpression.setEnable(true);
 				paymentQuoteExpression.setValue("");
 				break;
 			}
 		});
 		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB.getListBox());
 	}
 	
 	private String getTaxedQuoteType(String expression) {
@@ -437,7 +581,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void initializeDeductionType() {
-		deductionTypeLB.clear();
+		deductionTypeLB.clearItems();
 		deductionTypeLB.addItem("-", "");
 		for (Deduction.Type deductionType : Deduction.Type.values())
 			deductionTypeLB.addItem(deductionType.getDescription(), deductionType.ordinal() + "");
@@ -451,7 +595,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void initializeCostType() {
-		costTypeLB.clear();
+		costTypeLB.clearItems();
 		costTypeLB.addItem("-", "");
 		for (Deduction.Type costType : Deduction.Type.values())
 			costTypeLB.addItem(costType.getDescription(), costType.ordinal() + "");
@@ -461,7 +605,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private void providedBonus() {
 		initializeBonusType();
-		initializeSB(bonusDescriptionSB, (TextBox) bonusDescriptionSB.getValueBox(), bonusExpressionTB);
+		initializeSB(bonusDescriptionSB, null, bonusExpressionTB);
 	}
 
 	private void initializeBonusType() {
@@ -493,7 +637,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- SuggestBox
 
-	private void initializeSB(SuggestBox suggestBox, TextBox descriptionTB, TextArea expressionTB) {
+	private void initializeSB(AonCustomSuggestBox customSuggestBox, AonCustomTextBox descriptionTB,
+			AonCustomTextArea expressionTB) {
+		SuggestBox suggestBox = customSuggestBox.getSuggestBox();
 		List<String> conceptsSuggest = new ArrayList<>();
 		for (ContractConcept contractConcept : getConcepts()) {
 			String suggestDisplay = AonStringUtils.isBlank(contractConcept.getCode()) ? ""
@@ -505,10 +651,10 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		MultiWordSuggestOracle orclConcepts = (MultiWordSuggestOracle) suggestBox.getSuggestOracle();
 		orclConcepts.clear();
 		orclConcepts.addAll(conceptsSuggest);
-		suggestBox.setAutoSelectEnabled(false);
+		customSuggestBox.setAutoSelectEnabled(false);
 		
 		suggestBox.addSelectionHandler(e -> {
-			selectedConcept = getConcept(suggestBox);
+			selectedConcept = getConcept(customSuggestBox);
 			
 //			Window.alert("suggestBox : " + suggestBox.getValue() + "\nselectedConcept : " + selectedConcept);
 
@@ -516,13 +662,14 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 				ListBox typeLB = getTypeListBox();
 				if(null != selectedConcept.getType()) setSelectedValueLB(typeLB, selectedConcept.getType().toString());
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), typeLB);
-				descriptionTB.setValue(selectedConcept.getDescription());
+				if (descriptionTB != null)
+					descriptionTB.setValue(selectedConcept.getDescription());
 				expressionTB.setValue(selectedConcept.getExpression());
 			}
 		});
 	}
 
-	private ContractConcept getConcept(SuggestBox suggestBox) {
+	private ContractConcept getConcept(AonCustomSuggestBox suggestBox) {
 		Set<ContractConcept> concepts = getConcepts();
 		String code = null;
 		String description = null;
@@ -578,9 +725,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		case PAYMENT:
 			return paymentTypeLB;
 		case DEDUCTION:
-			return deductionTypeLB;
+			return deductionTypeLB.getListBox();
 		case COST:
-			return costTypeLB;
+			return costTypeLB.getListBox();
 		case BONUS:
 			return bonusTypeLB;
 		default:
@@ -617,14 +764,14 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(this.payment.getExpression());
-		setSelectedValueLB(paymentSalaryTypeLB, this.payment.getSalaryType().ordinal() + "");
-		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
+		setSelectedValueLB(paymentSalaryTypeLB.getListBox(), this.payment.getSalaryType().ordinal() + "");
+		setSelectedValueLB(paymentTaxedTypeLB.getListBox(), getTaxedQuoteType(this.payment.getIrpfExpression()));
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
-		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
+		setSelectedValueLB(paymentQuoteTypeLB.getListBox(), getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
 		if(this.payment.getType() != null /*&& (this.payment.getType().equals(Payment.Type.CRA_0004) || this.payment.getType().equals(Payment.Type.CRA_0005))*/) {
 			paymentMonthPanel.setVisible(true);
-			setSelectedValueLB(paymentMonthLB, null == this.payment.getMonth() ? "" : this.payment.getMonth().toString());
+			setSelectedValueLB(paymentMonthLB.getListBox(), null == this.payment.getMonth() ? "" : this.payment.getMonth().toString());
 		} else
 			paymentMonthPanel.setVisible(false);
 		
@@ -633,7 +780,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void fillDeduction() {
-		setSelectedValueLB(deductionTypeLB, this.payment.getCodeType());
+		setSelectedValueLB(deductionTypeLB.getListBox(), this.payment.getCodeType());
 		deductionConceptSB.setValue(this.payment.getName());
 		deductionDescriptionTB.setValue(this.payment.getDescription());
 		deductionExpressionTB.setValue(this.payment.getExpression());
@@ -642,7 +789,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 	}
 
 	private void fillCost() {
-		setSelectedValueLB(costTypeLB, this.payment.getCodeType());
+		setSelectedValueLB(costTypeLB.getListBox(), this.payment.getCodeType());
 		costCodeSB.setValue(this.payment.getName());
 		costDescriptionTB.setValue(this.payment.getDescription());
 		costExpressionTB.setValue(this.payment.getExpression());
@@ -711,7 +858,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			accept.accept(false);
 	}
 	
-	private void checkPaymentDates(DateBoxEx startDateBx, DateBoxEx endDateBx, Consumer<Boolean> accept) {
+	private void checkPaymentDates(AonCustomDateBox startDateBx, AonCustomDateBox endDateBx, Consumer<Boolean> accept) {
 		Date paymentStart = startDateBx.getValue(); 
 		Date paymentEnd = endDateBx.getValue();
 		
@@ -779,11 +926,11 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionTB.getValue());
-		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]);
+		payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getValue())]);
 		payment.setIrpfExpression(paymentTaxedExpression.getValue());
 		payment.setQuoteExpression(paymentQuoteExpression.getValue());
-		payment.setMonth(AonStringUtils.isBlank(paymentMonthLB.getSelectedValue()) ? null
-				: Short.parseShort(paymentMonthLB.getSelectedValue()));
+		payment.setMonth(AonStringUtils.isBlank(paymentMonthLB.getValue()) ? null
+				: Short.parseShort(paymentMonthLB.getValue()));
 		payment.setStartDate(paymentStartDateBx.getValue());
 		payment.setEndDate(paymentEndDateBx.getValue());
 		payment.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
@@ -795,7 +942,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		if(null == this.payment)
 			this.payment = new ContractConceptCalc();
 
-		payment.setCodeType(deductionTypeLB.getSelectedValue());
+		payment.setCodeType(deductionTypeLB.getValue());
 		if (null != selectedConcept) {
 			payment.setConceptId(selectedConcept.getId());
 			payment.setName(selectedConcept.getCode());
@@ -815,7 +962,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		if(null == this.payment)
 			this.payment = new ContractConceptCalc();
 
-		payment.setCodeType(costTypeLB.getSelectedValue());
+		payment.setCodeType(costTypeLB.getValue());
 		if (null != selectedConcept) {
 			payment.setConceptId(selectedConcept.getId());
 			payment.setName(selectedConcept.getCode());

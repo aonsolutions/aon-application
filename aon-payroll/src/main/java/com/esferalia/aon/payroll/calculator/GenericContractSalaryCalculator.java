@@ -1838,6 +1838,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& !AonStringUtils.equals(ContextVariable.MATERNITY.getName(), name)
+					&& !AonStringUtils.equals(ContextVariable.LACK_PERIOD.getName(), name)
 					&& !AonStringUtils.equals(ContextVariable.MEDICAL_INSURANCE, name)
 					&& !ContextVariable.FLEXIBLES.contains(name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
@@ -1959,7 +1960,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					Double tax ;
 					try {
-						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 					} catch ( YesExtraException e ) {
 						tax = e.getTax();
 						resultValue = e.getTax();
@@ -1979,7 +1980,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							public String getIrpfExpression() {
 								return irpfExpression;
 							};
-						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 						onCheckError(
 						contractPayment,
 						String.format(

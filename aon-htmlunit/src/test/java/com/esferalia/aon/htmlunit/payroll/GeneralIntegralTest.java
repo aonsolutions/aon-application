@@ -460,10 +460,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	
 		draft("FINIQUITO, REDEFINIDO");
 		settle(calendar.getTime());
-		assertValue("cgcBaseLabel", 200.00);
-		assertValue("cgpBaseLabel", 200.00);
+		assertValue("cgcBaseLabel", 300.00);
+		assertValue("cgpBaseLabel", 300.00);
 		assertValue("totalPaymentLabel", 300.00);
-		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
+		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) );
 		
 		draft("COTIZACIÓN, MIN");
 		calendar.set(2023, Calendar.JULY, 31);
@@ -3453,6 +3453,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
 		assertTrue(totalEnterpriseLabel > 0.00);
 		
+		draft("DIAS DE AUSENCIA, NO INFORMADOS");
+		calculate(Calendar.AUGUST,2026);
+		assertValue("cgcBaseLabel", 1424.40);
+		assertValue("cgpBaseLabel", 1424.40);
+		assertText("common_contingency", Math.round( 1424.40 * 4.70 ) / 100.00);
+		assertText("unemployment", Math.round( 1424.40 * 1.55 )/ 100.00);
 	}
 
 	@Test
@@ -3709,7 +3715,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("ERE COMPLETO, FZA EXONERACION ( TIEMPO COMPLETO )");
 		calculate(Calendar.AUGUST,2026);
-		assertText("totalEnterpriseLabel", 0.00);
+		double cgcBase = getValue("cgcBaseLabel");
+		
+		assertText("totalEnterpriseLabel", cgcBase * 2.25 / 100.00);
 		
 	}
 

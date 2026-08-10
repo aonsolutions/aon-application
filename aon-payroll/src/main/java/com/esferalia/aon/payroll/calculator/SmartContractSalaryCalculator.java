@@ -332,27 +332,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return delegate.getAmounts(type);
 		}
 
-		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total)
+		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total,double quote)
 				throws AonException {
 			try {
 				if ( payment.getType() == PaymentType.CRA_0004 
 					&& payment.getMonth() == getMonth(issueDate) 
 					&& payment.getSalaryType() == ctx.getSalaryType() 
 					&& ctx.getSalaryType() == SalaryType.SALARY ) {
-    				amount = getExtra(ctx, payment, issueDate, amount, total).orElse(amount);
+    				amount = getExtra(ctx, payment, issueDate, amount, total, quote).orElse(amount);
 					payment = new SalaryExtraPayment(payment, amount);
-					double tax = delegate.tax(payment, start, end, issueDate, amount, total);
+					double tax = delegate.tax(payment, start, end, issueDate, amount, total, quote);
 					throw new YesExtraException(tax);
 				}
 				
-				return delegate.tax(payment, start, end, issueDate, amount, total);
+				return delegate.tax(payment, start, end, issueDate, amount, total, quote);
 			
 			} catch (ExtraException e) {
-				return taxExtra(payment, start, end, issueDate, amount, total);
+				return taxExtra(payment, start, end, issueDate, amount, total, quote);
 			} 
 		}
 		
-		private double taxExtra(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total) 
+		private double taxExtra(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total, double quote) 
 				throws AonException {
 			try {
 				IExtraPayment extraPayment = getExtraPayment(payment);
@@ -364,7 +364,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					Salary extra = calculateExtra(ctx, extraPayment, extraIssueDate);
 					amount = extra.getTotalPayment();
 					payment = new SalaryExtraPayment(payment, amount);
-					double tax = delegate.tax(payment, start, end, extraIssueDate, amount, total);
+					double tax = delegate.tax(payment, start, end, extraIssueDate, amount, total, quote);
 					throw new YesExtraException(tax);
 				}
 				
@@ -1709,8 +1709,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
-	private static Optional<Double> getExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate, Double amount,Double total) throws AonException {
-		Optional<Double> quoted = getMonthlyQuoted(ctx, contractPayment, endDate, amount, total);
+	private static Optional<Double> getExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate, Double amount,Double total, Double quote) throws AonException {
+		Optional<Double> quoted = getMonthlyQuoted(ctx, contractPayment, endDate, amount, total, quote);
 		if ( quoted.isPresent() )
 			return quoted;
 
@@ -1808,7 +1808,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
-	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,double amount, double total) throws AonException {
+	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,double amount, double total, double quote) throws AonException {
 		Collection<Payment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
 		
 		int expected = 0;
@@ -1816,7 +1816,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			expected++;
 		
 		if ( payments.size() == expected )
-			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * (( amount == total ) ? 1.00 : amount/total ) + amount / 12.00);
+			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * (( amount == total ) ? 1.00 : amount/total ) + quote );
 		return Optional.empty();
 	}
 	
@@ -2160,7 +2160,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					
 				};
 				
-				taxCalculator.tax(salaryExtraContractPayment, start, end, extraIssueDate, extra.getTotalPayment(), extra.getTotalPayment());
+				taxCalculator.tax(salaryExtraContractPayment, start, end, extraIssueDate, extra.getTotalPayment(), extra.getTotalPayment(), extra.getCommonBase());
 				
 				Date extraEnd = parseExtraDate(extraPayment.getExtraEndDate(), issueDate).getTime();
 				Date extraEndDate = AonDateUtils.getLastDayOfMonth(extraEnd);

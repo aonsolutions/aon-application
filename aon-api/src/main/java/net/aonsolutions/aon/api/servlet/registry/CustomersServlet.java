@@ -199,7 +199,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
 		}
 
-		if (api.getData().opt(IJsonNames.SCOPE) != null) {
+		if (api.getData().opt(IJsonNames.SCOPE) != null && JsonUtils.getInt(api.getData(), IJsonNames.SCOPE) == -1) {
+			filter = filter.and(f.getScopeProperty().isNull());
+		} else if (api.getData().opt(IJsonNames.SCOPE) != null) {
 			filter = filter.and(f.getScopeProperty().eq(JsonUtils.getInt(api.getData(), IJsonNames.SCOPE)));
 		}
 
