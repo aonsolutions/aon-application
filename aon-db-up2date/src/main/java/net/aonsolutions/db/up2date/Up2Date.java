@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
 import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
 import net.aonsolutions.db.up2date.payroll.FixPreavisoQuote;
+import net.aonsolutions.db.up2date.registry.CustomerAlterExpirationDate;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
@@ -681,7 +682,8 @@ public class Up2Date {
 			
 			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
 			// UpdateMailAccountType.UPDATEMAILACCOUNTTYPE,
-			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY
+			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY,
+			CustomerAlterExpirationDate.CUSTOMERALTEREXPIRATIONDATE
 	};
 
 	// ------------------------------------------------------------------------

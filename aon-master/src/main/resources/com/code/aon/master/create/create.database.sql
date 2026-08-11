@@ -2414,6 +2414,7 @@ CREATE TABLE `customer` (
   `withholding` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Cliente aplica retencion de impuestos',
   `transaction` tinyint DEFAULT '0' COMMENT 'Tipo de transacciones del Cliente',
   `status` tinyint DEFAULT NULL COMMENT 'Estado del Cliente',
+  `expiration_date` date DEFAULT NULL COMMENT 'Fecha de expiracion. Solo aplica cuando status = BLOCKED',
   `fiscal_status` tinyint DEFAULT '0' COMMENT 'Estado Fiscal: 0=REGISTERED, 1=NOT_REGISTERED, 2=NOT_IDENTIFIED',
   `scope` int NOT NULL COMMENT 'Identificador del Ambito',
   `e_invoice` tinyint(1) DEFAULT '0' COMMENT 'Indica si el Cliente desea recibir Facturas electronicas',
