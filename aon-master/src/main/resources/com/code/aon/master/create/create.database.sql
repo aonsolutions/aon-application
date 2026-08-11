@@ -4655,7 +4655,7 @@ CREATE TABLE `invoice` (
   `vat_quota` decimal(15,4) DEFAULT '0' COMMENT 'Cuota de IVA de la Factura',
   `retention_quota` decimal(15,4) DEFAULT '0' COMMENT 'Cuota de IRPF de la Factura',
   `total` decimal(15,4) DEFAULT '0' COMMENT 'Total Factura',
-# `annulled` tinyint(1) DEFAULT '0' COMMENT 'Indica si la Factura esta anulada',
+  `annulled` tinyint(1) DEFAULT '0' COMMENT 'Indica si la Factura esta anulada',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',

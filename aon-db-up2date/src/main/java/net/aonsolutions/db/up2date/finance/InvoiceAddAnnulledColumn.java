@@ -9,6 +9,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import net.aonsolutions.db.up2date.Up2DateUtils;
 import net.aonsolutions.db.up2date.Update;
 
 public class InvoiceAddAnnulledColumn implements Update {
@@ -26,16 +27,16 @@ public class InvoiceAddAnnulledColumn implements Update {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 
-		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+		DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
 
 		LOGGER.info("[START]");
 		LOGGER.info("Alter table `invoice`");
-
-		String sql = "ALTER TABLE `invoice` ADD COLUMN `annulled` tinyint(1) DEFAULT '0' Comment 'Indica si la Factura esta anulada' AFTER `total`";
-
-		dslContext.execute(sql);
-	
+		if (Up2DateUtils.columnNotExists(connection, LOGGER, "invoice", "annulled")) {
+			String sql = "ALTER TABLE `invoice` ADD COLUMN `annulled` tinyint(1) DEFAULT '0' Comment 'Indica si la Factura esta anulada' AFTER `total`";
+			dslContext.execute(sql);
+			LOGGER.info("Columna `annulled` agregada a la tabla `invoice`");
+		}
 		LOGGER.info("[END]");
 	}
-
 }
+

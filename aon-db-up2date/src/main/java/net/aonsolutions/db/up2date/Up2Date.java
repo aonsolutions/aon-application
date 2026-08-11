@@ -19,10 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.InvoiceAddAnnulledColumn;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
-import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
-import net.aonsolutions.db.up2date.payroll.FixPreavisoQuote;
 import net.aonsolutions.db.up2date.scope.InsertDefaultScope;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp10;
 import net.aonsolutions.db.up2date.security.DeleteDomainAppApp19;
@@ -281,7 +279,6 @@ public class Up2Date {
 			// TrainingBases2022FixII.TRAININGBASES2022FIXII,
 			// UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
 			// SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE,
-			// InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
 			// HomeQuote2022Update.HOMEQUOTE2022UPDATE,
 			// ContractDocCreate.CONTRACTDOCCREATE
 			// AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
@@ -681,7 +678,10 @@ public class Up2Date {
 			
 			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
 			// UpdateMailAccountType.UPDATEMAILACCOUNTTYPE,
-			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY
+			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY,
+			
+			// INVOICE REFACTOR
+			InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
 	};
 
 	// ------------------------------------------------------------------------
