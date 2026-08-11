@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.AmortizationInvoice.AMORTIZATION_INV
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
-import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -18,8 +17,6 @@ import org.jooq.OrderField;
 import org.jooq.Record14;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
-import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -49,10 +46,10 @@ public class InvoiceConsoleDAO {
 	private static final Field<String>  F_RDOCUMENT = DSL.field("rDocument", String.class);
 	private static final Field<String>  F_RNAME = DSL.field("rName", String.class);
 	private static final Field<Double> F_TOTAL = DSL.field("total", Double.class);
-	private static final Field<Boolean> F_ANNULLED = DSL.field("annulled", Boolean.class);
+	private static final Field<Byte> F_ANNULLED = DSL.field("annulled", Byte.class);
 	private static final Field<Timestamp> F_CREATION_DATE = DSL.field("creationTime", Timestamp.class);
 	private static final Field<Byte> F_STATUS = DSL.field("statuc", Byte.class);
-	private static final String INVOICE_UNION = "invoice_union";
+//	private static final String INVOICE_UNION = "invoice_union";
 
 	public static Field<Integer> getOrderedType() {
 		// Field para que salgan ordenado primero 
@@ -66,17 +63,17 @@ public class InvoiceConsoleDAO {
 
 	}
 	
-	public static Field<Integer> getTrackingOrderedType() {
-		// Field para que salgan ordenado primero 
-		// compras,gastos y gastos no .ded y luego ventas.
-		// En la select se complementa con invoice.type
-		return DSL.decode()
-		   .when(INVOICE_TRACKING.TYPE.equal((byte) 0), 0)
-		   .when(INVOICE_TRACKING.TYPE.equal((byte) 1), 1)
-		   .when(INVOICE_TRACKING.TYPE.equal((byte) 2), 0)
-		   .when(INVOICE_TRACKING.TYPE.equal((byte) 3), 0);
-
-	}
+//	public static Field<Integer> getTrackingOrderedType() {
+//		// Field para que salgan ordenado primero 
+//		// compras,gastos y gastos no .ded y luego ventas.
+//		// En la select se complementa con invoice.type
+//		return DSL.decode()
+//		   .when(INVOICE_TRACKING.TYPE.equal((byte) 0), 0)
+//		   .when(INVOICE_TRACKING.TYPE.equal((byte) 1), 1)
+//		   .when(INVOICE_TRACKING.TYPE.equal((byte) 2), 0)
+//		   .when(INVOICE_TRACKING.TYPE.equal((byte) 3), 0);
+//
+//	}
 	
 	private InvoiceConsoleDAO() {
 
@@ -85,7 +82,7 @@ public class InvoiceConsoleDAO {
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
-	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceSelect( AONContext ctx, InvoiceConsoleParams params ) {
+	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Byte>> getInvoiceSelect( AONContext ctx, InvoiceConsoleParams params ) {
 		Field<Integer> invoiceOrderedType = getOrderedType().as(F_ORDERED_TYPE);
 		return ctx.getDslContext()
 			.select(
@@ -102,100 +99,96 @@ public class InvoiceConsoleDAO {
 					,INVOICE.RNAME.as( F_RNAME)
 					,INVOICE.TOTAL.as( F_TOTAL)
 					,INVOICE.CREATION_DATE.as( F_CREATION_DATE )
-					,DSL.val( false ).as( F_ANNULLED )
+					,INVOICE.ANNULLED.as( F_ANNULLED )
 					)
 			.from(INVOICE)
 			.where(new InvoiceConditionBuilder().build(ctx, params))
 			;
 	}
 	
-	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceTrackingSelect( AONContext ctx, InvoiceConsoleParams params ) {
-    	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
-    	return ctx.getDslContext()
-			.select(
-					INVOICE_TRACKING.ID.as( F_ID )
-					,INVOICE_TRACKING.DOMAIN.as( F_DOMAIN )
-					,invoiceTrackingOrderedType.as( F_ORDERED_TYPE)
-					,INVOICE_TRACKING.TYPE.as( F_TYPE )
-					,INVOICE_TRACKING.ISSUE_DATE.as( F_ISSUE_DATE )
-					,INVOICE_TRACKING.REFERENCE_CODE.as( F_REFERENCE_CODE )
-					,INVOICE_TRACKING.SERIES.as( F_SERIES)
-					,INVOICE_TRACKING.NUMBER.as( F_NUMBER)
-					,DSL.val( (byte) 0 ).as( F_STATUS)
-					,INVOICE_TRACKING.RDOCUMENT.as( F_RDOCUMENT)
-					,INVOICE_TRACKING.RNAME.as( F_RNAME)
-					,INVOICE_TRACKING.TOTAL.as( F_TOTAL)
-					,INVOICE_TRACKING.CREATION_DATE.as( F_CREATION_DATE )
-					,DSL.val( true ).as( F_ANNULLED )
-					)
-			.from(INVOICE_TRACKING)
-			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
-			;
-	}
-	private static Table<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
-		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> invoiceSelect = null;
-		if (params.showInvoices()) {
-			if (params.showInvoiceTrackings()) {
-				invoiceSelect = getInvoiceSelect(ctx, params).unionAll( getInvoiceTrackingSelect(ctx, params) );
-			}
-		} else {
-			invoiceSelect = getInvoiceTrackingSelect(ctx, params);	
-		}
-		return invoiceSelect.asTable( INVOICE_UNION );
-	}
+//	private static SelectConditionStep<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> getInvoiceTrackingSelect( AONContext ctx, InvoiceConsoleParams params ) {
+//    	Field<Integer> invoiceTrackingOrderedType = getTrackingOrderedType().as(F_ORDERED_TYPE);
+//    	return ctx.getDslContext()
+//			.select(
+//					INVOICE_TRACKING.ID.as( F_ID )
+//					,INVOICE_TRACKING.DOMAIN.as( F_DOMAIN )
+//					,invoiceTrackingOrderedType.as( F_ORDERED_TYPE)
+//					,INVOICE_TRACKING.TYPE.as( F_TYPE )
+//					,INVOICE_TRACKING.ISSUE_DATE.as( F_ISSUE_DATE )
+//					,INVOICE_TRACKING.REFERENCE_CODE.as( F_REFERENCE_CODE )
+//					,INVOICE_TRACKING.SERIES.as( F_SERIES)
+//					,INVOICE_TRACKING.NUMBER.as( F_NUMBER)
+//					,DSL.val( (byte) 0 ).as( F_STATUS)
+//					,INVOICE_TRACKING.RDOCUMENT.as( F_RDOCUMENT)
+//					,INVOICE_TRACKING.RNAME.as( F_RNAME)
+//					,INVOICE_TRACKING.TOTAL.as( F_TOTAL)
+//					,INVOICE_TRACKING.CREATION_DATE.as( F_CREATION_DATE )
+//					,DSL.val( true ).as( F_ANNULLED )
+//					)
+//			.from(INVOICE_TRACKING)
+//			.where(new InvoiceTrackingConditionBuilder().build(ctx, params))
+//			;
+//	}
+//	private static Table<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> unionTable(AONContext ctx, InvoiceConsoleParams params) {
+//		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> invoiceSelect = null;
+//		if (params.showInvoices()) {
+//			if (params.showInvoiceTrackings()) {
+//				invoiceSelect = getInvoiceSelect(ctx, params).unionAll( getInvoiceTrackingSelect(ctx, params) );
+//			}
+//		} else {
+//			invoiceSelect = getInvoiceTrackingSelect(ctx, params);	
+//		}
+//		return invoiceSelect.asTable( INVOICE_UNION );
+//		return getInvoiceSelect(ctx, params).asTable( INVOICE_UNION );
+//	}
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
-		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Boolean>> select =
-			(params.showInvoiceTrackings())
-				?ctx.getDslContext().selectFrom( unionTable(ctx,params) )
-					.orderBy(getOrderBy(params))
-					.limit(params.getOffset() , params.getLimit())
-				:getInvoiceSelect(ctx, params)
-					.orderBy(getOrderBy(params))
-					.limit(params.getOffset() , params.getLimit())
-		;
-		
+		Select<Record14<Integer, Integer, Integer, Byte, Date, String, String, Integer, Byte, String, String, Double, Timestamp, Byte>> select =
+			getInvoiceSelect(ctx, params)
+				.orderBy(getOrderBy(params))
+				.limit(params.getOffset() , params.getLimit());
+//			(params.showInvoiceTrackings())
+//				?ctx.getDslContext().selectFrom( unionTable(ctx,params) )
+//					.orderBy(getOrderBy(params))
+//					.limit(params.getOffset() , params.getLimit())
+//				:getInvoiceSelect(ctx, params)
+//					.orderBy(getOrderBy(params))
+//					.limit(params.getOffset() , params.getLimit())
+//		;
+//		
 //		System.out.println("--- SQL InvoiceConsoleDAO.getInvoiceHeaders ----");
 //		System.out.println( select .getSQL(ParamType.INLINED) );
 //		System.out.println("-----------------------------------------------");
 		
 		InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, params.getDomain(), false);
 		
-		System.out.println( select.getSQL(ParamType.INLINED) );
-		
 		return select
 			.fetch()
 			.stream()
-			.map(r -> {
-				InvoiceConsole ic = new InvoiceConsole()
-					.setId(r.getValue(F_ID))
-					.setAnnulled(Boolean.TRUE.equals( r.getValue(F_ANNULLED) ));
-				if (!ic.isAnnulled()) {
-					ic.setInvoice(  new Invoice()
-						.setId( r.getValue(F_ID) )
-						.setDomain( r.getValue(F_DOMAIN) )
-						.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(F_TYPE)))
-						.setIssueDate( r.getValue(F_ISSUE_DATE) )
-						.setReferenceCode( r.getValue(F_REFERENCE_CODE) )
-						.setSeries( r.getValue(F_SERIES) )
-						.setNumber( r.getValue(F_NUMBER) )
-						.setRecorded(r.getValue(F_STATUS) != null && r.getValue(F_STATUS) == 1 )
-						.setRegistryDocument( r.getValue(F_RDOCUMENT) )
-						.setRegistryName( r.getValue(F_RNAME) )
-						.setTotal( r.getValue(F_TOTAL) )
-						.setCreationDate( r.getValue(F_CREATION_DATE) )
-						);
-				}
-				return ic;
-			})
-			.map( ic -> {
-				if (ic.isAnnulled()) {
-					InvoiceTrackingDAO.get( ctx, params.getDomain(), ic.getId() )
-						.ifPresent( ic::setInvoice );
-				}
-				return ic;
-			})
+			.map(r -> new Invoice()
+				.setId(r.getValue(F_ID))
+				.setAnnulled( r.getValue(F_ANNULLED) == 1)
+				.setDomain( r.getValue(F_DOMAIN) )
+				.setType(AonEnumUtils.enumValue(InvoiceType.class, r.getValue(F_TYPE)))
+				.setIssueDate( r.getValue(F_ISSUE_DATE) )
+				.setReferenceCode( r.getValue(F_REFERENCE_CODE) )
+				.setSeries( r.getValue(F_SERIES) )
+				.setNumber( r.getValue(F_NUMBER) )
+				.setRecorded(r.getValue(F_STATUS) != null && r.getValue(F_STATUS) == 1 )
+				.setRegistryDocument( r.getValue(F_RDOCUMENT) )
+				.setRegistryName( r.getValue(F_RNAME) )
+				.setTotal( r.getValue(F_TOTAL) )
+				.setCreationDate( r.getValue(F_CREATION_DATE) )
+			)
+			.map(i -> new InvoiceConsole().setInvoice(i) )
+//			.map( ic -> {
+//				if (ic.isAnnulled()) {
+//					InvoiceTrackingDAO.get( ctx, params.getDomain(), ic.getId() )
+//						.ifPresent( ic::setInvoice );
+//				}
+//				return ic;
+//			})
 			.map( ic -> fillAttach(ctx, ic))
 			.map( ic -> fillCommunicationInfo(ctx, icc, ic))
 //			.map( ic -> fillSource(ic))
@@ -369,6 +362,14 @@ public class InvoiceConsoleDAO {
 		}
 
 		@Override
+		protected Condition buildAnnulledCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+			if (params.getAnnulled() != null) {
+				cond = cond.and( INVOICE.ANNULLED.eq( AonEnumUtils.getByte(params.getAnnulled()) ));
+			}
+			return cond;
+		}
+
+		@Override
 		protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
 			if (params.getProforma() != null) {
 				if ( params.getProforma().booleanValue() ) {
@@ -446,60 +447,60 @@ public class InvoiceConsoleDAO {
 		
 	}
 	
-	private static class InvoiceTrackingConditionBuilder extends ConditionBuilder {
-		
-		@Override protected Condition buildActivityCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildRegistryCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildAccrualRegimeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildWithholdingCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildInvestmentCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
-		@Override protected Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }		
-		
-		@Override
-		protected Condition buildDomainCondition(AONContext ctx, InvoiceConsoleParams params) {
-			return buildDomainCondition(ctx, INVOICE_TRACKING.DOMAIN, params);
-		}
-
-		@Override
-		protected Condition buildIdCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildIdCondition(ctx, INVOICE_TRACKING.ID, cond, params);
-		}
-		
-
-		@Override
-		protected Condition buildIssueDateCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildIssueDateCondition(ctx, INVOICE_TRACKING.ISSUE_DATE, cond, params);
-		}
-
-
-		@Override
-		protected Condition buildSeriesCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildSeriesCondition(ctx, INVOICE_TRACKING.SERIES, cond, params);
-		}
-
-		@Override
-		protected Condition buildNumberCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildNumberCondition(ctx, INVOICE_TRACKING.NUMBER, cond, params);
-		}
-
-		@Override
-		protected Condition buildReferenceCodeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildReferenceCodeCondition(ctx, INVOICE_TRACKING.REFERENCE_CODE, cond, params);
-		}
-
-		@Override
-		protected Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
-			return buildOutputCondition(ctx, INVOICE_TRACKING.TYPE, cond, params);
-		}
-
-	}
+//	private static class InvoiceTrackingConditionBuilder extends ConditionBuilder {
+//		
+//		@Override protected Condition buildActivityCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildRegistryCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildAccrualRegimeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildWithholdingCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildInvestmentCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildTransactionTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildCommunicationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }
+//		@Override protected Condition buildSourceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) { return cond; }		
+//		
+//		@Override
+//		protected Condition buildDomainCondition(AONContext ctx, InvoiceConsoleParams params) {
+//			return buildDomainCondition(ctx, INVOICE_TRACKING.DOMAIN, params);
+//		}
+//
+//		@Override
+//		protected Condition buildIdCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildIdCondition(ctx, INVOICE_TRACKING.ID, cond, params);
+//		}
+//		
+//
+//		@Override
+//		protected Condition buildIssueDateCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildIssueDateCondition(ctx, INVOICE_TRACKING.ISSUE_DATE, cond, params);
+//		}
+//
+//
+//		@Override
+//		protected Condition buildSeriesCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildSeriesCondition(ctx, INVOICE_TRACKING.SERIES, cond, params);
+//		}
+//
+//		@Override
+//		protected Condition buildNumberCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildNumberCondition(ctx, INVOICE_TRACKING.NUMBER, cond, params);
+//		}
+//
+//		@Override
+//		protected Condition buildReferenceCodeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildReferenceCodeCondition(ctx, INVOICE_TRACKING.REFERENCE_CODE, cond, params);
+//		}
+//
+//		@Override
+//		protected Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params) {
+//			return buildOutputCondition(ctx, INVOICE_TRACKING.TYPE, cond, params);
+//		}
+//
+//	}
 
 	private abstract static class ConditionBuilder {
 		Condition build(AONContext ctx, InvoiceConsoleParams params) {
@@ -517,6 +518,7 @@ public class InvoiceConsoleDAO {
 			condition = buildRectificationTypeCondition(ctx, condition, params);
 			condition = buildServiceCondition(ctx, condition, params);
 			condition = buildRecordedCondition(ctx, condition, params);
+			condition = buildAnnulledCondition(ctx, condition, params);
 			condition = buildProformaCondition(ctx, condition, params);
 			condition = buildAmortizationBindedCondition(ctx, condition, params);
 			condition = buildOutputCondition(ctx, condition, params);
@@ -598,6 +600,7 @@ public class InvoiceConsoleDAO {
 		protected abstract Condition buildRectificationTypeCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildServiceCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildRecordedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
+		protected abstract Condition buildAnnulledCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildProformaCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildAmortizationBindedCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
 		protected abstract Condition buildOutputCondition(AONContext ctx, Condition cond, InvoiceConsoleParams params);
