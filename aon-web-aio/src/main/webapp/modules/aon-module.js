@@ -3,7 +3,7 @@ import { login } from '../services/service.js';
 import { AonHome } from './aon-home.js';
 import { CONSTANT, TAG } from '../environments/environments.js';
 import { AonLoader } from '../components/aon-loader.js';
-import { AonNewLogin } from './login/aon-new-login.js';
+import { AonLogin } from './login/aon-login.js';
 import { AonNewInput } from "../components/aon-new-input.js";
 import { AonMobileParent } from './company/aon-mobile-parent.js';
 import { AonParent } from './aon-parent.js';
@@ -37,7 +37,7 @@ export class AonModule extends AonElement {
 
 	buildLogin() {
 		this.clear();
-		let login = new AonNewLogin(new AonNewInput(), this.newCompanyLogoDiv());
+		let login = new AonLogin(new AonNewInput(), this.newCompanyLogoDiv());
 		login.id = this.AON_LOGIN;
 		this.appendChild(login)
 	}

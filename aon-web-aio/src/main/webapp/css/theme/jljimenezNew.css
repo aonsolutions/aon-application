@@ -216,37 +216,3 @@
 .rootPanel > aon-accounting-menu .suiteMenuContent {
 	background-color: transparent;
 }
-
-/* Invoice Future Sidenav options */
-
-#aonInvoiceSidenavIncomes {
-	display: none;
-}
-
-#aonInvoiceSidenavExpenses {
-	display: none;
-}
-
-#aonInvoiceSidenavDocument {
-	display: none;
-}
-
-#aonInvoiceSidenavManagement {
-	display: none;
-}
-
-#aonInvoiceSidenavFutureIncomes {
-	display: block;
-}
-
-#aonInvoiceSidenavFutureExpenses {
-	display: block;
-}
-
-#aonInvoiceSidenavFutureDocument {
-	display: block;
-}
-
-#aonInvoiceSidenavFutureManagement {
-	display: block;
-}

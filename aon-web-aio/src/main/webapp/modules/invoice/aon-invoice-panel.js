@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import {
-	insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel,
+	insertInvoice, mobileAction, MOBILE_ACTION, downloadInvoiceExcel,
 	getBidoqToOCR, getBidoqToOCRCount, getInvoice, getInvoiceCount, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
 	checkBidoq,
 	getCompanyActivities,
@@ -391,11 +391,6 @@ export class AonInvoicePanel extends AonElement {
 			this.getApplication().addSidenavOptions3(option);
 		});
 
-		OPTION.getFutureOptions(this.getDur().isTrial()).forEach((option) => {
-			option.app = INVOICE;
-			this.getApplication().addSidenavOptions3(option);
-		});
-
 		this.buildCounter();
 	}
 
@@ -414,26 +409,20 @@ export class AonInvoicePanel extends AonElement {
 			// FACTURAS EMITIDAS 
 			if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
 				addCounter(OPTION.INVOICE_ISSUED_BETA, r.invoice.emitida);
-				addCounter(OPTION.FUTURE_INVOICE_ISSUED_BETA, r.invoice.emitida);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_ISSUED_BETA);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_ISSUED_BETA);
 
 			// FACTURAS RECIBIDAS
 			if (r.invoice && r.invoice.recibida && r.invoice.recibida > 0) {
 				addCounter(OPTION.INVOICE_RECEIVED_BETA, r.invoice.recibida);
-				addCounter(OPTION.FUTURE_INVOICE_RECEIVED_BETA, r.invoice.recibida);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_RECEIVED_BETA);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_RECEIVED_BETA);
 
 			// FACTURAS SIMPLIFICADAS / TICKETS
 			if (r.invoice && r.invoice.ticket && r.invoice.ticket > 0) {
 				addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
-				addCounter(OPTION.FUTURE_INVOICE_TICKET, r.invoice.ticket);
 			}
 			this.updateCounterSpan(OPTION.INVOICE_TICKET);
-			this.updateCounterSpan(OPTION.FUTURE_INVOICE_TICKET);
 
 			// if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0) {
 			//   addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
@@ -443,54 +432,41 @@ export class AonInvoicePanel extends AonElement {
 			// BORRADOR/PROFORMAS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0) {
 				addCounter(OPTION.PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
-				addCounter(OPTION.FUTURE_PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
 			}
 			this.updateCounterSpan(OPTION.PROFORMA_INVOICES);
-			this.updateCounterSpan(OPTION.FUTURE_PROFORMA_INVOICES);
 
 			// BORRADOR FACTURAS RECIBIDAS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0) {
 				addCounter(OPTION.RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
-				addCounter(OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED_NEW);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_INBOX_RECEIVED_NEW);
 
 			// BORRADOR FACTURAS SIMPLIFICADAS / TICKETS
 			if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0) {
 				addCounter(OPTION.RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
-				addCounter(OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET_NEW);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_INBOX_TICKET_NEW);
 
 			// EN TRAMITE
 			if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
 				addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
-				addCounter(OPTION.FUTURE_RAWDOC_PROCESSING, r.rawdoc.processing.count);
 			}
 			if (r && r.rawdoc && r.rawdoc.processed && r.rawdoc.processed.count && r.rawdoc.processed.count > 0) {
 				addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processed.count);
-				addCounter(OPTION.FUTURE_RAWDOC_PROCESSING, r.rawdoc.processed.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_PROCESSING);
 			
 			// A REVISAR
 			if (r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0) {
 				addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
-				addCounter(OPTION.FUTURE_RAWDOC_REJECT, r.rawdoc.rejected.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_REJECT);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_REJECT);
 
 			// PAPELERA
 			if (r && r.rawdoc && r.rawdoc.trash && r.rawdoc.trash.count && r.rawdoc.trash.count > 0) {
 				addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.trash.count);
-				addCounter(OPTION.FUTURE_RAWDOC_TRASH, r.rawdoc.trash.count);
 			}
 			this.updateCounterSpan(OPTION.RAWDOC_TRASH);
-			this.updateCounterSpan(OPTION.FUTURE_RAWDOC_TRASH);
 
 			this.updateCounterHome();
 		});
@@ -759,7 +735,6 @@ export class AonInvoicePanel extends AonElement {
 			return;
 		}
 		
-		let ayudat = this.getDur().isSelfconta();
 		let aonInvoice = this.getApplication();
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
 		let button = this.isMobile()
@@ -771,23 +746,12 @@ export class AonInvoicePanel extends AonElement {
 		const left = button.getBoundingClientRect().left;
 
 		if (height - top < height / 2) {
-			top = top - (ayudat ? 205 : 170);
+			top = top - 170;
 		}
 
 		let d = document.getElementById("aonDialogAddOption");
 
 		let options = OPTION.getNewOptions();
-		if (ayudat) {
-			let importSelfconta = {
-				name: "Importación Selfconta",
-				title: "Importación Selfconta",
-				icon: "import_export",
-				permission: ayudat,
-				backgroundColor: "#4472C4",
-				fn: () => this.importSelfconta(),
-			};
-			options.push(importSelfconta);
-		}
 
 		if (this.isMobile()) {
 			let uploadFile = {
@@ -819,51 +783,6 @@ export class AonInvoicePanel extends AonElement {
 			options.push(openCamera);
 		}
 		d.setMenuOptions(options, top, left);
-		d.open();
-	}
-
-	importSelfconta() {
-		let div = this.createElement(TAG.DIV);
-		div.id = "aonInvoiceSelfcontaDiv";
-
-		let div2 = this.createElement(TAG.DIV);
-		div2.id = "aonInvoiceSelfcontaDiv2";
-		div2.innerHTML = "¿Desea importar las facturas?";
-		div.appendChild(div2);
-
-		let yearSelect = new AonSelect();
-		yearSelect.id = "aonInvoiceSelfcontaYear";
-		yearSelect.title = MSG.YEAR;
-		yearSelect.options = JSON.stringify([
-			{ name: "2024", value: 2024 },
-			{ name: "2023", value: 2023 },
-			{ name: "2022", value: 2022 },
-			{ name: "2021", value: 2021 },
-			{ name: "2020", value: 2020 },
-			{ name: "2019", value: 2019 },
-			{ name: "2018", value: 2018 },
-		]);
-		div.appendChild(yearSelect);
-
-		let aonApplication = this.getApplication();
-		let d = aonApplication.getDialog();
-		d.clear();
-		if (!this.isMobile()) d.width = "400px";
-		d.setTitle(MSG.IMPORT);
-		d.setContent(div);
-		d.addAcceptAction(async () => {
-			aonApplication.startLoading();
-			try {
-				await selfconta(yearSelect.value);
-				this.showToast({
-					type: "success",
-					message: "Datos Importados. Revisa las facturas rechazadas.",
-				});
-			} catch (error) {
-				this.showToast(error);
-			}
-			aonApplication.stopLoading();
-		});
 		d.open();
 	}
 

@@ -52,7 +52,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
+		LOGGER.info("AON API BIDOQ SERVLET");
 		try {
 			AonApiData api = initialize(req);
 			if(BIDOQ_SESSION_ID.equals(api.getToken()) || BIDOQ_SESSION_ID.equals(api.getData().optString(IJsonNames.SESSION_ID))) {
