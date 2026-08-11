@@ -97,6 +97,8 @@ public interface IConstants {
 	String POBLACION2 = "POBLACIÓN";
 	String PROVINCIA = "PROVINCIA";
 	String REFERENCIA = "REFERENCIA";
+	String RESTO_DIRECCION = "RESTO DIRECCION";
+	String RESTO_DIRECCION2 = "RESTO DIRECCIÓN";
 	String SEGURIDAD = "SEGURIDAD";
 	String SUBCUENTA = "SUBCUENTA";
 	String SUPLIDO = "SUPLIDO";
@@ -158,8 +160,10 @@ public interface IConstants {
 	
 	String SERIE = "SERIE";
 	String SERIES = "SERIES";
-
+	
+	String NUMBER = "NUMBER";
 	String NUMERO = "NUMERO";
+	String NUMERO2 = "NÚMERO";
 	String NUMERO_FACTURA = "NUMERO FACTURA";
 	String NUMERO_DE_FACTURA = "NUMERO DE FACTURA";
 	String CODIGO_REFERENCIA = "CODIGO REFERENCIA";

@@ -2506,23 +2506,6 @@ aon-search > span {
 	display: block;
 }
 
-#aonInvoiceSidenavFutureIncomes {
-	display: none;
-}
-
-#aonInvoiceSidenavFutureExpenses {
-	display: none;
-}
-
-#aonInvoiceSidenavFutureDocument {
-	display: none;
-}
-
-#aonInvoiceSidenavFutureManagement {
-	display: none;
-}
-
-
 #aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover,
 #aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected {
 	left: -12px;

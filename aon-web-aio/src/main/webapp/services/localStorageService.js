@@ -378,6 +378,7 @@ export const isNewTheme = () => {
 
 export const setNewTheme = (newTheme, reload) => {
     set(NEW_THEME, newTheme);
+    set(THEME, FUTURE_THEME);
     if(reload) location.reload();
 }
 

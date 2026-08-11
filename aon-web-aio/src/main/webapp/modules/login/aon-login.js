@@ -27,7 +27,7 @@ import * as GWT from '../../gwt/gwt.js';
 import { AonAuth } from '../user/aon-auth.js';
 
 
-export class AonNewLogin extends AonElement {
+export class AonLogin extends AonElement {
   tag;
   userInput;
   companyLogo;
@@ -713,10 +713,7 @@ export class AonNewLogin extends AonElement {
 			} 
 		});  
 	}
-	
-  
-
 }
-if(!window.customElements.get(TAG.AON_NEW_LOGIN)){
-	window.customElements.define(TAG.AON_NEW_LOGIN, AonNewLogin);
+if(!window.customElements.get(TAG.AON_LOGIN)){
+	window.customElements.define(TAG.AON_LOGIN, AonLogin);
 }

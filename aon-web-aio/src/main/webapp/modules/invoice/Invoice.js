@@ -28,7 +28,6 @@ export class Invoice {
   suplidos;
   comments;
   remarks;
-  selfconta;
   insight;
   signed;
 
@@ -131,7 +130,6 @@ export class Invoice {
         } 
       } else this.remarks = [];
     
-      this.selfconta = invoice.selfconta || false;
       this.amortization = invoice.amortization || undefined;
 
       this.activity = invoice.activity;
@@ -203,7 +201,6 @@ export class Invoice {
       this.status = 'inbox';
       this.remarks = [];
       this.comments = '';
-      this.selfconta = false;
 
       this.withholding = false; //this.isEmitida() ? company.withholding : false;
       this.creation_user = LS.getDomainLogin();
@@ -388,10 +385,6 @@ export class Invoice {
 
   isVatCalculate(){
     return this.isNacional() && !this.isExempt();
-  }
-
-  isSelfconta() {
-    return this.selfconta;
   }
 
   isRecibida() {
