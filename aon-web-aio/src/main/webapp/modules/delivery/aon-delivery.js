@@ -11,8 +11,8 @@ import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTab } from '../../components/aon-tab.js';
 
-import { getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { deleteDelivery, getDelivery } from '../../services/warehouseService.js';
+import { acceptDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';

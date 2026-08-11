@@ -36,7 +36,7 @@ public class DeliveryDetailJSON {
 			.setWarehouse(JsonUtils.getInteger(json, IJsonNames.WAREHOUSE))
 			.setQuantity(JsonUtils.getdouble(json, IJsonNames.QUANTITY))
 			.setPrice(JsonUtils.getdouble(json, IJsonNames.PRICE))
-			.setDiscountExpression(JsonUtils.getString(json, IJsonNames.DISCOUNT))
+			.setDiscount(JsonUtils.getdouble(json, IJsonNames.DISCOUNT))
 			.setSalesDetail(JsonUtils.getInteger(json, IJsonNames.SALES_DETAIL))
 			.setPurchaseReference(JsonUtils.getString(json, IJsonNames.PURCHASE_REFERENCE));
 	}
@@ -62,13 +62,13 @@ public class DeliveryDetailJSON {
 			.put(IJsonNames.WAREHOUSE, object.getWarehouse())
 			.put(IJsonNames.QUANTITY, object.getQuantity())
 			.put(IJsonNames.PRICE, object.getPrice())
-			.put(IJsonNames.DISCOUNT, object.getDiscountExpression().getDiscountExpr())
+			.put(IJsonNames.DISCOUNT, object.getDiscount())
 			.put(IJsonNames.SALES_DETAIL, object.getSalesDetail())
 			.put(IJsonNames.PURCHASE_REFERENCE, object.getPurchaseReference())
-			.put(IJsonNames.CREATION_DATE, object.getCreationDate())
-			.put(IJsonNames.CREATION_USER, object.getCreationUser())
-			.put(IJsonNames.MODIFICATION_DATE, object.getModificationDate())
-			.put(IJsonNames.MODIFICATION_USER, object.getModificationUser())
+			.put(IJsonNames.CREATION_DATE2, object.getCreationDate())
+			.put(IJsonNames.CREATION_USER2, object.getCreationUser())
+			.put(IJsonNames.MODIFICATION_DATE2, object.getModificationDate())
+			.put(IJsonNames.MODIFICATION_USER2, object.getModificationUser())
 			;
 	}
 }

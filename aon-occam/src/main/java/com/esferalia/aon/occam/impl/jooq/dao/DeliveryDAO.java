@@ -233,10 +233,16 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		if(page == null || perPage == null)
+			return getStream(ctx, filter);
 		return select(ctx, filter)
 			.orderBy(DELIVERY.ID.desc())
-			.limit(perPage).offset(perPage * (page -1))
+			.limit(perPage).offset(offset(page, perPage))
 			.fetch().stream().map(new DeliveryFiller());
+	}
+
+	private static int offset(Integer page, Integer perPage) {
+		return perPage * (Math.max(page, 1) - 1);
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
