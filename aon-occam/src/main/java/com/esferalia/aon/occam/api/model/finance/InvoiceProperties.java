@@ -39,7 +39,6 @@ public interface InvoiceProperties extends Serializable {
 	Property<Date> getTaxDateProperty();
 	Property<Byte> getVatAccrualPayment();
 	Property<Double> getTotalProperty();
-	Property<Byte> getAnnulledProperty();
 
 	Property<Timestamp> getCreationDateProperty();
 	Property<String> getCreationUserProperty();

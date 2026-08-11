@@ -143,8 +143,6 @@ public class InvoiceDAO {
 
 	}
 	
-	public static final Condition NOT_ANNULLED = INVOICE.ANNULLED.isDistinctFrom((byte) 1);
-	
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
@@ -466,8 +464,7 @@ public class InvoiceDAO {
 				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
 				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(r.getValue(INVOICE.TOTAL))
-				.setAnnulled(r.getValue(INVOICE.ANNULLED) == 1)
+				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
 				.setRemarks(r.getValue(INVOICE.REMARKS))
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
@@ -1312,7 +1309,6 @@ public class InvoiceDAO {
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 		.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new Date()))))
-		.and(NOT_ANNULLED)
 		.groupBy(INVOICE.TYPE)
 		.fetch().stream().forEach(r -> {
 			InvoiceType type = InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE));
