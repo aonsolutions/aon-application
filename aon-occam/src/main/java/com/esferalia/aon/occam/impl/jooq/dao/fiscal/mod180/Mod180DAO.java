@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -380,6 +381,8 @@ public class Mod180DAO {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
 			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.RENTING.value() ))	// IRPF de Alquiler
 			.and(INVOICE.ISSUE_DATE.between(firstDay, lastDay))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME,INVOICE_DETAIL.INVEST_ASSET)
 		.fetch()
 		.stream()
