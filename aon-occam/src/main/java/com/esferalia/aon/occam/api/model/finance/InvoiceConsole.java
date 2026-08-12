@@ -8,27 +8,16 @@ public class InvoiceConsole implements Serializable {
 
 	private static final long serialVersionUID = 2303454794885109516L;
 
-	private Integer id;
-	private boolean annulled;
-	
 	private Invoice invoice;
 	private InvoiceSource source;
 	
 	
 	public Integer getId() {
-		return id;
-	}
-	public InvoiceConsole setId(Integer id) {
-		this.id = id;
-		return this;
+		return invoice.getId();
 	}
 	
 	public boolean isAnnulled() {
-		return annulled;
-	}
-	public InvoiceConsole setAnnulled(boolean annulled) {
-		this.annulled = annulled;
-		return this;
+		return invoice.isAnnulled();
 	}
 
 	public Invoice getInvoice() {
