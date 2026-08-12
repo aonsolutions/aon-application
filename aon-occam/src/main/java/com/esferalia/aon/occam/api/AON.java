@@ -2073,13 +2073,13 @@ public class AON {
 		return getFinance().getInvoiceHeaders(ctx, filter, offset, limit);
 	}
 	
-	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, boolean includeAnnulled, int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getInvoiceHeaders(ctx, params, offset, limit);
+			return getInvoiceHeaders(ctx, params, includeAnnulled, offset, limit);
 		}
 	}
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
-		return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, params, includeAnnulled, offset, limit);
 	}
 
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){

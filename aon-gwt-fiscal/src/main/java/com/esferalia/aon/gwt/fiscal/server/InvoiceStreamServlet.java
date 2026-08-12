@@ -43,7 +43,7 @@ public class InvoiceStreamServlet extends HttpServlet {
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter writer = new PrintWriter (resp.getWriter(), true); 
 			writer.print( "[" );
-			AON.getInvoiceHeaders(occam, params, offset, limit)
+			AON.getInvoiceHeaders(occam, params, true, offset, limit)
 				.map( InvoiceMinJSON::toJSON )
 				.forEach( js -> writer.print( js.toString() ));
 			writer.print( "]" );

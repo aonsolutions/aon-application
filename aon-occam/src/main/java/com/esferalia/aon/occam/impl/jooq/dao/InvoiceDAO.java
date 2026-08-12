@@ -1220,11 +1220,11 @@ public class InvoiceDAO {
 			);
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
-
-	public static Condition getWhere(AccountingReportParams params) {
+	
+	public static Condition getWhere(AccountingReportParams params, boolean includeAnnulled) {
 		
-		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() )
-				.and(NOT_ANNULLED);
+		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		if (!includeAnnulled) condition = condition.and(NOT_ANNULLED);
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -1324,7 +1324,7 @@ public class InvoiceDAO {
 		return counter;
 	}
 	
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset , int numberOfRows) {
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset , int numberOfRows) {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
@@ -1354,7 +1354,7 @@ public class InvoiceDAO {
 			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-			.where(getWhere(params))
+			.where(getWhere(params, includeAnnulled))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE.desc(),INVOICE.REFERENCE_CODE)
 			.limit(offset , numberOfRows )
 			.fetch()

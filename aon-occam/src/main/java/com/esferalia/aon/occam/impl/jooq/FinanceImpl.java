@@ -158,9 +158,9 @@ public class FinanceImpl implements IFinance {
 			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, filter, offset, limit));
 	}
 	@Override
-	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
+	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));
+			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, includeAnnulled, offset, limit));
 	}
 	@Override
 	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
