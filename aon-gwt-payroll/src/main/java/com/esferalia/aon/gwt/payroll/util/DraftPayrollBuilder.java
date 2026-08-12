@@ -200,7 +200,7 @@ public class DraftPayrollBuilder {
 				
 				if (repeated.isPresent()) {
 					PDFPayment repAcc = repeated.get();
-					repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
+					repAcc.setAmount(repAcc.getAmount().orElse(0d)+ accrual.getAmount().orElse(0d));
 				} else {
 					paymentMap.get(craKey).add(accrual);						
 				}

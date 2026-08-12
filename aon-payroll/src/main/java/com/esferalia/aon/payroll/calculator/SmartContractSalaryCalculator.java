@@ -1161,6 +1161,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			} 
 			catch (ExpressionException e) {
 				fixed.add( result );
+			}catch (Exception e) {
+				fixed.add( result );
 			}
 			
 		}
@@ -2047,6 +2049,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		if ( min < Double.MAX_VALUE )
 			return min;
+		if ( expressionException == null )
+			return 0.00;
 		throw expressionException;
 	}
 
