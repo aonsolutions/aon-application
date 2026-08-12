@@ -4368,6 +4368,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						// e.printStackTrace();
 					}
 				};
+				
+				protected double resolveBonus(Date bonusStart, Date bonusEnd, IContractBonus contractBonus, ExpressionContext expressionContext) throws ExpressionException ,UndefinedVariablesException {
+					return 0.00;
+				};
 
 				@Override
 				protected java.util.List<com.esferalia.aon.salary.expression.ITimedResult<Double>> fixGuaranteedResults(
@@ -5406,6 +5410,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					.toList();
 			intersects = split(intersects, partialDrops);
 
+			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getQuoteDays(ctx, p, 1.00);
+				}
+
+			};
+
+			ITimedVariable<?> userQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, p.getStart(),
+					p.getEnd());
+
+			if (userQuoteDays == null) {
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			} else {
+			}
 		}
 
 		// ITs
@@ -5964,6 +5988,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		};
 		ctx.putVariable(TOTAL_WORKED_DAYS, totalWorkedDays);
+
+		ITimedVariable<Double> totalSalaryDays = new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+				return new Period(SQLContractSalaryCalculatorContext.this.contractStartDate,
+						SQLContractSalaryCalculatorContext.this.getEnd());
+			}
+
+			@Override
+			public Double getValue(Period p) {
+				List<Period> periods = getPeriods(SALARY_DAYS);
+				double salaryDays = 0.00;
+				for (Period period : periods)
+					salaryDays += getQuoteDays(ctx, period, 1.0);
+
+				return salaryDays;
+			}
+
+		};
+		ctx.putVariable(TOTAL_SALARY_DAYS, totalSalaryDays);
 
 		ITimedVariable<Double> totalDoDays = new ITimedVariable<Double>() {
 			@Override
