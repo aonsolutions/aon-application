@@ -193,6 +193,7 @@ public class ExpressionContext {
 
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("[A-Za-z_\u00F1][A-Za-z0-9_\u00D1]*");
 	
+	private static final Pattern PRIVATE_VARIABLE_PATTERN = Pattern.compile("__[A-Za-z0-9_\u00D1]+");
 
 	private static Pattern CHAINED_OR_PATTERN = Pattern.compile(
 			String.format("(%1$s)\\s+(?:O|OR)\\s+(%1$s)%2$s", 
@@ -484,9 +485,11 @@ public class ExpressionContext {
 		Matcher matcher = VARIABLE_PATTERN.matcher(script);
 		while (matcher.find()) {
 			String var = matcher.group();
-			if (!RESERVED_WORDS.contains(var)) {
+			if ( !RESERVED_WORDS.contains(var)
+				&& !PRIVATE_VARIABLE_PATTERN.matcher(var).matches() ) {
 				names.add(var);
 			}
+			
 
 		}
 		return names;
