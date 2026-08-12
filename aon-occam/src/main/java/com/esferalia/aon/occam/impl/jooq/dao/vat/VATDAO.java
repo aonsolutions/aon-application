@@ -389,6 +389,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
 			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -419,6 +420,7 @@ public class VATDAO  {
 				.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
 				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -452,6 +454,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
@@ -484,6 +487,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
 			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -504,6 +508,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( FALSE_BYTE) )	// No Criterio de Caja.
 					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+					.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -523,6 +528,7 @@ public class VATDAO  {
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.stream()
 			.map(new VatContextCritCajaFiller())
@@ -542,6 +548,7 @@ public class VATDAO  {
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
 				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
@@ -738,7 +745,10 @@ public class VATDAO  {
 		Condition condition = INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() );
 		
 		// No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
-		condition = condition.and(INVOICE.NUMBER.ge(0));   
+		condition = condition.and(INVOICE.NUMBER.ge(0));
+		
+		// Sólo facturas no anuladas.
+		condition = condition.and(InvoiceDAO.NOT_ANNULLED);   
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -992,6 +1002,7 @@ public class VATDAO  {
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
 					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+					.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -1010,6 +1021,7 @@ public class VATDAO  {
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
 					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+					.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -1038,6 +1050,7 @@ public class VATDAO  {
 					.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE) )	// Criterio de Caja.
 					.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+					.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.stream()
 				.map(new VatContextFiller())
@@ -1068,6 +1081,7 @@ public class VATDAO  {
 			.and(INVOICE.TAX_DATE.lt(AonDateUtils.toSql( FiscalUtils.getPeriodStart(mod))))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))	
 			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
@@ -1098,6 +1112,7 @@ public class VATDAO  {
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
 			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy(INVOICE.TAX_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
