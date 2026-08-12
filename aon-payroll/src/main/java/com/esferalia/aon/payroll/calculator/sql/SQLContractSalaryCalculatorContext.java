@@ -5989,26 +5989,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		};
 		ctx.putVariable(TOTAL_WORKED_DAYS, totalWorkedDays);
 
-		ITimedVariable<Double> totalSalaryDays = new ITimedVariable<Double>() {
-			@Override
-			public Period getPeriod() {
-				return new Period(SQLContractSalaryCalculatorContext.this.contractStartDate,
-						SQLContractSalaryCalculatorContext.this.getEnd());
-			}
-
-			@Override
-			public Double getValue(Period p) {
-				List<Period> periods = getPeriods(SALARY_DAYS);
-				double salaryDays = 0.00;
-				for (Period period : periods)
-					salaryDays += getQuoteDays(ctx, period, 1.0);
-
-				return salaryDays;
-			}
-
-		};
-		ctx.putVariable(TOTAL_SALARY_DAYS, totalSalaryDays);
-
 		ITimedVariable<Double> totalDoDays = new ITimedVariable<Double>() {
 			@Override
 			public Period getPeriod() {
