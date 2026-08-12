@@ -508,6 +508,7 @@ public class InvoiceDAO {
 		return ctx.getDslContext().select()
 				.from(INVOICE)
 				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(NOT_ANNULLED)	
 				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
 				.and(AonStringUtils.isBlank(series)
 					? INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
@@ -1222,7 +1223,8 @@ public class InvoiceDAO {
 
 	public static Condition getWhere(AccountingReportParams params) {
 		
-		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() )
+				.and(NOT_ANNULLED);
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -1450,6 +1452,7 @@ public class InvoiceDAO {
 			.select(orderedType, INVOICE.SERIES, INVOICE.SCOPE, min, max, records)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(domain))
+			.and(NOT_ANNULLED)
 			.and( fromCondition )
 			.and( toCondition )
 			.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
@@ -1486,6 +1489,7 @@ public class InvoiceDAO {
 			.where(domain.ID.in(domains)
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
+			.and(NOT_ANNULLED)
 			.groupBy(INVOICE.DOMAIN, INVOICE.STATUS)
 			.fetch()
 			.stream()
