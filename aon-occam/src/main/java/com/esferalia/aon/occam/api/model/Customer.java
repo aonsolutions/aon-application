@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.registry.CustomerFiscalStatus;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -17,7 +18,10 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	private boolean surcharge;
 	private boolean withholding;
 	private InvoiceTransactionType transaction;
+	
 	private RegistryStatus status;
+	private Date expirationDate;
+	
 	private CustomerFiscalStatus fiscalStatus;
 	private Scope scope;
 	private boolean eInvoice;
@@ -92,6 +96,14 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	}
 	public Customer setStatus(RegistryStatus status) {
 		this.status = status;
+		return this;
+	}
+	
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	public Customer setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 		return this;
 	}
 	

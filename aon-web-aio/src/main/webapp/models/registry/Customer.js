@@ -7,6 +7,7 @@ export class Customer extends Registry {
     withholding;
     transaction;
     status;
+    expirationDate;
     scope;
     eInvoice;
     invoicingGroup;
@@ -29,6 +30,7 @@ export class Customer extends Registry {
             this.withholding = customer.withholding;
             this.transaction = customer.transaction || 'NAC';
             this.status = customer.status;
+            this.expirationDate = customer.expirationDate || null;
             this.scope = customer.scope;
             this.eInvoice = customer.eInvoice;
             this.invoicingGroup = customer.invoicingGroup;
@@ -47,6 +49,7 @@ export class Customer extends Registry {
             this.status = 'ACTIVE';
             this.withholding = false;
             this.surcharge = false;
+            this.expirationDate = null;
         }   
 
     }
@@ -104,6 +107,15 @@ export class Customer extends Registry {
         this.status = status;
         return this;
     }
+    
+    getExpirationDate() {
+        return this.expirationDate;
+    }
+
+    setExpirationDate(expirationDate) {
+        this.expirationDate = expirationDate;
+        return this;
+    }
 
     getCreationUser() {
         return this.creation_user;
@@ -140,4 +152,44 @@ export class Customer extends Registry {
         this.modification_date = modification_date;
         return this;
     }
+    
+    /** 'yyyy-MM-dd' -> Date local. new Date(str) lo leeria como UTC. */
+	getExpirationDateAsDate() {
+		if (!this.expirationDate) return null;
+		if (this.expirationDate instanceof Date) return this.expirationDate;
+ 
+		const parts = String(this.expirationDate).split("-");
+		if (parts.length !== 3) return null;
+ 
+		const year = Number(parts[0]);
+		const month = Number(parts[1]);
+		const day = Number(parts[2]);
+ 
+		if (!year || !month || !day) return null;
+ 
+		return new Date(year, month - 1, day);
+	}
+ 
+	/** Sin fecha se considera vencida: un BLOCKED sin fecha bloquea de inmediato. */
+	isExpirationReached() {
+		const date = this.getExpirationDateAsDate();
+		if (!date) return true;
+ 
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+ 
+		return date.getTime() <= today.getTime();
+	}
+ 
+	/** BLOCKED con fecha aun no vencida: efectivamente activo. */
+	isBlockScheduled() {
+		return this.status === "BLOCKED" && !this.isExpirationReached();
+	}
+ 
+	/** Lo que hay que MOSTRAR. 'status' sigue siendo lo que se edita y se guarda. */
+	getEffectiveStatus() {
+		if (this.status !== "BLOCKED") return this.status;
+ 
+		return this.isExpirationReached() ? "BLOCKED" : "ACTIVE";
+	}
 }

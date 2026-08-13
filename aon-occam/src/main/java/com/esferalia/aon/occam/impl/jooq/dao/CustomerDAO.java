@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -82,7 +84,10 @@ public class CustomerDAO {
 		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SURCHARGE);}
 		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TRANSACTION);}
+		
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<java.sql.Date> getExpirationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.EXPIRATION_DATE);}
+		
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SCOPE);}
 		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.E_INVOICE);}
 		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
@@ -133,6 +138,7 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
+					.setExpirationDate(getValue(r, CUSTOMER.EXPIRATION_DATE))
 					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null || (checkField(r, hasDomain) && r.get(hasDomain)) );
 			
 			if(checkField(r, PERSON.REGISTRY)) {
@@ -276,8 +282,9 @@ public class CustomerDAO {
 			.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
 		)
 		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
+		.and(effectiveStatusCondition(RegistryStatus.ACTIVE))
 		.and(CUSTOMER_FEE.ID.isNull())
+		.orderBy(effectiveStatusOrder())
 		.fetch().stream().map(new CustomerFiller())
 		.collect(Collectors.toList());
 	}
@@ -321,6 +328,32 @@ public class CustomerDAO {
 		
 	}
 	
+	/**
+	 * Traduce el filtro de estado efectivo a una Condition de jOOQ reutilizando
+	 * CUSTOMER_PROPERTIES, para no reescribir la regla en dos sitios.
+	 */
+	private static Condition effectiveStatusCondition(RegistryStatus... statuses) {
+		CustomerFilter statusFilter = f -> RegistryExpirationUtils.effectiveStatusFilter(f, Arrays.asList(statuses));
+
+		Condition[] conditions = CUSTOMER_PROPERTIES.getConditions(statusFilter);
+
+		return 0 == conditions.length ? DSL.trueCondition() : conditions[0];
+	}
+	
+	private static Field<Integer> effectiveStatusOrder() {
+		java.sql.Date today = AonDateUtils.toSql(AonDateUtils.today());
+ 
+		return DSL
+			.when(CUSTOMER.STATUS.eq(RegistryStatus.INACTIVE.value()),
+					RegistryStatus.INACTIVE.value() + 0)
+			.when(CUSTOMER.STATUS.eq(RegistryStatus.BLOCKED.value())
+					.and(CUSTOMER.EXPIRATION_DATE.gt(today)),
+					RegistryStatus.ACTIVE.value() + 0)
+			.when(CUSTOMER.STATUS.eq(RegistryStatus.BLOCKED.value()),
+					RegistryStatus.BLOCKED.value() + 0)
+			.otherwise(RegistryStatus.ACTIVE.value() + 0);
+	}
+	
 	private static Condition paramsToCondition(AONContext ctx, CustomerParams params) {
 		Condition condition = CUSTOMER.DOMAIN.eq(params.getDomain());
 		
@@ -336,8 +369,12 @@ public class CustomerDAO {
 						.or(REGISTRY.DOCUMENT.like("%" + params.getDescription() + "%"))
 					);
 		
-		if(null != params.getStatus())
-			condition = condition.and(CUSTOMER.STATUS.eq(params.getStatus()));
+		if (null != params.getStatus()) {
+			RegistryStatus status = RegistryStatus.safeValueOf(params.getStatus());
+ 
+			if (null != status)
+				condition = condition.and(effectiveStatusCondition(status));
+		}
 		
 		if(null != params.getCustomerIds() && params.getCustomerIds().size() > 0)
 			condition = condition.and(CUSTOMER.REGISTRY.in(params.getCustomerIds()));
@@ -366,6 +403,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.WITHHOLDING,AonEnumUtils.getByte(customer.isWithholding()))
 			.set(CUSTOMER.TRANSACTION,AonEnumUtils.getByte(customer.getTransaction()))
 			.set(CUSTOMER.STATUS, customer.getStatus().value())
+			.set(CUSTOMER.EXPIRATION_DATE, toSqlOrNull(customer.getExpirationDate()))
 			.set(CUSTOMER.SCOPE, customer.getScope().getId())
 			.set(CUSTOMER.E_INVOICE, AonEnumUtils.getByte(customer.isEInvoice()))
 			.set(CUSTOMER.INVOICING_GROUP, customer.getInvoicingGroup())
@@ -409,6 +447,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.WITHHOLDING, AonEnumUtils.getByte(customer.isWithholding()))
 			.set(CUSTOMER.TRANSACTION, AonEnumUtils.getByte(customer.getTransaction()))
 			.set(CUSTOMER.STATUS, customer.getStatus().value())
+			.set(CUSTOMER.EXPIRATION_DATE, toSqlOrNull(customer.getExpirationDate()))
 			.set(CUSTOMER.SCOPE, customer.getScope().getId())
 			.set(CUSTOMER.E_INVOICE,AonEnumUtils.getByte(customer.isEInvoice()))
 			.set(CUSTOMER.INVOICING_GROUP, customer.getInvoicingGroup())
@@ -422,6 +461,10 @@ public class CustomerDAO {
 			.execute();
 		ctx.log().debug("UPDATE CUSTOMER id: {0} ({1} rows)", customer.getId(),count);		
 		return customer;
+	}
+	
+	private static java.sql.Date toSqlOrNull(Date date) {
+		return null != date ? AonDateUtils.toSql(date) : null;
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
