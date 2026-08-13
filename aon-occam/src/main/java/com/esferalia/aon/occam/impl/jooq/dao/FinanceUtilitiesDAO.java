@@ -59,8 +59,10 @@ public class FinanceUtilitiesDAO {
 				
 	private static void missingFinanceInvoices(AONContext ctx, FinanceUtilitiesParams params, FinanceUtilitiesResult result) {
 		Condition where = INVOICE.DOMAIN.equal(ctx.getDomainId())
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.and(INVOICE.TOTAL.ne(0.0))
-				.and(FINANCE.ID.isNull());
+				.and(FINANCE.ID.isNull())
+				;
 		if (params != null && params.getInvoiceType() != null) {
 			where = where.and(INVOICE.TYPE.eq( params.getInvoiceType().value()));
 		}
