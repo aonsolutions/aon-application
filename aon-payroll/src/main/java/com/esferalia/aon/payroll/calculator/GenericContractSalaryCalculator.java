@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_UNPAID_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
@@ -1017,6 +1018,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			expressionContext.getPeriods(UNPAID_BASE)
 			.forEach(p -> copyResults(expressionContext, CGP_BASE_MIN, CGP_BASE_ENTERPRISE, p.getStart(), p.getEnd()));
 
+			expressionContext.getPeriods(UNPAID_BASE)
+			.forEach(p -> copyResults(expressionContext, CGP_BASE_MIN, CGP_UNPAID_BASE, p.getStart(), p.getEnd()));
 			
 			
 			salaryBuilder.setCgpBase(cgpBase);
