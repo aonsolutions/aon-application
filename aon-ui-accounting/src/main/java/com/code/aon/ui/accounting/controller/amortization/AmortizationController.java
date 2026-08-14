@@ -2,7 +2,6 @@ package com.code.aon.ui.accounting.controller.amortization;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,8 +14,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +26,6 @@ import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
-import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -55,6 +51,9 @@ import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class AmortizationController extends BasicController {
 	
@@ -388,8 +387,10 @@ public class AmortizationController extends BasicController {
 				}
 				criteria.addInExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), types);
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_INVESTMENT), true);
+				Invoice.addNotAnnulledExpression(bean,criteria);
 				criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_TYPE));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
+				
 				List<ITransferObject> list = bean.getList(criteria);
 				List<Invoice> invoices = new LinkedList<Invoice>();
 				for (ITransferObject to : list) {

@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -41,8 +42,6 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 
-	private static final Boolean NOT_ANNULLED = Boolean.FALSE;
-	
 	private String defaultType;
 	private String defaultStatus;
 	private Date defaultDateFrom;
@@ -216,7 +215,8 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		
-		criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ANNULLED), NOT_ANNULLED );
+		String annulledAlias = getFieldName(IEntityAlias.INVOICE_ANNULLED);
+		Invoice.addNotAnnulledExpression(annulledAlias, criteria);
 		
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 
