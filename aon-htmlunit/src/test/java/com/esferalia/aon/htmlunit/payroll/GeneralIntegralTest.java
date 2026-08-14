@@ -3448,7 +3448,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("AUSENCIA, NO JUSTIFICADA");
 		calculate(Calendar.JULY,2026);
-		assertValue("cgpBaseLabel", 1424.40 / 30.00 * 31.00);
+		assertValue("cgcBaseLabel", 1424.40 / 30.00 * 31.00);
+		assertValue("cgpBaseLabel", 1424.40 );
 		assertValue("totalLiquidLabel", 0.00);
 		double totalEnterpriseLabel = getText("totalEnterpriseLabel");
 		assertTrue(totalEnterpriseLabel > 0.00);
