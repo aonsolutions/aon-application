@@ -39,8 +39,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -51,11 +49,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.stat.Stat;
@@ -64,11 +60,15 @@ import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class StatEngineController implements Serializable {
 	
@@ -833,6 +833,7 @@ public class StatEngineController implements Serializable {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID),customer);
 			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE),parameters.getFromDate(), parameters.getToDate());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 			
 			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
 				criteria.addEqualExpression("Invoice.lines.workPlace.id",this.params.getWorkPlace().getId());
@@ -865,6 +866,7 @@ public class StatEngineController implements Serializable {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), registryId);
 			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
@@ -894,6 +896,7 @@ public class StatEngineController implements Serializable {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
 			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 			
 			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
 				criteria.addEqualExpression("Invoice.lines.workPlace.id",this.params.getWorkPlace().getId());
@@ -935,6 +938,7 @@ public class StatEngineController implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 			criteria.addEqualExpression("Invoice.lines.item.product.id",this.getProduct());
 			
 			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
