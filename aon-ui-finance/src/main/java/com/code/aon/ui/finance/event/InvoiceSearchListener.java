@@ -40,6 +40,8 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceSearchListener.class.getName());
 		
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
+
+	private static final Boolean NOT_ANNULLED = Boolean.FALSE;
 	
 	private String defaultType;
 	private String defaultStatus;
@@ -213,6 +215,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
+		
+		criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_ANNULLED), NOT_ANNULLED );
+		
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), type);	
