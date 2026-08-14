@@ -119,7 +119,8 @@ public class AccountEntryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			}
 			InvoiceType type = InvoiceType.values()[loaded.getEnlaceTipoFactura()]; 
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getInvoiceBean().getFieldName(IEntityAlias.INVOICE_TYPE), type);	
+			criteria.addEqualExpression(getInvoiceBean().getFieldName(IEntityAlias.INVOICE_TYPE), type);
+			Invoice.addNotAnnulledExpression(getInvoiceBean(), criteria);
 			if (StringUtils.isEmpty( loaded.getEnlaceSerie() )) {
 				criteria.addNullExpression(getInvoiceBean().getFieldName(IEntityAlias.INVOICE_SERIES));
 			} else {
