@@ -541,7 +541,8 @@ public class SellerWorkloadDAO {
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
 						.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
-						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						.and(InvoiceDAO.NOT_ANNULLED);
 
 				addFilteredIds(invoiceSelect.fetch(), INVOICE_DETAIL.ID, sf, invoiceIds);
 			}
@@ -555,7 +556,8 @@ public class SellerWorkloadDAO {
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
 						.where(INVOICE_DETAIL.PROJECT.in(projectIds))
 						.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
-						.and(INVOICE.ISSUE_DATE.between(start, endIt));
+						.and(INVOICE.ISSUE_DATE.between(start, endIt))
+						.and(InvoiceDAO.NOT_ANNULLED);
 
 				addFilteredIds(invoiceSelect.fetch(), INVOICE_DETAIL.ID, sf, invoiceIds);
 			}
@@ -927,6 +929,7 @@ public class SellerWorkloadDAO {
 					.where(INVOICE_DETAIL.SELLER.eq(seller))
 					.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
 					.and(INVOICE.ISSUE_DATE.between(start, endIt))
+					.and(InvoiceDAO.NOT_ANNULLED)
 					.fetch();
 
 			// Necesitamos el STATUS del cliente en fees para filtrar. Lo consultamos
@@ -991,6 +994,7 @@ public class SellerWorkloadDAO {
 					.where(INVOICE_DETAIL.PROJECT.in(projectIds))
 					.and(INVOICE_DETAIL.DOMAIN.in(domainIds))
 					.and(INVOICE.ISSUE_DATE.between(start, endIt))
+					.and(InvoiceDAO.NOT_ANNULLED)
 					.fetch();
 
 			Map<Integer, Byte> statusByCustomer = statusMapForProject(ctx, projectIds, domainIds);

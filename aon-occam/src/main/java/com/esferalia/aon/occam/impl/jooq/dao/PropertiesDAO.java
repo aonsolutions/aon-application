@@ -1231,6 +1231,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SELLER);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
+		@Override public Property<Byte> getAnnulledProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ANNULLED);}
 		
 	}
 	
