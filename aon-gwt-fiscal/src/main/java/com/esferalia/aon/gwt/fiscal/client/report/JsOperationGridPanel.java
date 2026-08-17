@@ -5,7 +5,7 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -15,9 +15,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public abstract class JsOperationGridPanelNew extends FlowPanel implements HasSelectionHandlers<JsOperationBreakdownNew> {
+public abstract class JsOperationGridPanel extends FlowPanel implements HasSelectionHandlers<JsOperationBreakdown> {
 	
-	private OperationParamsNew params;
+	private OperationParams params;
 	private final AonDisplayGrid grid;
 	
 	private boolean something;
@@ -27,7 +27,7 @@ public abstract class JsOperationGridPanelNew extends FlowPanel implements HasSe
 	private double sumSurchargeQuota = 0.0;
 	private double sumTotal = 0.0;
 	
-	protected JsOperationGridPanelNew() {
+	protected JsOperationGridPanel() {
 		grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonMarginTop());
 		grid.addStyleName(AON.CSS.aonFontSmaller());
@@ -35,19 +35,19 @@ public abstract class JsOperationGridPanelNew extends FlowPanel implements HasSe
 		add(grid);
 	}
 	
-	abstract void addRow(JsOperationBreakdownNew jsOperationBreakdownNew);
+	abstract void addRow(JsOperationBreakdown jsOperationBreakdown);
 	abstract void addFooterRow();
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<JsOperationBreakdownNew> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<JsOperationBreakdown> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	
-	public OperationParamsNew getParams() {
+	public OperationParams getParams() {
 		return params;
 	}
 
-	public void setParams(OperationParamsNew params) {
+	public void setParams(OperationParams params) {
 		this.params = params;		
 	}
 

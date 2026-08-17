@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -43,9 +43,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class OperationReportNew implements EntryPoint {
+public class OperationReport implements EntryPoint {
 	
-	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
+	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
 	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 
 	private static final int TAB_1 = 1; // Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 
@@ -55,7 +55,7 @@ public class OperationReportNew implements EntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 	}
 
-	private OperationReportModuleOptionsNew options;
+	private OperationReportModuleOptions options;
 	
 	private DockLayoutPanel dockLayoutPanel;
 	private TabLayoutPanel tabLayout;
@@ -78,7 +78,7 @@ public class OperationReportNew implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		OperationReportModuleOptionsNew opts = new OperationReportModuleOptionsNew();
+		OperationReportModuleOptions opts = new OperationReportModuleOptions();
 		opts.setParentWidget(root);
 		opts.setDomainName(getCurrentDomainName());
 		opts.setDomain(getCurrentDomain());
@@ -86,7 +86,7 @@ public class OperationReportNew implements EntryPoint {
 		this.onModuleLoad( opts );
 	}
 	
-	public void onModuleLoad( OperationReportModuleOptionsNew opts ) {
+	public void onModuleLoad( OperationReportModuleOptions opts ) {
 		AON.ensureInjected();
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
@@ -108,7 +108,7 @@ public class OperationReportNew implements EntryPoint {
 
 	}
 	
-	private void loadModule( OperationReportModuleOptionsNew opts ) {
+	private void loadModule( OperationReportModuleOptions opts ) {
 		this.options = opts;
 //		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
 //		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
@@ -314,7 +314,7 @@ public class OperationReportNew implements EntryPoint {
 		fillDates(); // Esto llama a onSearch
 	}
 	
-	private void submitForm(String action, OperationParamsNew params) {
+	private void submitForm(String action, OperationParams params) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		operationParamsHidden.setValue(JsonParams.convert(params));				
 		domainIdHidden.setValue(String.valueOf(options.getDomain()));
@@ -323,8 +323,8 @@ public class OperationReportNew implements EntryPoint {
 		diskForm.submit();
 	}
 
-	private OperationParamsNew getWidgetParams() {
-		OperationParamsNew params = new OperationParamsNew()
+	private OperationParams getWidgetParams() {
+		OperationParams params = new OperationParams()
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
@@ -349,16 +349,16 @@ public class OperationReportNew implements EntryPoint {
 		}
 	}
 
-	private void refreshTab0(OperationParamsNew params) {
+	private void refreshTab0(OperationParams params) {
 		tab0Content.clear();
 		params.setTabType(TAB_0);
-		tab0Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabExpIngPanelNew()));
+		tab0Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabExpIngPanel()));
 	}
 	
-	private void refreshTab1(OperationParamsNew params) {
+	private void refreshTab1(OperationParams params) {
 		tab1Content.clear();
 		params.setTabType(TAB_1);
-		tab1Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabRecGasPanelNew()));
+		tab1Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabRecGasPanel()));
 	}
 
 	private void paintTextTab() {
@@ -375,7 +375,7 @@ public class OperationReportNew implements EntryPoint {
 	}
 
 	public static void run() {
-		GWT.runAsync(OperationReportNew.class, new RunAsyncCallback() {
+		GWT.runAsync(OperationReport.class, new RunAsyncCallback() {
 			
 			@Override
 			public void onFailure(Throwable reason) {
@@ -384,7 +384,7 @@ public class OperationReportNew implements EntryPoint {
 			
 			@Override
 			public void onSuccess() {
-				OperationReportNew operationReport = new OperationReportNew();
+				OperationReport operationReport = new OperationReport();
 				operationReport.onModuleLoad();
 			}
 		});

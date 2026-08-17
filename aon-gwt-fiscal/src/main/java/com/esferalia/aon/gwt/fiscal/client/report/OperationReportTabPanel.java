@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -21,13 +21,13 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-class OperationReportTabPanelNew extends ScrollPanel{
+class OperationReportTabPanel extends ScrollPanel{
 		
-	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/AccountingOperationReportStreamNew");
+	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/AccountingOperationReportStream");
 	
 	private FlowPanel rootPanel = new FlowPanel();
 	
-	public OperationReportTabPanelNew(OperationReportModuleOptionsNew options, OperationParamsNew params, JsOperationGridPanelNew grid) {
+	public OperationReportTabPanel(OperationReportModuleOptions options, OperationParams params, JsOperationGridPanel grid) {
 		setStyleName(AON.CSS.aonScrollArea());
 		rootPanel.add(grid);
 		setWidget(rootPanel);
@@ -47,7 +47,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 		xhr.setOnReadyStateChange(xhrt -> {
 			if (xhr.getReadyState() == XMLHttpRequest.DONE) {
 				JavaScriptObject arrayObject = JsonUtils.safeEval(xhr.getResponseText());
-				JsArray<JsOperationBreakdownNew> array = arrayObject.cast();
+				JsArray<JsOperationBreakdown> array = arrayObject.cast();
 				for (int i = 0; i < array.length(); i++) {
 					grid.addRow(array.get(i));			
 				}
@@ -65,7 +65,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 		
 	}
 	
-	private void showEntry(OperationReportModuleOptionsNew options, Integer entryId) {
+	private void showEntry(OperationReportModuleOptions options, Integer entryId) {
 		
 		// Si no hay entryId, o es cero, no hacemos nada
 		if (entryId == null || entryId.intValue() == 0) {

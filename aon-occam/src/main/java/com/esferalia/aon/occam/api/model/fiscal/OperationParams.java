@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.Date;
 
-public class OperationParamsNew implements Serializable {
+public class OperationParams implements Serializable {
 	
 	private static final long serialVersionUID = 4708586223785270098L;
 
@@ -20,70 +20,70 @@ public class OperationParamsNew implements Serializable {
 	public int getDomain() {
 		return domain;
 	}
-	public OperationParamsNew setDomain(int domain) {
+	public OperationParams setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
 	public Integer getActivity() {
 		return activity;
 	}
-	public OperationParamsNew setActivity(Integer activity) {
+	public OperationParams setActivity(Integer activity) {
 		this.activity = activity;
 		return this;
 	}
 //	public String getActivityDescription() {
 //		return activityDescription;
 //	}
-//	public OperationParamsNew setActivityDescription(String activityDescription) {
+//	public OperationParams setActivityDescription(String activityDescription) {
 //		this.activityDescription = activityDescription;
 //		return this;
 //	}
 	public Date getFromDate() {
 		return fromDate;
 	}
-	public OperationParamsNew setFromDate(Date fromDate) {
+	public OperationParams setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 		return this;
 	}
 	public Date getToDate() {
 		return toDate;
 	}
-	public OperationParamsNew setToDate(Date toDate) {
+	public OperationParams setToDate(Date toDate) {
 		this.toDate = toDate;
 		return this;
 	}
 	public int getBookType() {
 		return bookType;
 	}
-	public OperationParamsNew setBookType(int bookType) {
+	public OperationParams setBookType(int bookType) {
 		this.bookType = bookType;
 		return this;
 	}
 	public int getTabType() {
 		return tabType;
 	}
-	public OperationParamsNew setTabType(int tabType) {
+	public OperationParams setTabType(int tabType) {
 		this.tabType = tabType;
 		return this;
 	}
 	public double getLastProratePercentage() {
 		return lastProratePercentage;
 	}
-	public OperationParamsNew setLastProratePercentage(double lastProratePercentage) {
+	public OperationParams setLastProratePercentage(double lastProratePercentage) {
 		this.lastProratePercentage = lastProratePercentage;
 		return this;
 	}
 	public String getLastProrateType() {
 		return lastProrateType;
 	}
-	public OperationParamsNew setLastProrateType(String lastProrateType) {
+	public OperationParams setLastProrateType(String lastProrateType) {
 		this.lastProrateType = lastProrateType;
 		return this;
 	}
 	public boolean isDistributeInvoice() {
 		return distributeInvoice;
 	}
-	public OperationParamsNew setDistributeInvoice(boolean distributeInvoice) {
+	public OperationParams setDistributeInvoice(boolean distributeInvoice) {
 		this.distributeInvoice = distributeInvoice;
 		return this;
 	}

@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "Accounting Operation Report Stream New", urlPatterns = { "/aon_gwt_fiscal/roms/AccountingOperationReportStreamNew" })
-public class AccountingOperationReportStreamServletNew extends HttpServlet {
+@WebServlet(name = "Accounting Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/AccountingOperationReportStream" })
+public class AccountingOperationReportStreamServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 3846483795164331091L;
 
@@ -37,14 +37,13 @@ public class AccountingOperationReportStreamServletNew extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			OperationParamsNew params = JsonParser.parseOperationParamsNew(operationParams);
-//			System.out.println("AccountingOperationReportStreamServletNew: params="+operationParams);
+			OperationParams params = JsonParser.parseOperationParams(operationParams);
 			
 			resp.setContentType(MimeType.HTML.getName());
 			PrintWriter wr = resp.getWriter();
 			
 			JSONArray jsonArray = new JSONArray();
-			ACCOUNTING.getOperationBreakdownNew(occam, params)
+			ACCOUNTING.getOperationBreakdown(occam, params)
 				.forEach(op -> {
 					JSONObject jsonObject = new JSONObject(op);
 					jsonObject.put("entryDate", ensureDate(op.getEntryDate()));

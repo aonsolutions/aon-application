@@ -50,8 +50,8 @@ import com.esferalia.aon.occam.api.model.eccounting.AmortizationParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
-import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -181,7 +181,7 @@ public interface IAccounting {
 	public Analytical saveAnalyticConfiguration(AONContext ctx, Analytical analytical);
 	
 	// REPORT
-	public Stream<OperationBreakdownNew> getOperationBreakdownNew(AONContext ctx, int domain, OperationParamsNew params);
+	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
 	
 	// AMORTIZATION TYPE
 	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;

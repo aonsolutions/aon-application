@@ -22,8 +22,8 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -35,8 +35,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "Operation Report Excel Book New", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelBookNew" })
-public class OperationReportExcelBookNew extends HttpServlet {
+@WebServlet(name = "Operation Report Excel Book", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelBook" })
+public class OperationReportExcelBook extends HttpServlet {
 	
 	private static final long serialVersionUID = 4002617139388558939L;
 
@@ -54,7 +54,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				.setDomain(domainId)
 				.setUser(user);
 
-			OperationParamsNew params = JsonParser.parseOperationParamsNew(operationParams);			
+			OperationParams params = JsonParser.parseOperationParams(operationParams);			
 			
 			// Obtener NIF y Nombre de la Empresa (para el nombre del fichero)
 			String companyDocument = "";
@@ -109,12 +109,12 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			params.setTabType(0);
 			ExcelAction action = new ExcelAction(params);
 			action.initialize(sheetName1);
-			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			
 			// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 			params.setTabType(1);
 			action.createSheet(sheetName2);
-			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			
             // Formato del fichero Excel 2007
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
@@ -130,14 +130,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		
 	}
 
-	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdownNew>{
+	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdown>{
 		
 		private Row row2;
-		private OperationParamsNew params;
+		private OperationParams params;
 		private XSSFCellStyle headerCellStyleDisabled;
 		private XSSFCellStyle headerCellStyleSmall;
 		
-		public ExcelAction(OperationParamsNew params) {
+		public ExcelAction(OperationParams params) {
 			this.params = params;
 		}
 		
@@ -315,14 +315,14 @@ public class OperationReportExcelBookNew extends HttpServlet {
 	    	addVerticalMergedRegion("Referencia Externa");
 		}
 		
-		public void accept(OperationBreakdownNew op) {
+		public void accept(OperationBreakdown op) {
 			
 			// Añadir linea de detalle al archivo Excel
 			addDetailRow(op);
 			
 		}
 		
-		private void addDetailRow(OperationBreakdownNew op) {
+		private void addDetailRow(OperationBreakdown op) {
 			
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
@@ -335,7 +335,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		}
 		
 		// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos
-		private void addDetailRowExpIng(OperationBreakdownNew op) {
+		private void addDetailRowExpIng(OperationBreakdown op) {
 			
 			addCell(Integer.toString(AonDateUtils.getYear(op.getTaxDate()))).setCellStyle(centerCellStyle);     // Autoliquidación - Ejercicio
 			addCell(Period.getQuarterlyPeriod(AonDateUtils.getMonth(op.getTaxDate())).getName()).setCellStyle(centerCellStyle);  // Autoliquidación - Periodo
@@ -421,7 +421,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 		}
 		
 		// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
-		private void addDetailRowRecGas(OperationBreakdownNew op) {
+		private void addDetailRowRecGas(OperationBreakdown op) {
 			
 			addCell(Integer.toString(AonDateUtils.getYear(op.getTaxDate()))).setCellStyle(centerCellStyle);                      // Autoliquidación - Ejercicio
 			addCell(Period.getQuarterlyPeriod(AonDateUtils.getMonth(op.getTaxDate())).getName()).setCellStyle(centerCellStyle);  // Autoliquidación - Periodo
