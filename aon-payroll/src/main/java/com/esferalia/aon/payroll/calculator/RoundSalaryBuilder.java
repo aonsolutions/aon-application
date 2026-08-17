@@ -694,6 +694,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		for ( ContextVariable v : ContextVariable.FREE_BASES ) { 
 			try {
+				if (  v == ContextVariable.UNPAID_BASE )
+					v = ContextVariable.CGP_UNPAID_BASE;
 				this.cgpBase = add(this.cgpBase,round(v));			
 			} catch ( Exception e ) {
 				// wrong MATERNITY, DIRECT or UNPAID 

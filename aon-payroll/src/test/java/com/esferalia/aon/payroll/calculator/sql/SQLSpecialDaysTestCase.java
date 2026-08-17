@@ -1,6 +1,13 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LACK_PERIOD;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C109;
@@ -24,8 +31,11 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -33,10 +43,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.esferalia.aon.jooq.tables.PaymentConcept;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -44,9 +55,12 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -55,8 +69,6 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 
@@ -786,6 +798,166 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		assertEquals(1435.20 / 30, Double.valueOf(baseCgc.getExpression()), DELTA);
 	}
 
+	@Test
+	public void testInactivityDaysBaseCgpRoundI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						put("BASE_CGP_MIN", "1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+						put("BASE_CGC_MIN", "[\"03\":1435.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)][GRUPO_COTIZACION]");
+					}
+				});
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30");
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}
+				, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		
+		// Add InactivityDays Period -> 01 - 01
+		java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(getToday());
+		java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(getToday());
+		
+		
+		addInactivityContractData(aonContext, contract, startDate, endDate, ContextVariable.NOT_PAID_PERMISSION);
+		
+		PaymentConceptRecord  unpaid = addConcept(aonContext, "UNPAID");
+		addPayment(aonContext, contract, unpaid, "PERMISO NO RETRIBUIDO", "((CAUSA_INACTIVIDAD == PERMISO_NO_RETRIBUIDO) ? DIAS_INACTIVIDAD * 0.00 : __HIDE_)", "_P", "/*fixBaseCgcMin*/BASE_CGC_MIN", PaymentType.CRA_0001);
+		
+		// Calculate Salary for all month with inactivities
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate,
+				contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ));
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		for ( SalaryPayment p : salary.getSalaryPayments() )
+			System.out.println(p.getExpression() + " :" + p.getQuote());
+		
+		SalaryData baseCgp = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGP_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(startDate) && data.getEndDate().equals(endDate))
+		.findAny().orElseThrow();
+		
+		
+		assertEquals(1424.40, Double.valueOf(baseCgp.getExpression()), DELTA);
+		assertEquals(1424.40, salary.getProfessionalBase(), DELTA);
+		
+		SalaryData baseCgc = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGC_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(startDate) && data.getEndDate().equals(endDate))
+		.findAny().orElseThrow();
+
+		assertEquals(1435.20 , Double.valueOf(baseCgc.getExpression()), DELTA);
+		assertEquals(1435.20 , salary.getCommonBase(), DELTA);
+	}
+
+	@Test
+	public void testInactivityDaysBaseCgpRoundII() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						put("BASE_CGP_MIN", "1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+						put("BASE_CGC_MIN", "[\"03\":1435.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)][GRUPO_COTIZACION]");
+					}
+				});
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30");
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}
+				, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		
+		// Add InactivityDays Period -> 01 - 01
+		java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(getToday());
+		java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(getToday());
+		
+		java.sql.Date startInactivityDate = addDays(startDate, 10);
+		java.sql.Date endInactivityDate = addDays(startDate, 19);
+		
+		
+		addInactivityContractData(aonContext, contract, startInactivityDate, endInactivityDate, ContextVariable.NOT_PAID_PERMISSION);
+		
+		PaymentConceptRecord  unpaid = addConcept(aonContext, "UNPAID");
+		addPayment(aonContext, contract, unpaid, "PERMISO NO RETRIBUIDO", "((CAUSA_INACTIVIDAD == PERMISO_NO_RETRIBUIDO) ? DIAS_INACTIVIDAD * 0.00 : __HIDE_)", "_P", "/*fixBaseCgcMin*/BASE_CGC_MIN", PaymentType.CRA_0001);
+		
+		// Calculate Salary for all month with inactivities
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate,
+				contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ));
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		for ( SalaryPayment p : salary.getSalaryPayments() )
+			System.out.println(p.getExpression() + " :" + p.getQuote());
+		
+		SalaryData baseCgp = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGP_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(startInactivityDate) && data.getEndDate().equals(endInactivityDate))
+		.findAny().orElseThrow();
+		
+		
+		assertEquals(1424.40 / 30 * 10, Double.valueOf(baseCgp.getExpression()), DELTA);
+		assertEquals(1424.40 / 30 * 10 + 3000.00 / 30 * 21, salary.getProfessionalBase(), DELTA);
+		
+		SalaryData baseCgc = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGC_E"))
+		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
+		.filter( data -> data.getStartDate().equals(startInactivityDate) && data.getEndDate().equals(endInactivityDate))
+		.findAny().orElseThrow();
+
+		assertEquals(1435.20 / 30.00 * 10 , Double.valueOf(baseCgc.getExpression()), DELTA);
+		assertEquals(1435.20 / 30.00 * 10 + 3000.00 / 30 * 21 , salary.getCommonBase(), DELTA);
+	}
 
 	@Test
 	public void testDropDaysUnjustified() throws ExpressionException, SQLException,
@@ -885,9 +1057,195 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	@Disabled
+	public void testDropDaysWithConstantI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		java.sql.Date startContract = add(getFirstDayOfMonth(getToday()), MONTH, -2 );
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+						put("BASE_CGC_MIN","1424.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_1_3 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 1.00 * %s_4_15 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR));
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P",
+				"/*fixBaseCgcMin*/MAX(0.00, BASE_CGC_MIN - (isdef BASE_CGC_BRUTA ? BASE_CGC_BRUTA : 0.00))",
+				PaymentType.CRA_0001, SalaryType.SALARY);		
+
+		java.sql.Date startDate = getFirstDayOfMonth(getToday());
+		java.sql.Date endDate = getLastDayOfMonth(startDate);
+		addPayment(aonContext, contract, startDate, endDate, "SALARIO BASE", "1750.00", "_P", "_P", PaymentType.CRA_0001, SalaryType.SALARY);
+
+		java.sql.Date startDropDate = add(startDate, DAY_OF_MONTH,22);
+		java.sql.Date endDropDate = add(startDropDate, DAY_OF_MONTH,0);
+		
+		addDropContractData(aonContext, contract, startDropDate, endDropDate);
+		
+		java.sql.Date endITDate = add(startDate, DAY_OF_MONTH,6);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate,
+				endITDate, 1750.00 / 30.00);
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(); 
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments())
+			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+					+ " (" + payment.getExpression() + ")");
+
+		assertEquals(1750.00 / 30.00 * 28.00 + 1424.50 / 30.00 * 2, salary.getCommonBase(), DELTA);
+		assertEquals(1750.00 / 30.00 * 28.00, salary.getTotalPayment(), DELTA);
+
+//		startDate = add(startDate, MONTH, 1);
+//		endDate = getLastDayOfMonth(startDate);
+//		ctx = getContractSalaryCalculatorContext(
+//				connection, startDate, endDate, endDate, contract);
+//
+//		calculator.setSalaryBuilder(new SalaryBuilder());
+//		salary = calculator.calculate(ctx);
+//
+//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+//				.getSalaryPayments())
+//			System.out.println(payment.getName() + " = " + payment.getAmount() + ", " + payment.getQuote()
+//					+ " (" + payment.getExpression() + ")");
+//
+//		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+//		assertEquals(1750.00/30.00 * get(endDate, DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+	}
+
+	@Test
+	public void testDropDaysAndQuoteDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put(TC2.getName(), format("\"%s\"", FULL_TIME[0].getValue()));
+					}
+				}
+				, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		// Add DropDays Period -> 14 - 24
+		Calendar startDateIDay = Calendar.getInstance();
+		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
+		
+		Calendar endDateIDay = Calendar.getInstance();
+		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
+
+		addDropContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime());
+		
+		// Calculate Salary for all month with drop
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		double monthDays = ctx.getExpressionContext().eval("DIAS_MES", startDate, endDate, Number.class).stream().map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+		double quoteDays = ctx.getExpressionContext().eval("DIAS_COTIZADOS", startDate, endDate, Number.class).stream().peek(d -> System.out.println(d.getValue() + "," + d.getPeriod().getStart() + ".." + d.getPeriod().getEnd())).map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+		assertEquals(monthDays, quoteDays, DELTA);
+	}
+	
+	@Test
+	public void testDropDaysAndQuoteDaysII() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put(TC2.getName(), format("\"%s\"", FULL_TIME[0].getValue()));
+					}
+				}
+				, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		// Add DropDays Period -> 14 - 24
+		Calendar startDateIDay = Calendar.getInstance();
+		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
+		
+		Calendar endDateIDay = Calendar.getInstance();
+		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
+
+		addDropContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime(), "0.5");
+		
+		// Calculate Salary for all month with drop
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		double monthDays = ctx.getExpressionContext().eval("DIAS_MES", startDate, endDate, Number.class).stream().map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+		double quoteDays = ctx.getExpressionContext().eval("DIAS_COTIZADOS", startDate, endDate, Number.class).stream().peek(d -> System.out.println(d.getValue() + "," + d.getPeriod().getStart() + ".." + d.getPeriod().getEnd())).map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+		assertEquals(monthDays, quoteDays, DELTA);
+	}
 	// --------------------------------------------------------------------------------------------------------------------------
 
-	private void addInactivityContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {
+	protected static void addInactivityContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
 			.set(CONTRACT_DATA.NAME, "DIAS_INACTIVIDAD")
@@ -898,7 +1256,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			.execute();
 	}
 	
-	private void addInactivityContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, ContextVariable offType) {
+	protected static void addInactivityContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, ContextVariable offType) {
 		addInactivityContractData(aonContext, contract, startDate, endDate);
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 		.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
@@ -911,7 +1269,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 
-	private void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {
+	protected static void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
 			.set(CONTRACT_DATA.NAME, "COEFICIENTE_AUSENCIA")
@@ -922,7 +1280,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			.execute();
 	}
 	
-	private void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, ContextVariable dropType) {
+	protected static void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, ContextVariable dropType) {
 		addDropContractData(aonContext, contract, startDate, endDate);
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
@@ -934,7 +1292,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			.execute();
 	}
 
-	private void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String factor) {
+	protected static void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String factor) {
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
 			.set(CONTRACT_DATA.NAME, "COEFICIENTE_AUSENCIA")
@@ -945,7 +1303,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			.execute();
 	}
 
-	private Integer getDaysBetweenDates(Date startDate, Date endDate) {
+	private static Integer getDaysBetweenDates(Date startDate, Date endDate) {
 		if(null == startDate || null == endDate)
 			return 0;
 		
