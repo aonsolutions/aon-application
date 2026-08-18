@@ -2245,6 +2245,48 @@ public class SQLFunctionsTestCase extends
 						, endDate, Number.class);
 		assertEquals(0.0, sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
 	}
+	
+	@Test
+	public void testSumIfDefDays() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap() );
+		//@formatter:on
+		
+		Date startDropDate = add(startDate, Calendar.DAY_OF_MONTH, 5);
+		Date endDropDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		SQLSpecialDaysTestCase.addDropContractData(aonContext, contract, startDropDate, endDropDate);
+		
+		Date startITDate = add(startDate, Calendar.DAY_OF_MONTH, 15);
+		Date endITDate = add(startDate, Calendar.DAY_OF_MONTH, 20);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, endITDate, null);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+
+		List<ITimedResult<Number>>  sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('DIAS_TRABAJADOS')")
+						, startDate
+						, endDate, Number.class);
+		assertEquals(get(endDate, Calendar.DAY_OF_MONTH) - 12 , sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+
+		sum = 
+				ctx.getExpressionContext().eval(
+						String.format("SUMIFDEF('DIAS_TRABAJADOS', 'DIAS_AUSENCIA')")
+						, startDate
+						, endDate, Number.class);
+		assertEquals(get(endDate, Calendar.DAY_OF_MONTH) -6 , sum.stream().collect(Collectors.summingDouble( r -> r.getValue().doubleValue()) ), 0.00);
+	}	
 	//------------------------------------------------------------------------
 	
 	protected ContractRecord newContract(AONContext aonContext, String quoteGroup, Date startDate, Date endDate ) {

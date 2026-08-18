@@ -838,6 +838,7 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
+					.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.description)
 					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
 					.set(AGREEMENT_PAYMENT.MONTH, AonEnumUtils.getByte(payment.month ))
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();

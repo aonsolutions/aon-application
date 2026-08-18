@@ -65,6 +65,7 @@ public class ContextFunctions {
 	public static final String _OLD = "_OLD";
 	public static final String _GROSS = "_BRUTO";
 	public static final String _SECTION = "_SECTION";
+	public static final String _SUMIFDEF = "_SUMIFDEF";
 	public static final String _PRORATION = "_PRORATION";
 	public static final String _FRACTIONATE = "_FRACC";
 	public static final String MONTHS_IMPL = "MESESIMPL";
@@ -166,10 +167,31 @@ public class ContextFunctions {
 		return ExpressionContext.getCurrentBindings().get(name, AonNumberUtils::todouble , def);
 	}
 
-	public static Number sumIfDef(String ...names) {
+	public static Number _sumIfDef(String ...names) {
 		double sum = 0.00;
 		for (String name : names) {
 			sum += ExpressionContext.getCurrentBindings().getAll(name, AonNumberUtils::todouble , 0.00).stream().collect(Collectors.summingDouble(Double::doubleValue));
+		}
+		return sum;
+	}
+
+	public static Number sumIfDef(String ...names) throws MacroException{
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.SUMIFDEF),
+						String.format("%s\\(%s, %s, %s,", _SUMIFDEF, ContextVariable.CONTEXT, ContextVariable.START, ContextVariable.END));
+			}
+		};
+	}
+
+	public static Number sumIfDef(ExpressionContext context, Date startDate, Date endDate, String ...names) {
+		double sum = 0.00;
+		for (String name : names) {
+			try {
+				sum += context.eval(name, startDate, endDate, Number.class).stream().map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
+			} catch (ExpressionException e) {
+			}
 		}
 		return sum;
 	}
@@ -1275,11 +1297,14 @@ public class ContextFunctions {
 	private static void loadSumIfDefFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		try {
+			Method _sumIfDef = ContextFunctions.class.getMethod("sumIfDef", ExpressionContext.class, Date.class, Date.class, String[].class);
+			MethodStub _sumIfDefStub = new MethodStub(_sumIfDef);
+			context.setVariable(_SUMIFDEF, _sumIfDefStub, startDate, endDate);
+
 			Method sumIfDef = ContextFunctions.class.getMethod("sumIfDef", String[].class);
-
 			MethodStub sumIfDefStub = new MethodStub(sumIfDef);
-			context.setVariable("SUMIFDEF", sumIfDefStub, startDate, endDate);
-
+			context.setVariable(ContextVariable.SUMIFDEF, sumIfDefStub, startDate, endDate);
+			
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
 		}

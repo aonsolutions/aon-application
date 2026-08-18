@@ -1779,6 +1779,52 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		assertEquals(1500.00, salary.getTotalPayment(), DELTA);
 	}
 
+	@Test
+	public void testDeferredVars()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES",
+				"[ \"01\":30, \"02\":30, \"03\":30, \"04\":30, \"05\":30, \"06\":30, \"07\":30, \"08\": DIAS_NATURALES_MES, \"09\": DIAS_NATURALES_MES, \"10\": DIAS_NATURALES_MES, \"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]");
+			}
+		});
+	
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				Collections.singletonMap("GRUPO_COTIZACION", "\"04\""),
+				new String[] { },
+				new String[] { },
+				null);
+	
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		
+//		Date startITDate = add(start, Calendar.DAY_OF_MONTH, 10);
+//		Date endITDate = add(start, Calendar.DAY_OF_MONTH, 15);
+//		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate, endITDate, null);
+		
+		Date startDropDate = add(start, Calendar.DAY_OF_MONTH, 20);
+		Date endDropDate = add(start, Calendar.DAY_OF_MONTH, 25);
+		SQLSpecialDaysTestCase.addDropContractData(aonContext, contract, startDropDate, endDropDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		List<ITimedResult<Double>> workedValues = ctx.getExpressionContext().eval("1.00 * DIAS_TRABAJADOS / DIAS_MES ", start, end, Double.class);
+		
+		List<ITimedResult<Double>> quotedValues = ctx.getExpressionContext().eval("__HOLA=100.00; DIAS_MES; 1.00 * DIAS_COTIZADOS / DIAS_MES ", start, end, Double.class);
+		
+		assertEquals(3.00, quotedValues.size());
+		assertEquals(1.00, quotedValues.stream().collect(Collectors.summingDouble(ITimedResult::getValue)), DELTA);
+
+		
+	}
+
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
