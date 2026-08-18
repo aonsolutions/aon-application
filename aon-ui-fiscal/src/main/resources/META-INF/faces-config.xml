@@ -228,97 +228,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** MODEL 349  *************** -->
-	<managed-bean>
-		<managed-bean-name>mod349</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod349.Mod349Controller</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.fiscal.Mod349</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>mod349</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Mod349_year desc,Mod349_period desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{mod349ControllerListener}</value>
-				<value>#{mod349DetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>mod349ControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.event.Mod349ControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>mod349DetailListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>mod349Detail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Mod349Detail_mod349_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>mod349Detail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod349.Mod349DetailController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.fiscal.Mod349Detail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>mod349Detail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>mod349</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Mod349Detail_type, Mod349Detail_name</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>mod349.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
 	<!-- **************** MODEL 340 REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>mod340</managed-bean-name>
@@ -643,22 +552,6 @@
 		<navigation-case>
 			<from-outcome>mod347_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod347/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== MODEL 349 REPORT ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>mod349_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod349/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>mod349_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod349/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>mod349_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod349/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

@@ -41,12 +41,4 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="">
-		<pojo>com.code.aon.fiscal.Mod349</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.fiscal.event.Mod349BeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-
 </bean-config>

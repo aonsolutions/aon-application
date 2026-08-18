@@ -58,18 +58,6 @@
 		</params>
 	</report>
 	
-	<!--  *********  Modelo 347 ********* -->
-	<report id="mod349List" description="Model 349List">
-		<template path="/com/code/aon/ui/fiscal/report/mod349.jasper"/>
-		<bean key="com.code.aon.fiscal.Mod349Detail" />
-		<criteria provider="#{mod349Detail}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="year" value="#{mod349.getYear}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>
-	
 	<!--  *********  Declaracion de IVA ********* -->
 	<report id="vatTaxReport" description="Declaracion de IVA">
 		<template path="/com/code/aon/ui/fiscal/report/vatTax.jasper"/>

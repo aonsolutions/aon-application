@@ -22,8 +22,6 @@ import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Mod347Type;
-import com.code.aon.fiscal.enumeration.Mod349Status;
-import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RetentionRegime;
 import com.code.aon.fiscal.enumeration.VatExemptionCause;
@@ -51,8 +49,6 @@ public class FiscalCollectionsController implements Serializable {
 	private List<SelectItem> quarterPeriods;
 	private List<SelectItem> mod347Formats;
 	private List<SelectItem> mod347Types;
-	private List<SelectItem> mod349Statuses;
-	private List<SelectItem> mod349Types;	
 	private List<SelectItem> fiscalModelStatuses;
 
 	public List<SelectItem> getWithholdingStatuses() {
@@ -79,19 +75,6 @@ public class FiscalCollectionsController implements Serializable {
 			}
 		}
 		return vatTaxStatuses;
-	}
-
-	public List<SelectItem> getMod349Statuses() {
-		if (mod349Statuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Statuses = new LinkedList<>();
-			for (Mod349Status  status:Mod349Status.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				mod349Statuses.add(item);
-			}
-		}
-		return mod349Statuses;
 	}
 
 	public List<SelectItem> getVatTaxDeclarationStatuses() {
@@ -219,19 +202,6 @@ public class FiscalCollectionsController implements Serializable {
 		return mod347Types;
 	}
 
-	public List<SelectItem> getMod349Types() {
-		if (mod349Types == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Types = new LinkedList<>();
-			for (Mod349Type type : Mod349Type.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				mod349Types.add(item);
-			}
-		}
-		return mod349Types;
-	}
-	
 	public List<SelectItem> getFiscalModelStatuses() {
 		if (fiscalModelStatuses == null) {
 			fiscalModelStatuses = new LinkedList<>();

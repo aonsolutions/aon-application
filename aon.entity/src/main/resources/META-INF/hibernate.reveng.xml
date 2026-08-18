@@ -45,6 +45,8 @@
 	<table-filter match-name="fs_model200_detail" exclude="true" />
 	<table-filter match-name="fs_model200_registry" exclude="true" />
 	<table-filter match-name="fs_model390" exclude="true" />
+   	<table-filter match-name="fs_mod349" exclude="true" />
+	<table-filter match-name="fs_mod349_detail" exclude="true" />
 	
 	<table-filter match-name="elaboration" exclude="true" />
 	<table-filter match-name="elaboration_detail" exclude="true" />
@@ -1015,31 +1017,6 @@
 		<column name="second_quarter_amount" type="java.lang.Double"/>
 		<column name="third_quarter_amount" type="java.lang.Double"/>
 		<column name="fourth_quarter_amount" type="java.lang.Double"/>
-	</table>
-
-	<table name="fs_mod349" class="com.esferalia.aon.entity.master.Mod349">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
-		<column name="status" type="com.code.aon.fiscal.enumeration.Mod349Status"/>
-		<column name="comments" type="text"/>
-		<column name="year" type="java.lang.Integer"/>
-		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
-	</table>
-
-	<table name="fs_mod349_detail" class="com.esferalia.aon.entity.master.Mod349Detail">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="type" type="com.code.aon.fiscal.enumeration.Mod349Type"/>
-		<column name="country" type="com.code.aon.common.enumeration.Country"/>
-		<column name="amount" type="java.lang.Double"/>
-		<column name="rectified_year" type="java.lang.Integer"/>
-		<column name="rectified_period" type="com.code.aon.fiscal.enumeration.Period"/>		
-		<column name="rectified_amount" type="java.lang.Double"/>
 	</table>
 
 	<table name="fs_model" class="com.esferalia.aon.entity.master.FiscalModel">
