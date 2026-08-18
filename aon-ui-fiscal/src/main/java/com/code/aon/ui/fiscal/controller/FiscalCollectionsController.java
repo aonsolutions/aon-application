@@ -17,11 +17,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
-import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RetentionRegime;
 import com.code.aon.fiscal.enumeration.VatExemptionCause;
@@ -47,8 +45,6 @@ public class FiscalCollectionsController implements Serializable {
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
 	private List<SelectItem> quarterPeriods;
-	private List<SelectItem> mod347Formats;
-	private List<SelectItem> mod347Types;
 	private List<SelectItem> fiscalModelStatuses;
 
 	public List<SelectItem> getWithholdingStatuses() {
@@ -175,31 +171,6 @@ public class FiscalCollectionsController implements Serializable {
 			quarterPeriods.add( new SelectItem(Period.T4, Period.T4.getName(locale)) );
 		}
 		return quarterPeriods;
-	}
-
-	public List<SelectItem> getMod347Formats() {
-		if (mod347Formats == null) {
-			mod347Formats = new LinkedList<>();
-			for (MOD347Format format : MOD347Format.values()) {
-				String name = format.getDescription();
-				SelectItem item = new SelectItem(format, name);
-				mod347Formats.add(item);
-			}
-		}
-		return mod347Formats;
-	}
-
-	public List<SelectItem> getMod347Types() {
-		if (mod347Types == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod347Types = new LinkedList<>();
-			for (Mod347Type type : Mod347Type.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				mod347Types.add(item);
-			}
-		}
-		return mod347Types;
 	}
 
 	public List<SelectItem> getFiscalModelStatuses() {

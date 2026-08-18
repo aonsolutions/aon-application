@@ -175,8 +175,6 @@
 		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
 		<mapping class="com.code.aon.fiscal.FiscalModel"/>
 		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
-		<mapping class="com.code.aon.fiscal.Mod347"/>
-		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
 		<mapping class="com.code.aon.fiscal.VatTax"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
