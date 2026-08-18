@@ -49,6 +49,10 @@
 	<table-filter match-name="fs_mod347_detail" exclude="true" />
    	<table-filter match-name="fs_mod349" exclude="true" />
 	<table-filter match-name="fs_mod349_detail" exclude="true" />
+
+	<table-filter match-name="fs_vat" exclude="true" />
+	<table-filter match-name="fs_vat_declaration" exclude="true" />
+	<table-filter match-name="fs_vat_detail" exclude="true" />
 	
 	<table-filter match-name="elaboration" exclude="true" />
 	<table-filter match-name="elaboration_detail" exclude="true" />
@@ -1017,49 +1021,6 @@
 		<column name="acu_amount" property="accumulatedAmount"/>
 		<column name="dec_amount" property="declaredAmount"/>
 		<column name="res_amount" property="resultAmount"/>
-	</table>
-
-	<table name="fs_vat" class="com.esferalia.aon.entity.master.VatTax">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="status" type="com.code.aon.fiscal.enumeration.VatTaxStatus"/>		
-		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>
-		<column name="comments" type="text"/>
-		<column name="year" type="java.lang.Integer"/>
-	</table>
-
-	<table name="fs_vat_declaration" class="com.esferalia.aon.entity.master.VatTaxDeclaration">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
-		<column name="status" type="com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus"/>
-		<column name="prev_year_compensate_quota" property="previousYearCompensateQuota"/>
-		<column name="prev_deposit" property="previousDeposit"/>
-		<column name="prev_pay_back" property="previousPayBack"/>
-	</table>
-
-	<table name="fs_vat_detail" class="com.esferalia.aon.entity.master.VatTaxDetail">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="vat_key" property="key" type="com.code.aon.fiscal.enumeration.VatTaxKey"/>
-		<column name="adj_taxable_base" property="taxableBaseAdjust"/>
-		<column name="adj_quota" property="quotaAdjust"/>
-		<column name="adj_deductible_quota" property="deductibleQuotaAdjust"/>
-		<column name="acu_taxable_base" property="taxableBaseAccumulated"/>
-		<column name="acu_quota" property="quotaAccumulated"/>
-		<column name="acu_deductible_quota" property="deductibleQuotaAccumulated"/>
-		<column name="dec_taxable_base" property="taxableBaseDeclared"/>
-		<column name="dec_quota" property="quotaDeclared"/>
-		<column name="dec_deductible_quota" property="deductibleQuotaDeclared"/>
-		<column name="res_taxable_base" property="taxableBaseResult"/>
-		<column name="res_quota" property="quotaResult"/>
-		<column name="res_deductible_quota" property="deductibleQuotaResult"/>
 	</table>
 
 	<table name="geozone_irpf">

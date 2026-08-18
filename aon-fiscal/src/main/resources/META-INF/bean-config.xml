@@ -20,18 +20,4 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="">
-		<pojo>com.code.aon.fiscal.VatTax</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.fiscal.event.VatTaxBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.fiscal.VatTaxDeclaration</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.fiscal.event.VatTaxDeclarationBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
 </bean-config>

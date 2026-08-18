@@ -24,8 +24,6 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RetentionRegime;
 import com.code.aon.fiscal.enumeration.VatExemptionCause;
 import com.code.aon.fiscal.enumeration.VatRegime;
-import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
-import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.enumeration.WithholdingStatus;
 import com.code.aon.ql.Criteria;
@@ -36,8 +34,6 @@ public class FiscalCollectionsController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> withholdingStatuses;
-	private List<SelectItem> vatTaxStatuses;
-	private List<SelectItem> vatTaxDeclarationStatuses;
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatRegimes;
 	private List<SelectItem> vatExemptionCauses;
@@ -58,32 +54,6 @@ public class FiscalCollectionsController implements Serializable {
 			}
 		}
 		return withholdingStatuses;
-	}
-
-	public List<SelectItem> getVatTaxStatuses() {
-		if (vatTaxStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxStatuses = new LinkedList<>();
-			for (VatTaxStatus status:VatTaxStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				vatTaxStatuses.add(item);
-			}
-		}
-		return vatTaxStatuses;
-	}
-
-	public List<SelectItem> getVatTaxDeclarationStatuses() {
-		if (vatTaxDeclarationStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxDeclarationStatuses = new LinkedList<>();
-			for (VatTaxDeclarationStatus declarationStatus:VatTaxDeclarationStatus.values()) {
-				String name = declarationStatus.getName(locale);
-				SelectItem item = new SelectItem(declarationStatus, name);
-				vatTaxDeclarationStatuses.add(item);
-			}
-		}
-		return vatTaxDeclarationStatuses;
 	}
 
 	public List<SelectItem> getVatTypes() {

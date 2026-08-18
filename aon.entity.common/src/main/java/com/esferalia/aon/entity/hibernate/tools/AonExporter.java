@@ -342,9 +342,6 @@ public class AonExporter extends GenericExporter{
 		map.put("FiscalActivityInfo","com.code.aon.fiscal.FiscalActivityInfo");
 		map.put("FiscalModel","com.code.aon.fiscal.FiscalModel");
 		map.put("FiscalModelDetail","com.code.aon.fiscal.FiscalModelDetail");
-		map.put("VatTax","com.code.aon.fiscal.VatTax");
-		map.put("VatTaxDeclaration","com.code.aon.fiscal.VatTaxDeclaration");
-		map.put("VatTaxDetail","com.code.aon.fiscal.VatTaxDetail");
 
 		//AON GEOZONE 
 		map.put("GeoZone","com.code.aon.geozone.GeoZone");
