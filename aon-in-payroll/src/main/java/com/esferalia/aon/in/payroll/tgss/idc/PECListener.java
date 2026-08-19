@@ -226,8 +226,8 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> COST_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("43", "-CGC_E"); 																// Contingencias Comunes  
-			put("07", "-( CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E + MEI_E )"); 		// Contingencias Comunes  
+			put("43", "-CGC_E");										// Contingencias Comunes  
+			put("07", "-( CGC_E + FP_E + DESMPL_E + FOGASA_E )"); 		// Contingencias Comunes  
 		}
 	};
 

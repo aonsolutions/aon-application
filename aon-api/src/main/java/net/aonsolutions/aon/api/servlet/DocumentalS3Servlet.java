@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -36,32 +38,29 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.S3DocumentProperties;
 import com.esferalia.aon.occam.api.model.S3Category;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.S3Document;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import solutions.aon.aws.s3.S3rDoc;
-
-import java.io.ByteArrayInputStream;
-
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.FileList;
-
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
+import solutions.aon.aws.s3.S3rDoc;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DocumentalS3Servlet", urlPatterns = {"/ms/api/s3/*"})
@@ -192,121 +191,148 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	}
 	
 	private static Attach getFile(AonApiData api) throws Exception {
-		try {
-			Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
-			byte[] data = null;
-			if(type == 0 && document.getS3key() != null) {
-				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
-			} else if(type == 1){
-				data = getRattachFile(api, api.getData().getInt(IJsonNames.ID), document.getCreationUser());
-			}
-			if(data != null) {				
-				Attach attach = new Attach()
-						.setDescription(document.getName())
-						.setData(data)
-						.setMimeType(document.getMimetype());
-				return attach;
-			} else {
-				throw new AonException("Archivo corrupto.");
-			}
-		} catch(Exception e) {
-			throw e;
+		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
+		Integer id = api.getData().getInt(IJsonNames.ID);
+
+		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(),
+				f -> f.getIdProperty().eq(id).and(f.getDeleteDateProperty().isNull()),
+				f -> f.getIdProperty().eq(id), type, null, null, null)
+			.toList().getFirst();
+
+		byte[] data = null;
+		if (type != null && type == 0 && document.getS3key() != null) {
+			data = S3rDoc.download(document.getS3key(), document.getS3bucket());
+		} else if (type != null && type == 1) {
+			data = getRattachFile(api, id, document.getCreationUser());
 		}
+
+		if (data == null) throw new AonException("Archivo corrupto.");
+
+		return new Attach()
+				.setDescription(document.getName())
+				.setData(data)
+				.setMimeType(document.getMimetype());
 	}
 	
-	private static byte [] getRattachFile(AonApiData api, Integer id, String creationUser) {
-		Integer idRattach = api.getData().getInt(IJsonNames.ID);
+	private static byte[] getRattachFile(AonApiData api, Integer id, String creationUser) {
 		Domain domain = api.getDomain();
-		Attach attach = AON.getAttach(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(idRattach), AttachType.getAttachType("registry"), true);
-		if(attach.getDriveId() != null) {
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), api.getUser().getLogin(),
+				f -> f.getIdProperty().eq(id), AttachType.getAttachType("registry"), true);
+
+		if (attach == null) {
+			LOGGER.warning("Attach no encontrado: id=" + id);
+			return null;
+		}
+
+		if (attach.getData() == null && attach.getDriveId() != null) {
 			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), api.getUser().getLogin());
 			Drive drive = AonDrive.getInstace().serviceInitialize(g);
 			String[] keys = {"fileId", "aontype", "domain"};
 			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
 			FileList fl = SearchFiles.searchFilesAppProperties(drive, keys, values);
-			if(fl.getFiles().size() > 0) {
-				if(!fl.getFiles().get(0).getId().equals(attach.getDriveId())) {
+			if (!fl.getFiles().isEmpty()) {
+				if (!fl.getFiles().get(0).getId().equals(attach.getDriveId())) {
 					attach.setDriveId(fl.getFiles().get(0).getId());
 					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 				}
-				if("0".equals(attach.getDparentId())) {
+				if ("0".equals(attach.getDparentId())) {
 					attach.setDparentId(fl.getFiles().get(0).getSize().toString());
 					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
 				}
 			}
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
-        ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
-        return bais.readAllBytes();
+
+		return attach.getData();
 	}
 
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
-		try {
-			String jsonData = api.getData().getString(IJsonNames.DATA);
-			String decodedJson = URLDecoder.decode(jsonData, "UTF-8");
-			JSONArray array = new JSONArray(decodedJson);
-			Integer[] idsRdoc = new Integer[array.length()];
-			Integer[] idsRattach = new Integer[array.length()];
-			for(int i = 0; i < array.length(); i++) {
-				if(array.getJSONObject(i).getInt(IJsonNames.TYPE) == 0)
-					idsRdoc[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
-				else
-					idsRattach[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
-			}
-			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
-			List<byte[]> files = new LinkedList<byte[]>();
-			List<String> filenames = new LinkedList<String>();
-			for (S3Document document : documents) {
-				byte[] data = null;
-				if (document.getType() == 0 && document.getS3key() != null) {
-					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
-				} else if(document.getType() == 1){
-					data = getRattachFile(api, document.getId(), document.getCreationUser());
-				}
-				files.add(data);
+		String jsonData = api.getData().getString(IJsonNames.DATA);
+		String decodedJson = URLDecoder.decode(jsonData, StandardCharsets.UTF_8);
+		JSONArray array = new JSONArray(decodedJson);
 
-				String filename = document.getName();
-				
-				String type = document.getMimetype().toString(); 
-
-				if (type != null && !type.isEmpty()) {
-					String extension = "." + type.toLowerCase();
-					if (!filename.toLowerCase().endsWith(extension)) {
-						filename += extension;
-					}
-				}
-				filenames.add(filename);
-			}
-			byte[] i = createZipFromByteArrays(files, filenames);
-			Attach attach = new Attach()
-					.setData(i)
-					.setDescription("files")
-					.setMimeType(MimeType.ZIP);
-			return attach;
-		} catch(Exception e) {
-			throw e;
+		List<Integer> rdocIds = new ArrayList<>();
+		List<Integer> rattachIds = new ArrayList<>();
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject o = array.getJSONObject(i);
+			if (o.getInt(IJsonNames.TYPE) == 0) rdocIds.add(o.getInt(IJsonNames.ID));
+			else rattachIds.add(o.getInt(IJsonNames.ID));
 		}
+		// -1 no casa con nada: evita pasar arrays vacíos o llenos de null al in()
+		if (rdocIds.isEmpty()) rdocIds.add(-1);
+		if (rattachIds.isEmpty()) rattachIds.add(-1);
+		Integer[] idsRdoc = rdocIds.toArray(new Integer[0]);
+		Integer[] idsRattach = rattachIds.toArray(new Integer[0]);
+
+		List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(),
+				f -> f.getIdProperty().in(idsRdoc).and(f.getDeleteDateProperty().isNull()),
+				f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
+
+		List<byte[]> files = new LinkedList<>();
+		List<String> filenames = new LinkedList<>();
+
+		for (S3Document document : documents) {
+			byte[] data = null;
+			if (document.getType() != null && document.getType() == 0 && document.getS3key() != null) {
+				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
+			} else if (document.getType() != null && document.getType() == 1) {
+				data = getRattachFile(api, document.getId(), document.getCreationUser());
+			}
+
+			if (data == null) {
+				LOGGER.warning("Documento sin datos, se omite del ZIP: id=" + document.getId() + ", type=" + document.getType());
+				continue;
+			}
+
+			files.add(data);
+			filenames.add(buildFileName(document.getName(), document.getMimetype()));
+		}
+
+		if (files.isEmpty()) throw new AonException("No se ha podido descargar ninguno de los documentos seleccionados.");
+
+		return new Attach()
+				.setData(createZipFromByteArrays(files, filenames))
+				.setDescription("files")
+				.setMimeType(MimeType.ZIP);
 	}
 	
 	public static byte[] createZipFromByteArrays(List<byte[]> fileDataList, List<String> fileNames) throws IOException {
-        if (fileDataList.size() != fileNames.size()) {
-            throw new IllegalArgumentException("La cantidad de archivos y nombres no coincide.");
-        }
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ZipOutputStream zos = new ZipOutputStream(baos)) {
-            for (int i = 0; i < fileDataList.size(); i++) {
-                byte[] fileData = fileDataList.get(i);
-                String fileName = i + "_" + fileNames.get(i);
-                ZipEntry entry = new ZipEntry(fileName);
-                zos.putNextEntry(entry);
-                zos.write(fileData);
-                zos.closeEntry();
-            }
-            zos.finish();
-            return baos.toByteArray();
-        }
-    }
+		if (fileDataList.size() != fileNames.size()) {
+			throw new IllegalArgumentException("La cantidad de archivos y nombres no coincide.");
+		}
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos, StandardCharsets.UTF_8)) {
+
+			Set<String> used = new HashSet<>();
+			for (int i = 0; i < fileDataList.size(); i++) {
+				String fileName = fileNames.get(i);
+				int dot = fileName.lastIndexOf('.');
+				String base = dot > 0 ? fileName.substring(0, dot) : fileName;
+				String ext  = dot > 0 ? fileName.substring(dot) : "";
+				int n = 1;
+				while (!used.add(fileName)) {
+					fileName = base + " (" + (++n) + ")" + ext;
+				}
+				zos.putNextEntry(new ZipEntry(fileName));
+				zos.write(fileDataList.get(i));
+				zos.closeEntry();
+			}
+			zos.finish();
+			return baos.toByteArray();
+		}
+	}
+
+	private static String buildFileName(String name, MimeType mimeType) {
+		String fileName = AonStringUtils.isBlank(name) ? "documento" : name.trim();
+		fileName = fileName.replaceAll("[/\\\\:*?\"<>|]", "_");
+
+		// si el nombre ya trae una extensión conocida, no añadimos nada
+		if (MimeType.guessFromFileName(fileName) != null) return fileName;
+
+		String ext = mimeType != null ? mimeType.getExtension() : null;
+		if (AonStringUtils.isNotBlank(ext)) fileName = fileName + "." + ext;
+		return fileName;
+	}
 	
 	private static Object getAction(AonApiData api) {
 		if(api.getData().has(IJsonNames.ID)) {

@@ -30,9 +30,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,14 +47,13 @@ import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.UpdateSetMoreStep;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.CustomerRecord;
-import com.esferalia.aon.jooq.tables.records.RrelationshipRecord;
-import com.esferalia.aon.jooq.tables.records.RsellerRecord;
+import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
-import com.esferalia.aon.jooq.tables.records.UserScopeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -84,6 +84,8 @@ import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeDAO {
+	
+	private static final Logger LOGGER = Logger.getLogger(FeeDAO.class.getName());
 	
 	public static final com.esferalia.aon.jooq.tables.Seller SELLER_COMERCIAL = SELLER.as("seller_comercial");
     public static final com.esferalia.aon.jooq.tables.Seller SELLER_SUPPORT = SELLER.as("seller_support");
@@ -1302,353 +1304,213 @@ public class FeeDAO {
 		}
 		
 	}
-
+	
 	private static void updateSellerUserScope(AONContext ctx, Fee fee) {
+		try {
+			doUpdateSellerUserScope(ctx, fee);
+		} catch (RuntimeException e) {
+			LOGGER.log(Level.SEVERE, "updateSellerUserScope falló: fee=" + (null != fee ? fee.getId() : null)
+				+ ", customer=" + (null != fee && null != fee.getCustomer() ? fee.getCustomer().getId() : null)
+				+ ", seller=" + (null != fee && null != fee.getSeller() ? fee.getSeller().getId() : null), e);
+			throw e;
+		}
+	}
+
+	private static void doUpdateSellerUserScope(AONContext ctx, Fee fee) {
 		Seller newSeller = fee.getSeller();
-		
-		if(null != fee.getId()) {
+
+		if (null != fee.getId()) {
 			Integer oldSeller = ctx.getDslContext().select(CUSTOMER_FEE.SELLER)
 					.from(CUSTOMER_FEE)
 					.where(CUSTOMER_FEE.ID.eq(fee.getId()))
 					.fetchOne(CUSTOMER_FEE.SELLER);
-			
-			if(null != oldSeller)
+
+			if (null != oldSeller && (null == newSeller || !oldSeller.equals(newSeller.getId())))
 				deleteOldSellerUserScope(ctx, fee, oldSeller);
 		}
-		
-		if(null != newSeller && null != newSeller.getId()) {
-			Integer taskHolder = 
-					ctx.getDslContext()
-					.select(SELLER.TASK_HOLDER)
-					.from(SELLER)
-					.where(SELLER.REGISTRY.eq(newSeller.getId()))
-					.fetchOne(SELLER.TASK_HOLDER);
-			
-			if(null != taskHolder) {
-				Integer userId = 
-					ctx.getDslContext()
-					.select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
-					.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
-					.fetchOne(TASK_HOLDER.USER_ID);
-				
-				if(null != userId) {
-					// Domain Customer Scope
-					Result<RrelationshipRecord> rrelationships = 
-						ctx.getDslContext().selectFrom(RRELATIONSHIP)
-						.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
-						.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
-						.fetch();
-					
-					UserRecord user = 
-							ctx.getDslContext().selectFrom(USER)
-							.where(USER.ID.eq(userId))
-							.fetchOne();
-					
-					if(rrelationships.isNotEmpty()) {
-						RrelationshipRecord rrelationship = rrelationships.get(0);
-						
-						// Get domain scope
-						Record company = ctx.getDslContext().select().from(COMPANY)
-							.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
-							.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
-							.fetchOne();
-						
-						// NOTE: If not domain parent or user is not from domain parent do not do anything
-						if(null != company && null != company.get(DOMAIN.PARENT) && user.get(USER.DOMAIN).equals(company.get(DOMAIN.PARENT))) {
-						
-							Integer domainScope = company.get(DOMAIN.SCOPE);
-							
-							// 1. Domain has not scope
-							if(null == domainScope) {
-								
-								// Check if exist scope in domain or parentDomain with CIF scope description
-								Record customerDocuemntScope = ctx.getDslContext().select().from(SCOPE)
-										.where(SCOPE.DESCRIPTION.eq(fee.getCustomer().getDocument()))
-										.and(SCOPE.DOMAIN.eq(company.get(DOMAIN.PARENT)))
-										.fetchOne();
-								
-								// Create new scope whith customer document
-								if(null == customerDocuemntScope) {
-									Integer scopeId = ctx.getDslContext()
-											.insertInto(SCOPE)
-											.set(SCOPE.DOMAIN, company.get(DOMAIN.PARENT))
-											.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
-											.returning(SCOPE.ID)
-											.fetchOne().value1();
 
-										// Update domain scope with new document scope
-										ctx.getDslContext().update(DOMAIN)
-											.set(DOMAIN.SCOPE, scopeId)
-											.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
-											.execute();
-
-										ctx.getDslContext().insertInto(USER_SCOPE)
-											.set(USER_SCOPE.DOMAIN, user.getDomain())
-											.set(USER_SCOPE.USER_ID, userId)
-											.set(USER_SCOPE.SCOPE, scopeId)
-											.execute();
-								} else {
-									
-									// Check if user scopes contains customer document scope
-									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-											.where(USER_SCOPE.USER_ID.eq(userId))
-											.and(USER_SCOPE.SCOPE.isNotNull())
-											.fetch();
-									
-									Optional<UserScopeRecord> userScope = userScopes.stream()
-											.filter(userScopeIt -> customerDocuemntScope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
-									
-									if(userScope.isEmpty()) {
-										ctx.getDslContext().insertInto(USER_SCOPE)
-											.set(USER_SCOPE.DOMAIN, user.getDomain())
-											.set(USER_SCOPE.USER_ID, userId)
-											.set(USER_SCOPE.SCOPE, customerDocuemntScope.get(SCOPE.ID))
-											.execute();
-									}
-									
-									// Set domain whith his own CIF scope
-									ctx.getDslContext().update(DOMAIN)
-										.set(DOMAIN.SCOPE, customerDocuemntScope.get(SCOPE.ID))
-										.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
-										.execute();
-								}
-							
-							// 2. Domain has scope (check if it is customer document scope. If not create & assign)
-							} else {
-								Record scope = ctx.getDslContext().select().from(SCOPE)
-										.where(SCOPE.ID.eq(domainScope))
-										.fetchOne();
-								
-								if(!AonStringUtils.equalsIgnoreCase(scope.get(SCOPE.DESCRIPTION), fee.getCustomer().getDocument())) {
-									
-									// Check if exist scope in domain or parentDomain with CIF scope description
-									Record customerDocuemntScope = ctx.getDslContext().select().from(SCOPE)
-											.where(SCOPE.DESCRIPTION.eq(fee.getCustomer().getDocument()))
-											.and(SCOPE.DOMAIN.eq(company.get(DOMAIN.PARENT)))
-											.fetchOne();
-
-									if(null == customerDocuemntScope) {
-										Integer scopeId = ctx.getDslContext()
-												.insertInto(SCOPE)
-												.set(SCOPE.DOMAIN, company.get(DOMAIN.PARENT))
-												.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
-												.returning(SCOPE.ID)
-												.fetchOne().value1();
-
-											// Update domain scope with new document scope
-											ctx.getDslContext().update(DOMAIN)
-												.set(DOMAIN.SCOPE, scopeId)
-												.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
-												.execute();
-
-											ctx.getDslContext().insertInto(USER_SCOPE)
-												.set(USER_SCOPE.DOMAIN, user.getDomain())
-												.set(USER_SCOPE.USER_ID, userId)
-												.set(USER_SCOPE.SCOPE, scopeId)
-												.execute();
-									} else {
-										// Check if user scopes contains customer document scope
-										Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-												.where(USER_SCOPE.USER_ID.eq(userId))
-												.and(USER_SCOPE.SCOPE.isNotNull())
-												.fetch();
-										
-										Optional<UserScopeRecord> userScope = userScopes.stream()
-												.filter(userScopeIt -> customerDocuemntScope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
-										
-										if(userScope.isEmpty()) {
-											ctx.getDslContext().insertInto(USER_SCOPE)
-												.set(USER_SCOPE.DOMAIN, user.getDomain())
-												.set(USER_SCOPE.USER_ID, userId)
-												.set(USER_SCOPE.SCOPE, customerDocuemntScope.get(SCOPE.ID))
-												.execute();
-										}
-										
-										// Set domain whith his own CIF scope
-										ctx.getDslContext().update(DOMAIN)
-											.set(DOMAIN.SCOPE, customerDocuemntScope.get(SCOPE.ID))
-											.where(DOMAIN.ID.eq(company.get(DOMAIN.ID)))
-											.execute();
-									}
-									
-									
-								} else {
-									// Check if user scopes contains customer document scope
-									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-											.where(USER_SCOPE.USER_ID.eq(userId))
-											.and(USER_SCOPE.SCOPE.isNotNull())
-											.fetch();
-									
-									Optional<UserScopeRecord> userScope = userScopes.stream()
-											.filter(userScopeIt -> scope.get(SCOPE.ID).equals(userScopeIt.getScope())).findFirst();
-									
-									if(userScope.isEmpty()) {
-										ctx.getDslContext().insertInto(USER_SCOPE)
-											.set(USER_SCOPE.DOMAIN, user.getDomain())
-											.set(USER_SCOPE.USER_ID, userId)
-											.set(USER_SCOPE.SCOPE, scope.get(SCOPE.ID))
-											.execute();
-									}
-								}
-							}
-							
-						}
-					}
-				}
-			}
+		if (null == newSeller || null == newSeller.getId()) return;
+		if (null == fee.getCustomer() || null == fee.getCustomer().getId()) {
+			LOGGER.warning("Fee sin customer, no se actualiza scope: fee=" + fee.getId());
+			return;
 		}
-		
+
+		String document = fee.getCustomer().getDocument();
+		if (AonStringUtils.isBlank(document)) {
+			LOGGER.warning("Customer sin documento, no se actualiza scope: customer=" + fee.getCustomer().getId());
+			return;
+		}
+
+		Integer userId = getSellerUserId(ctx, newSeller.getId());
+		if (null == userId) return;
+
+		UserRecord user = ctx.getDslContext().selectFrom(USER)
+				.where(USER.ID.eq(userId))
+				.fetchOne();
+		if (null == user) {
+			LOGGER.warning("USER_ID huérfano: userId=" + userId + ", seller=" + newSeller.getId());
+			return;
+		}
+
+		Record company = getCustomerDomain(ctx, fee.getCustomer().getId());
+
+		// NOTE: If not domain parent or user is not from domain parent do not do anything
+		if (null == company || null == company.get(DOMAIN.PARENT)
+				|| !company.get(DOMAIN.PARENT).equals(user.get(USER.DOMAIN))) {
+			return;
+		}
+
+		Integer parentDomain = company.get(DOMAIN.PARENT);
+		Integer domainId = company.get(DOMAIN.ID);
+		Integer domainScope = company.get(DOMAIN.SCOPE);
+
+		String currentDescription = null == domainScope ? null
+				: ctx.getDslContext().select(SCOPE.DESCRIPTION).from(SCOPE)
+					.where(SCOPE.ID.eq(domainScope))
+					.fetchOne(SCOPE.DESCRIPTION);
+
+		Integer targetScope;
+		if (null != currentDescription && AonStringUtils.equalsIgnoreCase(currentDescription, document)) {
+			targetScope = domainScope;
+		} else {
+			targetScope = findOrCreateScope(ctx, parentDomain, document);
+			ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.SCOPE, targetScope)
+				.where(DOMAIN.ID.eq(domainId))
+				.execute();
+		}
+
+		ensureUserScope(ctx, user.getDomain(), userId, targetScope);
 	}
 	
-	private static void deleteOldSellerUserScope(AONContext ctx, Fee fee, Integer oldSeller) {
-		Result<CustomerFeeRecord> customerFees = ctx.getDslContext().selectFrom(CUSTOMER_FEE)
-				.where(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))
-				.fetch();
-		
-		// Exist seller in other fee
-		Optional<CustomerFeeRecord> oldSellerCustomerFee = customerFees.stream().filter(customerFee -> 
-			null != customerFee.getSeller() && 
-			customerFee.getSeller().equals(oldSeller) && 
-			!customerFee.getId().equals(fee.getId())).findFirst();
-		
-		Result<RsellerRecord> rseller = ctx.getDslContext().selectFrom(RSELLER)
-				.where(RSELLER.REGISTRY.eq(fee.getCustomer().getId()))
-				.and(RSELLER.SELLER.eq(oldSeller))
-				.and(RSELLER.TYPE.eq(RegistrySellerType.SOPORTE.value()))
-				.fetch();
-		
-		// Delete seller user Scope
-		if(oldSellerCustomerFee.isEmpty() && rseller.isEmpty()) {
-			Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
-				.where(SELLER.REGISTRY.eq(oldSeller))
+	/** SELLER -> TASK_HOLDER -> USER_ID. Null si falta cualquier eslabón. */
+	private static Integer getSellerUserId(AONContext ctx, Integer sellerRegistry) {
+		Integer taskHolder = ctx.getDslContext()
+				.select(SELLER.TASK_HOLDER).from(SELLER)
+				.where(SELLER.REGISTRY.eq(sellerRegistry))
+				.orderBy(SELLER.REGISTRY)
+				.limit(1)
 				.fetchOne(SELLER.TASK_HOLDER);
-			
-			if(null != taskHolder) {
-				Integer userId = ctx.getDslContext().select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
-					.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
-					.fetchOne(TASK_HOLDER.USER_ID);
-				
-				if(null != userId) {
-					// Domain Customer Scope
-					Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
-						.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
-						.and(RRELATIONSHIP.ID.eq(-1))
-						.fetch();
-					
-					if(rrelationships.isNotEmpty()) {
-						RrelationshipRecord rrelationship = rrelationships.get(0);
-						
-						// Get domain scope
-						Record company = ctx.getDslContext().select().from(COMPANY)
-							.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
-							.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
-							.fetchOne();
-						
-						if(null != company) {
-						
-							Integer domainScope = company.get(DOMAIN.SCOPE);
-							
-							if(null != domainScope) {
-								// Get user scopes
-								Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-										.where(USER_SCOPE.USER_ID.eq(userId))
-										.and(USER_SCOPE.SCOPE.isNotNull())
-										.fetch();
-								
-								Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
-								
-								// Delete user scopes
-								if(userScope.isPresent()) {
-									ctx.getDslContext().delete(USER_SCOPE)
-										.where(USER_SCOPE.ID.eq(userScope.get().getId()))
-										.execute();
-								}
-							}
-						}
-					}
-				}
+		if (null == taskHolder) return null;
+
+		return ctx.getDslContext()
+				.select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
+				.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
+				.orderBy(TASK_HOLDER.REGISTRY)
+				.limit(1)
+				.fetchOne(TASK_HOLDER.USER_ID);
+	}
+
+	/** Dominio (id, parent, scope) del customer vía RRELATIONSHIP -1 + COMPANY. */
+	private static Record getCustomerDomain(AONContext ctx, Integer customerId) {
+		return ctx.getDslContext()
+				.select(DOMAIN.ID, DOMAIN.PARENT, DOMAIN.SCOPE)
+				.from(RRELATIONSHIP)
+				.join(COMPANY).on(COMPANY.REGISTRY.eq(RRELATIONSHIP.RELATED_REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+				.where(RRELATIONSHIP.REGISTRY.eq(customerId))
+				.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
+				.orderBy(DOMAIN.ID)
+				.limit(1)
+				.fetchOne();
+	}
+
+	private static Integer findOrCreateScope(AONContext ctx, Integer domain, String document) {
+		Integer scopeId = selectScopeId(ctx, domain, document);
+		if (null != scopeId) return scopeId;
+
+		try {
+			ScopeRecord record = ctx.getDslContext()
+			        .insertInto(SCOPE)
+			        .set(SCOPE.DOMAIN, domain)
+			        .set(SCOPE.DESCRIPTION, document)
+			        .returning(SCOPE.ID)
+			        .fetchOne();
+
+			if (null == record || null == record.getId())
+			    throw new IllegalStateException("No se pudo obtener el ID del SCOPE creado: domain="
+			        + domain + ", document=" + document);
+
+			return record.getId();
+		} catch (DataAccessException e) {
+			// Otra petición lo creó entre el SELECT y el INSERT (sólo si existe el índice único)
+			scopeId = selectScopeId(ctx, domain, document);
+			if (null != scopeId) {
+				LOGGER.warning("SCOPE creado concurrentemente, se reutiliza: id=" + scopeId
+					+ ", domain=" + domain + ", document=" + document);
+				return scopeId;
 			}
+			throw e;
 		}
 	}
-	
+
+	private static Integer selectScopeId(AONContext ctx, Integer domain, String document) {
+		return ctx.getDslContext().select(SCOPE.ID).from(SCOPE)
+				.where(SCOPE.DESCRIPTION.eq(document))
+				.and(SCOPE.DOMAIN.eq(domain))
+				.orderBy(SCOPE.ID)
+				.limit(1)
+				.fetchOne(SCOPE.ID);
+	}
+
+	private static void ensureUserScope(AONContext ctx, Integer userDomain, Integer userId, Integer scopeId) {
+		boolean exists = ctx.getDslContext().fetchExists(
+				ctx.getDslContext().selectFrom(USER_SCOPE)
+					.where(USER_SCOPE.USER_ID.eq(userId))
+					.and(USER_SCOPE.SCOPE.eq(scopeId)));
+
+		if (!exists) {
+			ctx.getDslContext().insertInto(USER_SCOPE)
+				.set(USER_SCOPE.DOMAIN, userDomain)
+				.set(USER_SCOPE.USER_ID, userId)
+				.set(USER_SCOPE.SCOPE, scopeId)
+				.execute();
+		}
+	}
+
+	private static void deleteOldSellerUserScope(AONContext ctx, Fee fee, Integer oldSeller) {
+		removeSellerUserScope(ctx, fee, oldSeller);
+	}
+
 	private static void deleteSellerUserScope(AONContext ctx, Fee fee) {
 		Seller seller = fee.getSeller();
-		
-		Result<CustomerFeeRecord> customerFees = ctx.getDslContext().selectFrom(CUSTOMER_FEE)
-				.where(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))
-				.fetch();
-		
-		// Exist seller in other fee
-		Optional<CustomerFeeRecord> oldSellerCustomerFee = customerFees.stream().filter(customerFee -> 
-			null != customerFee.getSeller() && 
-			customerFee.getSeller().equals(seller.getId()) && 
-			!customerFee.getId().equals(fee.getId())).findFirst();
-		
-		if(oldSellerCustomerFee.isEmpty() && null != seller && null != seller.getId()) {
-			
-			Result<RsellerRecord> rseller = ctx.getDslContext().selectFrom(RSELLER)
+		if (null == seller || null == seller.getId()) return;
+		removeSellerUserScope(ctx, fee, seller.getId());
+	}
+
+	private static void removeSellerUserScope(AONContext ctx, Fee fee, Integer sellerId) {
+		if (null == sellerId || null == fee.getCustomer() || null == fee.getCustomer().getId()) return;
+
+		// ¿El seller sigue asignado en otra fee del mismo customer?
+		boolean enOtraFee = ctx.getDslContext().fetchExists(
+				ctx.getDslContext().selectFrom(CUSTOMER_FEE)
+					.where(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))
+					.and(CUSTOMER_FEE.SELLER.eq(sellerId))
+					.and(null == fee.getId() ? DSL.trueCondition() : CUSTOMER_FEE.ID.ne(fee.getId())));
+		if (enOtraFee) return;
+
+		// ¿Sigue como comercial de soporte del customer?
+		boolean esSoporte = ctx.getDslContext().fetchExists(
+				ctx.getDslContext().selectFrom(RSELLER)
 					.where(RSELLER.REGISTRY.eq(fee.getCustomer().getId()))
-					.and(RSELLER.SELLER.eq(seller.getId()))
-					.and(RSELLER.TYPE.eq(RegistrySellerType.SOPORTE.value()))
-					.fetch();
-			
-			if(rseller.isEmpty()) {
-				
-				Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
-						.where(SELLER.REGISTRY.eq(seller.getId()))
-						.fetchOne(SELLER.TASK_HOLDER);
-				
-				if(null != taskHolder) {
-					Integer userId = ctx.getDslContext().select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
-						.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
-						.fetchOne(TASK_HOLDER.USER_ID);
-				
-					if(null != userId) {
-						// Domain Customer Scope
-						Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
-							.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
-							.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
-							.fetch();
-						
-						if(rrelationships.isNotEmpty()) {
-							RrelationshipRecord rrelationship = rrelationships.get(0);
-							
-							// Get domain scope
-							Record company = ctx.getDslContext().select().from(COMPANY)
-								.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
-								.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
-								.fetchOne();
-							
-							if(null != company) {
-							
-								Integer domainScope = company.get(DOMAIN.SCOPE);
-								
-								if(null != domainScope) {
-								
-									// Get user scopes
-									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-											.where(USER_SCOPE.USER_ID.eq(userId))
-											.and(USER_SCOPE.SCOPE.isNotNull())
-											.fetch();
-									
-									Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt ->  domainScope.equals(userScopeIt.getScope())).findFirst();
-									
-									// Delete user scopes
-									if(userScope.isPresent()) {
-										ctx.getDslContext().delete(USER_SCOPE)
-											.where(USER_SCOPE.ID.eq(userScope.get().getId()))
-											.execute();
-									}
-								
-								}
-							}
-						}
-					}
-				}
-				
-			}
-			
-		}
+					.and(RSELLER.SELLER.eq(sellerId))
+					.and(RSELLER.TYPE.eq(RegistrySellerType.SOPORTE.value())));
+		if (esSoporte) return;
+
+		Integer userId = getSellerUserId(ctx, sellerId);
+		if (null == userId) return;
+
+		Record company = getCustomerDomain(ctx, fee.getCustomer().getId());
+		if (null == company || null == company.get(DOMAIN.SCOPE)) return;
+
+		int borrados = ctx.getDslContext().delete(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.and(USER_SCOPE.SCOPE.eq(company.get(DOMAIN.SCOPE)))
+				.execute();
+
+		if (borrados > 0)
+			LOGGER.info("USER_SCOPE eliminado: userId=" + userId + ", scope=" + company.get(DOMAIN.SCOPE)
+				+ ", seller=" + sellerId + ", customer=" + fee.getCustomer().getId());
 	}
 	
 }

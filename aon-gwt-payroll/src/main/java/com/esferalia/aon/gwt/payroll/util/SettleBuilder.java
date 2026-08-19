@@ -116,7 +116,7 @@ public class SettleBuilder {
 			{
 				try
 				{
-					description = croppedString(description, 260, PdfFonts.HELVETICA, 9f);
+					description = croppedString(description, 260, PdfFonts.helvetica(), 9f);
 				} catch (IOException ignored){}
 			}
 
@@ -277,7 +277,7 @@ public class SettleBuilder {
 			{
 				try
 				{
-					description = croppedString(description, 260, PdfFonts.HELVETICA, 9f);
+					description = croppedString(description, 260, PdfFonts.helvetica(), 9f);
 				} catch (IOException ignored){}
 			}
 

@@ -1155,6 +1155,7 @@ export const TYPES = 'Types';
 export const TARIFFS = 'Tariffs';
 export const TEACHERS = 'Teachers';
 export const TEMPLATE_HEADERS_FOOTERS = 'Template Headers and Footers';
+export const UNDEDUCTIBLE_EXPENSES = 'Undeductible Expenses';
 export const UNDEDUCTIBLE_VAT_EXPENSE = 'Undeductible VAT Expense';
 export const UNDEDUCTIBLE_VAT_EXPENSES = 'Undeductible VAT Expenses';
 export const TRANSITION_TYPES = 'Transition Types';

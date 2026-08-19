@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -43,6 +42,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
@@ -199,7 +199,9 @@ public class CustomersServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getDocumentProperty().eq(JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT)));
 		}
 
-		if (api.getData().opt(IJsonNames.SCOPE) != null) {
+		if (api.getData().opt(IJsonNames.SCOPE) != null && JsonUtils.getInt(api.getData(), IJsonNames.SCOPE) == -1) {
+			filter = filter.and(f.getScopeProperty().isNull());
+		} else if (api.getData().opt(IJsonNames.SCOPE) != null) {
 			filter = filter.and(f.getScopeProperty().eq(JsonUtils.getInt(api.getData(), IJsonNames.SCOPE)));
 		}
 
@@ -210,12 +212,15 @@ public class CustomersServlet extends AonApiHttpServlet {
 
 		if (api.getData().opt(IJsonNames.STATUS) != null) {
 			ArrayList<String> list = new ArrayList<>();
-
+ 
 			api.getData().optJSONArray(IJsonNames.STATUS).forEach(str -> list.add(str.toString()));
-
-			Byte[] status = RegistryStatus.safeValueOf(list).stream().map(RegistryStatus::value).toArray(Byte[]::new);
-
-			filter = filter.and(f.getStatusProperty().in(status));
+ 
+			// Antes: f.getStatusProperty().in(status) sobre el estado almacenado
+			Filter statusFilter = RegistryExpirationUtils.effectiveStatusFilter(f,
+					RegistryStatus.safeValueOf(list));
+ 
+			if (null != statusFilter)
+				filter = filter.and(statusFilter);
 		}
 
 		if (api.getData().opt(IJsonNames.RRELATIONSHIP) != null) {
@@ -291,165 +296,251 @@ public class CustomersServlet extends AonApiHttpServlet {
 
 	public static JSONObject saveCustomerNote(AonApiData api) {
 
-		System.out.println(api.getData());
-
 		boolean isSig = JsonUtils.getboolean(api.getData(), "isSig");
-
 		Integer customerId = JsonUtils.getInteger(api.getData(), "customerId");
-
-		String newStatusStr = JsonUtils.getString(api.getData(), "status");
-		RegistryStatus newStatus = RegistryStatus.valueOf(newStatusStr);
-
 		String tagName = JsonUtils.getString(api.getData(), "tagName");
+		String dateStr = JsonUtils.getString(api.getData(), "date");
+
+		RegistryStatus newStatus = RegistryStatus.valueOf(JsonUtils.getString(api.getData(), "status"));
+
+		// Misma normalizacion que aplica CustomerAutoComplete al guardar el cliente:
+		// ACTIVE/INACTIVE -> null, BLOCKED -> fecha recibida o hoy si viene vacia.
+		Date newExpirationDate = RegistryExpirationUtils.normalizeExpirationDate(
+				newStatus, AonDateUtils.simpleParse(dateStr));
 
 		Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(),
 				api.getUser().getLogin(), f -> f.getIdProperty().eq(customerId));
 
-		if (!newStatus.equals(customer.getStatus())) {
+		boolean statusChanged = !newStatus.equals(customer.getStatus());
+		boolean dateChanged = !isSameDate(newExpirationDate, customer.getExpirationDate());
 
-			String comments = "Cambio estado de " + customer.getStatus().getDescription() + " a "
-					+ newStatus.getDescription() + ". ";
-			comments += "\nMotivo: " + tagName;
+		if (!statusChanged && !dateChanged)
+			return new JSONObject();
 
-			String dateStr = JsonUtils.getString(api.getData(), "date");
-			if (AonStringUtils.isNotBlank(dateStr))
-				comments += "\nF. Expiracion: " + dateStr;
+		saveStatusNote(api, customer, customerId, newStatus, newExpirationDate, tagName, statusChanged);
 
-			RegistryNote note = new RegistryNote().setDomain(api.getDomain().getId()).setRegistry(customerId)
-					.setNoteDate(new Date()).setNoteType(NoteType.CUSTOMER_STATUS).setConfidential(true)
-					.setDescription(newStatus.getDescription()).setComments(comments);
+		syncLinkedDomains(api, customerId, isSig, newStatus, newExpirationDate);
 
-			AON.saveRegistryNote(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), note);
-
-			// Update domain (work for all except SIG)
-			Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(),
-					api.getUser(), f -> f.getRegistryProperty().eq(customerId));
-			if (rrelationship.isPresent()) {
-				Enterprise enterprise = AON.getEnterprise(api.getDomain().getName(), api.getDomain().getId(),
-						api.getUser().getLogin(), rrelationship.get().getRelatedRegistry());
-				if (null != enterprise) {
-					Domain domainCustomer = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
-							api.getUser().getLogin(), f -> f.getIdProperty().eq(enterprise.getDomain()));
-
-					Date expirationDate = AonDateUtils.simpleParse(dateStr);
-
-					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
-					domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
-
-					AON.updateDomainStatus(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-							domainCustomer);
-
-				}
-			} else if (isSig) {
-				Stream<RegistryAddInfo> registryAddInfoStream = AON.getRegistryAddInfoStream(api.getDomain().getName(),
-						api.getDomain().getId(), api.getUser().getLogin(),
-						f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")
-								.or(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA"))));
-
-				List<RegistryAddInfo> registryAddInfoList = registryAddInfoStream.collect(Collectors.toList());
-				
-				if(registryAddInfoList.size() > 0) {
-					Map<Integer, String> domainMap = new HashMap<>();
-
-					Map<String, Map<String, String>> grouped = registryAddInfoList.stream().collect(
-							Collectors.groupingBy(rec -> rec.getAttribute().replaceAll("AON_DOMAIN(\\d+)_.*", "$1"),
-									Collectors.toMap(rec -> rec.getAttribute().endsWith("_ID") ? "ID" : "SCHEMA",
-											RegistryAddInfo::getValue)));
-
-					grouped.values().forEach(entry -> {
-						Integer id = Integer.parseInt( entry.get("ID") );
-						String schema = entry.get("SCHEMA");
-						if (id != null && schema != null) {
-							domainMap.put(id, schema);
-						}
-					});
-					
-					domainMap.entrySet().forEach(entry -> {
-						Integer domainId = entry.getKey();
-						String schema = entry.getValue();
-						
-						Domain domainCustomer = AON_SOLUTIONS.getDomainBySchema(schema, domainId);
-						
-						Date expirationDate = AonDateUtils.simpleParse(dateStr);
-
-						domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
-						domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
-
-						AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
-								domainCustomer);
-					});
-				} else {
-					Domain domainCustomer = AON_SOLUTIONS.getDomainByAonCustomer(customerId);
-					
-					Date expirationDate = AonDateUtils.simpleParse(dateStr);
-
-					domainCustomer.setExpirationDate(newStatus.equals(RegistryStatus.ACTIVE) ? null : expirationDate);
-					domainCustomer.setActive( !( (newStatus.equals(RegistryStatus.INACTIVE) || newStatus.equals(RegistryStatus.BLOCKED)) && null == domainCustomer.getExpirationDate()) );
-
-					AON.updateDomainStatus(domainCustomer.getName(), domainCustomer.getId(), api.getUser().getLogin(),
-							domainCustomer);
-				}
-
-			}
-			
-			List<RegistrySeller> rsellerList = AON.getRegistrySellerStream(
-					api.getDomain(), 
-					api.getUser().getLogin(), 
-					f -> f.getDomainProperty().eq(api.getDomain().getId())
-						.and(f.getRegistryProperty().eq(customerId))
-						.and(f.getStatusProperty().eq(RegistrySellerStatus.ACTIVE.value()))
-						.and(f.getStartDateProperty().le(AonDateUtils.toSql(new Date())))
-					).collect(Collectors.toList());
-			if(!rsellerList.isEmpty()) {
-				
-				Set<Integer> sellerIds =
-					    rsellerList.stream()
-					        .map(RegistrySeller::getSeller)   
-					        .filter(Objects::nonNull)         
-					        .map(Seller::getId)               
-					        .filter(Objects::nonNull)         
-					        .collect(Collectors.toSet());   
-				
-				sellerIds.forEach(sellerId -> {
-					RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getRegistryProperty().eq(sellerId)).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
-					if(AonStringUtils.isNotBlank(emailMedia.getValue()) && AonValidationUtil.isValidEmail(emailMedia.getValue())) {
-						
-						String from = getFromMessage(api);
-						String logoUrl = getLogoUrl(api);
-						
-						Domain useDomain = null == api.getDomain().getParentId()
-								? api.getDomain()
-								: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
-
-							
-						
-						SESMessage msg = new SESMessage()
-								.setFrom(from)
-								.setAlias(useDomain.getDescription())
-								.setTo(emailMedia.getValue())
-								.setSubject("Cambio de estado del cliente " + customer.getName())
-								.setBody(createCustomerStatusChangeTemplate(
-										logoUrl, 
-										useDomain.getDescription(), 
-										customer.getName(),
-										customer.getStatus().getDescription(),
-										newStatus.getDescription(),
-										tagName,
-										dateStr
-								));
-
-						SES.sendEmail(msg);
-						
-					}
-				});
-				
-			}
-			
-			
-			
-		}
+		if (statusChanged)
+			notifySellers(api, customer, newStatus, tagName, newExpirationDate);
 
 		return new JSONObject();
+	}
+
+	// -----------------------------------------------------------------------
+	// Nota de auditoria
+	// -----------------------------------------------------------------------
+
+	private static void saveStatusNote(AonApiData api, Customer customer, Integer customerId,
+			RegistryStatus newStatus, Date newExpirationDate, String tagName, boolean statusChanged) {
+
+		String comments = statusChanged
+				? "Cambio estado de " + description(customer.getStatus()) + " a " + newStatus.getDescription() + ". "
+				: "Cambio de fecha de expiracion en estado " + newStatus.getDescription() + ". ";
+
+		comments += "\nMotivo: " + tagName;
+
+		if (null != newExpirationDate)
+			comments += "\nF. Expiracion: " + AonDateUtils.simpleFormat(newExpirationDate);
+
+		RegistryNote note = new RegistryNote()
+				.setDomain(api.getDomain().getId())
+				.setRegistry(customerId)
+				.setNoteDate(new Date())
+				.setNoteType(NoteType.CUSTOMER_STATUS)
+				.setConfidential(true)
+				.setDescription(newStatus.getDescription())
+				.setComments(comments);
+
+		AON.saveRegistryNote(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), note);
+	}
+
+	// -----------------------------------------------------------------------
+	// Sincronizacion con los dominios vinculados
+	// -----------------------------------------------------------------------
+
+	private static void syncLinkedDomains(AonApiData api, Integer customerId, boolean isSig,
+			RegistryStatus newStatus, Date newExpirationDate) {
+
+		Optional<RegistryRelationship> rrelationship = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(),
+				api.getUser(), f -> f.getRegistryProperty().eq(customerId));
+
+		// Caso general (todo menos SIG)
+		if (rrelationship.isPresent()) {
+			Enterprise enterprise = AON.getEnterprise(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), rrelationship.get().getRelatedRegistry());
+
+			if (null == enterprise)
+				return;
+
+			Domain domainCustomer = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> f.getIdProperty().eq(enterprise.getDomain()));
+
+			// OJO: contexto = dominio del llamante (comportamiento original)
+			applyToDomain(api, api.getDomain().getName(), api.getDomain().getId(),
+					domainCustomer, newStatus, newExpirationDate);
+			return;
+		}
+
+		if (!isSig)
+			return;
+
+		Map<Integer, String> domainMap = getSigDomainMap(api, customerId);
+
+		// SIG sin AON_DOMAINn_*: dominio unico referenciado por domain.aonCustomer
+		if (domainMap.isEmpty()) {
+			Domain domainCustomer = AON_SOLUTIONS.getDomainByAonCustomer(customerId);
+
+			if (null == domainCustomer || null == domainCustomer.getId())
+				return;
+
+			// OJO: contexto = dominio destino (comportamiento original)
+			applyToDomain(api, domainCustomer.getName(), domainCustomer.getId(),
+					domainCustomer, newStatus, newExpirationDate);
+			return;
+		}
+
+		// SIG multi-dominio: se propaga el mismo estado y fecha a todos
+		domainMap.forEach((domainId, schema) -> {
+			Domain domainCustomer = AON_SOLUTIONS.getDomainBySchema(schema, domainId);
+
+			if (null == domainCustomer || null == domainCustomer.getId()) {
+				LOGGER.warning("SIG: dominio no encontrado (schema=" + schema + ", id=" + domainId + ")");
+				return;
+			}
+
+			applyToDomain(api, domainCustomer.getName(), domainCustomer.getId(),
+					domainCustomer, newStatus, newExpirationDate);
+		});
+	}
+
+	/**
+	 * Unico punto donde se traduce estado de cliente -> estado de dominio.
+	 * Sustituye al antiguo setActive(!((INACTIVE||BLOCKED) && null==fecha)).
+	 */
+	private static void applyToDomain(AonApiData api, String ctxDomainName, Integer ctxDomainId,
+			Domain domain, RegistryStatus newStatus, Date newExpirationDate) {
+
+		if (null == domain || null == domain.getId()) {
+			LOGGER.warning("Dominio vinculado no encontrado, no se sincroniza el estado");
+			return;
+		}
+
+		domain.setExpirationDate(newExpirationDate);
+		domain.setActive(RegistryExpirationUtils.domainActive(newStatus));
+
+		AON.updateDomainStatus(ctxDomainName, ctxDomainId, api.getUser().getLogin(), domain);
+	}
+
+	private static Map<Integer, String> getSigDomainMap(AonApiData api, Integer customerId) {
+
+		List<RegistryAddInfo> list = AON.getRegistryAddInfoStream(api.getDomain().getName(),
+				api.getDomain().getId(), api.getUser().getLogin(),
+				f -> f.getRegistryProperty().eq(customerId).and(f.getAttributeProperty().like("AON_DOMAIN%_ID")
+						.or(f.getAttributeProperty().like("AON_DOMAIN%_SCHEMA"))))
+				.collect(Collectors.toList());
+
+		Map<Integer, String> domainMap = new HashMap<>();
+
+		if (list.isEmpty())
+			return domainMap;
+
+		Map<String, Map<String, String>> grouped = list.stream().collect(
+				Collectors.groupingBy(rec -> rec.getAttribute().replaceAll("AON_DOMAIN(\\d+)_.*", "$1"),
+						Collectors.toMap(rec -> rec.getAttribute().endsWith("_ID") ? "ID" : "SCHEMA",
+								RegistryAddInfo::getValue)));
+
+		grouped.values().forEach(entry -> {
+			String id = entry.get("ID");
+			String schema = entry.get("SCHEMA");
+
+			// El codigo anterior hacia parseInt antes de comprobar null -> NPE
+			if (AonStringUtils.isNotBlank(id) && AonStringUtils.isNotBlank(schema))
+				domainMap.put(Integer.valueOf(id.trim()), schema);
+		});
+
+		return domainMap;
+	}
+
+	// -----------------------------------------------------------------------
+	// Aviso a los agentes
+	// -----------------------------------------------------------------------
+
+	private static void notifySellers(AonApiData api, Customer customer, RegistryStatus newStatus,
+			String tagName, Date newExpirationDate) {
+
+		List<RegistrySeller> rsellerList = AON.getRegistrySellerStream(
+				api.getDomain(),
+				api.getUser().getLogin(),
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getRegistryProperty().eq(customer.getId()))
+					.and(f.getStatusProperty().eq(RegistrySellerStatus.ACTIVE.value()))
+					.and(f.getStartDateProperty().le(AonDateUtils.toSql(new Date())))
+				).collect(Collectors.toList());
+
+		if (rsellerList.isEmpty())
+			return;
+
+		Set<Integer> sellerIds = rsellerList.stream()
+				.map(RegistrySeller::getSeller)
+				.filter(Objects::nonNull)
+				.map(Seller::getId)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+
+		if (sellerIds.isEmpty())
+			return;
+
+		// Se calculaban dentro del bucle, una vez por agente
+		String from = getFromMessage(api);
+		String logoUrl = getLogoUrl(api);
+		String expirationStr = AonDateUtils.simpleFormat(newExpirationDate);
+
+		Domain useDomain = null == api.getDomain().getParentId()
+				? api.getDomain()
+				: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+						f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+
+		sellerIds.forEach(sellerId -> {
+			RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
+					f -> f.getDomainProperty().eq(api.getDomain().getId())
+						.and(f.getRegistryProperty().eq(sellerId))
+						.and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+
+			if (null == emailMedia || AonStringUtils.isBlank(emailMedia.getValue())
+					|| !AonValidationUtil.isValidEmail(emailMedia.getValue()))
+				return;
+
+			SESMessage msg = new SESMessage()
+					.setFrom(from)
+					.setAlias(useDomain.getDescription())
+					.setTo(emailMedia.getValue())
+					.setSubject("Cambio de estado del cliente " + customer.getName())
+					.setBody(createCustomerStatusChangeTemplate(
+							logoUrl,
+							useDomain.getDescription(),
+							customer.getName(),
+							description(customer.getStatus()),
+							newStatus.getDescription(),
+							tagName,
+							expirationStr));
+
+			SES.sendEmail(msg);
+		});
+	}
+
+	// -----------------------------------------------------------------------
+	// Helpers
+	// -----------------------------------------------------------------------
+
+	private static boolean isSameDate(Date a, Date b) {
+		if (null == a && null == b) return true;
+		if (null == a || null == b) return false;
+		return AonDateUtils.isSameDay(a, b);
+	}
+
+	private static String description(RegistryStatus status) {
+		return null == status ? RegistryStatus.ACTIVE.getDescription() : status.getDescription();
 	}
 	
 	private static String getLogoUrl(AonApiData api) {

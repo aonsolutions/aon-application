@@ -27,11 +27,51 @@ export class AonCustomerList extends AonRegistryList {
 	}
 	
 	async getRegistries() {
-	    this.filter = { ...this.filter, additional_info: ["MEDIA"] };
-	    console.log("getRegistries filter", this.filter);
-	    let customers = await getCustomers(this.filter);
-	    (customers || []).forEach(c => { c.contact = this.buildContactCell(c.media); });
-	    return customers;
+		this.filter = { ...this.filter, additional_info: ["MEDIA"] };
+		let customers = await getCustomers(this.filter);
+ 
+		(customers || []).forEach(c => {
+			c.contact = this.buildContactCell(c.media);
+ 
+			// OJO AL ORDEN: se calcula antes de tocar c.status, que es lo que
+			// distingue un bloqueo programado de uno ya efectivo
+			c.blockDate = this.buildBlockDate(c);
+ 
+			// La columna Estado usa MSG[c.status]. Ponemos el estado efectivo
+			// para que lo que se ve coincida con lo que filtra: un BLOCKED con
+			// fecha futura se lista como ACTIVE.
+			// Es seguro sobrescribirlo: buildRegistry() vuelve a pedir el
+			// cliente completo al servidor usando solo el id.
+			if (c.effectiveStatus) c.status = c.effectiveStatus;
+		});
+ 
+		return customers;
+	}
+ 
+	/**
+	 * Devuelve la fecha solo cuando el bloqueo esta programado y aun no ha
+	 * llegado. Si ya vencio, el cliente sale como Bloqueado y la fecha sobra.
+	 */
+	buildBlockDate(customer) {
+		const scheduled = customer.status === "BLOCKED"
+				&& customer.effectiveStatus === "ACTIVE";
+ 
+		return scheduled ? this.formatShortDate(customer.expirationDate) : '';
+	}
+ 
+	/** 'yyyy-MM-dd' -> 'dd/MM/yyyy' */
+	formatShortDate(value) {
+		if (!value) return '';
+ 
+		const parts = String(value).split("-");
+		if (parts.length !== 3) return String(value);
+ 
+		return `${parts[2]}/${parts[1]}/${parts[0]}`;
+	}
+ 
+	addCustomColumns() {
+		this.TABLE.addColumn('Bloqueo', 'string', 'blockDate', '10%');
+		this.TABLE.addColumn('Contacto', 'html', 'contact', '10%');
 	}
 	
 	buildContactCell(media) {
@@ -159,12 +199,16 @@ export class AonCustomerList extends AonRegistryList {
 		searchInput.value = searchValue ? searchValue : '';
 		
 		let scopeEl = this.getElement("scope");
-        getScopes().then(scopes=>{
-            scopeEl.setOptions(scopes.map(c=> ({...c, value: c.id})) );
-
-            const value = this.filter.scope;
-			scopeEl.setValue(value);
-        })
+		
+		getScopes().then(scopes => {
+		    const options = [
+		        { name: 'Sin ámbito', value: -1 },
+		        ...scopes.map(c => ({ ...c, value: c.id }))
+		    ];
+		
+		    scopeEl.setOptions(options);
+		    scopeEl.setValue(this.filter.scope);
+		});
 
         let projectTypeEl = this.getElement("projectType");
         getProjectTypes({})
@@ -255,10 +299,6 @@ export class AonCustomerList extends AonRegistryList {
 
 	setClientFile(clientFile) {
 		this.clientFile = clientFile;
-	}
-	
-	addCustomColumns() {
-	    this.TABLE.addColumn('Contacto', 'html', 'contact', '10%');
 	}
 
 }

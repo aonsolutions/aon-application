@@ -1446,7 +1446,6 @@ export class AonNewMenu extends AonElement {
 
 	async newIncome() {
 		let invoicePanel = new AonInvoicePanel();
-		invoicePanel.option = OPTION.CREATE_OTHER_INCOMES;
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewIncome());
 		this.rootPanel(invoicePanel);
 		this.setAppClassName(Apps.INVOICE);
@@ -1456,7 +1455,6 @@ export class AonNewMenu extends AonElement {
 
 	async newExpense() {
 		let invoicePanel = new AonInvoicePanel();
-		invoicePanel.option = OPTION.CREATE_OTHER_EXPENSES;
 		invoicePanel.addEventListener(EVENT.BUILD, () => invoicePanel.aonNewExpense());
 		this.rootPanel(invoicePanel);
 		this.setAppClassName(Apps.INVOICE);

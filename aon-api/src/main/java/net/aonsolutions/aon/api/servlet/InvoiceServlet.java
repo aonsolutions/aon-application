@@ -13,7 +13,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -73,7 +72,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Gender;
-import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
@@ -103,7 +101,6 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
-import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 import net.aonsolutions.aon.in.pdf.maker.PdfMaker;
@@ -169,15 +166,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/configuration":
 				response(req, resp, saveConfiguration(api));
-				break;
-			case "/selfconta":
-				response(req, resp, setSelfcontaInvoice(api));
-				break;
-			case "/selfconta_import":
-				response(req, resp, selfconta(api));
-				break;
-			case "/selfconta_record":
-				response(req, resp, selfcontaRecord(api));
 				break;
 			case "/fix":
 				response(req, resp, fix(api));
@@ -655,34 +643,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			.setData(signedData);
 		AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
 		return new JSONObject();
-	}
-	
-	private JSONObject setSelfcontaInvoice(AonApiData api) {
-		BidoqRequest.selfconta2Aon(api.getDomain(), api.getUser(), api.getData());
-		return new JSONObject();
-	}
-	
-	private JSONObject selfconta(AonApiData api) throws JSONException, Exception {
-		Integer year = null;
-		if(api.getData().opt("year") != null) {
-			year = api.getData().optInt("year");
-		}
-		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-		BidoqRequest.selfconta(api.getDomain(), api.getUser(), company.getDocument(), year);
-		return new JSONObject();
-	}
-	
-	private JSONObject selfcontaRecord(AonApiData api) throws Exception {
-		String status = JsonUtils.getString(api.getData(), IJsonNames.STATUS);
-		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
-		if(invoice.getId() == null || isRawdoc(status)) {
-			invoice.detailStream().forEach(d -> d.setSource(InvoiceSource.ACCOUNT));
-			invoice = AON_SOLUTIONS.validateInvoice(api.getDomain(), api.getUser(), invoice);
-		} else invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
-
-		BidoqRequest.selfcontaRecord(api.getDomain(), api.getUser(), invoice, api.getData());
-		
-		return InvoiceJSON.toJSON(invoice);
 	}
 	
 	public static File getFile(Drive drive, String id){

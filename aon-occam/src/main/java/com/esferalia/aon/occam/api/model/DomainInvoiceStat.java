@@ -30,7 +30,8 @@ public class DomainInvoiceStat implements Serializable {
 	
 	private int proformas;
 	private int unrecordedIssued;
-	private int unrecordedReceived;
+	private int unrecordedPurchased;
+	private int unrecordedExpensed;
 	private int unrecordedSimplified;
 	
 	private int draft;
@@ -198,14 +199,24 @@ public class DomainInvoiceStat implements Serializable {
 		return this;
 	}
 	
-	public int getUnrecordedReceived() {
-		return unrecordedReceived;
+	public int getUnrecordedPurchased() {
+		return unrecordedPurchased;
 	}
-	public DomainInvoiceStat setUnrecordedReceived(int unrecordedReceived) {
-		this.unrecordedReceived = unrecordedReceived;
+	
+	public DomainInvoiceStat setUnrecordedPurchased(int unrecordedPurchased) {
+		this.unrecordedPurchased = unrecordedPurchased;
 		return this;
 	}
 	
+	public int getUnrecordedExpensed() {
+		return unrecordedExpensed;
+	}
+	
+	public DomainInvoiceStat setUnrecordedExpensed(int unrecordedExpensed) {
+		this.unrecordedExpensed = unrecordedExpensed;
+		return this;
+	}
+		
 	public int getUnrecordedSimplified() {
 		return unrecordedSimplified;
 	}
@@ -259,7 +270,8 @@ public class DomainInvoiceStat implements Serializable {
 	public void addProformas(int c) {this.proformas += c;}
 	
 	public void addUnrecordedIssued(int c) {this.unrecordedIssued += c;}
-	public void addUnrecordedReceived(int c) {this.unrecordedReceived += c;}
+	public void addUnrecordedPurchased(int c) {this.unrecordedPurchased += c;}
+	public void addUnrecordedExpensed(int c) {this.unrecordedExpensed += c;}
 	public void addUnrecordedSimplified(int c) {this.unrecordedSimplified += c;}
 	
 	public void addDraft(int c) {this.draft += c;}

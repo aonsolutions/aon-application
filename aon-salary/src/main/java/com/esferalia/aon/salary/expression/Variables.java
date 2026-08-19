@@ -187,7 +187,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			List<T> result = new ArrayList<>();
 			
 			for (ITimedVariable<Object> variable : variables) {
-				Object value = variable.getValue(period);
+				Object value = variable.getValue(period.intersect(variable.getPeriod()));
 				T t = value == null ? def : mapper.apply(value);
 				read(key, variable,t);
 				result.add(t);

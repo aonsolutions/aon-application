@@ -123,32 +123,32 @@ public class InvoiceListTemplate {
 	private void drawHeader() throws IOException {
 		x = SIDE_MARGIN;
 		y = heigth - SIDE_MARGIN;
-		PDFToolkit.drawText(contentStream, TITLE_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, 15f);
+		PDFToolkit.drawText(contentStream, TITLE_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), 15f);
 		y -= 18;
 		
 		float companyNameMaxWidth = width - SIDE_MARGIN - 125 - x;
-		String safeCompanyName = PDFToolkit.croppedString(AonStringUtils.trimToEmpty(companyName), companyNameMaxWidth, PdfFonts.HELVETICA, 11f);
+		String safeCompanyName = PDFToolkit.croppedString(AonStringUtils.trimToEmpty(companyName), companyNameMaxWidth, PdfFonts.helvetica(), 11f);
 		
-		PDFToolkit.drawText(contentStream, safeCompanyName, x, y, PdfColors.BLACK, PdfFonts.HELVETICA, 11f);
+		PDFToolkit.drawText(contentStream, safeCompanyName, x, y, PdfColors.BLACK, PdfFonts.helvetica(), 11f);
 		x = width - SIDE_MARGIN - 120;
-		PDFToolkit.drawText(contentStream, DATE_TXT + ": " + com.esferalia.aon.watson.server.AonDateUtils.format(new Date(), com.esferalia.aon.watson.server.AonDateUtils.SIMPLE_DATE_FORMAT), x, y, PdfColors.BLACK, PdfFonts.HELVETICA, 11f);
+		PDFToolkit.drawText(contentStream, DATE_TXT + ": " + com.esferalia.aon.watson.server.AonDateUtils.format(new Date(), com.esferalia.aon.watson.server.AonDateUtils.SIMPLE_DATE_FORMAT), x, y, PdfColors.BLACK, PdfFonts.helvetica(), 11f);
 		y -= 20;
 		x = FIRST_COLUMN;
-		PDFToolkit.drawText(contentStream, DATE_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, DATE_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = SECOND_COLUMN;
-		PDFToolkit.drawText(contentStream, INVOICE_NUMBER_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, INVOICE_NUMBER_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = THIRD_COLUMN;
-		PDFToolkit.drawText(contentStream, NIF_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, NIF_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = FOURTH_COLUMN;
-		PDFToolkit.drawText(contentStream, TITULAR_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, TITULAR_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = FIFTH_COLUMN;
-		PDFToolkit.drawText(contentStream, BASE_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, BASE_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = SIXTH_COLUMN;
-		PDFToolkit.drawText(contentStream, IVA_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, IVA_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = SEVENTH_COLUMN;
-		PDFToolkit.drawText(contentStream, IRPF_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, IRPF_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = EIGTH_COLUMN;
-		PDFToolkit.drawText(contentStream, TOTAL_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, TOTAL_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		y -= 5;
 		PDFToolkit.drawBox(contentStream, SIDE_MARGIN, y, width - 2 * SIDE_MARGIN, 1.5f, PdfColors.BLACK);
 		x = SIDE_MARGIN;
@@ -165,26 +165,26 @@ public class InvoiceListTemplate {
 		while (currentEntryIndex <= to && to < entries.size()) {
 			InvoiceListEntry entry = entries.get(currentEntryIndex);
 			x = FIRST_COLUMN;
-			PDFToolkit.drawText(contentStream, getDateString(entry.getDate()), x, y, PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE);
+			PDFToolkit.drawText(contentStream, getDateString(entry.getDate()), x, y, PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE);
 			x = SECOND_COLUMN;
-			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(entry.getNumber()), x, y, PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE);			
+			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(entry.getNumber()), x, y, PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE);			
 			x = THIRD_COLUMN;
-			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(entry.getNif()), x, y, PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE);			
+			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(entry.getNif()), x, y, PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE);			
 			x = FOURTH_COLUMN;
-			String clientName = PDFToolkit.croppedString(AonStringUtils.trimToEmpty(entry.getName()), (FIFTH_COLUMN - FOURTH_COLUMN - 5), PdfFonts.HELVETICA, DATA_FONT_SIZE);
-			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(clientName), x, y, PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE);			
+			String clientName = PDFToolkit.croppedString(AonStringUtils.trimToEmpty(entry.getName()), (FIFTH_COLUMN - FOURTH_COLUMN - 5), PdfFonts.helvetica(), DATA_FONT_SIZE);
+			PDFToolkit.drawText(contentStream, AonStringUtils.trimToEmpty(clientName), x, y, PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE);			
 			x = FIFTH_COLUMN;
-			float boxWidth = PDFToolkit.fontWidth(BASE_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getBase()), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+			float boxWidth = PDFToolkit.fontWidth(BASE_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getBase()), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 			x = SIXTH_COLUMN;
-			boxWidth = PDFToolkit.fontWidth(IVA_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getIva()), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+			boxWidth = PDFToolkit.fontWidth(IVA_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getIva()), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 			x = SEVENTH_COLUMN;
-			boxWidth = PDFToolkit.fontWidth(IRPF_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getIrpf()), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+			boxWidth = PDFToolkit.fontWidth(IRPF_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getIrpf()), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 			x = EIGTH_COLUMN;
-			boxWidth = PDFToolkit.fontWidth(TOTAL_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getTotal()), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+			boxWidth = PDFToolkit.fontWidth(TOTAL_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+			PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(entry.getTotal()), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 			
 			addToTotals(entry);
 			y -= 12.5;
@@ -198,7 +198,7 @@ public class InvoiceListTemplate {
 		y -= 15;
 		x = 475;
 		String pageString = String.format(PAGE_TXT + " %d " + OF_TXT + " %d" , currentPage, totalPages);
-		PDFToolkit.drawText(contentStream, pageString, x, y, PdfColors.BLACK, PdfFonts.HELVETICA, 10);
+		PDFToolkit.drawText(contentStream, pageString, x, y, PdfColors.BLACK, PdfFonts.helvetica(), 10);
 	}
 	
 	private void drawTotals() throws IOException {
@@ -206,19 +206,19 @@ public class InvoiceListTemplate {
 		PDFToolkit.drawBox(contentStream, x, y, width - x - SIDE_MARGIN, 1f, PdfColors.BLACK);
 		x += 40;
 		y -= 12.5;
-		PDFToolkit.drawText(contentStream, TOTAL_TXT, x, y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, DATA_FONT_SIZE);
+		PDFToolkit.drawText(contentStream, TOTAL_TXT, x, y, PdfColors.BLACK, PdfFonts.helveticaBold(), DATA_FONT_SIZE);
 		x = FIFTH_COLUMN;
-		float boxWidth = PDFToolkit.fontWidth(BASE_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalBase), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+		float boxWidth = PDFToolkit.fontWidth(BASE_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalBase), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 		x = SIXTH_COLUMN;
-		boxWidth = PDFToolkit.fontWidth(IVA_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalIva), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+		boxWidth = PDFToolkit.fontWidth(IVA_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalIva), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 		x = SEVENTH_COLUMN;
-		boxWidth = PDFToolkit.fontWidth(IRPF_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalIrpf), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+		boxWidth = PDFToolkit.fontWidth(IRPF_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalIrpf), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 		x = EIGTH_COLUMN;
-		boxWidth = PDFToolkit.fontWidth(TOTAL_TXT, DATA_FONT_SIZE, PdfFonts.HELVETICA_BOLD);
-		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalTotal), PdfColors.BLACK, PdfFonts.HELVETICA, DATA_FONT_SIZE, 0, 0);
+		boxWidth = PDFToolkit.fontWidth(TOTAL_TXT, DATA_FONT_SIZE, PdfFonts.helveticaBold());
+		PDFToolkit.drawTextRight(contentStream, new PDRectangle(x, y, boxWidth, DATA_FONT_SIZE), PdfFormats.toLatinNumber(totalTotal), PdfColors.BLACK, PdfFonts.helvetica(), DATA_FONT_SIZE, 0, 0);
 	}
 	
 	public void print(OutputStream os) throws CanNotCreatePdfException {

@@ -680,6 +680,11 @@ public class JooqAgreementTab {
 							update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
 								.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain() ).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
 								.execute();
+							
+							dslContext.update(AGREEMENT_PAYMENT)
+								.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
+								.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
+								.execute();
 						}
 					}
 							

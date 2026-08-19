@@ -121,7 +121,7 @@ public class PDFToolkit {
 	) throws IOException {
 		//METER AQUÍ LAS EXCEPCIONES QUE VAYAN SURGIENDO
 		String textToWrite = content;
-		if (PdfFonts.HELVETICA.equals(font)) {
+		if (PdfFonts.isHelvetica(font)) {
 			textToWrite = AonStringUtils.replace(textToWrite, "\u0009", "  ");
 		}
 		contents.setNonStrokingColor(color);

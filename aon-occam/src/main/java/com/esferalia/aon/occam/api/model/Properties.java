@@ -893,6 +893,7 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getTransactionProperty();
 		Property<Byte> getStatusProperty();
+		Property<Date> getExpirationDateProperty();
 		Property<Integer> getScopeProperty();
 		Property<Byte> getEInvoiceProperty();
 		Property<Integer> getInvoicingGroupProperty();

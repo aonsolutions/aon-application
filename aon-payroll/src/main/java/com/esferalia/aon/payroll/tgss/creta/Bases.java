@@ -2513,7 +2513,7 @@ public class Bases {
 				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
 		)
 		.forEach( salary -> {
-			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(Double::parseDouble));
+			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(Bases::safeParseDouble));
 			if ( c763 != null && c763 > 0.00 )
 				codigoValorMap.put("763", codigoValorMap.getOrDefault("763", 0.00) + c763);
 		} );
@@ -3672,5 +3672,15 @@ public class Bases {
 				&& autorizado.chars().distinct().count() > 1;
 	}
 	
+	private static double safeParseDouble(String value) {
+		if ( AonStringUtils.isBlank(value))
+			return 0.0;
+		try {
+			AonStringUtils.replace(value, ",", ".");
+			return Double.parseDouble(value);
+		} catch ( NumberFormatException e) {
+			return 0.0;
+		}
+	}
 
 }

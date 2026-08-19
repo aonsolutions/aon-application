@@ -10,8 +10,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CustomerJSON {
 	
@@ -46,7 +48,8 @@ public class CustomerJSON {
 			.setTariff(JsonUtils.getInteger(json, IJsonNames.TARIFF))
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
 			.setWithholding(JsonUtils.getboolean(json, IJsonNames.WITHHOLDING))
-			.setStatus(RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)));
+			.setStatus(RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
+			.setExpirationDate(AonDateUtils.simpleParse(JsonUtils.getString(json, IJsonNames.EXPIRATION_DATE)));
 	}
 	
 
@@ -74,7 +77,20 @@ public class CustomerJSON {
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(customer.getScope()))
 			.put(IJsonNames.TARIFF, customer.getTariff())
 			.put(IJsonNames.TRANSACTION, customer.getTransaction().getTediName())
-			.put(IJsonNames.STATUS, customer.getStatus() != null ? customer.getStatus().name() : RegistryStatus.ACTIVE.name())
+			.put(IJsonNames.STATUS, customer.getStatus() != null
+					? customer.getStatus().name()
+					: RegistryStatus.ACTIVE.name())
+		
+			// Fecha de expiracion (solo con status = BLOCKED)
+			.put(IJsonNames.EXPIRATION_DATE, customer.getExpirationDate() != null
+					? AonDateUtils.format(customer.getExpirationDate(), AonDateUtils.SIMPLE_DATE_FORMAT4)
+					: JSONObject.NULL)
+		
+			// Estado EFECTIVO: un BLOCKED con fecha futura sale como ACTIVE.
+			// 'status' se deja intacto porque es lo que edita la ficha.
+			.put("effectiveStatus", RegistryExpirationUtils
+					.effective(customer.getStatus(), customer.getExpirationDate())
+					.name())
 			.put(IJsonNames.CREATION_USER, customer.getCreationUser())
 			.put(IJsonNames.CREATION_DATE, customer.getCreationDate()!=null ? customer.getCreationDate().getTime() : null)
 			.put(IJsonNames.MODIFICATION_USER, customer.getModificationUser())

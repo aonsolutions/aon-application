@@ -4368,6 +4368,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						// e.printStackTrace();
 					}
 				};
+				
+				protected double resolveBonus(Date bonusStart, Date bonusEnd, IContractBonus contractBonus, ExpressionContext expressionContext) throws ExpressionException ,UndefinedVariablesException {
+					return 0.00;
+				};
 
 				@Override
 				protected java.util.List<com.esferalia.aon.salary.expression.ITimedResult<Double>> fixGuaranteedResults(
@@ -4927,13 +4931,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //					}
 //				});
 
-		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
-				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
-					@Override
-					public Double create() {
-						return getAdvanceNoticeDays();
-					}
-				});
+//		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
+//				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
+//					@Override
+//					public Double create() {
+//						return getAdvanceNoticeDays();
+//					}
+//				});
 
 		this.implicitExpressionContext.putVariable("SALARIO_VARIABLE_DIA",
 				new LazyTimedExpressionConstant<Double>("SALARIO_VARIABLE_DIA", ExpressionScope.CONTRACT) {
@@ -5406,6 +5410,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					.toList();
 			intersects = split(intersects, partialDrops);
 
+			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getQuoteDays(ctx, p, 1.00);
+				}
+
+			};
+
+			ITimedVariable<?> userQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, p.getStart(),
+					p.getEnd());
+
+			if (userQuoteDays == null) {
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			} else {
+			}
 		}
 
 		// ITs

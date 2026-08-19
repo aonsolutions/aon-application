@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
+import java.util.Date;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.registry.CustomerFiscalStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -30,6 +33,16 @@ public class CustomerAutoComplete {
 		if (customer.getStatus() == null) {
 			ctx.log().debug("\t saving customer: autocomplete status: {0}",RegistryStatus.ACTIVE);
 			customer.setStatus(RegistryStatus.ACTIVE);
+		}
+	};
+	
+	public static final BiConsumer<AONContext,Customer> COMPLETE_EXPIRATION_DATE = (ctx,customer) -> {
+		Date normalized = RegistryExpirationUtils.normalizeExpirationDate(
+				customer.getStatus(), customer.getExpirationDate());
+
+		if (!Objects.equals(normalized, customer.getExpirationDate())) {
+			ctx.log().debug("\t saving customer: autocomplete expirationDate: {0}", normalized);
+			customer.setExpirationDate(normalized);
 		}
 	};
 	
@@ -66,6 +79,7 @@ public class CustomerAutoComplete {
 	public static void autoComplete(AONContext ctx, Customer customer) throws AonCoreException {
 		COMPLETE_TRANSACTION
 		.andThen(COMPLETE_STATUS)
+		.andThen(COMPLETE_EXPIRATION_DATE)
 		.andThen(COMPLETE_FISCAL_STATUS)
 		.andThen(COMPLETE_SCOPE)
 		.accept(ctx, customer);

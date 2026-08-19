@@ -42,8 +42,6 @@ export const deleteInvoice = (data) => remove(`${API_URL}/invoice`, data);
 
 export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, data);
 
-export const selfconta = (year) => post(`${API_URL}/invoice/selfconta_import`, {year});
-export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_record`, data);
 export const recordInvoices = (data) => post(`${API_URL}/invoices/record`, data);
 
 export const getPaymethods = (data) => get(`${API_URL}/paymethods`, data);

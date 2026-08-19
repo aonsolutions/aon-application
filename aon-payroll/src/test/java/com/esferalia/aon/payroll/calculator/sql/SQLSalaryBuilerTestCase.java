@@ -12,10 +12,12 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -234,6 +236,71 @@ public class SQLSalaryBuilerTestCase extends AbstractSQLTestCase {
 					});
 				}
 		);
+
+	}
+
+	@Test
+	public void testSalaryBuilderCompositeDescription()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), String.format("\"%s\"", C100.getValue()));
+						put("SALARIO_DIARIO", "66.67");
+					}
+				},
+				new String[] {
+				}, 
+				new String[] {						
+				},
+				null);
+		//@formatter:on
+		
+		addPayment(aonContext,
+				contract,
+				contract.getStartDate(),
+				contract.getEndDate(),
+				"SALARIO BASE ( @{SALARIO_DIARIO} X @{JORNADAS_REALES} DÍAS )",
+				"SALARIO_DIARIO * JORNADAS_REALES",
+				"_P",
+				"_P",
+				PaymentType.CRA_0001
+				);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,2), add(startDate, Calendar.DAY_OF_MONTH,2), "JORNADAS_REALES", "1");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,4), add(startDate, Calendar.DAY_OF_MONTH,4), "JORNADAS_REALES", "1");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,8), add(startDate, Calendar.DAY_OF_MONTH,8), "JORNADAS_REALES", "1");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,16), add(startDate, Calendar.DAY_OF_MONTH,16), "JORNADAS_REALES", "1");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,20), add(startDate, Calendar.DAY_OF_MONTH,20), "JORNADAS_REALES", "1");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		assertEquals(1, salaries);
+		
+		AON.getSalaries(aonContext, 
+		props->props.getContractProperty().eq(contract.getId()))
+		.flatMap(salary -> salary.getPayments().stream())
+		.forEach(payment -> {
+				System.out.println("Payment description : " + payment.getDescription() );
+				assertEquals("SALARIO BASE ( 66.67 X 5 DÍAS )", payment.getDescription());
+			}
+		)
+		;
+
 
 	}
 	// -------------------------------------------------------------------------

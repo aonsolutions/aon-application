@@ -1149,6 +1149,7 @@ export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
 export const UTILITIES_INVOICES_EXPIRATIONS = 'Utilidades facturas/vencimientos';
+export const UNDEDUCTIBLE_EXPENSES = 'Kengarriak ez diren gastuak';
 export const UNDEDUCTIBLE_VAT_EXPENSE = 'BEZean kengarria ez den gastua';
 export const UNDEDUCTIBLE_VAT_EXPENSES = 'BEZean kengarriak ez diren gastuak';
 export const USER_GROUPS = 'Erabiltzaile taldeak';

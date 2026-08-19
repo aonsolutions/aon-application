@@ -8531,7 +8531,56 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		assertEquals(1850.0 / 30 * monthDays +10.00, salary.getIrpfBase(), DELTA);
 		
 
-	}	// ------------------------------------------------------------------------
+	}	
+	
+	@Test
+	public void testCommonDiseaseAtLackIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		addPrestITs(aonContext, contract);
+		
+		Date startITDate = getFirstDayOfMonth(getToday());
+		Date endITDate = add(startITDate, DAY_OF_MONTH,4);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE_AT_LACK, getFirstDayOfMonth(getToday()),
+				endITDate, null);
+		
+		Date startITDateII = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,19);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE_AT_LACK, startITDateII,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		assertEquals(4, salary.getSalaryPayments().size());
+		assertEquals(1750.00, salary.getCommonBase(), DELTA);
+
+	}
+	
+	// ------------------------------------------------------------------------
 	
 
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
