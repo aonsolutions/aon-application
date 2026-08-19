@@ -50,6 +50,9 @@
    	<table-filter match-name="fs_mod349" exclude="true" />
 	<table-filter match-name="fs_mod349_detail" exclude="true" />
 
+	<table-filter match-name="fs_activity" exclude="true" />
+	<table-filter match-name="fs_activity_info" exclude="true" />
+	
 	<table-filter match-name="fs_vat" exclude="true" />
 	<table-filter match-name="fs_vat_declaration" exclude="true" />
 	<table-filter match-name="fs_vat_detail" exclude="true" />
@@ -958,25 +961,6 @@
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
 	</table>
 
-	<table name="fs_activity" class="com.esferalia.aon.entity.master.FiscalActivity">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<foreign-key constraint-name="FK_FS_ACTIVITY_ACTIVITY">
-			<many-to-one property="activity"/>
-		</foreign-key>
-	</table>
-	
-	<table name="fs_activity_info" class="com.esferalia.aon.entity.master.FiscalActivityInfo">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="info_key" type="com.code.aon.fiscal.enumeration.FiscalActivityInfoKey"/>
-		<column name="type" type="com.code.aon.fiscal.enumeration.FiscalActivityInfoType"/>
-	</table>
-	
 	<table name="fs_batch" class="com.esferalia.aon.entity.master.FiscalBatch">
 		<primary-key>
 			<generator class="identity"/>

@@ -338,8 +338,6 @@ public class AonExporter extends GenericExporter{
         map.put("Prepayment","com.code.aon.finance.Prepayment");
 
 		//AON-FISCAL  	
-		map.put("FiscalActivity","com.code.aon.fiscal.FiscalActivity");
-		map.put("FiscalActivityInfo","com.code.aon.fiscal.FiscalActivityInfo");
 		map.put("FiscalModel","com.code.aon.fiscal.FiscalModel");
 		map.put("FiscalModelDetail","com.code.aon.fiscal.FiscalModelDetail");
 

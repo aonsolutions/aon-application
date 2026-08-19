@@ -171,8 +171,6 @@
 		<mapping class="com.code.aon.finance.Prepayment"/>
 
 		<!-- AON-FISCAL Mapping files -->
-		<mapping class="com.code.aon.fiscal.FiscalActivity"/>
-		<mapping class="com.code.aon.fiscal.FiscalActivityInfo"/>
 		<mapping class="com.code.aon.fiscal.FiscalModel"/>
 		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
 		

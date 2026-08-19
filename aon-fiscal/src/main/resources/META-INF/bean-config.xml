@@ -13,11 +13,4 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="">
-		<pojo>com.code.aon.fiscal.FiscalActivity</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.fiscal.event.FiscalActivityBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
 </bean-config>
