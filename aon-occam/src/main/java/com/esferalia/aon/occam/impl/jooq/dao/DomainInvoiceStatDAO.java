@@ -75,7 +75,8 @@ public class DomainInvoiceStatDAO {
 		if (f == 2) return (
 			stat.getProformas() +
 			stat.getUnrecordedIssued()+
-			stat.getUnrecordedReceived() +
+			stat.getUnrecordedPurchased() +
+			stat.getUnrecordedExpensed() +
 			stat.getUnrecordedSimplified() +
 			stat.getDraft() + 
 			stat.getInProcess()) > 0;
@@ -85,7 +86,8 @@ public class DomainInvoiceStatDAO {
 		if (f == 3) return (
 			stat.getProformas() +
 			stat.getUnrecordedIssued()+
-			stat.getUnrecordedReceived() +
+			stat.getUnrecordedPurchased() +
+			stat.getUnrecordedExpensed() +
 			stat.getUnrecordedSimplified()) > 0;
 		
 		//	4 - "Documentos pendientes"
@@ -139,7 +141,8 @@ public class DomainInvoiceStatDAO {
 				if (status == InvoiceStatus.PENDING ) {
 					if (type.isSales()) stat.addUnrecordedIssued(c);
 					else if (type.isUndeductible()) stat.addUnrecordedSimplified(c);
-					else stat.addUnrecordedReceived(c);
+					else if (type.isPurchase()) stat.addUnrecordedPurchased(c);
+					else stat.addUnrecordedExpensed(c);
 				}
 				
 				boolean withholding = AonEnumUtils.getBoolean( r.get(INVOICE.WITHHOLDING));

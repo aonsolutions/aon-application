@@ -915,71 +915,117 @@ export class AonCustomer extends AonReg {
 			d.open();
 		});
 	}
-
+	
 	async openCustomerInactiveBloqued() {
 
-		if (this.office) {
-			const dialog = this.getApplication().getDialog();
-			dialog.clear();
-
-			if (this.isMobile()) {
-				dialog.type = "fullscreen";
-			} else {
-				dialog.width = "30%";
-			}
-
-			const title = this.registry.status === "BLOCKED" ? "Motivo bloqueo" : (this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
-
-			dialog.setTitle(title);
-
-			let div = document.createElement(TAG.DIV);
-			div.style.display = "flex";
-			div.style.flexDirection = "column";
-			div.style.marginTop = "10px";
-			dialog.setContent(div);
-
-			let selectTag = new AonSelect();
-			selectTag.id = "selectTag";
-			selectTag.title = "Motivo";
-			//selectTag.autocomplete = true;
-			div.appendChild(selectTag);
-
-			selectTag.loading(true);
-			getCustomerStatusTags()
-				.then((tags) => {
-					const options = tags.map((c) => ({ ...c, value: c.id }))
-					selectTag.setOptions(options);
-				})
-				.finally(() => {
-					selectTag.loading(false);
-				});
-
-			let datePicker = new AonNewDate();
-			datePicker.id = "aonDBloquedDatePicker";
-
-			const dateTitle = "F. Expiración Empresa";
-			datePicker.title = dateTitle;
-
-			if (this.registry.status !== "ACTIVE")
-				div.appendChild(datePicker);
-
-			dialog.addSendAction(async () => {
-				if (selectTag.value) {
-					dialog.close();
-					this.getApplication().startLoading();
-					await this.saveNote(selectTag.getDetail().name, datePicker ? datePicker.getDateValue() : undefined);
-					this.buildStatusRegistry();
-					this.save();
-					this.getApplication().stopLoading();
-				}
-			}, MSG.SAVE);
-
-			dialog.open();
-		} else {
+		if (!this.office) {
 			this.buildStatusRegistry();
 			this.save();
+			return;
 		}
 
+		const isBlocked = this.registry.status === "BLOCKED";
+
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+
+		if (this.isMobile()) {
+			dialog.type = "fullscreen";
+		} else {
+			dialog.width = "30%";
+		}
+
+		const title = isBlocked
+			? "Motivo bloqueo"
+			: (this.registry.status === "INACTIVE" ? "Motivo inactividad" : "Motivo activo");
+
+		dialog.setTitle(title);
+
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectTag = new AonSelect();
+		selectTag.id = "selectTag";
+		selectTag.title = "Motivo";
+		div.appendChild(selectTag);
+
+		selectTag.loading(true);
+		getCustomerStatusTags()
+			.then((tags) => {
+				const options = tags.map((c) => ({ ...c, value: c.id }));
+				selectTag.setOptions(options);
+			})
+			.finally(() => {
+				selectTag.loading(false);
+			});
+
+		// Solo en BLOCKED hay fecha de expiracion
+		let datePicker = null;
+
+		if (isBlocked) {
+			datePicker = new AonNewDate();
+			datePicker.id = "aonDBloquedDatePicker";
+			datePicker.title = "F. Expiración Empresa";
+
+			// Se anade antes del setDate: connectedCallback tiene que haber
+			// montado el input para que setDate pueda escribir su valor
+			div.appendChild(datePicker);
+
+			const current = this.toDateValue(this.registry.expirationDate);
+			if (current) datePicker.setDate(current);
+		}
+
+		dialog.addSendAction(async () => {
+			if (!selectTag.value) return;
+
+			dialog.close();
+			this.getApplication().startLoading();
+
+			// null => el backend normaliza a hoy (BLOCKED siempre lleva fecha)
+			const date = datePicker ? datePicker.getDateValue() : null;
+
+			// IMPRESCINDIBLE: el save() posterior manda el registry completo.
+			// Si la fecha no viaja aqui, CustomerAutoComplete la normalizaria
+			// a hoy y perderiamos la fecha elegida, dejando cliente y dominio
+			// desincronizados.
+			this.registry.setExpirationDate(date);
+
+			try {
+				await this.saveNote(selectTag.getDetail().name, date);
+				this.buildStatusRegistry();
+				this.save();
+			} catch (err) {
+				this.showError(err);
+			} finally {
+				this.getApplication().stopLoading();
+			}
+		}, MSG.SAVE);
+
+		dialog.open();
+	}
+
+	/**
+	 * Convierte 'yyyy-MM-dd' en un Date local.
+	 * No usamos new Date(str) porque lo interpreta como UTC y desplazaria
+	 * el dia en zonas con offset negativo.
+	 */
+	toDateValue(value) {
+		if (!value) return null;
+		if (value instanceof Date) return value;
+
+		const parts = String(value).split("-");
+		if (parts.length !== 3) return null;
+
+		const year = Number(parts[0]);
+		const month = Number(parts[1]);
+		const day = Number(parts[2]);
+
+		if (!year || !month || !day) return null;
+
+		return new Date(year, month - 1, day);
 	}
 
 	async saveNote(tagName, date) {

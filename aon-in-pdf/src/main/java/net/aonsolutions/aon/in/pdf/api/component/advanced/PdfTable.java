@@ -3,7 +3,7 @@ package net.aonsolutions.aon.in.pdf.api.component.advanced;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.BLACK;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.GRAY;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.WHITE;
-import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.HELVETICA;
+import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.helvetica;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfSettings.ALIGNMENT.CENTER;
 
 import java.awt.Color;
@@ -75,7 +75,7 @@ public class PdfTable extends PdfComponent {
 		cells = new Object[columns];
 		colors = new Color[columns];
 
-		font = HELVETICA;
+		font = helvetica();
 		fontsize = 10;
 		headerFontsize = fontsize;
 		textColor = BLACK;

@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_UNPAID_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
@@ -1017,6 +1018,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			expressionContext.getPeriods(UNPAID_BASE)
 			.forEach(p -> copyResults(expressionContext, CGP_BASE_MIN, CGP_BASE_ENTERPRISE, p.getStart(), p.getEnd()));
 
+			expressionContext.getPeriods(UNPAID_BASE)
+			.forEach(p -> copyResults(expressionContext, CGP_BASE_MIN, CGP_UNPAID_BASE, p.getStart(), p.getEnd()));
 			
 			
 			salaryBuilder.setCgpBase(cgpBase);
@@ -1838,6 +1841,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
 					&& !AonStringUtils.equals(ContextVariable.MATERNITY.getName(), name)
+					&& !AonStringUtils.equals(ContextVariable.LACK_PERIOD.getName(), name)
 					&& !AonStringUtils.equals(ContextVariable.MEDICAL_INSURANCE, name)
 					&& !ContextVariable.FLEXIBLES.contains(name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() > 0.00*/)
@@ -1959,7 +1963,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					Double tax ;
 					try {
-						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 					} catch ( YesExtraException e ) {
 						tax = e.getTax();
 						resultValue = e.getTax();
@@ -1979,7 +1983,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							public String getIrpfExpression() {
 								return irpfExpression;
 							};
-						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
+						}, resultStart, resultEnd, issueDate, resultValue, resultsDouble, quote);
 						onCheckError(
 						contractPayment,
 						String.format(

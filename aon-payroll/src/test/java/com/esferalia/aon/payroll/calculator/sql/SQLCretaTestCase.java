@@ -9966,7 +9966,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     private static void assertDato(List<Dato> datos, String tipoDato, String codigo, Double valor) {
-	assertDato(datos, tipoDato, codigo, Integer.toString(valor.intValue()));
+	assertDato(datos, tipoDato, codigo, Long.toString(Math.round(valor)));
     }
 
     private static void assertDato(List<Dato> datos, String tipoDato, String codigo, Predicate<String> predicate) {

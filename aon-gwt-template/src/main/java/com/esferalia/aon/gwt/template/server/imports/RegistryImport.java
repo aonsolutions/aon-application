@@ -199,6 +199,19 @@ public class RegistryImport extends Import {
 			return;
 		}
 
+		if(IConstants.NUMBER.equalsIgnoreCase(title)
+				|| IConstants.NUMERO.equalsIgnoreCase(title)
+				|| IConstants.NUMERO2.equalsIgnoreCase(title)) {
+			reg.getRegistry().getMainAddress().setNumber(o.toString());
+			return;
+		}
+		
+		if(IConstants.RESTO_DIRECCION.equalsIgnoreCase(title)
+				|| IConstants.RESTO_DIRECCION2.equalsIgnoreCase(title)) {
+			reg.getRegistry().getMainAddress().setAddress2(o.toString());
+			return;
+		}
+		
 		if(IConstants.CP.equalsIgnoreCase(title)
 				|| IConstants.CODIGO_POSTAL.equalsIgnoreCase(title)
 				|| IConstants.CODIGO_POSTAL2.equalsIgnoreCase(title)) {

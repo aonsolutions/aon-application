@@ -379,22 +379,39 @@ export class AonReg extends AonElement {
 	buildStatusRegistry(){
 		let card = this.getElement(this.GENERAL_CARD);
 		const id = "statusDiv";
-
+ 
 		let statusDiv = this.getElement(id);
 		if(statusDiv) statusDiv.remove();
-
-		const title = this.registry.status ? MSG[this.registry.status] : "";
-
+ 
+		// Registry no tiene estado; solo Customer aporta estos metodos
+		const effective = this.registry.getEffectiveStatus
+				? this.registry.getEffectiveStatus()
+				: this.registry.status;
+ 
+		const scheduled = this.registry.isBlockScheduled
+				&& this.registry.isBlockScheduled();
+ 
+		let title = effective ? MSG[effective] : "";
+		let tooltip = MSG.STATUS;
+ 
 		let color = CSS.variable(COLORS.ONLINE_GREEN);
-		if(this.registry.status === "INACTIVE"){
+		if(effective === "INACTIVE"){
 			color = COLORS.ORANGE;
-		} else if(this.registry.status === "BLOCKED"){
-			color = "#DC4D30"; //CSS.variable(COLORS.MATERIAL_RED);
+		} else if(effective === "BLOCKED"){
+			color = "#DC4D30";
 		}
-
+ 
+		// Esta activo, pero con bloqueo programado: se avisa sin cambiar el color,
+		// porque el punto refleja el estado real de hoy
+		if (scheduled) {
+			const date = AonDateUtils.formatDate(this.registry.getExpirationDateAsDate(), '/');
+			title += ` (bloqueo ${date})`;
+			tooltip = `Bloqueo programado para el ${date}`;
+		}
+ 
 		statusDiv = this.createElement(TAG.DIV);
 		statusDiv.id = id;
-		statusDiv.title = MSG.STATUS;
+		statusDiv.title = tooltip;
 		statusDiv.style.display = "flex";
 		statusDiv.style.columnGap = "5px";
 		statusDiv.style.border = "1px solid";
@@ -403,7 +420,7 @@ export class AonReg extends AonElement {
 		statusDiv.style.padding = "4px";
 		statusDiv.style.cursor = "pointer";
 		card.addSection2(statusDiv);
-
+ 
 		let statusBox = this.createElement(TAG.DIV);
 		statusBox.style.width           = "10px";
 		statusBox.style.height          = "10px";
@@ -411,20 +428,20 @@ export class AonReg extends AonElement {
 		statusBox.style.marginTop       = "3px";
 		statusBox.style.backgroundColor = color;
 		statusDiv.appendChild(statusBox);
-
+ 
 		let statusText = this.createElement(TAG.DIV);
 		statusText.innerText = title;
 		statusText.style.fontSize = "14px";
 		statusText.style.fontWeight = "500";
 		statusText.style.color = "#5f6368";
 		statusDiv.appendChild(statusText);
-
+ 
 		let iconArrowDown = this.createElement(TAG.DIV);
 		iconArrowDown.style.fontSize  = "18px";
 		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
 		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
 		statusDiv.appendChild(iconArrowDown);
-
+ 
 		statusDiv.addEventListener(EVENT.CLICK, () => this.getOptionsStatus(iconArrowDown));
 	}
 
@@ -432,41 +449,50 @@ export class AonReg extends AonElement {
 		const top = element.getBoundingClientRect().top + 24;
 		const left = element.getBoundingClientRect().left + 3;
 		let d = this.getApplication().getOptionDialog();
-
+ 
+		const scheduled = this.registry.isBlockScheduled
+				&& this.registry.isBlockScheduled();
+ 
 		let options = [
-			{ 
-				name: "Activar", 
+			{
+				name: "Activar",
 				value:"ACTIVE",
-				icon:"toggle_on", 
+				icon:"toggle_on",
 				fn: async () => {
 					this.registry.status = "ACTIVE";
 					this.openCustomerInactiveBloqued();
 				}
 			},
-			{ 
-				name: "Inactivar", 
+			{
+				name: "Inactivar",
 				value:"INACTIVE",
-				icon:"toggle_off", 
+				icon:"toggle_off",
 				fn: async () => {
 					this.registry.status = "INACTIVE";
 					this.openCustomerInactiveBloqued();
 				}
 			},
-			{ 
-				name: "Bloquear", 
+			{
+				// Si el bloqueo esta programado la opcion sigue disponible para
+				// poder mover la fecha; el estado almacenado ya es BLOCKED.
+				name: scheduled ? "Modificar bloqueo" : "Bloquear",
 				value:"BLOCKED",
-				icon:"block", 
+				icon:"block",
 				fn: async () => {
 					this.registry.status = "BLOCKED";
 					this.openCustomerInactiveBloqued();
 				}
 			}
 		];
-
+ 
 		if(this.registry.status){
-			options = options.filter(opt => opt.value!=this.registry.status );
+			// Con bloqueo programado NO se filtra BLOCKED: hay que poder reeditar
+			// la fecha aunque el estado almacenado ya sea ese.
+			options = options.filter(opt =>
+					opt.value != this.registry.status
+					|| (scheduled && opt.value === "BLOCKED"));
 		}
-
+ 
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}

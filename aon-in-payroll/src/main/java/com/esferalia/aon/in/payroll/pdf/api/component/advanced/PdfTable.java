@@ -3,7 +3,7 @@ package com.esferalia.aon.in.payroll.pdf.api.component.advanced;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GRAY;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.WHITE;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.CENTER;
 
 import java.awt.Color;
@@ -76,7 +76,7 @@ public class PdfTable extends PdfComponent {
 		cells = new Object[columns];
 		colors = new Color[columns];
 
-		font = HELVETICA;
+		font = helvetica();
 		fontsize = 10;
 		headerFontsize = fontsize;
 		textColor = BLACK;

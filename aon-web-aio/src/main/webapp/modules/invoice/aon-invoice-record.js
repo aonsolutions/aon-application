@@ -1,5 +1,6 @@
 import { AonTab } from '../../components/aon-tab.js';
 import {AonElement} from '../../components/AonElement.js';
+import { EVENT } from '../../environments/environments.js';
 
 import {CONSTANT, MSG, TAG } from '../../environments/environments.js'; 
 import { getInvoicesCounters } from '../../services/accountingService.js';
@@ -8,11 +9,31 @@ import * as GWT from "../../gwt/gwt.js";
 import * as JSF from "../aon-jsf-app.js";
 import { createCard } from '../../components/CreateComponent.js';
 
+// com.code.aon.finance.enumeration.InvoiceType
+export const INVOICE_TYPE = {
+    SALES: 'SALES',
+    PURCHASE: 'PURCHASE',
+    EXPENSES: 'EXPENSES',
+    UNDEDUCTIBLE: 'UNDEDUCTIBLE'
+};
+
+// com.esferalia.aon.occam.api.model.type.RawdocStatus
+// ALL no es un valor del enumerado: el modulo GWT lo interpreta como "sin filtro de estado"
+export const RAWDOC_STATUS = {
+    ALL: 'ALL',
+    INBOX: 'INBOX',
+    REJECTED: 'REJECTED',
+    TRASH: 'TRASH',
+    PROCESSING: 'PROCESSING',
+    PROCESSED: 'PROCESSED'
+};
+
 export class AonInvoiceRecord extends AonElement {
 
     TABS;
     DIV;
     COUNTERS_DIV;
+    invoiceType;
 
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -36,18 +57,11 @@ export class AonInvoiceRecord extends AonElement {
         this.TABS = this.id + 'Tabs';
         this.DIV = this.id + 'Div';
         this.COUNTERS_DIV = this.id + 'CountersDiv';
-        if(this.isBeta()) {
-            this.options = this.options || [
-   			    { title: MSG.SUMMARY, fn: () => this.buildAccountingSummary()},
-		    	{ title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
-	    		{ title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
-    		];
-        } else {
-            this.options = this.options || [
-   		        { title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
-			    { title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
-		    ];
-        }
+        this.options = this.options || [
+    	    { title: MSG.SUMMARY, fn: () => this.buildAccountingSummary()},
+	       	{ title: MSG.INVOICES, fn: () => this.buildInvoiceRecord()},
+	    	{ title: MSG.PENDING_DOCUMENTS, fn: () => this.buildRawdocRecord()}
+    	];
     }
 
     build() {
@@ -58,11 +72,7 @@ export class AonInvoiceRecord extends AonElement {
 		div.style.width = "100%";
         div.style.marginTop = '1px';
 		this.appendChild(div);
-        if(this.isBeta()) {
-            this.buildAccountingSummary();
-        } else {
-            this.buildInvoiceRecord();
-        } 
+        this.buildAccountingSummary();
     }
 
     buildCountersDiv(parent) {
@@ -92,19 +102,20 @@ export class AonInvoiceRecord extends AonElement {
                     {label: "Canarias, Ceuta, Melilla", value: stat.canCeuMel || 0}, 
                     {label: "I.S.P.",             		value: stat.otherISP || 0}, 
                     {label: "Con Retención",        	value: stat.withholding || 0},
+                    {label: "Proformas",                value: stat.proformas || 0},
                 ];
 
                 let unrecordes = [
-                    {label: "Proformas",    value: stat.proformas || 0}, 
-                    {label: "Emitidas",     value: stat.unrecordedIssued || 0, color: "orange"}, 
-                    {label: "Recibidas",    value: stat.unrecordedReceived || 0, color: "orange"}, 
-                    {label: "Simplificadas",value: stat.unrecordedSimplified || 0, color: "orange"}, 
+                    {label: MSG.ISSUEDS,                value: stat.unrecordedIssued || 0, color: "orange", fn: () => this.buildInvoiceRecord(INVOICE_TYPE.SALES)}, 
+                    {label: MSG.EXPENSES,               value: stat.unrecordedExpensed || 0, color: "orange", fn: () => this.buildInvoiceRecord(INVOICE_TYPE.EXPENSES)}, 
+                    {label: MSG.PURCHASES,              value: stat.unrecordedPurchased || 0, color: "orange", fn: () => this.buildInvoiceRecord(INVOICE_TYPE.PURCHASE)}, 
+                    {label: MSG.UNDEDUCTIBLE_EXPENSES,  value: stat.unrecordedSimplified || 0, color: "orange", fn: () => this.buildInvoiceRecord(INVOICE_TYPE.UNDEDUCTIBLE)}, 
                 ];
                 let rawdocs = [
-                    {label: "Borrador",   	value: stat.draft || 0, color: "orange"}, 
-                    {label: "En trámite",   value: stat.inProcess || 0, color: "orange"}, 
-                    {label: "A revisar",    value: stat.review || 0, color: "red"}, 
-                    {label: "Papelera",     value: stat.trash || 0}, 
+                    {label: "Borrador",   	value: stat.draft || 0, color: "orange", fn: () => this.buildRawdocRecord(RAWDOC_STATUS.INBOX)}, 
+                    {label: "En trámite",   value: stat.inProcess || 0, color: "orange", fn: () => this.buildRawdocRecord(RAWDOC_STATUS.PROCESSED)}, 
+                    {label: "A revisar",    value: stat.review || 0, color: "red", fn: () => this.buildRawdocRecord(RAWDOC_STATUS.REJECTED)}, 
+                    {label: "Papelera",     value: stat.trash || 0, color: "gray", fn: () => this.buildRawdocRecord(RAWDOC_STATUS.TRASH)}, 
                 ];
 
                 this.paintBlock(this.id + "invoices", "Resumen de Facturas", invoices);
@@ -133,10 +144,15 @@ export class AonInvoiceRecord extends AonElement {
             valueSpan.className = "aonInvoiceRecordValue";
 
 			let foregroundColor = item.color;
-			if (item.value && item.value > 0 && foregroundColor) {
-				labelSpan.style.color = foregroundColor;
-				valueSpan.style.color = foregroundColor;
-			}
+			if (item.value && item.value > 0) {
+                if(foregroundColor) {
+				    labelSpan.style.color = foregroundColor;
+				    valueSpan.style.color = foregroundColor;
+                }
+                if(item.fn) {
+                    itemDiv.addEventListener(EVENT.CLICK, () => item.fn());
+                }
+			} else itemDiv.style.cursor = "default";
 
 			itemDiv.appendChild(labelSpan);
             itemDiv.appendChild(valueSpan);
@@ -157,16 +173,21 @@ export class AonInvoiceRecord extends AonElement {
         this.buildCountersDiv(div);
     }
 
-    buildInvoiceRecord() {
+    buildInvoiceRecord(invoiceType = this.invoiceType) {
+        this.getElement(this.TABS).selectTab(1);
         let div = this.getElement(this.DIV);
 		this.clearElement(div);
-        div.appendChild(new JSF.AonJsfInvoiceRecorder());
+        let jsfInvoiceRecorder = new JSF.AonJsfInvoiceRecorder();
+        if (invoiceType) {
+            jsfInvoiceRecorder.setElExpression(`invoiceRecorderSearch.setDefaultType('${invoiceType}')`);
+        }
+        div.appendChild(jsfInvoiceRecorder);
     }
 
-    buildRawdocRecord() {
+    buildRawdocRecord(rawdocStatus = RAWDOC_STATUS.PROCESSED) {
         let div = this.getElement(this.DIV);
 		this.clearElement(div);
-        GWT.iLoad(GWT.RAWDOC, this.DIV);
+        GWT.iLoad(GWT.RAWDOC, this.DIV, { rawdocStatus });
     }
         
 }

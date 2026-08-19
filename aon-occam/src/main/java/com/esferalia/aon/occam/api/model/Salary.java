@@ -61,6 +61,10 @@ public class Salary implements Serializable {
 			this.paymentType = paymentType;
 		}
 
+		public Double getIrpf() {
+			return irpf;
+		}
+		
 		public Double getQuote() {
 			return quote;
 		}

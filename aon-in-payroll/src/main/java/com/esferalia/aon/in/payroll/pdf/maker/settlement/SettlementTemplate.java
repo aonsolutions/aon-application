@@ -3,8 +3,8 @@ package com.esferalia.aon.in.payroll.pdf.maker.settlement;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GRAY;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helveticaBold;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.JUSTIFY;
@@ -89,7 +89,7 @@ public class SettlementTemplate extends PdfFile {
 					(Locale) safeValue(config.getLanguage(), new Locale("Es")));
 
 			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out, 0, 800);
-			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
+			template.setDefaults(helvetica(), 10f, BLACK, PdfColors.GRAY);
 
 			template.lang	= (Locale) safeValue(config.getLanguage(), new Locale("Es"));
 			template.limitY	= 200;
@@ -138,7 +138,7 @@ public class SettlementTemplate extends PdfFile {
 	private void drawTitle() {
 		final String   titleTxt	= text("TITLE");
 		PdfTextBuilder builder	= new PdfTextBuilder();
-		builder.stream(contents).width(590).height(0).x(x()).y(y()).color(primary).font(HELVETICA_BOLD).fontSize(16f)
+		builder.stream(contents).width(590).height(0).x(x()).y(y()).color(primary).font(helveticaBold()).fontSize(16f)
 				.content(titleTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER).horizontalAlignment(ALIGNMENT.CENTER);
 
 		PdfText title = builder.build();
@@ -157,7 +157,7 @@ public class SettlementTemplate extends PdfFile {
 		final String enterpiseTxt = replaceVariables(variables, values, text("ENTERPRISE"));
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(480).height(0).x(x()).y(y()).lineSpacing(3f).color(primary).font(HELVETICA)
+		builder.stream(contents).width(480).height(0).x(x()).y(y()).lineSpacing(3f).color(primary).font(helvetica())
 				.fontSize(9f).content(enterpiseTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
@@ -179,7 +179,7 @@ public class SettlementTemplate extends PdfFile {
 		final String employeeTxt = replaceVariables(variables, values, text("EMPLOYEE"));
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
+		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(helvetica()).fontSize(9f)
 				.lineSpacing(3f).content(employeeTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
@@ -192,7 +192,7 @@ public class SettlementTemplate extends PdfFile {
 		final String declareTxt = text("DECLARE");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
+		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(helvetica()).fontSize(9f)
 				.lineSpacing(3f).content(declareTxt).horizontalAlignment(LEFT);
 
 		PdfText text = builder.build();
@@ -215,7 +215,7 @@ public class SettlementTemplate extends PdfFile {
 		final String declarationTxt = replaceVariables(variables, values, text("DECLARATION"));
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
+		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(helvetica()).fontSize(9f)
 				.lineSpacing(6f).content(declarationTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 		
@@ -232,7 +232,7 @@ public class SettlementTemplate extends PdfFile {
 		String paymentTotal		 = toLatinNumber(settlement.getAccrualTotal().orElse(0.00)) + " " + text("CURRENCY");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(595).height(0).x(x()).y(y()).color(primary).font(HELVETICA_BOLD)
+		builder.stream(contents).width(595).height(0).x(x()).y(y()).color(primary).font(helveticaBold())
 				.fontSize(fontsize + 2).content(titleTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(ALIGNMENT.LEFT);
 
@@ -240,7 +240,7 @@ public class SettlementTemplate extends PdfFile {
 		title.draw();
 		drawBox(contents, x() + 400, y() - 10, 80, 20, LIGHT_GRAY);
 
-		builder.stream(contents).width(80).height(20).x(x() + 400).y(y() - 10).marginX(5).font(HELVETICA).fontSize(9f)
+		builder.stream(contents).width(80).height(20).x(x() + 400).y(y() - 10).marginX(5).font(helvetica()).fontSize(9f)
 				.content(totalsTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER).horizontalAlignment(ALIGNMENT.RIGHT);
 
 		PdfText totals = builder.build();
@@ -267,12 +267,12 @@ public class SettlementTemplate extends PdfFile {
 						String paymentTxt = getType(m.getKey(), lang);
 						String paymentTotalTxt = toLatinNumber(localTotal) + " " + text("CURRENCY");
 
-//						drawText(contents, paymentTxt, x(), y(), BLACK, HELVETICA_BOLD, fontsize);
-						drawText(contents, craNumber, x(), y(), BLACK, HELVETICA_BOLD, fontsize);
+//						drawText(contents, paymentTxt, x(), y(), BLACK, helveticaBold(), fontsize);
+						drawText(contents, craNumber, x(), y(), BLACK, helveticaBold(), fontsize);
 						
-						drawText(contents, paymentTxt, x() + 15, y(), BLACK, HELVETICA_BOLD, fontsize);
+						drawText(contents, paymentTxt, x() + 15, y(), BLACK, helveticaBold(), fontsize);
 						drawTextRight(contents, new PDRectangle(x() + 292, y() - 5, 100, 10), paymentTotalTxt, BLACK,
-								HELVETICA, 9f, 5, 5);
+								helvetica(), 9f, 5, 5);
 						drawBox(contents, x(), y() - 2, 392, .2f, BLACK);
 						down(20);
 
@@ -283,8 +283,8 @@ public class SettlementTemplate extends PdfFile {
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("CURRENCY");
 								String entryTxt	  = " por " + safeString(n.getDescription());
-								new PdfText(x(), y(), 60, 15, contents, entryValue, BLACK, HELVETICA, 9f, RIGHT).draw();
-								new PdfText(x() + 64, y(), 325, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
+								new PdfText(x(), y(), 60, 15, contents, entryValue, BLACK, helvetica(), 9f, RIGHT).draw();
+								new PdfText(x() + 64, y(), 325, 15, contents, entryTxt, BLACK, helvetica(), 9f, LEFT)
 										.draw();
 
 								down(10.5f);
@@ -299,9 +299,9 @@ public class SettlementTemplate extends PdfFile {
 		});
 		down(5);
 
-		drawTextRight(contents, new PDRectangle(x() + 280, y(), 200, 25), paymentTotal, BLACK, HELVETICA, fontsize, 7,
+		drawTextRight(contents, new PDRectangle(x() + 280, y(), 200, 25), paymentTotal, BLACK, helvetica(), fontsize, 7,
 				5);
-		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), paymentTotalTitle, BLACK, HELVETICA, fontsize,
+		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), paymentTotalTitle, BLACK, helvetica(), fontsize,
 				5, 5);
 	}
 
@@ -313,7 +313,7 @@ public class SettlementTemplate extends PdfFile {
 		String payrollTotalTitle   = text("TOTAL");
 		String payrollTotal		   = toLatinNumber(settlement.total().orElse(null)) + " " + text("CURRENCY");
 
-		drawText(contents, title, x(), y() - 5, BLACK, HELVETICA_BOLD, fontsize + 2);
+		drawText(contents, title, x(), y() - 5, BLACK, helveticaBold(), fontsize + 2);
 		down(20);
 
 		Map<Integer, ArrayList<PDFDeduction>> deductions = settlement.getDeductions();
@@ -333,9 +333,9 @@ public class SettlementTemplate extends PdfFile {
 					String deductionTxt		 = "- " +/*m.getKey() + ". " + */DeductionTypes.getType(m.getKey());
 					String deductionTotalTxt = toLatinNumber(localTotal) + " " + text("CURRENCY");
 
-					drawText(contents, deductionTxt, x() + 3, y(), BLACK, HELVETICA_BOLD, fontsize);
+					drawText(contents, deductionTxt, x() + 3, y(), BLACK, helveticaBold(), fontsize);
 					drawTextRight(contents, new PDRectangle(x() + 292, y() - 5, 100, 10), deductionTotalTxt, BLACK,
-							HELVETICA, 9f, 2, 5);
+							helvetica(), 9f, 2, 5);
 					drawBox(contents, x(), y() - 2, 392, .2f, BLACK);
 
 					down(20);
@@ -356,12 +356,12 @@ public class SettlementTemplate extends PdfFile {
 								if (n.getAmount().isPresent() && n.getAmount().get() != 0)
 								{
 									PdfText quantity = new PdfText(x(), y(), 60, 15, contents, n.getPercent().isEmpty() ? entryValue : entryPercent, BLACK,
-											HELVETICA, 9f, RIGHT);
+											helvetica(), 9f, RIGHT);
 									quantity.draw();
 
-									new PdfText(x() + 64, y(), 210, 15, contents, entryTxt, BLACK, HELVETICA, 9f, LEFT)
+									new PdfText(x() + 64, y(), 210, 15, contents, entryTxt, BLACK, helvetica(), 9f, LEFT)
 											.draw();
-									new PdfText(x() + 64 + 210, y(), 60, 15, contents, n.getPercent().isEmpty() ? "" : entryValue, BLACK, HELVETICA, 9f,
+									new PdfText(x() + 64 + 210, y(), 60, 15, contents, n.getPercent().isEmpty() ? "" : entryValue, BLACK, helvetica(), 9f,
 											RIGHT).draw();
 
 									down(10);
@@ -377,9 +377,9 @@ public class SettlementTemplate extends PdfFile {
 		});
 		down(15);
 
-		drawTextRight(contents, new PDRectangle(x() + 278, y(), 200, 25), deductionTotal, BLACK, HELVETICA, fontsize, 5,
+		drawTextRight(contents, new PDRectangle(x() + 278, y(), 200, 25), deductionTotal, BLACK, helvetica(), fontsize, 5,
 				5);
-		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), deductionTotalTitle, BLACK, HELVETICA,
+		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), deductionTotalTitle, BLACK, helvetica(),
 				fontsize, 5, 5);
 
 		down(25);
@@ -387,9 +387,9 @@ public class SettlementTemplate extends PdfFile {
 		PdfBox b = new PdfBox(x() + 400, y() - 3, 80, 22, LIGHT_GRAY, contents);
 		b.draw();
 
-		drawTextRight(contents, new PDRectangle(x() + 278, y(), 200, 25), payrollTotal, BLACK, HELVETICA_BOLD, fontsize,
+		drawTextRight(contents, new PDRectangle(x() + 278, y(), 200, 25), payrollTotal, BLACK, helveticaBold(), fontsize,
 				5, 5);
-		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), payrollTotalTitle, BLACK, HELVETICA_BOLD,
+		drawTextRight(contents, new PDRectangle(x() + 190, y(), 200, 25), payrollTotalTitle, BLACK, helveticaBold(),
 				fontsize, 5, 5);
 
 		down(15);
@@ -412,7 +412,7 @@ public class SettlementTemplate extends PdfFile {
 		String	 dateTxt   = formatDate(settlement.date(), replaceVariables(variables, values, text("DATE"))).orElse("");
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).x(x()).width(480).y(y()).font(HELVETICA).fontSize(9f).content(legalTxt).lineSpacing(6f)
+		builder.stream(contents).x(x()).width(480).y(y()).font(helvetica()).fontSize(9f).content(legalTxt).lineSpacing(6f)
 				.horizontalAlignment(ALIGNMENT.JUSTIFY);
 
 		PdfText legalText = builder.horizontalAlignment(ALIGNMENT.JUSTIFY).build();

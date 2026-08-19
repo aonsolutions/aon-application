@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.jooq;
 
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.helvetica;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -385,7 +385,7 @@ public class JooqPayrollBuilder {
 							: p.getDescription();
 					if (AonStringUtils.isNotBlank(description) && description.length() > 50) {
 						try {
-							description = croppedString(description, 260, HELVETICA, 9f);
+							description = croppedString(description, 260, helvetica(), 9f);
 						} catch (IOException ignored) {
 						}
 					}

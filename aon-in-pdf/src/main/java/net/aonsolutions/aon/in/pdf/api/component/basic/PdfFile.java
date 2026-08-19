@@ -2,7 +2,7 @@ package net.aonsolutions.aon.in.pdf.api.component.basic;
 
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.BLACK;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfColors.GRAY;
-import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.HELVETICA;
+import static net.aonsolutions.aon.in.pdf.api.setting.PdfFonts.helvetica;
 import static net.aonsolutions.aon.in.pdf.api.setting.PdfSettings.PAGE_TYPE.VERTICAL;
 
 import java.awt.Color;
@@ -94,7 +94,7 @@ public class PdfFile {
 		this.words	 = words;
 		this.limitY	 = 0;
 
-		this.font		 = HELVETICA;
+		this.font		 = helvetica();
 		this.fontsize	 = 10f;
 		this.primary	 = BLACK;
 		this.secondary	 = GRAY;
@@ -121,7 +121,7 @@ public class PdfFile {
 		this.words	 = words;
 		this.limitY	 = limitY;
 
-		this.font		 = HELVETICA;
+		this.font		 = helvetica();
 		this.fontsize	 = 10f;
 		this.primary	 = BLACK;
 		this.secondary	 = GRAY;
@@ -150,7 +150,7 @@ public class PdfFile {
 		this.words	 = words;
 		this.limitY	 = limitY;
 
-		this.font		 = HELVETICA;
+		this.font		 = helvetica();
 		this.fontsize	 = 10f;
 		this.primary	 = BLACK;
 		this.secondary	 = GRAY;

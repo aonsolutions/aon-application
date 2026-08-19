@@ -181,9 +181,10 @@ export class AonAccountingBeta extends AonElement {
 			this.getApplication().addSidenavWidget2(utilitiesOptions, uploadInv);	
 		}
 		
-		// Load optionsPanel by default
-		let optionsPanel = this.getElement('aonAccountingBetaSidenavoptionsPanel');
-		optionsPanel && optionsPanel.click();
+		if (this.getDur().isDomainManagementAvailable()) {
+			GWT.iLoad(GWT.DOMAIN_INVOICE_STAT, this.getApplication().CONTENT);
+			this.getApplication().closeSidenav();
+		} else this.buildAccountingMenu();
 	}
 	
 	buildToolbar() {

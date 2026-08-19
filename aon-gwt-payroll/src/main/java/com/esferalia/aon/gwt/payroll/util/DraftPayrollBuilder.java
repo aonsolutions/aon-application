@@ -148,7 +148,7 @@ public class DraftPayrollBuilder {
 				String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 				if (description.length() > 50) {
 					try {
-						description = croppedString(description, 999, PdfFonts.HELVETICA, 9f);
+						description = croppedString(description, 999, PdfFonts.helvetica(), 9f);
 					} catch (IOException ignored) {}	
 				}
 				
@@ -200,7 +200,7 @@ public class DraftPayrollBuilder {
 				
 				if (repeated.isPresent()) {
 					PDFPayment repAcc = repeated.get();
-					repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
+					repAcc.setAmount(repAcc.getAmount().orElse(0d)+ accrual.getAmount().orElse(0d));
 				} else {
 					paymentMap.get(craKey).add(accrual);						
 				}

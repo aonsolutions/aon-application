@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.ScopeDAO;
 import com.esferalia.aon.watson.AonError;
@@ -23,19 +24,22 @@ public class CustomerValidation {
 	};
 	
 	private static final BiConsumer<Customer,AONContext> INVALID_SCOPE = (customer,ctx) -> {
-		if (customer.getScope() != null && customer.getScope().getId() != null) {
-			if(customer.getScope().getDomain() == null) {
-				customer.setScope(ScopeDAO.get(ctx, customer.getDomain().getId(), customer.getScope().getId()).orElse(null));
-			}
-			
-			if(customer.getScope() == null) {
-				throw new AonCoreException(AonError.EMPTY_SCOPE.getMessage());
-			}
-			
-			if(customer.getScope().getDomain() != null && !customer.getScope().getDomain().equals(customer.getDomain().getId())) {
-				throw new AonCoreException(AonError.REGISTRY_INVALID_SCOPE.getMessage());
-			}
+		if (null == customer.getScope() || null == customer.getScope().getId())
+			return;
+
+		if (null == customer.getScope().getDomain()) {
+			// Se busca en el dominio del cliente; si no aparece puede ser un ambito
+			// heredado del padre, asi que NO se anula: se deja el id tal cual.
+			// El getter de Customer recrea un Scope vacio si se pone a null, y eso
+			// termina en "Column 'scope' cannot be null" en el UPDATE.
+			ScopeDAO.get(ctx, customer.getDomain().getId(), customer.getScope().getId())
+				.ifPresent(customer::setScope);
+
+			return;
 		}
+
+		if (!customer.getScope().getDomain().equals(customer.getDomain().getId()))
+			throw new AonCoreException(AonError.REGISTRY_INVALID_SCOPE.getMessage());
 	};
 	
 	public static final BiConsumer<Customer,AONContext> EMPTY_DOCUMENT = (customer,ctx) -> {

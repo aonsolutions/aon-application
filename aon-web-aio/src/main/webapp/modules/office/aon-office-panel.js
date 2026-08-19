@@ -255,7 +255,7 @@ export class AonOfficePanel extends AonElement {
 			options: [sellerWorkload, customerPayrollActivity]
 		}
 		
-		if (this.isAyudaTorInfoautonomos()){
+		if (this.isAyudaTorInfoautonomos() || this.isBeta()){
 			process.options.push(sellerAssignScope);
 		}
 		
