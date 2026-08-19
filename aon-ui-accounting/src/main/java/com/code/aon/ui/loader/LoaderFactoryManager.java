@@ -22,8 +22,6 @@ import com.code.aon.ui.loader.factory.FinanceLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceLoaderFactory;
 import com.code.aon.ui.loader.factory.ItemLoaderFactory;
-import com.code.aon.ui.loader.factory.ModulesDetailLoaderFactory;
-import com.code.aon.ui.loader.factory.ModulesLoaderFactory;
 import com.code.aon.ui.loader.factory.SupplierLoaderFactory;
 import com.code.aon.ui.loader.factory.TargetLoaderFactory;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
@@ -50,8 +48,6 @@ public class LoaderFactoryManager {
 		factories.add( new CompanyLoaderFactory(engine));
 		factories.add( new AmortizationLoaderFactory(engine));
 		factories.add( new AmortizationDetailLoaderFactory(engine));
-		factories.add( new ModulesLoaderFactory(engine));
-		factories.add( new ModulesDetailLoaderFactory(engine));
 		factories.add( new CompanyBankLoaderFactory(engine));
 		factories.add( new CompanyDirStaffFactory(engine));
 		factories.add( new AutoConceptLoaderFactory(engine));
