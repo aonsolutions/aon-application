@@ -30,13 +30,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** RETENTION REPORT  *************** -->
-	<managed-bean>
-		<managed-bean-name>retentionReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.RetentionReportController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- **************** VAT REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>vatReport</managed-bean-name>
@@ -65,26 +58,6 @@
 		<navigation-case>
 			<from-outcome>invoiceReport_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/invoice/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== RETENTION REPORT ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>retention_report_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>retention_report_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>retention_report_detail</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/detailList.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>retention_report_detail_grouped</from-outcome>
-			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/groupedDetailList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

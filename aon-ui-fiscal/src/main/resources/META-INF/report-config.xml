@@ -24,26 +24,4 @@
 		</params>
 	</report>
 	
-	<!--  LISTADO DEL LIBRO DE RETENCIONES -->
-	<report id="retentionBook" description="Listado del Libro de IVA">
-		<template path="/com/code/aon/ui/fiscal/report/retentionBook.jasper"/>
-		<collection provider="#{retentionReport}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{retentionReport.getParams}" />
-			<param id="title" value="#{retentionReport.getTitle}" />
-		</params>
-	</report>
-	<report id="retentionBookGrouped" description="Listado del Libro de IVA">
-		<template path="/com/code/aon/ui/fiscal/report/retentionBookGrouped.jasper"/>
-		<collection provider="#{retentionReport}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{retentionReport.getParams}" />
-			<param id="title" value="#{retentionReport.getTitle}" />
-		</params>
-	</report>
-
 </report-config>
