@@ -437,7 +437,9 @@ public class DashboardController implements Serializable {
 				+ " INNER JOIN invoice_detail id ON it.invoice_detail = id.id"
 				+ " INNER JOIN invoice i ON id.invoice = i.id" + WHERE
 				+ DomainManager.getSQLWhereClause("it.domain")
-				+ " AND it.tax_type = 2" + " AND i.issue_date BETWEEN ? AND ?"
+				+ " AND it.tax_type = 2"
+				+ " AND (i.annulled IS NULL OR i.annulled = 0)"
+				+ " AND i.issue_date BETWEEN ? AND ?"
 				+ " GROUP BY it.withholding_type";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -490,6 +492,7 @@ public class DashboardController implements Serializable {
 		String select = "SELECT count(i.id)" + " FROM invoice i" + WHERE
 				+ DomainManager.getSQLWhereClause("i.domain")
 				+ " AND i.transaction = 1"
+				+ " AND (i.annulled IS NULL OR i.annulled = 0)"
 				+ " AND i.issue_date BETWEEN ? AND ?";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -528,7 +531,9 @@ public class DashboardController implements Serializable {
 		
 		String select = "SELECT count(i.id)" + " FROM invoice i" + WHERE
 				+ DomainManager.getSQLWhereClause("i.domain")
-				+ " AND i.issue_date BETWEEN ? AND ?" + " AND i.investment = 1"
+				+ " AND (i.annulled IS NULL OR i.annulled = 0)"
+				+ " AND i.issue_date BETWEEN ? AND ?" 
+				+ " AND i.investment = 1"
 				+ " AND i.id NOT IN (SELECT invoice FROM amortization_invoice)";
 		
 		
