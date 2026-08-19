@@ -182,9 +182,6 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		
 		public SimpleIrpfContractPayment(IContractPayment contractPayment) {
 			super(contractPayment);
-			getExtraPayment(contractPayment).ifPresent( extraPayment -> {
-				extraId = extraPayment.getExtraId();
-			});
 		}
 		
 		public int getExtraId() {
@@ -316,6 +313,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		private Collection<IContractPayment> payments;
 		private Collection<IContractDeduction> deductions;
+		
 
 		private CustomSQLContractCalculatorContext(
 				ISQLContractSalaryCalculatorContext ctx) {
@@ -338,15 +336,33 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return deductions;
 		}
 		
-		private static Collection<IContractPayment> copyPayments(
+		private Optional<IExtraPayment> getAgreementExtraPayment(IContractPayment payment) {
+			if ( payment.getMonth() == null || payment.getConceptId() == null )
+				return Optional.empty();
+			
+			return super.getAgreementPayments().stream()
+			.map(SQLIrpfCalculatorContext::getExtraPayment)
+			.filter(Optional::isPresent).map(Optional::get)
+			.filter( p -> Objects.equals(p.getMonth(),payment.getMonth()))
+			.filter( p -> Objects.equals(p.getConceptId(), payment.getConceptId()))
+			.findFirst();
+		}
+		
+		private Collection<IContractPayment> copyPayments(
 				Collection<IContractPayment> collection) {
 			List<IContractPayment> copy = new ArrayList<IContractPayment>();
-			for (IContractPayment payment : collection)
-				copy.add(new SimpleIrpfContractPayment(payment));
+			for (IContractPayment payment : collection) {
+				SimpleIrpfContractPayment irpfContractPayment = new SimpleIrpfContractPayment(payment);
+				getExtraPayment(payment).ifPresentOrElse( 
+						extraPayment -> irpfContractPayment.extraId = extraPayment.getExtraId(),
+						() -> getAgreementExtraPayment(payment).ifPresent ( extraPayment -> irpfContractPayment.extraId = extraPayment.getExtraId() )
+						);
+				copy.add(irpfContractPayment);
+			}
 			return copy;
 		}
 
-		private static Collection<IContractDeduction> copyDeductions(
+		private Collection<IContractDeduction> copyDeductions(
 				Collection<IContractDeduction> collection) {
 			List<IContractDeduction> copy = new ArrayList<IContractDeduction>();
 			for (IContractDeduction deduction : collection)
