@@ -30,13 +30,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -63,12 +59,9 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.User;
-import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.WithholdingType;
-import com.code.aon.fiscal.config.Model;
 import com.code.aon.fiscal.config.ModelConfig;
 import com.code.aon.fiscal.config.ModelManager;
-import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -313,57 +306,6 @@ public class DashboardController implements Serializable {
 			}
 		}
 		return fiscalConfig;
-	}
-
-	public String navigateModel() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		Map<String, String> params = ec.getRequestParameterMap();
-		String ad = params.get("adm");
-		Administration administration = null;
-		if (StringUtils.isNotBlank(ad)) {
-			administration = Administration.valueOf(ad);
-		}
-		Model mod = Model.valueOf(params.get("model"));
-		Period period = Period.valueOf(params.get("period"));
-		boolean missing = Boolean.valueOf(params.get("status"));
-		String beanName = null;
-		if ( mod == Model.M111) {
-			return "gwt_mod111";
-		} else if ( mod == Model.M115) {
-			return "gwt_mod115";
-		} else if ( mod == Model.M123) {
-			return "gwt_mod123";
-		} else if ( mod == Model.M130) {
-			return "gwt_mod130";
-		} else if ( mod == Model.M131) {
-			return "gwt_mod131";
-		} else if ( mod == Model.MIVA) {
-			return "gwt_mod303";
-		} else if ( mod == Model.M347) {
-			return  "gwt_mod347";
-		} else if ( mod == Model.M349) {
-			return  "gwt_mod349";
-		} else if ( mod == Model.M390_HF) {
-			return  "gwt_mod390HF";
-		} else if ( mod == Model.M390) {
-			return "gwt_mod390";
-		} else if ( mod == Model.M180) {
-			return "gwt_mod180";
-		} else if ( mod == Model.M184) {
-			return "gwt_mod184";
-		} else if ( mod == Model.M190) {
-			return "gwt_mod190";
-		} else if ( mod == Model.M193) {
-			return "gwt_mod193";
-		} else if ( mod == Model.M200) {
-			return "gwt_mod200";
-		} else if ( mod == Model.M202) {
-			return "gwt_mod202";
-		} else {
-			String message = "Imposible realizar la navegación al modelo solicitado.";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message);
-		}
 	}
 
 	public synchronized List<DashboardMessage> getMessages() {

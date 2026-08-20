@@ -170,10 +170,6 @@
 		<mapping class="com.code.aon.finance.PosShiftCount"/>
 		<mapping class="com.code.aon.finance.Prepayment"/>
 
-		<!-- AON-FISCAL Mapping files -->
-		<mapping class="com.code.aon.fiscal.FiscalModel"/>
-		<mapping class="com.code.aon.fiscal.FiscalModelDetail"/>
-		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>

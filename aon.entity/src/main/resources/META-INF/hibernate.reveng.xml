@@ -52,7 +52,8 @@
 
 	<table-filter match-name="fs_activity" exclude="true" />
 	<table-filter match-name="fs_activity_info" exclude="true" />
-	
+	<table-filter match-name="fs_model" exclude="true" />
+	<table-filter match-name="fs_model_detail" exclude="true" />
 	<table-filter match-name="fs_vat" exclude="true" />
 	<table-filter match-name="fs_vat_declaration" exclude="true" />
 	<table-filter match-name="fs_vat_detail" exclude="true" />
@@ -981,30 +982,6 @@
 		</primary-key>
 		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
 		<column name="year" type="java.lang.Integer"/>
-	</table>
-
-	<table name="fs_model" class="com.esferalia.aon.entity.master.FiscalModel">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
-		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
-		<column name="year" type="java.lang.Integer"/>
-		<column name="comments" type="text"/>
-		<column name="model" type="com.code.aon.fiscal.enumeration.FiscalModelType"/>
-		<column name="status" type="com.code.aon.fiscal.enumeration.FiscalModelStatus"/>
-	</table>
-
-	<table name="fs_model_detail" class="com.esferalia.aon.entity.master.FiscalModelDetail">
-		<primary-key>
-			<generator class="identity"/>
-			<key-column name="id" type="java.lang.Integer"/>
-		</primary-key>
-		<column name="adj_amount" property="adjustAmount"/>
-		<column name="acu_amount" property="accumulatedAmount"/>
-		<column name="dec_amount" property="declaredAmount"/>
-		<column name="res_amount" property="resultAmount"/>
 	</table>
 
 	<table name="geozone_irpf">
