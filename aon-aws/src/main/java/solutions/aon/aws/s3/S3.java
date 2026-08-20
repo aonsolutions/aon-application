@@ -86,6 +86,12 @@ public class S3 {
 				: list.getFirst();
 		}
 	}
+	public String getAonTableBucket(String aonTable, boolean createIfNotExist) {
+		try (S3Client client = getClient()) {
+			return getBucketsNames(client, aonTable).stream().findFirst()
+					.orElseGet(() -> createIfNotExist ? createBucket(client, aonTable, aonTable) : null);
+		}
+	}
 	
 	private Optional<String> getBucketName(String aonTable, String key) {
 		try (S3Client client = getClient()){
@@ -222,6 +228,14 @@ public class S3 {
 		}
 	}
 	
+	public String upload(String bucket, String key, byte [] bytes, Map<String, String> metadata) {
+		try(S3Client client = getClient()) {
+			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).metadata(metadata).build();
+		    client.putObject(request, RequestBody.fromBytes(bytes));
+		    return key;
+		}
+	}
+
 	public String upload(String bucket, String content) {
 		String key = UUID.randomUUID().toString().replace("-", "");
 		return upload(bucket, key, content);
