@@ -50,7 +50,7 @@ public class S3 {
 	}
 	
 	public S3Client getClient() {
-		return S3Client.create();
+		return S3Client.builder().crossRegionAccessEnabled(true).build();
 	}
 	
 	// ----- BUCKET OPTIONS
