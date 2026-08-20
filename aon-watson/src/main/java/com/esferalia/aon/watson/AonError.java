@@ -246,6 +246,16 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_TBAI("No es posible borrar la factura porque est\u00E1 enviada a Ticket Bai. Dar de baja la factura en Ticket Bai.")
 	,INVOICE_CANT_DELETE_VERIFACTU("No es posible borrar la factura porque est\u00E1 enviada a Verifactu. Dar de baja la factura en Verifactu.")
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
+	
+	,INVOICE_CANT_CANCEL_RECORDED("No es posible anular la factura porque est\u00E1 contabilizada. Descontabilice primero la factura.")	
+	,INVOICE_CANT_CANCEL_RECTIFIED("No es posible anular la factura porque est\u00E1 rectificada. Anule primero la factura rectificativa.")
+	,INVOICE_CANT_CANCEL_DUA_LINKED("No es posible anular la factura porque est\u00E1 vinculada a un documento DUA.")
+	,INVOICE_CANT_CANCEL_SII("No es posible anular la factura porque no est\u00E1 anulada en el SII. Dar de baja la factura en el SII.")
+	,INVOICE_CANT_CANCEL_TBAI("No es posible anular la factura porque no est\u00E1 anulada en Ticket Bai. Dar de baja la factura en Ticket Bai.")
+	,INVOICE_CANT_CANCEL_VERIFACTU("No es posible anular la factura porque no est\u00E1 anulada en Verifactu. Dar de baja la factura en Verifactu.")
+	,INVOICE_CANT_CANCEL_MODEL("Imposible anular, la factura ha sido declarada en modelos fiscales: {0}")
+	,INVOICE_CANT_CANCEL_FINANCE("No es posible anular la factura porque est\u00E1 vinculada a un vencimiento no pendiente.")
+	
 	,INVOICE_EXP_DATE_BEFORE_DATE("La fecha de operaci\u00F3on es posterior a la fecha de expedici\u00F3on")
 	,INVOICE_EXP_DATE_PAST_MONTH_LIMIT("La fecha de operaci\u00F3n es anterior al pasado mes")
 	,INVOICE_EXP_DATE_CURRENT_MONTH_LIMIT("La fecha de operaci\u00F3n es anterior al mes en curso")

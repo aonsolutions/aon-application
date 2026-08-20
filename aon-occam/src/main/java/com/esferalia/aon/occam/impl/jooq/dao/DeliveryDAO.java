@@ -455,6 +455,25 @@ public class DeliveryDAO {
 			.execute();
 	}
 	
+	protected static void restorePendingDelivery(AONContext ctx, Integer domain, Integer deliveryDetailId) {
+		if (deliveryDetailId == null) return;
+		Integer delivery = ctx.getDslContext()
+			.select(DELIVERY_DETAIL.DELIVERY)
+			.from(DELIVERY_DETAIL)
+			.where(DELIVERY_DETAIL.ID.eq(deliveryDetailId).and(DELIVERY_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(DELIVERY_DETAIL.DELIVERY);
+		if (delivery == null) return;
+
+		int count = ctx.getDslContext().update(DELIVERY)
+			.set(DELIVERY.STATUS, DeliveryStatus.PENDING.value())
+			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
+			.set(DELIVERY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(DELIVERY.ID.eq(delivery).and(DELIVERY.DOMAIN.eq(domain))
+				.and(DELIVERY.STATUS.ne(DeliveryStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE DELIVERY (PENDIENTE): {0} ({1} filas)",delivery,count);
+	}
+	
 	// -------------------- DELIVERY DETAIL
 
 	public static DeliveryDetail getDeliveryDetail(AONContext ctx, DeliveryDetailFilter filter){

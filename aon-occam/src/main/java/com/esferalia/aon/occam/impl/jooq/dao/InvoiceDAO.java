@@ -941,6 +941,98 @@ public class InvoiceDAO {
 		generateMD5(ctx, invoice);
 		return invoice; 
 	}
+	
+	public static Invoice cancel(AONContext ctx, Integer invoiceId) {
+		ctx.checkWrite();
+		Invoice invoice = getFullInvoice(ctx, invoiceId);
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+		InvoiceValidation.validateInvoiceCancellation(ctx, config, invoice);
+		int i = ctx.getDslContext()
+			.update(INVOICE)
+			.set(INVOICE.ANNULLED, (byte) 1)
+			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoice.getId()))
+			.execute();
+		ctx.log().debug("CANCEL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		
+		afterCancelInvoice(ctx, invoice);
+		return invoice;
+	}
+	
+	private static void afterCancelInvoice(AONContext ctx, Invoice invoice) {
+		FinanceDAO.deleteInvoiceFinances(ctx, invoice.getId());
+
+		getSourceDetailStream(ctx, invoice).filter(detail -> detail.getSource() != null).forEach(detail -> {
+			detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override public void visitTedi(InvoiceDetail detail) {}
+				@Override public void visitReservation(InvoiceDetail detail) {}
+				@Override public void visitDirectInvoice(InvoiceDetail detail) {}
+				@Override public void visitAccount(InvoiceDetail detail) {}
+				@Override public void visitDirectExpense(InvoiceDetail detail) {}
+
+				@Override
+				public void visitSales(InvoiceDetail detail) {
+					SalesDAO.restorePendingSales(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+
+				}
+
+				@Override
+				public void visitPurchase(InvoiceDetail detail) {
+					PurchaseDAO.restorePendingPurchase(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitOffer(InvoiceDetail detail) {
+					OfferDAO.restorePendingOffer(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitIncome(InvoiceDetail detail) {
+					IncomeDAO.restorePendingIncome(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitFee(InvoiceDetail detail) {
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitDelivery(InvoiceDetail detail) {
+					DeliveryDAO.restorePendingDelivery(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+			});
+		});
+	}
+
+	private static Stream<InvoiceDetail> getSourceDetailStream(AONContext ctx, Invoice invoice) {
+		return ctx.getDslContext()
+			.select(INVOICE_DETAIL.ID, INVOICE_DETAIL.DOMAIN, INVOICE_DETAIL.SOURCE, INVOICE_DETAIL.SOURCE_ID)
+			.from(INVOICE_DETAIL)
+			.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
+			.fetch()
+			.stream()
+			.map(rec -> new InvoiceDetail()
+				.setId(rec.getValue(INVOICE_DETAIL.ID))
+				.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
+				.setSource(InvoiceSource.safeValueOf(rec.getValue(INVOICE_DETAIL.SOURCE)))
+				.setSourceId(rec.getValue(INVOICE_DETAIL.SOURCE_ID)));
+	}
+
+	private static void updateInvoiceDetailSourceId(AONContext ctx, Integer detailId, Integer sourceId) {
+		ctx.getDslContext().update(INVOICE_DETAIL)
+			.set(INVOICE_DETAIL.SOURCE_ID, sourceId)
+			.where(INVOICE_DETAIL.ID.eq(detailId))
+			.execute();
+	}
 
 	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
 		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
