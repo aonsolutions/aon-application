@@ -1789,7 +1789,7 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceAttachmentController
+			com.code.aon.faces.controller.AttachmentController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -2225,7 +2225,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceAttachmentController
+			com.code.aon.faces.controller.AttachmentController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -2661,7 +2661,7 @@
 	<managed-bean>
 		<managed-bean-name>expenseInvoiceAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceAttachmentController
+			com.code.aon.faces.controller.AttachmentController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -3097,7 +3097,7 @@
 	<managed-bean>
 		<managed-bean-name>undeductibleInvoiceAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceAttachmentController
+			com.code.aon.faces.controller.AttachmentController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
