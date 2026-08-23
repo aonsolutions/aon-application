@@ -11,6 +11,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -95,57 +96,57 @@ public class DocServlet extends HttpServlet {
 		JSONObject json = getParamsJSON(req);
 		String domainName = req.getServerName();
 		Integer domain = JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID);
-		ExternalStorage externalStorage = ExternalStorage.safeValueOf(JsonUtils.getbyte(json, IJsonNames.STORAGE));		
-		String longURL = externalStorage.visit(new ExternalStorageVisitor<String>() {
-
-			@Override
-			public String visitAon() {
-				String source = JsonUtils.getString(json, IJsonNames.SOURCE);
-				String aonId = JsonUtils.getString(json, IJsonNames.AON_ID);
-
-				JSONObject data = new JSONObject();
-				data.put("domain_name", domainName);
-				data.put("domain_id", domain);
-				data.put("id", aonId);
-				data.put("attach_type", source);
-				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-				return "https://" + domainName + "/ms/api/file/" +  result;
-			}
-
-			@Override
-			public String visitDrive() {
-				return visitAon();
-//				String driveId = JsonUtils.getString(json, IJsonNames.DRIVE_ID);
-//				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domain, "");
-//				Drive drive = AonDrive.getInstace().serviceInitialize(g);
-//				return AonDrive.getInstace().getFile(drive, driveId).getWebContentLink();
-			}
-
-			@Override
-			public String visitAws() {
-				String s3Bucket = JsonUtils.getString(json, IJsonNames.S3_BUCKET);
-				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
-				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
-				return s3Bucket != null
-					? S3.getInstance().getURL(s3Bucket, s3Key).toExternalForm()
-					: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
-			}
-
-			@Override
-			public String visitScaleway() {
-				String s3Bucket = JsonUtils.getString(json, IJsonNames.S3_BUCKET);
-				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
-				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
-				return s3Bucket != null
-					? SCALEWAY.getInstance().getURL(s3Bucket, s3Key).toExternalForm()
-					: SCALEWAY.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
-			}
-			
-		});
+		ExternalStorage externalStorage = ExternalStorage.safeValueOf(JsonUtils.getbyte(json, IJsonNames.STORAGE));	
 		
-		if(externalStorage.isAon() || externalStorage.isDrive()) new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
-		else forwardToExternal(req, resp, longURL);
+		switch (externalStorage) {
+		case AON:
+		case DRIVE: {
+			String source = JsonUtils.getString(json, IJsonNames.SOURCE);
+			String aonId = JsonUtils.getString(json, IJsonNames.AON_ID);
+
+			JSONObject data = new JSONObject();
+			data.put("id", aonId);
+			data.put("domain_id", domain);
+			data.put("attach_type", source);
+			data.put("domain_name", domainName);
+			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+			new ForwardHttpServletRequestWrapper(req, "https://" + domainName + "/ms/api/file/" +  result).forward(resp);
+			return;
+		}
+		case AWS: {
+			S3 s3 = S3.getInstance();
+			String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY );
+			String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
+			String s3Bucket = Optional.ofNullable(JsonUtils.getString(json, IJsonNames.S3_BUCKET)).orElseGet(() -> s3.getAonTableBucket(aonTable, false));
+			forwardToAws(req, resp, s3.download(s3Bucket, s3Key));
+			return;
+		}
+		case SCALEWAY:{
+			SCALEWAY scaleway = SCALEWAY.getInstance();
+			String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY );
+			String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
+			String s3Bucket = Optional.ofNullable(JsonUtils.getString(json, IJsonNames.S3_BUCKET)).orElseGet(() -> scaleway.getAonTableBucket(aonTable, false));
+			forwardToAws(req, resp, scaleway.download(s3Bucket, s3Key));
+			return;
+		}
+			
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + externalStorage);
+		}
+		
 	}
+	
+	public void forwardToAws(HttpServletRequest request, HttpServletResponse response, byte[] data) throws IOException {
+        
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
+        
+        response.getOutputStream().write(data);
+        response.setStatus(HttpServletResponse.SC_OK);
+ 
+    }
 	
 	public void forwardToExternal(HttpServletRequest request, HttpServletResponse response, String longUrl) throws IOException {
         URL url = new URL(longUrl);
