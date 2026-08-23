@@ -437,6 +437,7 @@ public class SistemaRED {
 	public static byte[] getUp2DateSS(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String authKey) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
 			return SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc, authKey);
 		} catch (IOException e) {
