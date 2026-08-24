@@ -123,7 +123,7 @@ Consulte cada una de ellas para ver las columnas que contienen, junto con las ca
 </thead>
 <tbody>
 <#list factories as factory>
-<#if factory.getKey() != "ASI" && factory.getKey() != "EMP" && factory.getKey() != "AMC" && factory.getKey() != "AML" && factory.getKey() != "MOC" && factory.getKey() != "MOL" && factory.getKey() != "BAN" && factory.getKey() != "REP" && factory.getKey() != "CON" && factory.getKey() != "CUO" && factory.getKey() != "ACT">
+<#if factory.getKey() != "ASI" && factory.getKey() != "EMP" && factory.getKey() != "AMC" && factory.getKey() != "AML" && factory.getKey() != "BAN" && factory.getKey() != "REP" && factory.getKey() != "CON" && factory.getKey() != "CUO" && factory.getKey() != "ACT">
 <tr>
 	<td style="text-align: center;"><a href="#${factory.getClass().getSimpleName()}"><code>${factory.getKey()}</code></a></td>
 	<td>${bundle.getString( factory.getClass().getSimpleName())}</td>
@@ -157,7 +157,7 @@ A continuación se detalla las columnas y sus características de cada una de las 
 
 
 <#list factories as factory>
-<#if factory.getKey() != "ASI" && factory.getKey() != "EMP" && factory.getKey() != "AMC" && factory.getKey() != "AML" && factory.getKey() != "MOC" && factory.getKey() != "MOL" && factory.getKey() != "BAN" && factory.getKey() != "REP" && factory.getKey() != "CON" && factory.getKey() != "CUO" && factory.getKey() != "ACT">
+<#if factory.getKey() != "ASI" && factory.getKey() != "EMP" && factory.getKey() != "AMC" && factory.getKey() != "AML" && factory.getKey() != "BAN" && factory.getKey() != "REP" && factory.getKey() != "CON" && factory.getKey() != "CUO" && factory.getKey() != "ACT">
 <#assign prefix = factory.getClass().getSimpleName()>
 <h4>
 		<a id="${prefix}">

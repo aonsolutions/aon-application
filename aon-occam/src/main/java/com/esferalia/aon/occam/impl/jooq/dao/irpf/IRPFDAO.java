@@ -83,7 +83,7 @@ public class IRPFDAO {
 			if (filterDAO == null)
 				return new Condition[]{DSL.trueCondition()};
 
-			return new Condition[] { filterDAO.getCondition() };
+			return new Condition[] { filterDAO.getCondition(), InvoiceDAO.NOT_ANNULLED };
 		}
 		@Override public Property<Integer> getInvoiceIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
 		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
@@ -125,6 +125,8 @@ public class IRPFDAO {
 			.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
 			.and(INVOICE.ISSUE_DATE.between(getStartDate(fm),getEndDate(fm)))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			;		
 	}
 	private static SelectOnConditionStep<? extends Record> getInvoiceIrpBreakdownSelect(final AONContext ctx) {
@@ -390,6 +392,8 @@ public class IRPFDAO {
 			.and(INVOICE.ISSUE_DATE.ge(getYearFirstDay(fm)))
 			.and(INVOICE.ISSUE_DATE.lt(getStartDate(fm)))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()
@@ -413,6 +417,8 @@ public class IRPFDAO {
 			.and(INVOICE.ISSUE_DATE.ge(getStartDate(fm)))
 			.and(INVOICE.ISSUE_DATE.lt(getEndDate(fm)))
 			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
 			.fetch()
 			.stream()

@@ -6,13 +6,12 @@ import java.util.HashMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceProductBox;
-import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryDocumentBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceRegistryNameBox;
 import com.esferalia.aon.gwt.stat.client.StatModuleOptions;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
@@ -192,10 +191,10 @@ public class StatFilter extends ScrollPanel implements HasValueChangeHandlers<St
 		tab.setWidget(row, 0, new MediumLabel(AON.MSG.product()));
 		InvoiceProductBox product = new InvoiceProductBox(getDomainName(),getDomain(),getCurrentUser() );
 		product.setRequired(false);
-		product.addSelectionHandler(new  SelectionHandler<OldProduct>() {
+		product.addSelectionHandler(new  SelectionHandler<Product>() {
 
 			@Override
-			public void onSelection(SelectionEvent<OldProduct> event) {
+			public void onSelection(SelectionEvent<Product> event) {
 				if (event.getSelectedItem() != null) {
 					params.setProduct( event.getSelectedItem().getId());
 				} else {

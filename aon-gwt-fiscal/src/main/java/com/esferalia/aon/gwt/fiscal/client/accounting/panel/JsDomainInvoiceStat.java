@@ -68,9 +68,15 @@ public class JsDomainInvoiceStat extends JavaScriptObject {
 	public final native int getUnrecordedIssued() /*-{
 		return this.unrecordedIssued;
 	}-*/;
-	public final native int getUnrecordedReceived() /*-{
-		return this.unrecordedReceived;
+	public final native int getUnrecordedPurchased() /*-{
+		return this.unrecordedPurchased;
 	}-*/;
+	public final native int getUnrecordedExpensed() /*-{
+		return this.unrecordedExpensed;
+	}-*/;
+	public final int getUnrecordedReceived() {
+		return getUnrecordedPurchased() + getUnrecordedExpensed();
+	}
 	public final native int getUnrecordedSimplified() /*-{
 		return this.unrecordedSimplified;
 	}-*/;

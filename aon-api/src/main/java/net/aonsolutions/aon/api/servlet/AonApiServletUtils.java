@@ -16,8 +16,10 @@ class AonApiServletUtils {
 	}
 
 	static Filter invoiceFilter(InvoiceProperties f, Integer domainId, InvoiceFilter invoiceFilter) {
-    	Filter filter =  f.getDomainProperty().eq(domainId);
-    
+    	Filter filter =  f.getDomainProperty().eq(domainId)
+   			.and( f.getAnnulledProperty().eq((byte) 0).or(f.getAnnulledProperty().isNull()) )
+   			;
+    	
     	if(invoiceFilter.getDescription() != null) {
     		Filter ft = f.getReferenceCodeProperty().like("%" + invoiceFilter.getDescription() + "%")
         			.or(f.getRegistryNameProperty().like("%" + invoiceFilter.getDescription() + "%"))

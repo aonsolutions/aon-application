@@ -393,8 +393,12 @@ public class RegistryStatEngineController implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public void getInvoices() throws ManagerBeanException {
-		String select = "select Invoice " + "from Invoice as Invoice " + "where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type=1  AND Invoice.registry.id = "
-				+ registry.getId() + "order by Invoice.issueDate desc";
+		String select = "select Invoice " + "from Invoice as Invoice " 
+				+ "where "+DomainManager.getSQLWhereClause("Invoice.domain")
+				+ " AND Invoice.type=1"
+				+ " AND (Invoice.annulled=0 or Invoice.annulled is null)"
+				+ " AND Invoice.registry.id = " + registry.getId() 
+				+ " order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		pendingInvoiceList = query.list();
@@ -412,8 +416,11 @@ public class RegistryStatEngineController implements Serializable {
 	@SuppressWarnings("unchecked")
 	public void getBoughtProducts() throws ManagerBeanException {
 		String select = "select distinct(InvoiceDetail) " + "from InvoiceDetail as InvoiceDetail "
-				+ "where "+DomainManager.getSQLWhereClause("InvoiceDetail.domain")+" AND InvoiceDetail.invoice.type = 1 AND InvoiceDetail.invoice.registry.id = " + registry.getId()
-				+ "order by InvoiceDetail.invoice.issueDate desc";
+				+ "where "+DomainManager.getSQLWhereClause("InvoiceDetail.domain")
+				+ " AND InvoiceDetail.invoice.type = 1"
+				+ " AND (InvoiceDetail.invoice.annulled=0 or InvoiceDetail.invoice.annulled is null)"
+				+ " AND InvoiceDetail.invoice.registry.id = " + registry.getId()
+				+ " order by InvoiceDetail.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		boughtProductList = query.list();

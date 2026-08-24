@@ -230,6 +230,8 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.fetch()
 				.stream()
 				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
@@ -246,6 +248,8 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
 				.stream()
@@ -271,6 +275,8 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.fetch()
 				.stream()
 				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
@@ -287,6 +293,8 @@ public class Mod390DAO {
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
 				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
 				.stream()

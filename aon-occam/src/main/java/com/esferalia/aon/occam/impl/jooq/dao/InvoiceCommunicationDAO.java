@@ -620,6 +620,7 @@ public class InvoiceCommunicationDAO {
 			.leftOuterJoin(INVOICE_INFO).on(invoiceInfoCondition)
 			.where(getFilter(params))
 			.and(INVOICE.NUMBER.gt(0))
+			.and(InvoiceDAO.NOT_ANNULLED)
 			.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.desc())
 			.limit(params.getSafePerPage())
 			.offset(params.getOffset())

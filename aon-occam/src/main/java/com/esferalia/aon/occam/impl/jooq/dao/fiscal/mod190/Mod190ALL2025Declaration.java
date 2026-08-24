@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -1069,6 +1070,8 @@ public class Mod190ALL2025Declaration extends Mod190Declaration {
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 2))	// IRPF
 				// .and(INVOICE_TAX.WITHHOLDING_TYPE.in((byte) 0, (byte) 3,(byte) 4)) 
 				.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
+				.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+				.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 				.and(getAlcatrazCondition(mod190)) // LA FACTURA TIENE QUE ESTAR EN ALCATRAZ EN UN MODELO 111 DEL MISMO AÑO Y LA MISMA ADMINISTRACION
 				.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE,INVOICE_TAX.PERCENTAGE)
 				.fetch()

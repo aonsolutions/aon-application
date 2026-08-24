@@ -3,22 +3,21 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceMinJSON;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Invoice Stream Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/InvoiceStreamServlet" })
 public class InvoiceStreamServlet extends HttpServlet {
@@ -43,7 +42,7 @@ public class InvoiceStreamServlet extends HttpServlet {
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter writer = new PrintWriter (resp.getWriter(), true); 
 			writer.print( "[" );
-			AON.getInvoiceHeaders(occam, params, offset, limit)
+			AON.getInvoiceHeaders(occam, params, true, offset, limit)
 				.map( InvoiceMinJSON::toJSON )
 				.forEach( js -> writer.print( js.toString() ));
 			writer.print( "]" );

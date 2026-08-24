@@ -337,6 +337,34 @@ public class PurchaseDAO {
 		ctx.getDslContext().delete(PURCHASE).where(PURCHASE_PROPERTIES.getConditions(filter));
 	}
 	
+	protected static void restorePendingPurchase(AONContext ctx, Integer domain, Integer purchaseDetailId) {
+		if (purchaseDetailId == null) return;
+		Integer purchase = ctx.getDslContext()
+			.select(PURCHASE_DETAIL.PURCHASE)
+			.from(PURCHASE_DETAIL)
+			.where(PURCHASE_DETAIL.ID.eq(purchaseDetailId).and(PURCHASE_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(PURCHASE_DETAIL.PURCHASE);
+		if (purchase == null) return;
+
+		int count = ctx.getDslContext().update(PURCHASE_DETAIL)
+			.set(PURCHASE_DETAIL.STATUS, PurchaseDetailStatus.PENDING.value())
+			.set(PURCHASE_DETAIL.DELIVERED, 0.0)
+			.set(PURCHASE_DETAIL.MODIFICATION_USER, ctx.getUser())
+			.set(PURCHASE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(PURCHASE_DETAIL.ID.eq(purchaseDetailId).and(PURCHASE_DETAIL.DOMAIN.eq(domain)))
+			.execute();
+		ctx.log().debug("UPDATE PURCHASE_DETAIL (PENDIENTE): {0} ({1} filas)",purchaseDetailId,count);
+
+		count = ctx.getDslContext().update(PURCHASE)
+			.set(PURCHASE.STATUS, PurchaseStatus.PENDING.value())
+			.set(PURCHASE.MODIFICATION_USER, ctx.getUser())
+			.set(PURCHASE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(PURCHASE.ID.eq(purchase).and(PURCHASE.DOMAIN.eq(domain))
+				.and(PURCHASE.STATUS.ne(PurchaseStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE PURCHASE (PENDIENTE): {0} ({1} filas)",purchase,count);
+	}
+	
 	// ------------------- PURCHASE DETAIL
 	
 	public static Stream<PurchaseDetail> getPurchaseDetailStream(AONContext ctx, PurchaseDetailFilter filter){

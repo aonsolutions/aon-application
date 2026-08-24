@@ -579,6 +579,7 @@ public class AccountingInvoiceDAO {
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 				.and(INVOICE.REGISTRY.eq(registry))
 				.and(INVOICE.TYPE.eq(type.value()))
+				.and(InvoiceDAO.NOT_ANNULLED)
 			.groupBy(ACCOUNT.ID)
 			.orderBy(count.desc())
 			.fetch().stream().map(r -> new Account()
