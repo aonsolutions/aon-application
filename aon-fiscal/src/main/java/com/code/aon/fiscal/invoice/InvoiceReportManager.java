@@ -154,6 +154,7 @@ public class InvoiceReportManager {
 			stmt.append(" LEFT OUTER JOIN enterprise_activity ea ON (i.activity = ea.id) ");
 			stmt.append(" LEFT OUTER JOIN invest_asset ia ON (id.invest_asset = ia.id) ");
 			stmt.append(" WHERE it.domain = ?");
+			stmt.append(" AND (i.annulled = 0 or i.annulled is null)");
 			stmt.append(" AND (i.vat_accrual_payment = 0 OR (vat_accrual_payment = 1 AND it.tax_type != 1)) " );  
 			if (params.getFromTaxDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");

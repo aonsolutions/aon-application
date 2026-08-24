@@ -1587,6 +1587,7 @@ public interface Properties {
 		Property<Integer> getSellerProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getStatusProperty();	
+		Property<Byte> getAnnulledProperty();
 	}
 	
 	public interface AccountEntryProperties {

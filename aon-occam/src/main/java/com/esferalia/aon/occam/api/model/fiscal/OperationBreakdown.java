@@ -4,180 +4,54 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class OperationBreakdown implements Serializable {
-
-	private static final long serialVersionUID = 7829297928785116306L;
 	
-	private Integer entryId;           // ID del apunte
-	private Date entryDate;            // Fecha del apunte
-	private Date taxDate;              // Fecha de IVA (facturas)	
-	private String account;            // Cuenta contable
-	private String accountDescription; // Descripción cuenta contable
-	private String concept;  		   // Concepto del apunte
-	private Integer invoice;           // ID de la factura (facturas)
-	private String docNumber;          // Nº Documento (se coge de la linea del asiento)  (facturas)	
-	private String registryDocument;   // NIF del Titular  (facturas)
-	private String registryName;       // Nombre del Titular  (facturas)
-	private double base;               // Base imponible en facturas, debe o haber en apuntes
-	private double percent;            // Porcentaje de IVA  (facturas)
-	private double quota;	           // Cuota de IVA  (facturas)
-	private double deductibleQuota;	   // Cuota deducible de IVA  (facturas)
-	private double surchargePercent;   // Porcentaje de Recargo de Equivalencia  (facturas)
-	private double surchargeQuota;     // Cuota de Recargo de Equivalencia  (facturas)
-	private double total;              // Base imponible + iva + req en facturas, y total apunte en el resto de apuntes
+	private static final long serialVersionUID = -640500611675649L;
 	
-	// Añadido para poder obtener Libros Registro de IVA e IRPF según formato de la Agencia Tributaria	
-	private String activityType;          	// Tipo de Actividad (1..5)
-	private String activityIAE; 	   		// Epigrafe IAE
-	private String invoiceType; 	   		// Tipo de Factura (F1,F2,...)
-	private String conceptType; 	   		// Clave concepto Ingreso/Gasto (I01,IX1,GX1,G04,...) (Solo Libro IRPF)
-	private double amount; 			   		// Ingreso computable o Gasto deducible (Solo Libro IRPF)
-	private String invoiceSeries;      		// Serie de la Factura (Facturas Emitidas)
-	private String invoiceNumber;      		// Numero de la Factura (Facturas Emitidas/Recibidas)
-    private String registryDocumentType;	// Tipo NIF
-	private String registryDocumentCountry;	// Pais NIF
-	private String operationType; 			// Clave Operación (07,02) (Solo Libro IVA)
-	private Date payDate; 					// Fecha cobro/pago (RECC) 
-    private double payAmount; 				// Importe cobro/pago (RECC)
-	private String payMethod; 				// Medio de cobro/pago (01..05) (RECC)
-	private String payMethodName; 			// Identificación medio de cobro/pago (RECC)
-	private double retentionPercent;   		// Porcentaje Retención (Solo Libro IRPF)
-	private double retentionQuota;    		// Importe Retención (Solo Libro IRPF)
+	private String activityCode; 			// Actividad: Código
+	private String activityType; 			// Actividad: Tipo
+	private String activityIAE;  			// Actividad: Grupo o Epígrafe del IAE
+	private String invoiceType; 			// Tipo de Factura	
+	private String conceptCode; 			// Codigo Concepto de Ingreso o Gasto
+	private double conceptAmount; 			// Ingreso computable o Gasto deducible 	
+	private Date entryDate; 				// Fecha Expedición
+	private Date taxDate;        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
+	private String invoiceSeries; 			// Identificación de la Factura: Serie (Emitidas)
+	private String invoiceNumber; 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
+	private String receptionNumber; 		// Número recepción (Recibidas)
+	private Date receptionDate; 			// Fecha Recepción (Recibidas) (Fecha Asiento)
+	private String documentType; 			// NIF Destinatario/Expedidor: Tipo
+	private String documentCountry;  		// NIF Destinatario/Expedidor: Código País
+	private String document; 				// NIF Destinatario/Expedidor: Identificación
+	private String name; 					// Nombre Destinatario/Expedidor	
+	private String operationKey; 			// Clave de Operación 	
+	private String operationQualification; 	// Calificación de la Operación (Emitidas)	
+	private String exemptOperation;  		// Operación Exenta (Emitidas)
+	private boolean investment; 			// Bien de Inversión (Recibidas)
+	private boolean isp; 					// Inversión del Sujeto Pasivo (Recibidas)
+	private double total; 					// Total Factura (Base + IVA + REQ)	
+	private double base;               		// Base Imponible	
+	private double percent;            		// Tipo de IVA	
+	private double quota;	           		// Cuota IVA Repercutido/Soportado
+	private double deductibleQuota;    		// Cuota Deducible (Recibidas)
+	private double surchargePercent;	   	// Tipo de Recargo Eq.	
+	private double surchargeQuota;     		// Cuota Recargo Eq.	
+	private Date payDate; 					// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
+	private double payAmount; 				// Importe Cobro/Pago
+	private String payMethod; 				// Medio Utilizado Cobro/Pago
+	private String payMethodName; 			// Identificación Medio Utilizado Cobro/Pago
+	private double retentionPercent;   		// Tipo Retención del IRPF	
+	private double retentionQuota;    		// Importe Retenido del IRPF	
+	private String buildingLocation; 		// Situación del Inmueble;	
+	private String cadasdralReference; 		// Referencia Catastral del Inmueble
+	private int entryId;                    // ID del asiento
+	private int entryJournal;               // Número de Diario del asiento
 	
-	public String getRegistryDocument() {
-		return registryDocument;
+	public String getActivityCode() {
+		return activityCode;
 	}
-	public OperationBreakdown setRegistryDocument(String registryDocument) {
-		this.registryDocument = registryDocument;
+	public OperationBreakdown setActivityCode(String activityCode) {
+		this.activityCode = activityCode;
 		return this;
-	}	
-	public String getRegistryName() {
-		return registryName;
-	}
-	public OperationBreakdown setRegistryName(String registryName) {
-		this.registryName = registryName;
-		return this;
-	}		
-	public Integer getInvoice() {
-		return invoice;
-	}
-	public OperationBreakdown setInvoice(Integer invoice) {
-		this.invoice = invoice;
-		return this;
-	}		
-	public Double getBase() {
-		return base;
-	}
-	public OperationBreakdown setBase(double base) {
-		this.base = base;
-		return this;
-	}
-	public double getPercent() {
-		return percent;
-	}
-	public OperationBreakdown setPercent(double percent) {
-		this.percent = percent;
-		return this;
-	}
-	public double getQuota() {
-		return quota;
-	}
-	public OperationBreakdown setQuota(double quota) {
-		this.quota = quota;
-		return this;
-	}	
-	public double getDeductibleQuota() {
-		return deductibleQuota;
-	}
-	public OperationBreakdown setDeductibleQuota(double deductibleQuota) {
-		this.deductibleQuota = deductibleQuota;
-		return this;
-	}	
-	public Date getTaxDate() {
-		return taxDate;
-	}
-	public OperationBreakdown setTaxDate(Date taxDate) {
-		this.taxDate = taxDate;
-		return this;
-	}
-	public Integer getEntryId() {
-		return entryId;
-	}
-	public OperationBreakdown setEntryId(Integer entryId) {
-		this.entryId = entryId;
-		return this;
-	}
-	public Date getEntryDate() {
-		return entryDate;
-	}
-	public OperationBreakdown setEntryDate(Date entryDate) {
-		this.entryDate = entryDate;
-		return this;
-	}
-	public String getAccount() {
-		return account;
-	}
-	public OperationBreakdown setAccount(String account) {
-		this.account = account;
-		return this;
-	}
-	public String getAccountDescription() {
-		return accountDescription;
-	}
-	public OperationBreakdown setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
-		return this;
-	}
-	public String getConcept() {
-		return concept;
-	}
-	public OperationBreakdown setConcept(String concept) {
-		this.concept = concept;
-		return this;
-	}
-	public double getTotal() {
-		return total;
-	}
-	public OperationBreakdown setTotal(double total) {
-		this.total = total;
-		return this;
-	}
-	public String getDocNumber() {
-		return docNumber;
-	}
-	public OperationBreakdown setDocNumber(String docNumber) {
-		this.docNumber = docNumber;
-		return this;
-	}
-	public double getSurchargePercent() {
-		return surchargePercent;
-	}
-	public OperationBreakdown setSurchargePercent(double surchargePercent) {
-		this.surchargePercent = surchargePercent;
-		return this;
-	}
-	public double getSurchargeQuota() {
-		return surchargeQuota;
-	}
-	public OperationBreakdown setSurchargeQuota(double surchargeQuota) {
-		this.surchargeQuota = surchargeQuota;
-		return this;
-	}
-	public String getFullConcept() {
-		String c = "";
-		if (accountDescription != null)
-			c = c + accountDescription;
-		if (concept != null)
-			c = (c + " ["+concept+"]").trim();
-		return c;
-	}
-	public String getFullDocumentName() {
-		String c = "";
-		if (registryDocument != null)
-			c = c + registryDocument;
-		if (registryName != null)
-			c = (c + (registryDocument == null?"":" - ") + registryName).trim();
-		return c;
-		
 	}
 	public String getActivityType() {
 		return activityType;
@@ -200,18 +74,32 @@ public class OperationBreakdown implements Serializable {
 		this.invoiceType = invoiceType;
 		return this;
 	}
-	public String getConceptType() {
-		return conceptType;
+	public String getConceptCode() {
+		return conceptCode;
 	}
-	public OperationBreakdown setConceptType(String conceptType) {
-		this.conceptType = conceptType;
+	public OperationBreakdown setConceptCode(String conceptCode) {
+		this.conceptCode = conceptCode;
 		return this;
 	}
-	public double getAmount() {
-		return amount;
+	public double getConceptAmount() {
+		return conceptAmount;
 	}
-	public OperationBreakdown setAmount(double amount) {
-		this.amount = amount;
+	public OperationBreakdown setConceptAmount(double conceptAmount) {
+		this.conceptAmount = conceptAmount;
+		return this;
+	}
+	public Date getEntryDate() {
+		return entryDate;
+	}
+	public OperationBreakdown setEntryDate(Date entryDate) {
+		this.entryDate = entryDate;
+		return this;
+	}
+	public Date getTaxDate() {
+		return taxDate;
+	}
+	public OperationBreakdown setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
 		return this;
 	}
 	public String getInvoiceSeries() {
@@ -228,25 +116,130 @@ public class OperationBreakdown implements Serializable {
 		this.invoiceNumber = invoiceNumber;
 		return this;
 	}
-	public String getRegistryDocumentType() {
-		return registryDocumentType;
+	public String getReceptionNumber() {
+		return receptionNumber;
 	}
-	public OperationBreakdown setRegistryDocumentType(String registryDocumentType) {
-		this.registryDocumentType = registryDocumentType;
+	public OperationBreakdown setReceptionNumber(String receptionNumber) {
+		this.receptionNumber = receptionNumber;
 		return this;
 	}
-	public String getRegistryDocumentCountry() {
-		return registryDocumentCountry;
+	public Date getReceptionDate() {
+		return receptionDate;
 	}
-	public OperationBreakdown setRegistryDocumentCountry(String registryDocumentCountry) {
-		this.registryDocumentCountry = registryDocumentCountry;
+	public OperationBreakdown setReceptionDate(Date receptionDate) {
+		this.receptionDate = receptionDate;
 		return this;
 	}
-	public String getOperationType() {
-		return operationType;
+	public String getDocumentType() {
+		return documentType;
 	}
-	public OperationBreakdown setOperationType(String operationType) {
-		this.operationType = operationType;
+	public OperationBreakdown setDocumentType(String documentType) {
+		this.documentType = documentType;
+		return this;
+	}
+	public String getDocumentCountry() {
+		return documentCountry;
+	}
+	public OperationBreakdown setDocumentCountry(String documentCountry) {
+		this.documentCountry = documentCountry;
+		return this;
+	}
+	public String getDocument() {
+		return document;
+	}
+	public OperationBreakdown setDocument(String document) {
+		this.document = document;
+		return this;
+	}
+	public String getName() {
+		return name;
+	}
+	public OperationBreakdown setName(String name) {
+		this.name = name;
+		return this;
+	}
+	public String getOperationKey() {
+		return operationKey;
+	}
+	public OperationBreakdown setOperationKey(String operationKey) {
+		this.operationKey = operationKey;
+		return this;
+	}
+	public String getOperationQualification() {
+		return operationQualification;
+	}
+	public OperationBreakdown setOperationQualification(String operationQualification) {
+		this.operationQualification = operationQualification;
+		return this;
+	}
+	public String getExemptOperation() {
+		return exemptOperation;
+	}
+	public OperationBreakdown setExemptOperation(String exemptOperation) {
+		this.exemptOperation = exemptOperation;
+		return this;
+	}
+	public boolean isInvestment() {
+		return investment;
+	}
+	public OperationBreakdown setInvestment(boolean investment) {
+		this.investment = investment;
+		return this;
+	}
+	public boolean isIsp() {
+		return isp;
+	}
+	public OperationBreakdown setIsp(boolean isp) {
+		this.isp = isp;
+		return this;
+	}
+	public double getTotal() {
+		return total;
+	}
+	public OperationBreakdown setTotal(double total) {
+		this.total = total;
+		return this;
+	}
+	public double getBase() {
+		return base;
+	}
+	public OperationBreakdown setBase(double base) {
+		this.base = base;
+		return this;
+	}
+	public double getPercent() {
+		return percent;
+	}
+	public OperationBreakdown setPercent(double percent) {
+		this.percent = percent;
+		return this;
+	}
+	public double getQuota() {
+		return quota;
+	}
+	public OperationBreakdown setQuota(double quota) {
+		this.quota = quota;
+		return this;
+	}
+	public double getDeductibleQuota() {
+		return deductibleQuota;
+	}
+	public OperationBreakdown setDeductibleQuota(double deductibleQuota) {
+		this.deductibleQuota = deductibleQuota;
+		return this;
+	}
+	public double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public OperationBreakdown setSurchargePercent(double surchargePercent) {
+		this.surchargePercent = surchargePercent;
+		return this;
+	}
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public OperationBreakdown setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
 		return this;
 	}
 	public Date getPayDate() {
@@ -289,6 +282,34 @@ public class OperationBreakdown implements Serializable {
 	}
 	public OperationBreakdown setRetentionQuota(double retentionQuota) {
 		this.retentionQuota = retentionQuota;
+		return this;
+	}
+	public String getBuildingLocation() {
+		return buildingLocation;
+	}
+	public OperationBreakdown setBuildingLocation(String buildingLocation) {
+		this.buildingLocation = buildingLocation;
+		return this;
+	}
+	public String getCadasdralReference() {
+		return cadasdralReference;
+	}
+	public OperationBreakdown setCadasdralReference(String cadasdralReference) {
+		this.cadasdralReference = cadasdralReference;
+		return this;
+	}
+	public int getEntryId() {
+		return entryId;
+	}
+	public OperationBreakdown setEntryId(int entryId) {
+		this.entryId = entryId;
+		return this;
+	}
+	public int getEntryJournal() {
+		return entryJournal;
+	}
+	public OperationBreakdown setEntryJournal(int entryJournal) {
+		this.entryJournal = entryJournal;
 		return this;
 	}
 	

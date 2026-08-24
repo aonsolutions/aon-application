@@ -22,6 +22,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.scope.UserScopeAssign;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 /**
@@ -246,6 +247,7 @@ public class SellerAssignHelper {
 			.from(INVOICE_DETAIL)
 			.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 			.where(INVOICE_DETAIL.DOMAIN.eq(domainId))
+			.and(InvoiceDAO.NOT_ANNULLED)
 			.and(INVOICE_DETAIL.SOURCE.eq(SOURCE_CUSTOMER_FEE))
 			.and(INVOICE_DETAIL.SOURCE_ID.eq(assignYm))
 			.and(INVOICE_DETAIL.SELLER.eq(sellerOriginal))

@@ -143,6 +143,8 @@ public class InvoiceDAO {
 
 	}
 	
+	public static final Condition NOT_ANNULLED = INVOICE.ANNULLED.isDistinctFrom((byte) 1);
+	
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
@@ -464,7 +466,8 @@ public class InvoiceDAO {
 				.setTaxableBase(r.getValue(INVOICE.TAXABLE_BASE))	
 				.setVatQuota(r.getValue(INVOICE.VAT_QUOTA))	
 				.setRetentionQuota(r.getValue(INVOICE.RETENTION_QUOTA))	
-				.setTotal(r.getValue(INVOICE.TOTAL))	
+				.setTotal(r.getValue(INVOICE.TOTAL))
+				.setAnnulled(r.getValue(INVOICE.ANNULLED) == 1)
 				.setComments(r.getValue(INVOICE.COMMENTS))
 				.setRemarks(r.getValue(INVOICE.REMARKS))
 				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
@@ -505,6 +508,7 @@ public class InvoiceDAO {
 		return ctx.getDslContext().select()
 				.from(INVOICE)
 				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(NOT_ANNULLED)	
 				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
 				.and(AonStringUtils.isBlank(series)
 					? INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
@@ -937,6 +941,98 @@ public class InvoiceDAO {
 		generateMD5(ctx, invoice);
 		return invoice; 
 	}
+	
+	public static Invoice cancel(AONContext ctx, Integer invoiceId) {
+		ctx.checkWrite();
+		Invoice invoice = getFullInvoice(ctx, invoiceId);
+		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+		InvoiceValidation.validateInvoiceCancellation(ctx, config, invoice);
+		int i = ctx.getDslContext()
+			.update(INVOICE)
+			.set(INVOICE.ANNULLED, (byte) 1)
+			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(INVOICE.ID.equal( invoice.getId()))
+			.execute();
+		ctx.log().debug("CANCEL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		
+		afterCancelInvoice(ctx, invoice);
+		return invoice;
+	}
+	
+	private static void afterCancelInvoice(AONContext ctx, Invoice invoice) {
+		FinanceDAO.deleteInvoiceFinances(ctx, invoice.getId());
+
+		getSourceDetailStream(ctx, invoice).filter(detail -> detail.getSource() != null).forEach(detail -> {
+			detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override public void visitTedi(InvoiceDetail detail) {}
+				@Override public void visitReservation(InvoiceDetail detail) {}
+				@Override public void visitDirectInvoice(InvoiceDetail detail) {}
+				@Override public void visitAccount(InvoiceDetail detail) {}
+				@Override public void visitDirectExpense(InvoiceDetail detail) {}
+
+				@Override
+				public void visitSales(InvoiceDetail detail) {
+					SalesDAO.restorePendingSales(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+
+				}
+
+				@Override
+				public void visitPurchase(InvoiceDetail detail) {
+					PurchaseDAO.restorePendingPurchase(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitOffer(InvoiceDetail detail) {
+					OfferDAO.restorePendingOffer(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitIncome(InvoiceDetail detail) {
+					IncomeDAO.restorePendingIncome(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitFee(InvoiceDetail detail) {
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+
+				@Override
+				public void visitDelivery(InvoiceDetail detail) {
+					DeliveryDAO.restorePendingDelivery(ctx, detail.getDomain(), detail.getSourceId());
+					updateInvoiceDetailSourceId(ctx, detail.getId(), null);
+				}
+			});
+		});
+	}
+
+	private static Stream<InvoiceDetail> getSourceDetailStream(AONContext ctx, Invoice invoice) {
+		return ctx.getDslContext()
+			.select(INVOICE_DETAIL.ID, INVOICE_DETAIL.DOMAIN, INVOICE_DETAIL.SOURCE, INVOICE_DETAIL.SOURCE_ID)
+			.from(INVOICE_DETAIL)
+			.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
+			.fetch()
+			.stream()
+			.map(rec -> new InvoiceDetail()
+				.setId(rec.getValue(INVOICE_DETAIL.ID))
+				.setDomain(rec.getValue(INVOICE_DETAIL.DOMAIN))
+				.setSource(InvoiceSource.safeValueOf(rec.getValue(INVOICE_DETAIL.SOURCE)))
+				.setSourceId(rec.getValue(INVOICE_DETAIL.SOURCE_ID)));
+	}
+
+	private static void updateInvoiceDetailSourceId(AONContext ctx, Integer detailId, Integer sourceId) {
+		ctx.getDslContext().update(INVOICE_DETAIL)
+			.set(INVOICE_DETAIL.SOURCE_ID, sourceId)
+			.where(INVOICE_DETAIL.ID.eq(detailId))
+			.execute();
+	}
 
 	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
 		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
@@ -1216,10 +1312,11 @@ public class InvoiceDAO {
 			);
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
 	}
-
-	public static Condition getWhere(AccountingReportParams params) {
+	
+	public static Condition getWhere(AccountingReportParams params, boolean includeAnnulled) {
 		
 		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		if (!includeAnnulled) condition = condition.and(NOT_ANNULLED);
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
@@ -1309,6 +1406,7 @@ public class InvoiceDAO {
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 		.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new Date()))))
+		.and(NOT_ANNULLED)
 		.groupBy(INVOICE.TYPE)
 		.fetch().stream().forEach(r -> {
 			InvoiceType type = InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE));
@@ -1318,7 +1416,7 @@ public class InvoiceDAO {
 		return counter;
 	}
 	
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset , int numberOfRows) {
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset , int numberOfRows) {
 		ctx.checkRead();
 		Field<Integer> orderedType = getOrderedType();
 		return ctx.getDslContext()
@@ -1348,7 +1446,7 @@ public class InvoiceDAO {
 			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-			.where(getWhere(params))
+			.where(getWhere(params, includeAnnulled))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE.desc(),INVOICE.REFERENCE_CODE)
 			.limit(offset , numberOfRows )
 			.fetch()
@@ -1446,6 +1544,7 @@ public class InvoiceDAO {
 			.select(orderedType, INVOICE.SERIES, INVOICE.SCOPE, min, max, records)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(domain))
+			.and(NOT_ANNULLED)
 			.and( fromCondition )
 			.and( toCondition )
 			.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
@@ -1482,6 +1581,7 @@ public class InvoiceDAO {
 			.where(domain.ID.in(domains)
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
+			.and(NOT_ANNULLED)
 			.groupBy(INVOICE.DOMAIN, INVOICE.STATUS)
 			.fetch()
 			.stream()

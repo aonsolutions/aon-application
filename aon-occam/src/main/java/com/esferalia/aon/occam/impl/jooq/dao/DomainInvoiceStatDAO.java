@@ -117,6 +117,8 @@ public class DomainInvoiceStatDAO {
 		ctx.getDslContext().select( invCount, INVOICE.TYPE, INVOICE.TRANSACTION, INVOICE.WITHHOLDING, INVOICE.STATUS)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(stat.getId()))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.and( params.getFromDate()
 				.map(AonDateUtils::toSql)
 				.map(INVOICE.ISSUE_DATE::ge)
@@ -157,6 +159,7 @@ public class DomainInvoiceStatDAO {
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(stat.getId()))
 			.and(INVOICE.NUMBER.lt(0))
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.and( params.getFromDate()
 				.map(AonDateUtils::toSql)
 				.map(INVOICE.ISSUE_DATE::ge)
@@ -195,6 +198,7 @@ public class DomainInvoiceStatDAO {
 			.select(invCount, INVOICE.TYPE)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(stat.getId()))
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.and( params.getFromDate()
 				.map(AonDateUtils::toSql)
 				.map(INVOICE.ISSUE_DATE::ge)

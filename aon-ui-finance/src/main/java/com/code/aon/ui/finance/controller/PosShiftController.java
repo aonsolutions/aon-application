@@ -319,6 +319,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), getInvoiceReferenceCode());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+			Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 			UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoiceBean.getFieldName(IEntityAlias.INVOICE_SCOPE_ID));
 			List<ITransferObject> invoiceList = invoiceBean.getList(criteria);
 			if (invoiceList.size() == 0) {

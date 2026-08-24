@@ -29,7 +29,6 @@ import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETAIL_COMMISSION;
-import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
@@ -74,8 +73,6 @@ import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.jooq.tables.Rdoc;
 import com.esferalia.aon.jooq.tables.RdocTag;
-import com.esferalia.aon.jooq.tables.Rmedia;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -189,7 +186,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RMediaPropertyDAO;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class PropertiesDAO {
 	
@@ -200,6 +196,9 @@ public class PropertiesDAO {
 	public static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	public static class InvoicePropertiesDAO implements InvoiceProperties {
 		
+		private static final long serialVersionUID = 3145987234149879477L;
+
+
 		public Integer getPage(InvoiceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.getPage();
@@ -211,17 +210,26 @@ public class PropertiesDAO {
 		}
 		
 		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
+			return build(select, filter, false);
 		}
 		
-		public Condition[] getConditions(InvoiceFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
+		 public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter, boolean includeAnnulled) {
+             FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+             return (includeAnnulled ? filterDAO : filterDAO.andCondition(InvoiceDAO.NOT_ANNULLED)).build(select);
+	     }
 
-			return new Condition[] { filterDAO.getCondition() };
-		}
+         public Condition[] getConditions(InvoiceFilter filter) {
+        	 return getConditions(filter, false);
+	     }
+	
+	     public Condition[] getConditions(InvoiceFilter filter, boolean includeAnnulled) {
+	    	 FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+	    	 if (filterDAO == null) return new Condition[0];
+	    	 return includeAnnulled
+    			? new Condition[] { filterDAO.getCondition() }
+ 				: new Condition[] { filterDAO.getCondition(), InvoiceDAO.NOT_ANNULLED };
+	     }
+	
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ID);}
 		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.DOMAIN);}
 		@Override public Property<Integer> getActivityProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.ACTIVITY);}
@@ -256,6 +264,7 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 		@Override public Property<Double> getTotalProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TOTAL);}
+		@Override public Property<Byte> getAnnulledProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ANNULLED);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 
@@ -1222,6 +1231,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SELLER);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
+		@Override public Property<Byte> getAnnulledProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ANNULLED);}
 		
 	}
 	

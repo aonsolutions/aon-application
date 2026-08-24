@@ -73,7 +73,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -180,7 +179,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
-	void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<OldProduct>> asyncCallback);
+	void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<Product>> asyncCallback);
 	
 	// **************************************************
 	// *************************************** [REGISTRY]

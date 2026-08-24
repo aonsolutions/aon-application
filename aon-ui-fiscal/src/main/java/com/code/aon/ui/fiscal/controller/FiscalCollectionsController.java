@@ -17,19 +17,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
-import com.code.aon.fiscal.enumeration.Mod347Type;
-import com.code.aon.fiscal.enumeration.Mod349Status;
-import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RetentionRegime;
 import com.code.aon.fiscal.enumeration.VatExemptionCause;
 import com.code.aon.fiscal.enumeration.VatRegime;
-import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
-import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.enumeration.WithholdingStatus;
 import com.code.aon.ql.Criteria;
@@ -40,8 +34,6 @@ public class FiscalCollectionsController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private List<SelectItem> withholdingStatuses;
-	private List<SelectItem> vatTaxStatuses;
-	private List<SelectItem> vatTaxDeclarationStatuses;
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatRegimes;
 	private List<SelectItem> vatExemptionCauses;
@@ -49,10 +41,6 @@ public class FiscalCollectionsController implements Serializable {
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
 	private List<SelectItem> quarterPeriods;
-	private List<SelectItem> mod347Formats;
-	private List<SelectItem> mod347Types;
-	private List<SelectItem> mod349Statuses;
-	private List<SelectItem> mod349Types;	
 	private List<SelectItem> fiscalModelStatuses;
 
 	public List<SelectItem> getWithholdingStatuses() {
@@ -66,45 +54,6 @@ public class FiscalCollectionsController implements Serializable {
 			}
 		}
 		return withholdingStatuses;
-	}
-
-	public List<SelectItem> getVatTaxStatuses() {
-		if (vatTaxStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxStatuses = new LinkedList<>();
-			for (VatTaxStatus status:VatTaxStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				vatTaxStatuses.add(item);
-			}
-		}
-		return vatTaxStatuses;
-	}
-
-	public List<SelectItem> getMod349Statuses() {
-		if (mod349Statuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Statuses = new LinkedList<>();
-			for (Mod349Status  status:Mod349Status.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				mod349Statuses.add(item);
-			}
-		}
-		return mod349Statuses;
-	}
-
-	public List<SelectItem> getVatTaxDeclarationStatuses() {
-		if (vatTaxDeclarationStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatTaxDeclarationStatuses = new LinkedList<>();
-			for (VatTaxDeclarationStatus declarationStatus:VatTaxDeclarationStatus.values()) {
-				String name = declarationStatus.getName(locale);
-				SelectItem item = new SelectItem(declarationStatus, name);
-				vatTaxDeclarationStatuses.add(item);
-			}
-		}
-		return vatTaxDeclarationStatuses;
 	}
 
 	public List<SelectItem> getVatTypes() {
@@ -194,44 +143,6 @@ public class FiscalCollectionsController implements Serializable {
 		return quarterPeriods;
 	}
 
-	public List<SelectItem> getMod347Formats() {
-		if (mod347Formats == null) {
-			mod347Formats = new LinkedList<>();
-			for (MOD347Format format : MOD347Format.values()) {
-				String name = format.getDescription();
-				SelectItem item = new SelectItem(format, name);
-				mod347Formats.add(item);
-			}
-		}
-		return mod347Formats;
-	}
-
-	public List<SelectItem> getMod347Types() {
-		if (mod347Types == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod347Types = new LinkedList<>();
-			for (Mod347Type type : Mod347Type.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				mod347Types.add(item);
-			}
-		}
-		return mod347Types;
-	}
-
-	public List<SelectItem> getMod349Types() {
-		if (mod349Types == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			mod349Types = new LinkedList<>();
-			for (Mod349Type type : Mod349Type.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				mod349Types.add(item);
-			}
-		}
-		return mod349Types;
-	}
-	
 	public List<SelectItem> getFiscalModelStatuses() {
 		if (fiscalModelStatuses == null) {
 			fiscalModelStatuses = new LinkedList<>();

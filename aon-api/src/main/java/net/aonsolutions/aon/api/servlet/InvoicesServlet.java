@@ -348,7 +348,8 @@ public class InvoicesServlet extends AonApiHttpServlet {
     }
 
     private static Filter invoiceFilter(AonApiData api, InvoiceProperties f) {
-        Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+        Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
+			.and(f.getAnnulledProperty().eq((byte) 0).or(f.getAnnulledProperty().isNull()));
 
         if (api.getData().has(IJsonNames.DESCRIPTION)) {
             String description = JsonUtils.getString(api.getData(), IJsonNames.DESCRIPTION);

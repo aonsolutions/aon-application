@@ -6,6 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatusRules;
 import com.esferalia.aon.watson.server.AonDateUtils;
  
 /**
@@ -39,16 +40,10 @@ public final class RegistryExpirationUtils {
 	 * fecha de expiracion ya ha vencido; hasta entonces cuenta como ACTIVE.
 	 */
 	public static RegistryStatus effective(RegistryStatus status, Date expirationDate) {
-		RegistryStatus st = null == status ? RegistryStatus.ACTIVE : status;
- 
-		if (RegistryStatus.INACTIVE.equals(st))
-			return RegistryStatus.INACTIVE;
- 
-		if (RegistryStatus.BLOCKED.equals(st))
-			return isExpired(expirationDate) ? RegistryStatus.BLOCKED : RegistryStatus.ACTIVE;
- 
-		return RegistryStatus.ACTIVE;
+		return RegistryStatusRules.effective(status, expirationDate);
 	}
+ 
+	
  
 	/**
 	 * Vencida = no esta en el futuro. Una fecha de hoy vence hoy; null se
@@ -58,7 +53,7 @@ public final class RegistryExpirationUtils {
 	 * contrario. Aqui usamos el inclusivo a proposito.
 	 */
 	public static boolean isExpired(Date expirationDate) {
-		return !AonDateUtils.isFuture(expirationDate);
+		return RegistryStatusRules.isExpired(expirationDate);
 	}
  
 	/**
@@ -82,7 +77,7 @@ public final class RegistryExpirationUtils {
 	 * Solo INACTIVE desactiva el dominio; BLOCKED lo deja activo con fecha.
 	 */
 	public static boolean domainActive(RegistryStatus status) {
-		return !RegistryStatus.INACTIVE.equals(status);
+		return RegistryStatusRules.domainActive(status);
 	}
 	
 	/**

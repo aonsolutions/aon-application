@@ -244,7 +244,31 @@ public class InvoiceValidation {
 				});
 		}
 	};
-
+	
+	/**
+	 * Las facturas rectificadas no se pueden anular.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_RECTIFIED_INVOICE = ivc -> {
+		if (ivc.inv.isRectified() && ivc.inv.getRectificationInvoice() != null) {
+			throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_RECTIFIED.getMessage());
+		} else if(ivc.inv.isRectified()) {
+			InvoiceDAO.getInvoiceStream(ivc.ctx, f -> f.getDomainProperty().eq(ivc.inv.getDomain())
+				.and(f.getRectificationInvoiceProperty().eq(ivc.inv.getId()))).findFirst().ifPresent( i -> {
+					throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_RECTIFIED.getMessage());
+				});
+		}
+	};
+	
+	/**
+	 * Las facturas contabilizadas no se pueden anular.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_RECORDED_INVOICE = ivc -> {
+		if (ivc.inv.isRecorded()) {
+			throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_RECORDED.getMessage());
+		} 
+	};
+	
+	
 	/**
 	 * Las facturas rectificadas no se pueden borrar.
 	 */
@@ -257,6 +281,34 @@ public class InvoiceValidation {
 					.and(INVOICE_DUA.INVOICE_IMPORT.eq(ivc.inv.getId() )))) {
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
 		}
+	};
+	
+	/**
+	 * Las facturas rectificadas no se pueden anular.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_DUA_LINKED_INVOICE = ivc -> {
+		if (ivc.inv.isDUALinkAllowed() && 
+			ivc.ctx.getDslContext().fetchExists( 
+				ivc.ctx.getDslContext().selectOne()
+					.from(INVOICE_DUA)
+					.where(INVOICE_DUA.DOMAIN.eq(ivc.inv.getDomain()))
+					.and(INVOICE_DUA.INVOICE_IMPORT.eq(ivc.inv.getId() )))) {
+			throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_RECTIFIED.getMessage());
+		}
+	};
+	
+	/**
+	 * Las facturas con vencimientos no pendientes no se pueden anular.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_FINANCE_NOT_PENDING = ivc -> {
+		if (ivc.inv.getFinances() != null && !ivc.inv.getFinances().isEmpty()) {
+			ivc.inv.getFinances().stream()
+				.filter( f -> !f.isRemoved() && !f.isPending() )
+				.findFirst()
+				.ifPresent( f -> {
+					throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_FINANCE.format(f.getDueDate(),f.getAmount()));
+				});
+		}		
 	};
 	
 	/**
@@ -274,6 +326,32 @@ public class InvoiceValidation {
 					AppParamDAO.insertApplicationParameter( ivc.ctx, ap );
 				} else {
 					throw new AonCoreException(AonError.INVOICE_CANT_DELETE_MODEL.format(
+						models.stream()
+							.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+							.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+							.toString()
+							));
+					
+				}
+			}
+		}
+	};
+	
+	/**
+	 * La factura ha sido utilizada para los calculos de los modelos fiscales.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_ALCATRAZ = ivc -> {
+		if (ivc.inv.getId() != null) {
+			List<FiscalModel> models = AlcatrazDAO.isInvoiceDeclared(ivc.ctx, ivc.inv.getId() );
+			if (models != null && !models.isEmpty()) {
+				if (ivc.inv.isSkipAlcatrazValidation()) {
+					ApplicationParameter ap = new ApplicationParameter()
+							.setDomain( ivc.inv.getDomain() )
+							.setName( AppParam.FS_FORCE_DIFF_CALC )
+							.setValue(  AonNumberUtils.toString(AonDateUtils.getYear( ivc.inv.getIssueDate())) );
+					AppParamDAO.insertApplicationParameter( ivc.ctx, ap );
+				} else {
+					throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_MODEL.format(
 						models.stream()
 							.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
 							.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
@@ -342,6 +420,17 @@ public class InvoiceValidation {
 	};
 	
 	/**
+	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden ANULAR.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_SII = ivc -> {
+		InvoiceInfoDAO.get(ivc.ctx, ivc.inv.getId(), InvoiceCommunicationType.SII).ifPresent( info -> {
+			if (info.isAccepted() || info.isAcceptedWithErrors()) {
+				throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_SII.getMessage());
+			}
+		});
+	};
+	
+	/**
 	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
 	 */
 	private static final Consumer<InvoiceValidationContext> TBAI = ivc -> {
@@ -364,6 +453,24 @@ public class InvoiceValidation {
 			}
 		}
 	};
+	
+	/**
+	 * Las facturas enviadas al TicketBAI y que no se han dado de baja en TicketBAI no se pueden ANULAR.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_TBAI = ivc -> {
+		InvoiceInfoDAO.get(ivc.ctx, ivc.inv.getId(), InvoiceCommunicationType.TBAI).ifPresent( info -> {
+			if (info.isAccepted() || info.isAcceptedWithErrors()) {
+				throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_TBAI.getMessage());
+			}
+		});
+		
+		InvoiceInfoDAO.get(ivc.ctx, ivc.inv.getId(), InvoiceCommunicationType.LROE).ifPresent( info -> {
+			if (info.isAccepted() || info.isAcceptedWithErrors()) {
+				throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_TBAI.getMessage());
+			}
+		});
+	};
+	
 	
 	/**
 	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden borrar.
@@ -393,6 +500,17 @@ public class InvoiceValidation {
 		}
 	};
 
+	/**
+	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden ANULAR.
+	 */
+	private static final Consumer<InvoiceValidationContext> CANCEL_VERIFACTU = ivc -> {
+		InvoiceInfoDAO.get(ivc.ctx, ivc.inv.getId(), InvoiceCommunicationType.VERIFACTU).ifPresent( info -> {
+			if (info.isAccepted() || info.isAcceptedWithErrors()) {
+				throw new AonCoreException(AonError.INVOICE_CANT_CANCEL_VERIFACTU.getMessage());
+			}
+		});
+	};
+	
 	/**
 	 * El dominio de la factura no puede estar vacio.
 	 */
@@ -473,6 +591,20 @@ public class InvoiceValidation {
 		.accept(new InvoiceValidationContext(ctx,config,inv));
 	}
 
+	public static void validateInvoiceCancellation(AONContext ctx, AonConfiguration config, Invoice inv) {
+		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
+		CANCEL_RECTIFIED_INVOICE
+		.andThen(CANCEL_RECORDED_INVOICE)
+		.andThen(CANCEL_FINANCE_NOT_PENDING)
+		.andThen(CANCEL_DUA_LINKED_INVOICE)
+		.andThen(OPERATIONS_DEADLINE)
+		.andThen(CANCEL_SII)
+		.andThen(CANCEL_TBAI)
+		.andThen(CANCEL_VERIFACTU)
+		.andThen(CANCEL_ALCATRAZ)
+		.accept(new InvoiceValidationContext(ctx,config,inv));
+	}
+	
 	public static void validateIssue(AONContext ctx, Invoice invoice) {
 		if (invoice != null && invoice.isSales()) {
 			ISSUE_OPE_DATE_FUTURE

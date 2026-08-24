@@ -99,7 +99,9 @@ public class TasStatEngine {
 			+" FROM invoice i"
 			+" INNER JOIN registry r ON r.id = i.registry"
 			+" WHERE i.project=?"
-			+" AND " + DomainManager.getStaticSQLWhereClause("i.domain");
+			+" AND " + DomainManager.getStaticSQLWhereClause("i.domain")
+			+" AND (i.annulled = 0 or i.annulled is null)" // NO ANULADAS
+			;
 
 	private static String SALES_STATEMENT = 
 			"SELECT s.id " + ID

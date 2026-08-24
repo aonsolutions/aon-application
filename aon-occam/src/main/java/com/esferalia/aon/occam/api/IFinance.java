@@ -54,7 +54,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -98,7 +98,7 @@ public interface IFinance {
 
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	List<Invoice>getFullInvoiceList(AONContext ctx, List<Integer> ids);
-	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
+	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset, int limit);
 	Stream<Invoice> getInvoiceHeaders(AONContext ctx, InvoiceFilter filter, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
@@ -109,12 +109,9 @@ public interface IFinance {
 			ItemFilter iFilter);
 	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
 	Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx,InvoiceFilter filter, IDAOCallback callback);
-	InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
-	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, Integer itemId, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, Integer itemId, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, Integer itemId, Integer workplaceId, Integer warehouseId, Date date);
 	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
 	Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
 	Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
@@ -190,7 +187,7 @@ public interface IFinance {
 	// 	************************** INVOICE REGISTRY ***
 	// 	***********************************************
 	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, Integer domainId, String query);
-	public Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter);
+	public Stream<Product> getInvoiceProducts(AONContext ctx, ProductFilter filter);
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId);
 	
 	// 	***********************************************

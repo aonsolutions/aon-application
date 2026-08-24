@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,6 +115,25 @@ public class IncomeDAO {
 				.set(INCOME_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 			.where(INCOME_DETAIL.ID.eq(incomeDetail.getId()))
 			.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
+	}
+	
+	protected static void restorePendingIncome(AONContext ctx, Integer domain, Integer incomeDetailId) {
+		if (incomeDetailId == null) return;
+		Integer income = ctx.getDslContext()
+			.select(INCOME_DETAIL.INCOME)
+			.from(INCOME_DETAIL)
+			.where(INCOME_DETAIL.ID.eq(incomeDetailId).and(INCOME_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(INCOME_DETAIL.INCOME);
+		if (income == null) return;
+
+		int count = ctx.getDslContext().update(INCOME)
+			.set(INCOME.STATUS, IncomeStatus.PENDING.value())
+			.set(INCOME.MODIFICATION_USER, ctx.getUser())
+			.set(INCOME.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(INCOME.ID.eq(income).and(INCOME.DOMAIN.eq(domain))
+				.and(INCOME.STATUS.ne(IncomeStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE INCOME (PENDIENTE): {0} ({1} filas)",income,count);
 	}
 	
 	public static Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id){

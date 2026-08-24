@@ -147,7 +147,7 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 
 	private void streams(Occam occam, AccountingReportParams params, int offset, int limit, PrintWriter writer) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			Condition basicCondition = InvoiceDAO.getWhere(params);
+			Condition basicCondition = InvoiceDAO.getWhere(params, true);
 			
 			Stream.of(
 					Checks.DATES_DIFFERENT_YEARS.stream( ctx, basicCondition, offset , limit )
