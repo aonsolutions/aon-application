@@ -23,9 +23,6 @@ import net.aonsolutions.aon.sii.aeat.FacturasEmitidas;
 import net.aonsolutions.aon.sii.aeat.FacturasRecibidas;
 import net.aonsolutions.aon.sii.aeat.OperacionesIntracomunitarias;
 import net.aonsolutions.aon.sii.aeat.SIIAeatPost;
-import net.aonsolutions.aon.sii.araba.SIIArabaPost;
-import net.aonsolutions.aon.sii.bizkaia.SIIBizkaiaPost;
-import net.aonsolutions.aon.sii.gipuzkoa.SIIGipuzkoaPost;
 
 public class SIIManager {
 	private InvoiceCommunicationConfiguration icc;
@@ -55,8 +52,8 @@ public class SIIManager {
 	
 	public JSONArray bajaFacturas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		return invoice.isSales() 
-				? bajaFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros)
-				: bajaFacturasRecibidas(domain, login, company, invoice.getId(), contextList, terceros);
+				? bajaFacturasEmitidas(domain, login, company, invoice)
+				: bajaFacturasRecibidas(domain, login, company, invoice);
 	}
 
 	// -------------------- FACTURAS EMITIDAS	
@@ -70,29 +67,11 @@ public class SIIManager {
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
     	
     	if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas en Araba");
 		} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas en Gipuzkoa");
 		} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai/LROE para las facturas emitidas en Bizkaia");
 		} else {
 			if(newList.size() > 0){
 				return FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
@@ -115,29 +94,11 @@ public class SIIManager {
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
 		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas en Araba");
 		} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas en Gipuzkoa");
 		} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
-			}
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai/LROE para las facturas emitidas en Bizkaia");
 		} else { //if(getConfiguration().isCommonTerritory() || getConfiguration().isNafarroa()) {
 			if(newList.size() > 0){
 				return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
@@ -150,27 +111,19 @@ public class SIIManager {
 		return new JSONArray();
 	}
 	
-	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.FACTURAS_EMITIDAS);
 		
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).bajaFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).bajaFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else return SIIAeatPost.getInstance(getConfiguration()).bajaFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isAraba() || getConfiguration().isGipuzkoa() || getConfiguration().isBizkaia()) {
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas");
+    	} else return SIIAeatPost.getInstance(getConfiguration()).bajaFacturasEmitidas(domain, login, company, invoice, uri);
 	}
 	
 	protected JSONArray suministroFacturasEmitidasCobros(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.FACTURAS_EMITIDAS_COBROS);
 
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId, uri);
+		if(getConfiguration().isAraba() || getConfiguration().isGipuzkoa() || getConfiguration().isBizkaia()) {
+			throw new UnsupportedOperationException("Hay que utilizar TicketBai para las facturas emitidas");
     	} else return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasEmitidasCobros(domain, login, company, financeList, invoiceId, uri);
     }
 
@@ -184,39 +137,18 @@ public class SIIManager {
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> v.getSiiStatus().equals("Pendiente")
     			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.ALTA_RECIBIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
-			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.ALTA_RECIBIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
-			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.ALTA_RECIBIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
-			}
-		} else {
-    		if(newList.size() > 0){
-				return FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.ALTA_RECIBIDAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, modList, SendType.MOD_RECIBIDAS.isModificacion(), terceros);
-			}
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las facturas recibidas en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIINamespace.toAdministration(FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, newList, SendType.ALTA_RECIBIDAS.isModificacion(), terceros, getConfiguration().getAdministration()), getConfiguration().getAdministration());
+		}
+
+		if(modList.size() > 0){
+			return SIINamespace.toAdministration(FacturasRecibidas.getInstance().getSuministroFacturasRecibidas(domain, login, company, invoiceId, modList, SendType.MOD_RECIBIDAS.isModificacion(), terceros, getConfiguration().getAdministration()), getConfiguration().getAdministration());
+		}
+
     	return null;
     }
 	
@@ -230,63 +162,34 @@ public class SIIManager {
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> v.getSiiStatus().equals("Pendiente")
     			|| v.getSiiStatus().equals("Incorrecto")).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
-			}
-
-			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
-			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
-			}
-
-			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
-			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
-			}
-
-			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
-			}
-		} else {
-			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
-			}
-
-			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
-			}
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las facturas recibidas en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
+		}
+
+		if(modList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
+		}
+
     	return new JSONArray();
     }
 	
-	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Invoice invoice) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.FACTURAS_RECIBIDAS);
 
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else return SIIAeatPost.getInstance(getConfiguration()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las facturas recibidas en Bizkaia");
+    	} else return SIIAeatPost.getInstance(getConfiguration()).bajaFacturasRecibidas(domain, login, company, invoice, uri);
 	}
 	
 	protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.FACTURAS_RECIBIDAS_PAGOS);
 
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las facturas recibidas en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
     }
 	
@@ -300,39 +203,18 @@ public class SIIManager {
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.ALTA_INVERSION.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.MOD_INVERSION.isModificacion(), terceros);
-			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.ALTA_INVERSION.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.MOD_INVERSION.isModificacion(), terceros);
-			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.ALTA_INVERSION.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.MOD_INVERSION.isModificacion(), terceros);
-			}
-		} else {
-			if(newList.size() > 0){
-				return BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.ALTA_INVERSION.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.MOD_INVERSION.isModificacion(), terceros);
-			}
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para los bienes de inversión en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIINamespace.toAdministration(BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.ALTA_INVERSION.isModificacion(), terceros), getConfiguration().getAdministration());
+		}
+
+		if(modList.size() > 0){
+			return SIINamespace.toAdministration(BienesInversion.getInstance().getSuministroBienesInversion(domain, login, company, invoiceId, contextList, SendType.MOD_INVERSION.isModificacion(), terceros), getConfiguration().getAdministration());
+		}
+
 		return null;
 	}
 	
@@ -346,52 +228,26 @@ public class SIIManager {
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
-
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
-			}
-
-			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
-			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
-			}
-
-			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
-			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
-			}
-
-			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
-			}
-		} else {
-			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
-			}
-
-			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
-			}
+		if(getConfiguration().isBizkaia()) {
+			throw new UnsupportedOperationException("Hay que utilizar LROE para los bienes de inversión en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.ALTA_INVERSION);
+		}
+
+		if(modList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri, SendType.MOD_INVERSION);
+		}
+
 		return new JSONArray();
 	}
 
 	protected JSONArray bajaBienesInversion(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.BIENES_INVERSION);
 		
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).bajaBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).bajaBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para los bienes de inversión en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).bajaBienesInversion(domain, login, company, invoiceId, contextList, terceros, uri);
 	}
 
@@ -405,37 +261,18 @@ public class SIIManager {
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.ALTA_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.MOD_INTRACOMUNITARIAS.isModificacion(), terceros);			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.ALTA_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.MOD_INTRACOMUNITARIAS.isModificacion(), terceros);			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.ALTA_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.MOD_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
-		} else {
-			if(newList.size() > 0){
-				return OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.ALTA_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
-
-			if(modList.size() > 0){
-				return OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.MOD_INTRACOMUNITARIAS.isModificacion(), terceros);
-			}
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las operaciones intracomunitarias en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIINamespace.toAdministration(OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.ALTA_INTRACOMUNITARIAS.isModificacion(), terceros), getConfiguration().getAdministration());
+		}
+
+		if(modList.size() > 0){
+			return SIINamespace.toAdministration(OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, SendType.MOD_INTRACOMUNITARIAS.isModificacion(), terceros), getConfiguration().getAdministration());
+		}
+
 		return null;
 	}
 		
@@ -450,51 +287,26 @@ public class SIIManager {
 		LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
 				|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getConfiguration().isAraba()) {
-			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
-			}
-    	} else if(getConfiguration().isGipuzkoa()) {
-			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
-			}
-    	} else if(getConfiguration().isBizkaia()) {
-			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
-			}
-		} else {
-			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
-			}
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las operaciones intracomunitarias en Bizkaia");
 		}
+
+		if(newList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.ALTA_INTRACOMUNITARIAS);
+		}
+
+		if(modList.size() > 0){
+			return SIIAeatPost.getInstance(getConfiguration()).suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, terceros, uri, SendType.MOD_INTRACOMUNITARIAS);
+		}
+
 		return new JSONArray();
 	}
 		
 	protected JSONArray bajaOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.OPERACIONES_INTRACOMUNITARIAS);
 
-		if(getConfiguration().isAraba()) {
-    		return SIIArabaPost.getInstance(getConfiguration()).bajaOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-    		return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-    		return SIIBizkaiaPost.getInstance(getConfiguration()).bajaOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las operaciones intracomunitarias en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).bajaOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, terceros, uri);
 	}
 
@@ -503,24 +315,16 @@ public class SIIManager {
     protected JSONObject suministroCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.COBROS_METALICO);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para los cobros metálico en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).suministroCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
     }
 
     protected JSONObject bajaCobrosMetalico(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.COBROS_METALICO);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para los cobros metálico en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).bajaCobrosMetalico(domain, login, company, invoiceId, contextList, terceros, uri);
     }
 
@@ -529,24 +333,16 @@ public class SIIManager {
     protected JSONObject suministroOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.OPERACIONES_SEGUROS);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las operaciones seguros en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).suministroOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
     }
 
     protected JSONObject bajaOperacionesSeguros(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.OPERACIONES_SEGUROS);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las operaciones seguros en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).bajaOperacionesSeguros(domain, login, company, invoiceId, contextList, terceros, uri);
 
     }
@@ -556,24 +352,16 @@ public class SIIManager {
     protected JSONObject suministroAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.AGENCIAS_VIAJES);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las agencias de viajes en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).suministroAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
     }
 
     protected JSONObject bajaAgenciasViajes(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
 		String uri = SIIUri.getInstance().getURI(getConfiguration(), SIIType.AGENCIAS_VIAJES);
 
-		if(getConfiguration().isAraba()) {
-			return SIIArabaPost.getInstance(getConfiguration()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isGipuzkoa()) {
-			return SIIGipuzkoaPost.getInstance(getConfiguration()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
-    	} else if(getConfiguration().isBizkaia()) {
-			return SIIBizkaiaPost.getInstance(getConfiguration()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
+		if(getConfiguration().isBizkaia()) {
+    		throw new UnsupportedOperationException("Hay que utilizar LROE para las agencias de viajes en Bizkaia");
     	} else return SIIAeatPost.getInstance(getConfiguration()).bajaAgenciasViajes(domain, login, company, invoiceId, contextList, terceros, uri);
     }
 

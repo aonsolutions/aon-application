@@ -1,8 +1,6 @@
 package net.aonsolutions.aon.sii.aeat;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,8 +9,6 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
@@ -27,20 +23,18 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatData;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRBajaFRecibidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRFRecibidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRPagosRecibidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSii;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSiiBaja;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSiiCobrosPagos;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.ClaveTipoComunicacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.ClaveTipoFacturaType;
@@ -64,8 +58,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PagosType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRFacturasRecibidas;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBajaRecibidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRFacturasRecibidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRPagosEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.SuministroLRFacturasRecibidas;
@@ -84,12 +76,12 @@ public class FacturasRecibidas extends SIIBuilt {
 	}
 	// ------------------- FACTURAS RECIBIDAS
 
-	public byte[] getSuministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+	public byte[] getSuministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros, Administration place) {
 		JAXBContext ctx;
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(SuministroLRFacturasRecibidas.class);
-			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros, false));
+			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros, false, place));
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -122,39 +114,13 @@ public class FacturasRecibidas extends SIIBuilt {
 		return b;
 	}
 
-	protected byte[] getBajaFacturasRecibidas(BajaLRFacturasRecibidas suministro) {
-		JAXBContext ctx;
-		byte[] b = null;
-		try {
-			ctx = JAXBContext.newInstance(BajaLRFacturasRecibidas.class);
-			b = writeXml(ctx, suministro);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
-	}
-
-	protected byte[] getRespuestaBajaFacturasRecibidas(RespuestaLRBajaFRecibidasType suministro) {
-		JAXBContext ctx;
-		byte[] b = null;
-		try {
-			ctx = JAXBContext.newInstance(RespuestaLRBajaFRecibidasType.class);
-			QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRBajaFRecibidasType");
-		    JAXBElement<RespuestaLRBajaFRecibidasType> root = new JAXBElement<>(qName, RespuestaLRBajaFRecibidasType.class, suministro);
-			b = writeXml(ctx, root);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
-	}
-
 	/**
 	 * Libro de registro de Facturas recibidas.
 	 * 
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros, boolean errorPeriodo) {
+	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros, boolean errorPeriodo, Administration place) {
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 
 		// CABECERA
@@ -254,8 +220,11 @@ public class FacturasRecibidas extends SIIBuilt {
 		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.SII_INCLUDE_DATE);
 		
-		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : AonDateUtils.getDate(2017, 6, 1);
-		if(siiDate == null) siiDate = AonDateUtils.getDate(2017, 6, 1); 
+		// El SII entro en vigor el 01-07-2017 en territorio comun y el 01-01-2018 en los territorios forales.
+		Date defaultSiiDate = Administration.ALAVA.equals(place) || Administration.GIPUZKOA.equals(place)
+				? AonDateUtils.getDate(2018, 0, 1) : AonDateUtils.getDate(2017, 6, 1);
+		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : defaultSiiDate;
+		if(siiDate == null) siiDate = defaultSiiDate; 
 		if (opDate != null && siiDate != null && opDate.compareTo(siiDate) < 0) {
 			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 		}
@@ -331,7 +300,7 @@ public class FacturasRecibidas extends SIIBuilt {
 					h -> h.getIdProperty().eq(vat.getRectificationInvoice()));
 			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA!
 			IDFacturaARType a2 = new IDFacturaARType();
-			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getTaxDate(), "dd-MM-yyyy")); // TODO
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy"));
 			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
 			fr.getIDFacturaRectificada().add(a2);
 			frt.setFacturasRectificadas(fr);
@@ -433,54 +402,6 @@ public class FacturasRecibidas extends SIIBuilt {
 		suministro.getRegistroLRFacturasRecibidas().add(factura);
 		System.out.println("SII FR GENERANDO XML - RETURN SUMINISTRO");
 		return suministro;
-	}
-
-	protected BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company, Integer invoiceId,
-			LinkedList<VatContext> vatList, String terceros) {
-		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
-		baja.setCabecera(cabeceraBaja(company, terceros));
-
-		VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
-
-		LRBajaRecibidasType factura = new LRBajaRecibidasType();
-
-		IDFacturaRecibidaNombreBCType idFactura = new IDFacturaRecibidaNombreBCType();
-		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-		https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType.IDEmisorFactura();
-
-		emisor.setNombreRazon(vat.getRegistryName());
-		
-		if (vat.getRegistryDocumentCountry().equals(Country.ES)) {
-			emisor.setNIF(vat.getRegistryDocument());
-		} else if(vat.isIntracommunity()){
-			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
-			String document = vat.getRegistryDocument();
-			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getAeatCode())) {
-				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
-				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getAeatCode();
-				document = countryDocument + document;
-			}
-			otro.setID(document);		
-			otro.setIDType(IDType.NIF_IVA.getName());
-			emisor.setIDOtro(otro);
-		} else {
-			IDOtroType otro = new IDOtroType();
-			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getAeatCode()));
-			otro.setID(vat.getRegistryDocument());
-			otro.setIDType(IDType.valueOf(vat.getRegistryDocumentType()).getName());
-			emisor.setIDOtro(otro);
-		}
-
-		idFactura.setIDEmisorFactura(emisor);
-		factura.setIDFactura(idFactura);
-
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
-
-		baja.getRegistroLRBajaRecibidas().add(factura);
-
-		return baja;
 	}
 
 	// ------------------- SUMINISTRO FACTURAS RECIBIDAS PAGOS
@@ -609,24 +530,6 @@ public class FacturasRecibidas extends SIIBuilt {
 		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
 		titular.setNIF(company.getDocument());
 		titular.setNombreRazon(company.getName());
-		cabecera.setTitular(titular);
-		return cabecera;
-	}
-	
-	/**
-	 * Devuelve la cabecera para bajas.
-	 * 
-	 * @param company
-	 * @return CabeceraSiiBaja
-	 */
-	private CabeceraSiiBaja cabeceraBaja(Company company, String terceros){
-		CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
-		cabecera.setIDVersionSii("1.1");
-		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-		titular.setNIF(company.getDocument());
-		titular.setNombreRazon(company.getName());
-		if(terceros != null && !terceros.equals("false"))
-			titular.setNIFRepresentante(terceros);
 		cabecera.setTitular(titular);
 		return cabecera;
 	}

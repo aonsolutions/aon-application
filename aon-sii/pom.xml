@@ -70,6 +70,24 @@
     		<version>3.0.2</version>
 		</dependency>
 
+		<!--
+			**********************************************
+			************ [TEST DEPENDENCIES] *************
+			**********************************************
+		-->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>6.1.0-RC1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-suite-engine</artifactId>
+			<version>6.1.0-RC1</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Migrating From Java 8 To Java 11. Instead of using the deprecated 
 			JAXB (java.xml.bind) module, use the following artifacts. -->
 <!-- 		<dependency>

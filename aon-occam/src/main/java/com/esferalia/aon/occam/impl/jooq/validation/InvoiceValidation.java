@@ -605,6 +605,17 @@ public class InvoiceValidation {
 		.accept(new InvoiceValidationContext(ctx,config,inv));
 	}
 	
+	public static void validatePreCommunicationInvoiceCancellation(AONContext ctx, AonConfiguration config, Invoice inv) {
+		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
+		CANCEL_RECTIFIED_INVOICE
+		.andThen(CANCEL_RECORDED_INVOICE)
+		.andThen(CANCEL_FINANCE_NOT_PENDING)
+		.andThen(CANCEL_DUA_LINKED_INVOICE)
+		.andThen(OPERATIONS_DEADLINE)
+		.andThen(CANCEL_ALCATRAZ)
+		.accept(new InvoiceValidationContext(ctx,config,inv));
+	}
+	
 	public static void validateIssue(AONContext ctx, Invoice invoice) {
 		if (invoice != null && invoice.isSales()) {
 			ISSUE_OPE_DATE_FUTURE

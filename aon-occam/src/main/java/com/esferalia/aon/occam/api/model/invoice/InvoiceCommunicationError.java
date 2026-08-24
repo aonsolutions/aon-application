@@ -308,7 +308,57 @@ public enum InvoiceCommunicationError {
 	VERIFACTU_2005("2005", "El campo ImporteTotal tiene un valor incorrecto para el valor de los campos BaseImponibleOimporteNoSujeto, CuotaRepercutida y CuotaRecargoEquivalencia suministrados."),
 	VERIFACTU_2006("2006", "El campo CuotaTotal tiene un valor incorrecto para el valor de los campos CuotaRepercutida y CuotaRecargoEquivalencia suministrados."),
 	VERIFACTU_2007("2007", "No debe informarse como primer registro, existen facturas emitidas con el obligado emisi\u00F3n y el sistema inform\u00E1tico actual."),
-	VERIFACTU_2008("2008", "El valor de la huella del registro anterior debe ser diferente a la huella del registro actual.")
+	VERIFACTU_2008("2008", "El valor de la huella del registro anterior debe ser diferente a la huella del registro actual."),
+
+	// ---------------------------------------------- [SII]
+
+	// Errores que provocan el rechazo del envio completo
+	SII_4100("4100", "Error en la cabecera: el contenido del campo IDVersionSii no es v\u00E1lido."),
+	SII_4102("4102", "El XML no cumple el esquema. Falta informar un campo obligatorio."),
+	SII_4104("4104", "Error en la cabecera: el valor del campo NIF del bloque Titular no est\u00E1 identificado."),
+	SII_4106("4106", "Error en el formato de fecha."),
+	SII_4111("4111", "El NIF tiene un formato err\u00F3neo."),
+	SII_4117("4117", "El XML no cumple el esquema. Se ha superado el l\u00EDmite m\u00E1ximo permitido de facturas a registrar."),
+	SII_4122("4122", "Error en la cabecera: el NIF del titular tiene un formato err\u00F3neo."),
+	SII_4123("4123", "Error en la cabecera: el NIFRepresentante tiene un formato err\u00F3neo."),
+
+	// Errores que provocan el rechazo de la factura
+	SII_1105("1105", "Valor del campo NumSerieFacturaEmisor incorrecto."),
+	SII_1106("1106", "Valor del campo FechaExpedicionFacturaEmisor incorrecto."),
+	SII_1112("1112", "El NIF de la factura debe ser el mismo que el NIF del titular del libro de registro."),
+	SII_1122("1122", "Al tratarse de un menor, el NIF del representante debe contener valor."),
+	SII_1123("1123", "Al tratarse de un menor, el NIF del representante no puede coincidir con el NIF del titular."),
+	SII_1125("1125", "La FechaExpedicionFacturaEmisor es superior a la fecha actual."),
+	SII_1196("1196", "El valor del campo FechaExpedicionFacturaEmisor no debe ser inferior a la fecha actual menos veinte a\u00F1os."),
+	SII_1210("1210", "Valor del campo RefExterna incorrecto."),
+	SII_1211("1211", "Valor del campo Periodo no debe ser trimestral. S\u00F3lo se permiten periodos trimestrales a partir del Ejercicio 2018 en adelante."),
+	SII_3004("3004", "Se ha excedido el tama\u00F1o m\u00E1ximo del campo."),
+	SII_3015("3015", "No se puede dar de baja a la factura ya que el valor del campo Ejercicio no es correcto."),
+	SII_3016("3016", "No se puede dar de baja a la factura. El valor del campo Periodo debe ser inferior o igual al periodo actual."),
+	SII_3017("3017", "No se puede dar de baja a la factura ya que el valor del campo Periodo es incorrecto."),
+
+	// ---------------------------------------------- [TBAI]
+
+	// Errores que provocan el rechazo del fichero de anulacion
+	TBAI_001("001", "El certificado utilizado para el env\u00EDo del fichero TicketBAI no es v\u00E1lido."),
+	TBAI_002("002", "El fichero de anulaci\u00F3n TicketBAI no cumple el esquema XSD definido."),
+	TBAI_004("004", "Falta un dato obligatorio o el dato es err\u00F3neo."),
+	TBAI_006("006", "El servicio de recepci\u00F3n no est\u00E1 disponible. Repita la operaci\u00F3n m\u00E1s tarde."),
+	TBAI_018("018", "El fichero de alta que se anula no existe en el sistema."),
+	TBAI_019("019", "El fichero de alta ya ha sido anulado previamente."),
+	TBAI_024("024", "La factura a anular ya ha sido sustituida o rectificada por sustituci\u00F3n previamente."),
+
+	// Avisos que no provocan el rechazo del fichero de anulacion
+	TBAI_007("007", "AVISO: certificado remitente no v\u00E1lido para el emisor de la factura."),
+	TBAI_008("008", "AVISO: error en la verificaci\u00F3n de la firma."),
+	TBAI_011("011", "AVISO: error en la verificaci\u00F3n del alta-inscripci\u00F3n del software TicketBAI."),
+	TBAI_012("012", "AVISO: dispositivo de facturaci\u00F3n remitente no registrado."),
+	TBAI_013("013", "AVISO: certificado remitente caducado, debe renovarlo para los pr\u00F3ximos env\u00EDos."),
+	TBAI_014("014", "AVISO: certificado firmante caducado, debe renovarlo para los pr\u00F3ximos env\u00EDos."),
+	TBAI_016("016", "AVISO: falta un dato o el dato es err\u00F3neo."),
+	TBAI_998("998", "AVISO en la validaci\u00F3n del certificado remitente: certificado v\u00E1lido \u00FAnicamente en cach\u00E9 caducada."),
+	TBAI_999("999", "Error en el sistema. Debe contactar con informaciontecnica@araba.eus.")
+
 	;
 
 	String code;

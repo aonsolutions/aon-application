@@ -16,6 +16,9 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.EstadoRegistroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaBienBajaType;
@@ -56,6 +59,8 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.SuministroLRPagosRecibidas;
 import net.aonsolutions.aon.sii.SIIDB;
 import net.aonsolutions.aon.sii.SIIPost;
+import net.aonsolutions.aon.sii.SIIType;
+import net.aonsolutions.aon.sii.SIIUri;
 import net.aonsolutions.aon.sii.SendType;
 
 public class SIIAeatPost extends SIIPost{
@@ -104,14 +109,25 @@ public class SIIAeatPost extends SIIPost{
 	   	
 	   	return array;
 	}
-    
-	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
+
+	public RespuestaLRBajaFEmitidasType bajaFacturasEmitidas(InvoiceCommunicatorContext context, BajaLRFacturasEmitidas request) throws InvoiceCommunicationException {
+		try {
+			String uri = SIIUri.getInstance().getURI(context.getConfig(), SIIType.FACTURAS_EMITIDAS);
+			String sumStr = marshal(BajaLRFacturasEmitidas.class, request); 
+			String response = post(uri, sumStr);	    	
+			return (RespuestaLRBajaFEmitidasType) unmarshal(RespuestaLRBajaFEmitidasType.class, response);			
+		} catch (JAXBException | SOAPException | IOException e) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
+		}
+	}
+	
+	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice, String uri) throws JAXBException, SOAPException, IOException {
     	JSONArray array = new JSONArray();
 
     	byte[] requestXml = null;
     	byte[] responseXml = null;
 
-    	BajaLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().bajaFacturasEmitidas(company, invoiceId, contextList, terceros);
+    	BajaLRFacturasEmitidas suministro = FacturasEmitidasBaja.getInstance().bajaFacturasEmitidas(company, invoice);
 		String sumStr = marshal(BajaLRFacturasEmitidas.class, suministro); 
 		String response = post(uri, sumStr);	    	
     	RespuestaLRBajaFEmitidasType respuesta = (RespuestaLRBajaFEmitidasType) unmarshal(RespuestaLRBajaFEmitidasType.class, response);
@@ -121,11 +137,11 @@ public class SIIAeatPost extends SIIPost{
            	    	correcto ? "Envio realizado correctamente" : rect.getDescripcionErrorRegistro(),
            	    			rect.getIDFactura().getNumSerieFacturaEmisor()));
         }
-        requestXml = FacturasEmitidas.getInstance().getBajaFacturasEmitidas(suministro);
-       	responseXml = FacturasEmitidas.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
+        requestXml = FacturasEmitidasBaja.getInstance().getBajaFacturasEmitidas(suministro);
+       	responseXml = FacturasEmitidasBaja.getInstance().getRespuestaBajaFacturasEmitidas(respuesta);
     	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_EMITIDAS);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoice.getId(), requestXml, responseXml, status, SendType.BAJA_EMITIDAS);
     	
     	return array;
 	}
@@ -165,7 +181,7 @@ public class SIIAeatPost extends SIIPost{
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
-		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros, errorPeriodo);
+		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros, errorPeriodo, getSiiConfiguration().getAdministration());
 		String sumStr = marshal(SuministroLRFacturasRecibidas.class, suministro); 
 		String response = post(uri, sumStr);
 		RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) unmarshal(RespuestaLRFRecibidasType.class, response);
@@ -180,8 +196,8 @@ public class SIIAeatPost extends SIIPost{
     		}
         }
     			
-    	requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidas((SuministroLRFacturasRecibidas) suministro);
-    	responseXml = FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta);
+    	requestXml = archive(FacturasRecibidas.getInstance().getSuministroFacturasRecibidas((SuministroLRFacturasRecibidas) suministro));
+    	responseXml = archive(FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidas(respuesta));
     	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
     	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
@@ -189,13 +205,13 @@ public class SIIAeatPost extends SIIPost{
     	return array;
 	}
 
-	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    
+	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Invoice invoice, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    
     	JSONArray array = new JSONArray();
     	
     	byte[] requestXml = null;
     	byte[] responseXml = null;
     	
-    	BajaLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().bajaFacturasRecibidas(company, invoiceId, contextList, terceros);     	
+    	BajaLRFacturasRecibidas suministro = FacturasRecibidasBaja.getInstance().bajaFacturasRecibidas(company, invoice);     	
     	String sumStr = marshal(BajaLRFacturasRecibidas.class, suministro); 
 		String response = post(uri, sumStr);
     	RespuestaLRBajaFRecibidasType respuesta = (RespuestaLRBajaFRecibidasType) unmarshal(RespuestaLRBajaFRecibidasType.class, response);
@@ -207,11 +223,11 @@ public class SIIAeatPost extends SIIPost{
             			rect.getIDFactura().getNumSerieFacturaEmisor()));
     	}
     	
-    	requestXml = FacturasRecibidas.getInstance().getBajaFacturasRecibidas(suministro);
-    	responseXml = FacturasRecibidas.getInstance().getRespuestaBajaFacturasRecibidas(respuesta);
+    	requestXml = archive(FacturasRecibidasBaja.getInstance().getBajaFacturasRecibidas(suministro));
+    	responseXml = archive(FacturasRecibidasBaja.getInstance().getRespuestaBajaFacturasRecibidas(respuesta));
     	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
-    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_RECIBIDAS);
+    	SIIDB.getInstance().insertSuministroBajas(domain, login, invoice.getId(), requestXml, responseXml, status, SendType.BAJA_RECIBIDAS);
     	
     	return array;
     }
@@ -233,8 +249,8 @@ public class SIIAeatPost extends SIIPost{
             			rrpt.getIDFactura().getNumSerieFacturaEmisor()));
     	}
     	
-    	requestXml = FacturasRecibidas.getInstance().getSuministroFacturasRecibidasPagos(suministro);
-    	responseXml = FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta);
+    	requestXml = archive(FacturasRecibidas.getInstance().getSuministroFacturasRecibidasPagos(suministro));
+    	responseXml = archive(FacturasRecibidas.getInstance().getRespuestaSuministroFacturasRecibidasPagos(respuesta));
     	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
     	SIIDB.getInstance().insertSuministroCobrosPagos(domain, login, invoiceId, requestXml, responseXml, financeList, status);
@@ -255,8 +271,8 @@ public class SIIAeatPost extends SIIPost{
 		String response = post(uri, sumStr);
     	RespuestaLRBienesInversionType respuesta = (RespuestaLRBienesInversionType) unmarshal(RespuestaLRBienesInversionType.class, response);
     	
-    	requestXml = BienesInversion.getInstance().getSuministroBienesInversion(suministro);
-    	responseXml = BienesInversion.getInstance().getRespuestaSuministroBienesInversion(respuesta);
+    	requestXml = archive(BienesInversion.getInstance().getSuministroBienesInversion(suministro));
+    	responseXml = archive(BienesInversion.getInstance().getRespuestaSuministroBienesInversion(respuesta));
     	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
     	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
     	
@@ -286,8 +302,8 @@ public class SIIAeatPost extends SIIPost{
             			rect.getIDFactura().getNumSerieFacturaEmisor()));
 	    }
     	
-	    requestXml = BienesInversion.getInstance().getBajaBienesInversion(suministro);
-	    responseXml = BienesInversion.getInstance().getRespuestaBajaBienesInversion(respuesta);
+	    requestXml = archive(BienesInversion.getInstance().getBajaBienesInversion(suministro));
+	    responseXml = archive(BienesInversion.getInstance().getRespuestaBajaBienesInversion(respuesta));
        	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
     	SIIDB.getInstance().insertSuministroBajas(domain, login, invoiceId, requestXml, responseXml, status, SendType.BAJA_INVERSION);
@@ -307,8 +323,8 @@ public class SIIAeatPost extends SIIPost{
 		String response = post(uri, sumStr);
     	RespuestaLROComunitariasType respuesta = (RespuestaLROComunitariasType) unmarshal(RespuestaLROComunitariasType.class, response);
     		
-    	requestXml = OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(suministro);
-    	responseXml = OperacionesIntracomunitarias.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta);
+    	requestXml = archive(OperacionesIntracomunitarias.getInstance().getSuministroOperacionesIntracomunitarias(suministro));
+    	responseXml = archive(OperacionesIntracomunitarias.getInstance().getRespuestaSuministroOperacionesIntracomunitarias(respuesta));
        	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
     	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
@@ -341,8 +357,8 @@ public class SIIAeatPost extends SIIPost{
     						rect.getIDFactura().getNumSerieFacturaEmisor()));
     	}
     	
-    	requestXml = OperacionesIntracomunitarias.getInstance().getBajaOperacionesIntracomunitarias(suministro);
-    	responseXml = OperacionesIntracomunitarias.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta);
+    	requestXml = archive(OperacionesIntracomunitarias.getInstance().getBajaOperacionesIntracomunitarias(suministro));
+    	responseXml = archive(OperacionesIntracomunitarias.getInstance().getRespuestaBajaOperacionesIntracomunitarias(respuesta));
        	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 
 

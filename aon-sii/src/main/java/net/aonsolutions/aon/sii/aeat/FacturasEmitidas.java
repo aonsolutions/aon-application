@@ -34,11 +34,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRBajaFEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRCobrosEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.RespuestaLRFEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSii;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSiiBaja;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSiiCobrosPagos;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CausaExencionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.ClaveTipoComunicacionType;
@@ -77,8 +75,6 @@ import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.apli
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.TipoSinDesglosePrestacionType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.TipoSinDesgloseType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.VariosDestinatariosType;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRFacturasEmitidas;
-import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBajaExpedidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRCobrosEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRfacturasEmitidasType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.SuministroLRCobrosEmitidas;
@@ -136,31 +132,6 @@ public class FacturasEmitidas extends SIIBuilt {
 		return b;
 	}
 
-	public byte[] getBajaFacturasEmitidas(BajaLRFacturasEmitidas suministro){
-		JAXBContext ctx;
-		byte[] b = null;
-		try {
-			ctx = JAXBContext.newInstance(BajaLRFacturasEmitidas.class);
-			b = writeXml(ctx, suministro);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
-	}
-	
-	public byte[] getRespuestaBajaFacturasEmitidas(RespuestaLRBajaFEmitidasType suministro){
-		JAXBContext ctx;
-		byte[] b = null;
-		try {
-			ctx = JAXBContext.newInstance(RespuestaLRBajaFEmitidasType.class);
-			QName qName = new QName("https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro", "RespuestaLRBajaFEmitidasType");
-		    JAXBElement<RespuestaLRBajaFEmitidasType> root = new JAXBElement<>(qName, RespuestaLRBajaFEmitidasType.class, suministro);
-			b = writeXml(ctx, root);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
-	}
 	/**
 	 * Libro de registro de Facturas expedidas.
 	 * 
@@ -564,27 +535,6 @@ public class FacturasEmitidas extends SIIBuilt {
 		return suministro;
 	}
 	
-	public BajaLRFacturasEmitidas bajaFacturasEmitidas(Company company, Integer invoiceId, LinkedList<VatContext> vatList, String terceros) {
-		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
-		baja.setCabecera(cabeceraBaja(company, terceros));
-		
-		VatContext vat = vatList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
-		LRBajaExpedidasType factura = new LRBajaExpedidasType();
-			
-		IDFacturaExpedidaBCType idFactura = new IDFacturaExpedidaBCType();
-		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
-		idFactura.setNumSerieFacturaEmisor(vat.getReferenceCode());
-		https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura emisor = new https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaExpedidaBCType.IDEmisorFactura();
-		emisor.setNIF(company.getDocument());
-		idFactura.setIDEmisorFactura(emisor);
-		factura.setIDFactura(idFactura);
-			
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
-		
-		baja.getRegistroLRBajaExpedidas().add(factura);
-		return baja;
-	}
-	
 	// ------------------- SUMINISTRO FACTURAS EMITIDAS COBROS
 	
 	public byte[] getSuministroFacturasEmitidasCobros(SuministroLRCobrosEmitidas suministro) {
@@ -690,24 +640,6 @@ public class FacturasEmitidas extends SIIBuilt {
 		cabecera.setTitular(titular);
 		
 		
-		return cabecera;
-	}
-	
-	/**
-	 * Devuelve la cabecera para bajas.
-	 * 
-	 * @param company
-	 * @return CabeceraSiiBaja
-	 */
-	private CabeceraSiiBaja cabeceraBaja(Company company, String terceros){
-		CabeceraSiiBaja cabecera = new CabeceraSiiBaja();
-		cabecera.setIDVersionSii("1.1");
-		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-		titular.setNIF(company.getDocument());
-		titular.setNombreRazon(company.getName());
-		if(terceros != null && !terceros.equals("false"))
-			titular.setNIFRepresentante(terceros);
-		cabecera.setTitular(titular);
 		return cabecera;
 	}
 	
