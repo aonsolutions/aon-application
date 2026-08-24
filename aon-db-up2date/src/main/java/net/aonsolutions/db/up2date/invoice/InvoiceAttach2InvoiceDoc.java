@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -58,11 +59,19 @@ public class InvoiceAttach2InvoiceDoc implements Update {
 		
 		
 		DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
+		
+		String currentSchema = dslContext.dsl().select(DSL.currentSchema()).fetchOneInto(String.class);
+		if ( !getDatabasePattern().matcher(currentSchema).matches() ) {
+			LOGGER.info(String.format("currentSchema=%1$s, not matching database pattern, skipping", currentSchema));
+			return;
+		}
 				
 		dslContext.dsl()
 		.select(
 			DOMAIN.ID,
 			DOMAIN.NAME,
+			DOMAIN.ACTIVE,
+			DOMAIN.LASTACCESS_DATE,
 			INVOICE.ID,
 			INVOICE.TYPE,
 			INVOICE.RDOCUMENT,
@@ -89,7 +98,9 @@ public class InvoiceAttach2InvoiceDoc implements Update {
 			InvoiceRecord invoice = record.into(INVOICE);
 			RegistryRecord registry = record.into(REGISTRY);
 			InvoiceAttachRecord attach = record.into(INVOICE_ATTACH);
-						
+			
+			LOGGER.info(String.format("domain=%1$s, invoice=%2$s, attach=%3$s, processing", domain.getName(), invoice.getId(), attach.getId()));
+			
 			byte[] data = dslContext.select().from(INVOICE_ATTACH).where(INVOICE_ATTACH.ID.eq(attach.getId())).fetchOne(INVOICE_ATTACH.DATA);
 			if ( data == null || data.length == 0 ) {
 				LOGGER.finest(String.format("domain=%1$s, invoice=%2$s, attach=%3$s, data is null or empty", domain.getName(), invoice.getId(), attach.getId()));
@@ -179,6 +190,10 @@ public class InvoiceAttach2InvoiceDoc implements Update {
 		return DSL.condition(System.getProperty("where", " 1 = 2 "));
 	}
 		
+	private static Pattern getDatabasePattern() {
+		return Pattern.compile(System.getProperty("database", ".*"), Pattern.DOTALL);
+	}
+
 	private static String md5(byte [] data)  {
 		try {
 			MessageDigest md5Digest = MessageDigest.getInstance("MD5");
