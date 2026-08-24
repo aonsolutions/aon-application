@@ -5,10 +5,10 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.registry.CustomerFiscalStatus;
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatusRules;
 
 public class Customer extends Registry implements Serializable, HasAudit, IScopable<Customer>, IAccountId<Customer> {
 
@@ -105,6 +105,16 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	public Customer setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 		return this;
+	}
+	
+	/** Estado a MOSTRAR. getStatus() sigue siendo el que se edita y se guarda. */
+	public RegistryStatus getEffectiveStatus() {
+		return RegistryStatusRules.effective(status, expirationDate);
+	}
+ 
+	/** true si esta bloqueado pero la fecha aun no ha llegado. */
+	public boolean isBlockScheduled() {
+		return RegistryStatusRules.isBlockScheduled(status, expirationDate);
 	}
 	
 	public CustomerFiscalStatus getFiscalStatus() {
