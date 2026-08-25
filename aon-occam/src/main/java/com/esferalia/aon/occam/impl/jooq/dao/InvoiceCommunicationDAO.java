@@ -902,7 +902,7 @@ public class InvoiceCommunicationDAO {
 		});
 	}
 	
-	public static void validatePreCommunicationInvoiceCancellation(AONContext ctx, Invoice invoice) {
-		InvoiceValidation.validatePreCommunicationInvoiceCancellation(ctx, null, invoice);
+	public static void validatePreCommunicationInvoiceAnnulment(AONContext ctx, Invoice invoice) {
+		InvoiceValidation.validatePreCommunicationInvoiceAnnulment(ctx, null, invoice);
 	}
 }

@@ -51,6 +51,6 @@ public class SII {
 		boolean correcto = AonEnumUtils.in(r.getEstadoRegistro(), EstadoRegistroType.CORRECTO, EstadoRegistroType.ACEPTADO_CON_ERRORES);
 		InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, invoiceId, correcto 
 				? InvoiceCommunicationStatus.CANCELLED : InvoiceCommunicationStatus.WRONG);
-		InvoiceDAO.cancel(ctx, invoiceId);
+		InvoiceDAO.annul(ctx, invoiceId);
 	}
 }

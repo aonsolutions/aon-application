@@ -54,11 +54,8 @@ import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.sii.SII;
-import net.aonsolutions.aon.tbai.TBAI;
 import net.aonsolutions.aon.tbai.TBAIInformation;
 import net.aonsolutions.aon.tbai.TbaiData;
-import net.aonsolutions.aon.tbai.lroe.LROE;
 import net.aonsolutions.aon.verifactu.NOVERIFACTU;
 import net.aonsolutions.aon.verifactu.SIF;
 import net.aonsolutions.aon.verifactu.VERIFACTU;
@@ -427,7 +424,7 @@ public class InvoiceCommunicator {
 				.findFirst()
 				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0005));
 						
-			InvoiceCommunicationDAO.validatePreCommunicationInvoiceCancellation(ctx, invoice);
+			InvoiceCommunicationDAO.validatePreCommunicationInvoiceAnnulment(ctx, invoice);
 
 //			***** Cuando se permita la cancelación de varias facturas a la vez *****
 //			cc.invoiceStream().forEach(invoice -> {

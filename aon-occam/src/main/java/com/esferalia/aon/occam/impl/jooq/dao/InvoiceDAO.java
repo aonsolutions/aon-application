@@ -942,11 +942,17 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 	
-	public static Invoice cancel(AONContext ctx, Integer invoiceId) {
+	public static Invoice annul(AONContext ctx, Integer invoiceId) {
+		return annul(ctx, null, invoiceId);
+	}
+	public static Invoice annul(AONContext ctx, AonConfiguration config, Integer invoiceId) {
 		ctx.checkWrite();
+		if (invoiceId == null) 
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
 		Invoice invoice = getFullInvoice(ctx, invoiceId);
-		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
-		InvoiceValidation.validateInvoiceCancellation(ctx, config, invoice);
+		if (invoice == null || invoice.getId() ==null) 
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		InvoiceValidation.validateInvoiceAnnulment(ctx, config, invoice);
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.ANNULLED, (byte) 1)
@@ -954,15 +960,16 @@ public class InvoiceDAO {
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
-		ctx.log().debug("CANCEL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		ctx.log().debug("ANNUL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
 		
-		afterCancelInvoice(ctx, invoice);
+		afterAnnulInvoice(ctx, invoice);
 		return invoice;
 	}
 	
-	private static void afterCancelInvoice(AONContext ctx, Invoice invoice) {
+	private static void afterAnnulInvoice(AONContext ctx, Invoice invoice) {
 		FinanceDAO.deleteInvoiceFinances(ctx, invoice.getId());
-
+		revertDUALink(ctx, invoice);
+		
 		getSourceDetailStream(ctx, invoice).filter(detail -> detail.getSource() != null).forEach(detail -> {
 			detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 
@@ -1113,52 +1120,7 @@ public class InvoiceDAO {
 //				);
 		
 		deleteDetails(ctx, config, invoice);
-		
-		if ( invoice.isDUAAllowed() ) {
-			Integer importInvoice = ctx.getDslContext()
-				.select(INVOICE_DUA.INVOICE_IMPORT)
-				.from(INVOICE_DUA)
-				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
-				.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
-				.fetch()
-				.stream()
-				.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_IMPORT))				
-				.findFirst()
-				.orElse(null);
-			if (importInvoice != null) {
-				ctx.log().debug("\tDUA LINKED");
-				ctx.getDslContext()
-					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
-					.from(INVOICE_DETAIL)
-					.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
-					.where(INVOICE_DETAIL.INVOICE.eq(importInvoice))
-					.and(INVOICE_DETAIL.DOMAIN.eq(invoice.getDomain()))
-					.fetch()
-					.stream()
-					.forEach(rec -> {
-						int taxId = rec.getValue(INVOICE_TAX.ID);
-						double base = rec.getValue(INVOICE_DETAIL.TAXABLE_BASE);
-						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
-						double surcharge = rec.getValue(INVOICE_TAX.SURCHARGE);
-						double quota = AonMathUtils.round( base * percent / 100 );
-						double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
-						int count = ctx.getDslContext().update(INVOICE_TAX)
-								.set(INVOICE_TAX.BASE, base )
-								.set(INVOICE_TAX.QUOTA, quota )
-								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
-								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
-								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
-								.where(INVOICE_TAX.ID.equal( taxId ))
-								.execute();
-						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",id,count);	
-					});
-				int count = ctx.getDslContext()
-						.delete(INVOICE_DUA)
-						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
-						.execute();
-				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",id,count);
-			}
-		}
+		revertDUALink(ctx, invoice);
 		
 		byte[] attachData = null;
 		if (preserveRawdoc) {
@@ -1221,6 +1183,54 @@ public class InvoiceDAO {
 			.execute();
 		
 		return invoice;
+	}
+
+	private static void revertDUALink(AONContext ctx, Invoice invoice) {
+		if ( invoice.isDUAAllowed() ) {
+			Integer importInvoice = ctx.getDslContext()
+				.select(INVOICE_DUA.INVOICE_IMPORT)
+				.from(INVOICE_DUA)
+				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
+				.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_IMPORT))				
+				.findFirst()
+				.orElse(null);
+			if (importInvoice != null) {
+				ctx.log().debug("\tDUA LINKED");
+				ctx.getDslContext()
+					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
+					.from(INVOICE_DETAIL)
+					.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+					.where(INVOICE_DETAIL.INVOICE.eq(importInvoice))
+					.and(INVOICE_DETAIL.DOMAIN.eq(invoice.getDomain()))
+					.fetch()
+					.stream()
+					.forEach(rec -> {
+						int taxId = rec.getValue(INVOICE_TAX.ID);
+						double base = rec.getValue(INVOICE_DETAIL.TAXABLE_BASE);
+						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+						double surcharge = rec.getValue(INVOICE_TAX.SURCHARGE);
+						double quota = AonMathUtils.round( base * percent / 100 );
+						double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
+						int count = ctx.getDslContext().update(INVOICE_TAX)
+								.set(INVOICE_TAX.BASE, base )
+								.set(INVOICE_TAX.QUOTA, quota )
+								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
+								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
+								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
+								.where(INVOICE_TAX.ID.equal( taxId ))
+								.execute();
+						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",invoice.getId(),count);	
+					});
+				int count = ctx.getDslContext()
+						.delete(INVOICE_DUA)
+						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
+						.execute();
+				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",invoice.getId(),count);
+			}
+		}
 	}
 
 	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
@@ -2164,5 +2174,6 @@ public class InvoiceDAO {
 				.execute();
 		return getFullInvoice(ctx, invoiceId);
 	}
+	
 }
 
