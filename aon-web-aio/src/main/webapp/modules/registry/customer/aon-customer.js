@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain, saveCustomerNotePro } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes, saveCustomerNote, getCustomerDomainAddInfo, removeCustomerDomainAddInfo, removeAonCustomerDomain, saveCustomerNotePro, saveCustomerDomainStatus } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getCustomerStatusTags, getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -1035,15 +1035,51 @@ export class AonCustomer extends AonReg {
 			status: this.registry.status,
 			date: date,
 			isSig: this.isSig()
-		}
-
-		if (params.isSig) {
-			let headers = { domain_name: LS.getDomainName(), domain_id: LS.getDomainId() };
-			//params.domain_name = LS.getDomainName();
-			//params.domain_id = LS.getDomainId();
-			await saveCustomerNotePro(params, headers);
-		} else
+		};
+	
+		if (!params.isSig) {
 			await saveCustomerNote(params);
+			return;
+		}
+	
+		const headers = { domain_name: LS.getDomainName(), domain_id: LS.getDomainId() };
+		const result = await saveCustomerNotePro(params, headers);
+	
+		await this.syncSigLinkedDomains(result);
+	}
+	
+	/**
+	 * SIG: el back ya no propaga el estado, devuelve los dominios vinculados
+	 * y aqui se hace un PUT contra cada domainName.
+	 */
+	async syncSigLinkedDomains(result) {
+		const domains = (result && result.domains) || [];
+		if (!domains.length) return;
+	
+		const failed = [];
+		
+		console.log("syncSigLinkedDomains", domains, result);
+	
+		for (const d of domains) {
+			try {
+				await saveCustomerDomainStatus({
+					domainId: d.domainId,
+					domainName: d.domainName,
+					status: result.status,
+					expirationDate: result.expirationDate || null
+				});
+			} catch (e) {
+				console.error("syncSigLinkedDomains", d.domainName, e);
+				failed.push(d.domainName);
+			}
+		}
+	
+		// No relanzamos: la nota ya esta guardada y el save() del cliente debe seguir
+		if (failed.length)
+			this.showToast({
+				type: "error",
+				message: "No se pudo sincronizar el estado en: " + failed.join(", ")
+			});
 	}
 
 	openDialogCompany(companies = []) {
