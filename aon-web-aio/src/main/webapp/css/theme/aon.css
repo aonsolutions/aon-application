@@ -1,11 +1,28 @@
 :root{
-    --favicon: ../faviconColors.png;
+	--aonCustomizeLoginLogoWidth: 155px;
+	--aonCustomizeLoginLogoHeight: 32px;
+	--aonCustomizeHeaderLogoWidth: var(--aonCustomizeLoginLogoWidth);
+	--aonCustomizeHeaderLogoHeight: var(--aonCustomizeLoginLogoHeight);
+	
+	--favicon: /assets/aon-ai-favicon.svg;
 }
 
 .rootPanel {
   z-index: 3;   
   background-color: #fafafa;
 }
+
+.aonNewLogo {
+	background-image: url("../../assets/aonsolutions-ai-black-logo.svg");
+	width: var(--aonCustomizeHeaderLogoWidth);
+	height: var(--aonCustomizeHeaderLogoHeight);
+}
+.aonLoginLogo {
+	background-image: url("../../assets/aon-ai-black-logo.svg");
+	width: var(--aonCustomizeLoginLogoWidth);
+	height: var(--aonCustomizeLoginLogoHeight);	
+}
+
 /*
 .aonToolbar2 { 
   background-color: var(--aonBlack);
