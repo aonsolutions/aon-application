@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -1060,8 +1061,8 @@ public class Mod347DAO {
 	
 	private static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
 		return Stream.concat(
-				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
+				 VATDAO.getVatBreakdown(ctx, mod347)
+				,VATDAO.getPeriodCritCajaVatBreakdown(ctx, mod347)
 			)			
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )
