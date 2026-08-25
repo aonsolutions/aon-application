@@ -61,7 +61,7 @@
 	--aonCustomizeHeaderLogoHeight: var(--aonCustomizeLoginLogoHeight);
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 	
-	--favicon: /assets/aonsolutions-ai-favicon.svg;
+	--favicon: /assets/aon-ai-favicon.svg;
 }
 
 body {
