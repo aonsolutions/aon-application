@@ -114,7 +114,7 @@ public class TbaiValidation {
 	 * unica excepcion con todos ellos.
 	 *
 	 * El bloque Signature no se valida porque se incorpora al fichero al firmarlo,
-	 * despues de serializar el objeto (ver TbaiMain.createAnulacionTBAI).
+	 * despues de serializar el objeto.
 	 *
 	 * @param anulacion fichero de anulacion a validar
 	 * @throws InvoiceCommunicationException si el fichero no cumple alguna validacion

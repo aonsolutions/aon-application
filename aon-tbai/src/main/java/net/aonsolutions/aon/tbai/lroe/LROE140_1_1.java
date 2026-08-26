@@ -28,12 +28,9 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Esta
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionIngresoSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosConSGType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleRentaIngresosType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresoConSGCodificadoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresosConSGCodificadoType;
@@ -43,10 +40,8 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.F
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaIngresosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_altapeticion_v1_0_2.LROEPF140IngresosConFacturaConSGAltaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionrespuesta_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionRespuesta;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultapeticion_v1_0_0.LROEPF140IngresosConFacturaConSGConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultarespuesta_v1_0_1.LROEPF140IngresosConFacturaConSGConsultaRespuesta;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaSinSGAnulacionPeticion;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.Invoice2tbai;
 import net.aonsolutions.aon.tbai.LroeData;
@@ -124,18 +119,6 @@ public class LROE140_1_1 extends LROE140 {
 		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
-	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
-		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
-		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
-		
-		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
-		anulacion.setAnulacionTicketBai(data);
-		anulaciones.getIngreso().add(anulacion);
-		lroe.setIngresos(anulaciones);
-		return lroe;
-	}
-	
 	public static LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
 		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
 		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
@@ -160,26 +143,6 @@ public class LROE140_1_1 extends LROE140 {
 		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
 		byte[] requestXmlGzip = toGzip(requestXml);
 		return post(context.getConfig(), buildJSON(context, info), requestXmlGzip);
-	}
-	
-	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice, byte[] tbai)  {
-		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoice));
-			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAnulacionPeticion.class );
-			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
-
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p140, bos );
-			byte[] xml = bos.toByteArray();
-			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
-		} catch (Exception e) {
-			return error(e);
-		}
 	}
 	
 	public boolean consulta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) {
