@@ -62,7 +62,6 @@ export class AonModule extends AonElement {
 
     load() {
         this.loading();
-        LS.setNewTheme(true, false);
         this.checkLogin();
     }
 
