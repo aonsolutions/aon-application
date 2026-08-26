@@ -1,7 +1,13 @@
 package net.aonsolutions.aon.tbai;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,16 +24,25 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.sign.TbaiSigner;
+import net.aonsolutions.aon.sign.exception.AonSignerException;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.emision.TicketBai;
+import ticketbai.respuesta.Salida;
 import ticketbai.respuesta.TicketBaiResponse;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
@@ -104,5 +119,67 @@ public class TBAI {
 		return dataRequest;		
 	}
 
+	
+	// **************************************************************
+	// ************************************************ [CANCEL] ****
+	// **************************************************************
+	
+	static class TbaiBajaContext {
+		Invoice invoice;
+		AnulaTicketBai request;
+		
+		public TbaiBajaContext(Invoice invoice, AnulaTicketBai request) {
+			this.invoice = invoice;
+			this.request = request;
+		}
+		
+		public Invoice getInvoice() {
+			return invoice;
+		}
+		
+		public AnulaTicketBai getRequest() {
+			return request;
+		}
+	}
+	
+	public static InvoiceCommunicatorContext cancel(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		try {
+			List<TbaiBajaContext> bajaList = context.invoiceStream()
+					.map(i -> new TbaiBajaContext(i, Invoice2tbai.buildBaja(context.getCompany(), i, context.getConfig()))).toList();
+			
+			for(TbaiBajaContext baja : bajaList) {
+				TbaiValidation.validateAnulacion(baja.getRequest());
+			}
+			
+			for(TbaiBajaContext baja : bajaList) {
+				byte[] requestBytes = XMLUtils.marshal(baja.getRequest(), AnulaTicketBai.class);
+				byte[] requestBytesSigned = TbaiSigner.getInstance().sign(context.getConfig(), requestBytes);
+				String uri = TbaiUri.getUrlAnulacion(context.getConfig());
+				byte[] responseBytes = XMLUtils.send(context.getConfig().getCertificate(), uri, requestBytesSigned);
+				saveCancel(ctx, context, baja.getInvoice(), requestBytes, responseBytes);
+			}
+		} catch (JAXBException | IOException | AonSignerException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
+			throw new InvoiceCommunicationException(e);
+		}
+		return context;
+	}
+	
+	private static InvoiceCommunicatorContext saveCancel(AONContext ctx, InvoiceCommunicatorContext context, Invoice invoice, byte[] requestBytes, byte[] responseBytes) throws JAXBException {
+		InvoiceBatch invoiceBatch = InvoiceCommunicationDAO.saveCancel(ctx, context.getDomain(), InvoiceCommunicationType.TBAI, requestBytes, responseBytes);
+		TicketBaiResponse response = (TicketBaiResponse) XMLUtils.unmarshal(responseBytes, TicketBaiResponse.class);
+
+		Salida salida = response.getSalida();
+	    String estado = salida != null ? salida.getEstado() : null;
+	    boolean anulada = "00".equals(estado) || "01".equals(estado);
+		saveCancelInvoice(ctx, context, invoiceBatch, invoice, anulada);
+		return context;
+	}
+	
+	private static void saveCancelInvoice(AONContext ctx, InvoiceCommunicatorContext context, InvoiceBatch invoiceBatch, Invoice invoice, boolean correcto) {
+		if(correcto) {
+			InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, invoice.getId(), InvoiceCommunicationStatus.CANCELLED);
+			InvoiceDAO.annul(ctx, invoice.getId());
+		} else InvoiceCommunicationDAO.saveInvoiceBatchdetail(ctx, invoiceBatch, invoice.getId(), InvoiceCommunicationStatus.WRONG);
+	}
 	
 }

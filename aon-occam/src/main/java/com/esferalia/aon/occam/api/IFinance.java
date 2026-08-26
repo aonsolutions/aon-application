@@ -92,6 +92,7 @@ public interface IFinance {
 	Invoice getLastSaleInvoice(AONContext ctx, String serie);
 	Invoice getInvoice(AONContext ctx, Integer id);
 	void deleteInvoice(AONContext ctx, Integer invoiceId);
+	Invoice annulInvoice(AONContext ctx, Integer invoiceId);
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);

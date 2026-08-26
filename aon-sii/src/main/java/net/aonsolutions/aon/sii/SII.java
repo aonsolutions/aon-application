@@ -49,8 +49,9 @@ public class SII {
 		if ( invoiceId == null) return;
 		if ( AonMathUtils.isZero(invoiceId)) return;
 		boolean correcto = AonEnumUtils.in(r.getEstadoRegistro(), EstadoRegistroType.CORRECTO, EstadoRegistroType.ACEPTADO_CON_ERRORES);
-		InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, invoiceId, correcto 
-				? InvoiceCommunicationStatus.CANCELLED : InvoiceCommunicationStatus.WRONG);
-		InvoiceDAO.annul(ctx, invoiceId);
+		if(correcto) {
+			InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, invoiceId, InvoiceCommunicationStatus.CANCELLED);
+			InvoiceDAO.annul(ctx, invoiceId);
+		} else InvoiceCommunicationDAO.saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, InvoiceCommunicationStatus.WRONG);
 	}
 }

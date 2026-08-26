@@ -833,7 +833,7 @@ public class InvoiceCommunicationDAO {
 		return InvoiceInfoDAO.save(ctx, info);
 	}
 	
-	private static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
+	public static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
 		InvoiceBatchDetail ibd = new InvoiceBatchDetail()
 			.setDomain(invoiceBatch.getDomain())
 			.setInvoiceBatch(invoiceBatch.getId())

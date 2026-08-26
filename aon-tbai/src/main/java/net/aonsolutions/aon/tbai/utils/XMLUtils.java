@@ -7,8 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
@@ -31,8 +36,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.Certificate;
-
-import ticketbai.emision.TicketBai;
 
 public class XMLUtils {
 
@@ -79,7 +82,7 @@ public class XMLUtils {
 		return jaxbMarshaller.unmarshal(is);
 	}
 	
-	public static byte[] send(Certificate certificate, String uri, byte[] xml) throws Exception{
+	public static byte[] send(Certificate certificate, String uri, byte[] xml) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException, KeyManagementException {
 		ByteArrayInputStream key = new ByteArrayInputStream(certificate.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		keyStore.load(key, certificate.getPassword().toCharArray());

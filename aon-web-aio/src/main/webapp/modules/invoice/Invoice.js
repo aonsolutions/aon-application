@@ -30,6 +30,7 @@ export class Invoice {
   remarks;
   insight;
   signed;
+  annuled;
 
   taxableBase;
   vatQuota;
@@ -134,6 +135,7 @@ export class Invoice {
 
       this.activity = invoice.activity;
       this.signed = invoice.signed;
+      this.annuled = invoice.annuled || false;
       this.service = invoice.service || false;// boolean | servicio
       this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
       this.investment = invoice.investment || false; // boolean | bienes de inversion
@@ -207,6 +209,7 @@ export class Invoice {
       // this.tbai = false;
       // this.tbaiUrl = '';
       this.signed = false;
+      this.annuled = false;
     }
     // getCompany().then(company => {
     //   this.surcharge = this.surcharge || company.surcharge;
@@ -458,6 +461,10 @@ export class Invoice {
 
   isSigned() {
     return this.signed;
+  }
+
+  isAnnulled() {
+    return this.annuled;
   }
 
   isAccountSource() {

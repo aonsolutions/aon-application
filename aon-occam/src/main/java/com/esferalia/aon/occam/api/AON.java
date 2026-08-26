@@ -2141,13 +2141,21 @@ public class AON {
 			return getFinance().updateInvoice(ctx, invoice);
 		}
 	}
+
+	public static Invoice annulInvoice(Occam occam, Integer invoiceId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().annulInvoice(ctx, invoiceId);
+		}
+	}
 	
+	@Deprecated
 	public static void deleteInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getFinance().deleteInvoice(ctx, invoiceId);
 		}
 	}
 	
+	@Deprecated
 	public static void deleteInvoice(String domainName, Integer domainId, String login, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getFinance().deleteInvoice(ctx, invoiceId);

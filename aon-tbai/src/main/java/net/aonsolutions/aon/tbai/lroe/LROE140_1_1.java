@@ -1,11 +1,13 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -14,6 +16,8 @@ import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -24,9 +28,12 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Esta
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.SiNoEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionIngresoSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosConSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleRentaIngresosType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresoConSGCodificadoType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IngresosConSGCodificadoType;
@@ -36,17 +43,24 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.F
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaIngresosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_altapeticion_v1_0_2.LROEPF140IngresosConFacturaConSGAltaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionrespuesta_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionRespuesta;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultapeticion_v1_0_0.LROEPF140IngresosConFacturaConSGConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultarespuesta_v1_0_1.LROEPF140IngresosConFacturaConSGConsultaRespuesta;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaSinSGAnulacionPeticion;
 import net.aonsolutions.aon.tbai.CRC8;
+import net.aonsolutions.aon.tbai.Invoice2tbai;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.LroeValidation;
 import net.aonsolutions.aon.tbai.TbaiBlockchain;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiUri;
+import net.aonsolutions.aon.tbai.TbaiValidation;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
+import net.aonsolutions.aon.tbai.utils.XMLUtils;
+import ticketbai.anulacion.AnulaTicketBai;
 
 public class LROE140_1_1 extends LROE140 {
 
@@ -106,7 +120,7 @@ public class LROE140_1_1 extends LROE140 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+	public static LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
 		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
@@ -120,6 +134,32 @@ public class LROE140_1_1 extends LROE140 {
 		anulaciones.getIngreso().add(anulacion);
 		lroe.setIngresos(anulaciones);
 		return lroe;
+	}
+	
+	public static LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
+		lroe.setCabecera(buildCabecera(context, info));
+		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
+
+		for(Invoice invoice : context.invoiceStream().toList()) {
+			AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
+			AnulaTicketBai request = Invoice2tbai.buildBaja(context.getCompany(), invoice, context.getConfig());
+			TbaiValidation.validateAnulacion(request);
+			byte[] requestBytes = XMLUtils.marshal(request, AnulaTicketBai.class);
+			anulacion.setAnulacionTicketBai(requestBytes);
+			anulaciones.getIngreso().add(anulacion);			
+		}
+		
+		lroe.setIngresos(anulaciones);
+		LroeValidation.validateAnulacionConSG(lroe);
+		return lroe;
+	}
+	
+	public static byte[] sendCancel(InvoiceCommunicatorContext context, byte[] requestXml) throws InvoiceCommunicationException, JAXBException, IOException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		byte[] requestXmlGzip = toGzip(requestXml);
+		return post(context.getConfig(), buildJSON(context, info), requestXmlGzip);
 	}
 	
 	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice, byte[] tbai)  {

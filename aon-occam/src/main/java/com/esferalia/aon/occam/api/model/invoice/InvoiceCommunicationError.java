@@ -44,6 +44,8 @@ public enum InvoiceCommunicationError {
 	AON_0032("0032", "El tipo de comunicaci\u00F3n SIG no est\u00E1 implementado."),
 	AON_0033("0033", "El tipo de comunicaci\u00F3n FACTURAE no est\u00E1 implementado."),
 	AON_0034("0034", "Se ha producido un error al firmar el XML del registro ed facturaci\u00F3n."),
+	AON_0035("0035", "Las facturas a comunicar pertenecen a m\u00E1s de un ejercicio."),
+	AON_0036("0036", "No se ha podido determinar el ejercicio de las facturas a comunicar."),
 
 	// InvoiceCommunicationType 	
 	AON_NO_SERES		("0100", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),
@@ -357,7 +359,40 @@ public enum InvoiceCommunicationError {
 	TBAI_014("014", "AVISO: certificado firmante caducado, debe renovarlo para los pr\u00F3ximos env\u00EDos."),
 	TBAI_016("016", "AVISO: falta un dato o el dato es err\u00F3neo."),
 	TBAI_998("998", "AVISO en la validaci\u00F3n del certificado remitente: certificado v\u00E1lido \u00FAnicamente en cach\u00E9 caducada."),
-	TBAI_999("999", "Error en el sistema. Debe contactar con informaciontecnica@araba.eus.")
+	TBAI_999("999", "Error en el sistema. Debe contactar con informaciontecnica@araba.eus."),
+
+	// ---------------------------------------------- [LROE]
+
+	// Errores que provocan el rechazo del envio completo
+	LROE_1000001("B4_1000001", "El XML no cumple el esquema."),
+	LROE_1000002("B4_1000002", "Todos los registros incluidos en la petici\u00F3n son incorrectos."),
+	LROE_1000003("B4_1000003", "Error al descomprimir el fichero."),
+	LROE_1000004("B4_1000004", "Error t\u00E9cnico."),
+	LROE_1000005("B4_1000005", "Error al existir registros duplicados en el env\u00EDo."),
+	LROE_1000006("B4_1000006", "El Modelo no corresponde al tipo de persona."),
+	LROE_1000020("B4_1000020", "El Modelo indicado en la cabecera no coincide con el indicado en el cuerpo."),
+	LROE_1000021("B4_1000021", "El Ejercicio indicado en la cabecera no coincide con el indicado en el cuerpo."),
+	LROE_1000022("B4_1000022", "El NIF del interesado indicado en la cabecera no coincide con el del obligado tributario."),
+	LROE_1000023("B4_1000023", "El Cap\u00EDtulo no corresponde con el Modelo y el Apartado indicados."),
+	LROE_1000024("B4_1000024", "El Subcap\u00EDtulo no corresponde con el Modelo y el Apartado indicados."),
+	LROE_1000025("B4_1000025", "Operaci\u00F3n err\u00F3nea."),
+	LROE_1000026("B4_1000026", "Apartado err\u00F3neo."),
+	LROE_1000030("B4_1000030", "El Nombre y apellidos o Raz\u00F3n social del interesado indicado en la cabecera no coincide con el del Obligado tributario."),
+
+	// Errores que provocan el rechazo de la factura o registro
+	LROE_2000000("B4_2000000", "El campo es obligatorio por lo que debe venir informado."),
+	LROE_2000001("B4_2000001", "El XML del fichero TicketBAI no cumple el esquema."),
+	LROE_2000002("B4_2000002", "El NIF emisor no coincide con el NIF del obligado tributario."),
+	LROE_2000003("B4_2000003", "Registro duplicado."),
+	LROE_2000004("B4_2000004", "El registro no existe en el sistema."),
+	LROE_2000005("B4_2000005", "La fecha no es v\u00E1lida."),
+	LROE_2000006("B4_2000006", "El registro ya est\u00E1 anulado."),
+	LROE_2000011("B4_2000011", "El NIF tiene un formato err\u00F3neo."),
+	LROE_2000063("B4_2000063", "La licencia no est\u00E1 registrada."),
+	LROE_2000064("B4_2000064", "El NIF de la entidad desarrolladora debe corresponder con el de la licencia."),
+	LROE_2000065("B4_2000065", "El ID de la entidad desarrolladora debe corresponder con el de la licencia."),
+	LROE_2000066("B4_2000066", "El Nombre del software debe corresponder con el de la licencia."),
+	LROE_2000070("B4_2000070", "La firma no cumple los requisitos de la pol\u00EDtica de firma TicketBAI.")
 
 	;
 

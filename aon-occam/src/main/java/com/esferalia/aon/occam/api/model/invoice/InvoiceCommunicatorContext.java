@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model.invoice;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -8,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceCommunicatorContext {
@@ -105,6 +109,34 @@ public class InvoiceCommunicatorContext {
 		return this;
 	}
 
+	public Integer getExercise() throws InvoiceCommunicationException {
+		List<Integer> exercises = invoiceStream()
+			.map(InvoiceCommunicatorContext::exerciseDate)
+			.filter(Objects::nonNull)
+			.map(AonDateUtils::getYear)
+			.distinct()
+			.collect(Collectors.toList());
+		
+		if (AonCollectionUtils.isEmpty(exercises)) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0036);
+		}
+		if (exercises.size() > 1) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_0035);
+		}
+		return exercises.get(0);
+	}
+	
+	/**
+	 * Fecha que determina el ejercicio de la factura: fecha de expedici\u00F3n en las
+	 * facturas emitidas y fecha de recepci\u00F3n en las recibidas.
+	 */
+	private static Date exerciseDate(Invoice invoice) {
+		if (invoice == null) return null;
+		return invoice.isSales()
+			? invoice.getExpDate()
+			: invoice.getIssueDate();
+	}
+	
 //	public boolean isError() {
 //		return error;
 //	}

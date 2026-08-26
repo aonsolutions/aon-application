@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
@@ -145,6 +146,79 @@ public class LROE implements Serializable {
 		}
 	}
 	
+	public static byte[] post(InvoiceCommunicationConfiguration icc, JSONObject json, byte[] xml) throws InvoiceCommunicationException {
+		JSONObject responseJSON = new JSONObject();
+		URL url;
+		try {
+			ByteArrayInputStream key = new ByteArrayInputStream(icc.getCertificate().getData());	
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(key, icc.getCertificate().getPassword().toCharArray());
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+   			kmf.init(keyStore, icc.getCertificate().getPassword().toCharArray());
+   	        
+            TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
+
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			SSLContext.setDefault(sslContext);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+           
+			String uri = TbaiUri.getUrlEmision(icc);
+			url = new URL(uri);
+			System.out.println("***** REQUEST *****");
+			System.out.println("[POST] " + uri);
+			System.out.println(json.toString());
+			String contentLength = Integer.toString(xml.length);
+			System.out.println("Content-Length: " + contentLength);
+			
+			HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+
+	        https.setHostnameVerifier(new TrustAllHosts());
+	        https.setRequestMethod("POST"); 
+			https.setRequestProperty("Accept-Encoding", "gzip");
+			https.setRequestProperty("Content-Encoding", "gzip");
+			https.setRequestProperty("Content-Length", contentLength);
+			https.setRequestProperty("Content-Type", "application/octet-stream");
+			https.setRequestProperty("eus-bizkaia-n3-version", "1.0");
+			https.setRequestProperty("eus-bizkaia-n3-content-type", "application/xml");
+			https.setRequestProperty("eus-bizkaia-n3-data", json.toString());
+			
+			https.setDoOutput(true);
+			https.setDoInput(true);
+			https.setUseCaches(false);
+			for( String str : https.getRequestProperties().keySet()) {
+				System.out.println(str + ": " + https.getRequestProperty(str));
+			}
+
+			
+			OutputStream os = https.getOutputStream();
+			os.write(xml);
+			os.close();
+
+			responseJSON.put("responseCode", https.getResponseCode());
+			System.out.println(https.getResponseCode());
+			responseJSON.put("responseMessage", https.getResponseMessage());
+			System.out.println(https.getResponseMessage());
+			responseJSON.put("responseContentType", https.getContentType());
+			responseJSON.put("responseContentLength", https.getContentLength());
+			for (String key2 : https.getHeaderFields().keySet()) {
+				if(key2 != null) {
+					responseJSON.put(key2, https.getHeaderField(key2));
+					System.out.println( key2 + " - " + https.getHeaderField(key2));
+				}
+			} 
+			
+			byte[] responseData = null;
+			InputStream respons = https.getInputStream();
+			byte[] bytes = respons.readAllBytes();
+			responseData = decompress(bytes);
+			return responseData;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new InvoiceCommunicationException(e);
+		}
+	}
+	
 	public LROEResponse sendConsulta(InvoiceCommunicationConfiguration icc, JSONObject json, byte[] xml) {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
@@ -228,7 +302,7 @@ public class LROE implements Serializable {
 		}
 	}
 	
-	private class TrustAllCertificates implements X509TrustManager {
+	private static class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
 	    }
 	 
@@ -240,13 +314,13 @@ public class LROE implements Serializable {
 	    }
 	}
 	
-	private class TrustAllHosts implements HostnameVerifier {
+	private static class TrustAllHosts implements HostnameVerifier {
 	    public boolean verify(String hostname, SSLSession session) {
 	        return true;
 	    }
 	}
 	
-	public byte[] decompress(byte[] file) {
+	public static byte[] decompress(byte[] file) {
 	         byte[] buffer = new byte[1024];
 	        try
 	        {
@@ -274,7 +348,7 @@ public class LROE implements Serializable {
 	          
 	    }
 	
-	public byte[] toGzip(byte[] data) throws IOException {
+	public static byte[] toGzip(byte[] data) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length);
 		GZIPOutputStream gzipStream = new GZIPOutputStream(baos);
 		try {
@@ -327,9 +401,6 @@ public class LROE implements Serializable {
 	}
 	
 	public Integer getEjercicio(InvoiceCommunicationConfiguration icc, Invoice invoice) {
-		if(invoice.getDomain().equals(29434) && invoice.getId().equals(27075541)) {
-			return 2024;
-		}
 		Date ejercicioDate = new Date(); 
 		if(invoice.isSales()) {
 			ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
