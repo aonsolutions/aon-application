@@ -112,7 +112,11 @@
 	--aonMenuTopnav: true;
 	--aonMenuSidenav: true;
 	--aonConfigSwitchApps: false;
-	--aonFontFamily: "Noto Sans", sans-serif
+	--aonFontFamily: "Noto Sans", sans-serif;
+	
+	--aonHeaderLogoWidth: 155px;
+	--aonHeaderLogoHeight: 32px;
+	
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -2228,12 +2232,12 @@ label.rating:hover {
 	position: relative;
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url("../assets/aon-black-logo.svg");
 	background-position: 50%;
 	background-repeat: no-repeat;
 	cursor: pointer;
-	height: 2.5rem;
-	width: 10rem;
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+    background-image: url("../assets/aonsolutions-ai-black-logo.svg");
 }
 
 .aonHeaderButtons {
@@ -2246,11 +2250,25 @@ label.rating:hover {
 	/* min-width: 120px;
   display: none; */
 }
-
 .aonHeaderAppDiv {
 	display: flex;
 	align-items: center;
 	background-color: transparent;
+}
+
+.aonHeaderAppDiv * {
+	display: none !important;
+}
+
+.aonHeaderAppDiv {
+    background-image: url("../assets/aonsolutions-ai-black-logo.svg");
+	background-position: 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+	padding: 0 0 0 68px;
+	position: relative;
 }
 
 .aonHeaderAppIcon {
@@ -5085,8 +5103,29 @@ aon-superset iframe {
 	display: none;
 }
 
-#aonHeaderSearchDiv{
-	display: none;
+/* 
+	Header search, at top right. 
+*/
+#aonHeaderSearch {
+  position: absolute;
+  _top: 20;
+  right: 15;
+  z-index: 5;
+
+  transform: translateX(100%);
+  opacity: 0;
+
+  transition: transform .3s ease, opacity .2s ease;
+  /* pointer-events: none; evita clics cuando está oculto */
+}
+
+#aonHeaderSearch.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#aonHeaderSearch.open + * #aonHeaderCompany{
+	display: none !important;
 }
 
 #aonHeaderSearchDialogMenuDialogMenuContent{

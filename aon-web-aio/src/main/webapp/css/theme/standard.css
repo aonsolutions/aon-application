@@ -195,19 +195,9 @@ body {
 	color: var(--aonWhite);
 }
 
-.aonHeaderAppDiv * {
-	display: none;
-}
 
 .aonHeaderAppDiv {
     background-image: url("../../assets/aonsolutions-ai-logo.svg");
-	background-position: 50%;
-	background-repeat: no-repeat;
-	cursor: pointer;
-	height: 40px;
-	padding: 0 0 0 68px;
-	position: relative;
-	width: 160px;
 }
 
 #uploads{
@@ -2525,31 +2515,6 @@ aon-search > span {
 	padding-left: 12px;
 }
 
-#aonHeaderSearch {
-  position: absolute;
-  top: 20;
-  right: 15;
-  z-index: 5;
-
-  transform: translateX(100%);
-  opacity: 0;
-
-  transition: transform .3s ease, opacity .2s ease;
-  /* pointer-events: none; evita clics cuando está oculto */
-}
-
-#aonHeaderSearch.open {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-#aonHeaderSearch.open + * #aonHeaderCompany{
-	display: none !important;
-}
-
-#aonHeaderSearchDiv{
-	display: block;
-}
 
 i[id$="aonHeaderSearchDivButtonIcon"],
 #accountingUploadInvoiceLabel i{
