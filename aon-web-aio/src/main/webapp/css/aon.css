@@ -1,7 +1,7 @@
 @import url('calendar-agenda.css');
 
 :root {
-	--favicon: /assets/favicon-black.ico;
+	--favicon: /assets/aon-ai-favicon.svg;
 	--aonDarkColor: rgba(0, 0, 0, 0.87);
 	--aonBlue: #002469;
 	--aonClearBlue: #4F91FF;
@@ -116,6 +116,8 @@
 	
 	--aonHeaderLogoWidth: 155px;
 	--aonHeaderLogoHeight: 32px;
+	
+	--defaultWelcomeImg: /assets/aon-ai-black-logo.svg;
 	
 }
 
@@ -764,7 +766,7 @@ h1 {
 	height: 4rem;
 	min-height: 4rem;
 	border-bottom: solid 0.05rem #d2d2d6;
-	padding: 0 2rem;
+	padding: 0 1rem;
 }
 
 .aonToolbarBeta {
@@ -2860,12 +2862,12 @@ label.rating:hover {
 background-image: url("../favicon.png");
 } */
 .aonLoginLogo {
-	width: 132px;
-	height: 32px;
 	cursor: pointer;
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url("../assets/aon-black-logo.svg");
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+	background-image: url("../assets/aonsolutions-ai-black-logo.svg");
 }
 
 .aonTrademark:after {

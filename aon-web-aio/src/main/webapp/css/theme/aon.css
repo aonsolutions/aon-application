@@ -1,5 +1,4 @@
 :root{
-	--favicon: /assets/aon-ai-favicon.svg;
 }
 
 .rootPanel {
@@ -7,11 +6,6 @@
   background-color: #fafafa;
 }
 
-.aonLoginLogo {
-	width: 155px;
-	height: 32px;	
-	background-image: url("../../assets/aon-ai-black-logo.svg");
-}
 
 #divCompanyLogoForm {
     display:none;
@@ -21,22 +15,6 @@
   display: none;
 }
 
-
-
-/* 
-#applications:hover {
-  background-size: cover ;
-  background-image: url("/images/theme/aon-background.webp");
-}
-
-#applications:hover #aonMenuListAppImgTop-applications,
-.aonMenuLeftopNew #aonMenuListAppImgTop-applications,
-.aonMenuLeftopHome #aonMenuListAppImgTop-applications,
-.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications,
-.aonMenuLeftopApplications #aonMenuListAppImgTop-applications {
-  color: white;
-}
-*/
 
 /**
 Important. Keep this rule at the end of file 

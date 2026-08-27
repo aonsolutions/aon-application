@@ -87,10 +87,11 @@ body {
   fill:var(--logo-image-color, #4e48df);
 }
 
-.aonNewLogo{
-	background-image: url("../../assets/aonsolutions-ai-logo.svg");
+.aonNewLogo,
+.aonLoginLogo{
 	width: var(--aonCustomizeHeaderLogoWidth);
 	height: var(--aonCustomizeHeaderLogoHeight);
+	background-image: url("../../assets/aonsolutions-ai-logo.svg");
 }
 
 .aonHeader{
@@ -1046,11 +1047,6 @@ aon-fiscal-menu .suiteMenuDiv2{
 	padding: .5rem 0;
 }
 
-.aonLoginLogo {
-	width: var(--aonCustomizeLoginLogoWidth);
-	height: var(--aonCustomizeLoginLogoHeight);
-	background-image: url("../../assets/aon-ai-logo.svg");
-}
 
 #aonLogin .aonToolbar2 {
 	height: 68px; /*4rem;*/

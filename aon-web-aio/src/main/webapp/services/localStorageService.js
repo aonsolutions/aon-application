@@ -34,6 +34,7 @@ export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
 export const CUSTOM_THEME = '/css/theme/customview.css';
+export const DEFAULT_THEME = '/css/theme/standard.css';
 
 export const IS_FUTURE_THEME = 'isFutureTheme';
 
