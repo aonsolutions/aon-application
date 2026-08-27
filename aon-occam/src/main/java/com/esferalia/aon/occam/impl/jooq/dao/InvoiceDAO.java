@@ -1041,14 +1041,11 @@ public class InvoiceDAO {
 			.execute();
 	}
 
-	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
-		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
-	}
 	public static Invoice delete(AONContext ctx, Integer id) {
-		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
 	}
 	
-	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
+	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1122,14 +1119,14 @@ public class InvoiceDAO {
 		deleteDetails(ctx, config, invoice);
 		revertDUALink(ctx, invoice);
 		
-		byte[] attachData = null;
-		if (preserveRawdoc) {
-			attachData = invoice.getDoc()
-				.filter(d -> d.getExternalStorage() == ExternalStorage.AON)
-				.flatMap( d -> AttachmentDAO.getInvoiceAttachStream(ctx, f -> f.getIdProperty().eq(d.getAonId()), true).findFirst())
-				.map( Attach::getData)
-				.orElse(null);
-		}
+//		byte[] attachData = null;
+//		if (preserveRawdoc) {
+//			attachData = invoice.getDoc()
+//				.filter(d -> d.getExternalStorage() == ExternalStorage.AON)
+//				.flatMap( d -> AttachmentDAO.getInvoiceAttachStream(ctx, f -> f.getIdProperty().eq(d.getAonId()), true).findFirst())
+//				.map( Attach::getData)
+//				.orElse(null);
+//		}
 
 		int count = ctx.getDslContext()
 			.delete(INVOICE_ATTACH)
@@ -1160,23 +1157,23 @@ public class InvoiceDAO {
 			}
 		}
 		
-		if (preserveRawdoc) {
-			invoice.setId(null);
-			invoice.detailStream()
-				.map(d -> d.setId(null))
-				.flatMap(d -> d.taxStream())
-				.forEach(t -> t.setId(null));
-			Rawdoc rawdoc = new Rawdoc()
-				.setData( attachData )
-				.setDomain(invoice.getDomain())
-				.setJson(InvoiceJSON.toJSON(invoice).toString())
-				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
-				.setNature(RawdocNature.INVOICE)
-				.setStatus(RawdocStatus.TRASH)
-				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
-			;
-			RawdocDAO.save(ctx, rawdoc);
-		}
+//		if (preserveRawdoc) {
+//			invoice.setId(null);
+//			invoice.detailStream()
+//				.map(d -> d.setId(null))
+//				.flatMap(d -> d.taxStream())
+//				.forEach(t -> t.setId(null));
+//			Rawdoc rawdoc = new Rawdoc()
+//				.setData( attachData )
+//				.setDomain(invoice.getDomain())
+//				.setJson(InvoiceJSON.toJSON(invoice).toString())
+//				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
+//				.setNature(RawdocNature.INVOICE)
+//				.setStatus(RawdocStatus.TRASH)
+//				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
+//			;
+//			RawdocDAO.save(ctx, rawdoc);
+//		}
 		
 		ctx.getDslContext().delete(AMORTIZATION_INVOICE)
 			.where(AMORTIZATION_INVOICE.INVOICE.eq(id))

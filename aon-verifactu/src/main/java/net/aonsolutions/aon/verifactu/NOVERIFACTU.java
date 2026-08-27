@@ -116,17 +116,18 @@ public class NOVERIFACTU {
 		DataResponse dataResponse = saveResponse(ctx, vc.getDomain(), dataRequest, null );	// save DATA RESPONSE - NO DATA
 		InvoiceBatch invoiceBatch =  saveInvoiceBatch(ctx, vc.getDomain(), dataResponse, InvoiceCommunicationOperation.ANNULMENT);
 		vc.invoiceStream()
-			.forEach(i -> cancelInAON( ctx, vc, invoiceBatch, i) )
+			.forEach(i -> annulInAON( ctx, vc, invoiceBatch, i) )
 		;
 		return vc.setDataResponse(dataResponse);
 	}
 	
-	private static void cancelInAON(AONContext ctx, VerifactuContext vc, InvoiceBatch invoiceBatch, Invoice i) {
+	private static void annulInAON(AONContext ctx, VerifactuContext vc, InvoiceBatch invoiceBatch, Invoice i) {
 		if ( i == null) return; 
 		Integer invoiceId = i.getId();
 		if ( invoiceId == null) return;
 		if ( AonMathUtils.isZero(invoiceId)) return;
-		InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
+		saveInvoiceCommunication(ctx, vc, invoiceBatch, invoiceId, InvoiceCommunicationStatus.CANCELLED);
+		InvoiceDAO.annul(ctx, invoiceId);
 	}
 	
 	// **************************************************************

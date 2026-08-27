@@ -24,7 +24,6 @@ public class InvoiceCommunicatorContext {
 	private Company company;
 	private Person person;
 	private DataResponse dataResponse;
-	private boolean preserveRawdocOnDeletion;
 	private InvoiceCommunicationQuery communicationQuery;
 	
 //	private boolean error;
@@ -90,14 +89,6 @@ public class InvoiceCommunicatorContext {
 	
 	public InvoiceCommunicatorContext setDataResponse(DataResponse dataResponse) {
 		this.dataResponse = dataResponse;
-		return this;
-	}
-	
-	public boolean isPreserveRawdocOnDeletion() {
-		return preserveRawdocOnDeletion;
-	}
-	public InvoiceCommunicatorContext setPreserveRawdocOnDeletion(boolean preserveRawdocOnDeletion) {
-		this.preserveRawdocOnDeletion = preserveRawdocOnDeletion;
 		return this;
 	}
 	

@@ -184,7 +184,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 				.setConfig(config)
 				.setCompany(company)
 				.setPerson(person)
-				.setPreserveRawdocOnDeletion(true);
+			;
 
 			InvoiceCommunicator.cancelInvoice(icc);
 		} catch (InvoiceCommunicationException e) {

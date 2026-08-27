@@ -826,9 +826,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext icc = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
-				.setConfig(config)
-				.setCompany(company)
-				.setPreserveRawdocOnDeletion(true);
+			.setConfig(config)
+			.setCompany(company);
 		try {
 			InvoiceCommunicator.cancelInvoice(icc);
 		} catch (Exception e) {
