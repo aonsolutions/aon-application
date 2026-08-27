@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +25,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -66,9 +69,9 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_factura
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultapeticion_v1_0_0.LROEPJ240FacturasRecibidasConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_consultarespuesta_v1_0_0.LROEPJ240FacturasRecibidasConsultaRespuesta;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.LroeValidation;
 import net.aonsolutions.aon.tbai.exceptions.TBAIError;
 import net.aonsolutions.aon.tbai.exceptions.TbaiException;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class LROE240_2 extends LROE240 {
@@ -130,7 +133,7 @@ public class LROE240_2 extends LROE240 {
 		return emisor;
 	}
 	
-	private DocumentoType buildEmisorAnulacion(Invoice invoice) {
+	private static DocumentoType buildEmisorAnulacion(Invoice invoice) {
 		DocumentoType emisor = new DocumentoType();
 		
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
@@ -316,55 +319,44 @@ public class LROE240_2 extends LROE240 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+	public static LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
 		return new LROEInfo(MODEL_240, CAPITULO, null, operacion, ejercicio);
 	}
 	
-	private LROEPJ240FacturasRecibidasAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	
+	public static LROEPJ240FacturasRecibidasAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
 		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = new LROEPJ240FacturasRecibidasAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(context.getCompany(), info));
+
 		AnulacionesFacturasRecibidasType anulaciones = new AnulacionesFacturasRecibidasType();
-		AnulacionFacturaRecibidaType anulacion = new AnulacionFacturaRecibidaType();
 
-		IDFacturaConEmisorType factura = new IDFacturaConEmisorType();
+		for(Invoice invoice : context.invoiceStream().toList()) {
+			AnulacionFacturaRecibidaType anulacion = new AnulacionFacturaRecibidaType();
 
-		factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
-		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-//		factura.setSerieFactura(invoice.getSeries());
-		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		if(invoice.isRectifier()) {
-			factura.setSerieFactura(reference.substring(0, 1));
-			factura.setNumFactura(reference.substring(1));
-		} else factura.setNumFactura(reference);
-		anulacion.setIDRecibida(factura);
+			IDFacturaConEmisorType factura = new IDFacturaConEmisorType();
+
+			factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+			factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+//			factura.setSerieFactura(invoice.getSeries());
+			String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+			if(invoice.isRectifier()) {
+				factura.setSerieFactura(reference.substring(0, 1));
+				factura.setNumFactura(reference.substring(1));
+			} else factura.setNumFactura(reference);
+			anulacion.setIDRecibida(factura);
+			
+			anulaciones.getFacturaRecibida().add(anulacion);
+		}
 		
-		anulaciones.getFacturaRecibida().add(anulacion);
 		lroe.setFacturasRecibidas(anulaciones);
+		LroeValidation.validateAnulacionGastos(lroe);
 		return lroe;
 	}
 	
-	public LROEResponse anulacion(Company company, InvoiceCommunicationConfiguration icc, Invoice invoice) throws StatusCodeException {
-		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoice));
-			final LROEPJ240FacturasRecibidasAnulacionPeticion p240 = buildBaja(company, invoice, info); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasRecibidasAnulacionPeticion.class );
-			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
-
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p240, bos );
-			byte[] xml = bos.toByteArray();
-			
-			Document doc = getDocument(xml);
-			System.out.println(toString(doc));
-			
-			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(company, info), data).setDataRequest(dataRequest);
-		} catch (Exception e) {
-			return error(e);
-		}
+	public static byte[] sendCancel(InvoiceCommunicatorContext context, byte[] requestXml) throws InvoiceCommunicationException, JAXBException, IOException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		byte[] requestXmlGzip = toGzip(requestXml);
+		return post(context.getConfig(), buildJSON(context.getCompany(), info), requestXmlGzip);
 	}
 	
 	private LROEPJ240FacturasRecibidasConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {

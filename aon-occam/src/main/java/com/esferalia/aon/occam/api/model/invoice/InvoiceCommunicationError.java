@@ -46,6 +46,7 @@ public enum InvoiceCommunicationError {
 	AON_0034("0034", "Se ha producido un error al firmar el XML del registro ed facturaci\u00F3n."),
 	AON_0035("0035", "Las facturas a comunicar pertenecen a m\u00E1s de un ejercicio."),
 	AON_0036("0036", "No se ha podido determinar el ejercicio de las facturas a comunicar."),
+	AON_0037("0037", "Las facturas a anular no pueden mezclar facturas emitidas y recibidas."),
 
 	// InvoiceCommunicationType 	
 	AON_NO_SERES		("0100", "El tipo de comunicaci\u00F3n SERES no est\u00E1 implementado."),
@@ -390,6 +391,8 @@ public enum InvoiceCommunicationError {
 	LROE_2000005("B4_2000005", "La fecha no es v\u00E1lida."),
 	LROE_2000006("B4_2000006", "El registro ya est\u00E1 anulado."),
 	LROE_2000011("B4_2000011", "El NIF tiene un formato err\u00F3neo."),
+	LROE_2000012("B4_2000012", "Si el ID Type es 03, 04, 05 o 06 el C\u00F3digo pa\u00EDs es obligatorio."),
+	LROE_2000013("B4_2000013", "El NIF-IVA debe tener el formato correspondiente al pa\u00EDs."),
 	LROE_2000063("B4_2000063", "La licencia no est\u00E1 registrada."),
 	LROE_2000064("B4_2000064", "El NIF de la entidad desarrolladora debe corresponder con el de la licencia."),
 	LROE_2000065("B4_2000065", "El ID de la entidad desarrolladora debe corresponder con el de la licencia."),

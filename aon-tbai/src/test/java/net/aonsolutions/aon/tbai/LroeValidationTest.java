@@ -16,22 +16,32 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaEmitidaSinSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaRecibidaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionGastoConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionIngresoSinSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasRecibidasType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesGastosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasEmitidasConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasEmitidasSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera240Type;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaConEmisorType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaSinSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasSinSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_anulacionpeticion_v1_0_0.LROEPJ240FacturasRecibidasAnulacionPeticion;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 import ticketbai.anulacion.AnulaTicketBai;
 
@@ -54,6 +64,9 @@ class LroeValidationTest {
 
 	/** Otro NIF valido, distinto del obligado tributario. */
 	private static final String OTRO_NIF = "11111111H";
+
+	/** NIF del emisor de las facturas recibidas que se anulan, que es el proveedor. */
+	private static final String NIF_PROVEEDOR = "04437365K";
 
 	/** NIF con el formato del tipo NIFType pero con la letra de control erronea. */
 	private static final String NIF_LETRA_ERRONEA = "12345678A";
@@ -558,6 +571,363 @@ class LroeValidationTest {
 	}
 
 	// *****************************************************************
+	// ************ [LROE_PF_140_2_1 GASTOS CON FACTURA] ***************
+	// *****************************************************************
+
+	/**
+	 * En el subcapitulo de gastos con factura la factura recibida que se anula se
+	 * identifica con su serie, su numero, su fecha de expedicion y su emisor, que es
+	 * el proveedor y no el obligado tributario.
+	 */
+	@Test
+	void peticionGastosObligatoria_Test() {
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class,
+			() -> LroeValidation.validateAnulacionGastos((LROEPF140GastosConFacturaAnulacionPeticion) null));
+		assertEquals(List.of(InvoiceCommunicationError.LROE_1000001), e.getMessages());
+	}
+
+	@Test
+	void peticionGastosValida_Test() {
+		assertValidaGastos(peticionGastos(idGasto()));
+	}
+
+	/** Los gastos y las facturas recibidas son el capitulo 2. */
+	@Test
+	void capituloGastosErroneo_Test() {
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = peticionGastos(idGasto());
+		lroe.getCabecera().setCapitulo("1");
+		assertErroresGastos(lroe, InvoiceCommunicationError.LROE_1000023);
+	}
+
+	/** Los gastos con factura son el subcapitulo 2.1. */
+	@Test
+	void subcapituloGastosErroneo_Test() {
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = peticionGastos(idGasto());
+		lroe.getCabecera().setSubcapitulo("2.2");
+		assertErroresGastos(lroe, InvoiceCommunicationError.LROE_1000024);
+	}
+
+	@Test
+	void gastosObligatorios_Test() {
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = peticionGastos(idGasto());
+		lroe.setGastos(null);
+		assertErroresGastos(lroe, InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void gastosVacios_Test() {
+		assertErroresGastos(peticionGastos(), InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void idGastoObligatorio_Test() {
+		assertErroresGastos(peticionGastos((IDFacturaConEmisorType) null),
+			InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void numFacturaGastoObligatorio_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setNumFactura(null);
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000000);
+	}
+
+	/** La serie y el numero de la factura son de tipo TextMax20Type. */
+	@Test
+	void numFacturaGastoDemasiadoLargo_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setNumFactura(texto(21));
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void serieFacturaGastoDemasiadoLarga_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setSerieFactura(texto(21));
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_1000001);
+	}
+
+	/** La serie es el unico campo opcional del bloque. */
+	@Test
+	void serieFacturaGastoOpcional_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setSerieFactura(null);
+		assertValidaGastos(peticionGastos(idGasto));
+	}
+
+	@Test
+	void fechaExpedicionGastoObligatoria_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setFechaExpedicionFactura(null);
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000000);
+	}
+
+	@Test
+	void fechaExpedicionGastoPosteriorAHoy_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setFechaExpedicionFactura(fecha(1));
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000005);
+	}
+
+	@Test
+	void fechaExpedicionGastoConFormatoErroneo_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setFechaExpedicionFactura("2026-01-31");
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000005);
+	}
+
+	/**
+	 * El ejercicio de un gasto es el de su fecha de recepcion (ver
+	 * LROE.getEjercicio), que no se informa en la anulacion, por lo que no tiene que
+	 * coincidir con el de la fecha de expedicion de la factura.
+	 */
+	@Test
+	void ejercicioGastoDistintoDeLaFechaExpedicion_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setFechaExpedicionFactura(
+			AonDateUtils.format(AonDateUtils.addYears(AonDateUtils.today(), -1), "dd-MM-yyyy"));
+		assertValidaGastos(peticionGastos(idGasto));
+	}
+
+	@Test
+	void emisorGastoObligatorio_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setEmisorFacturaRecibida(null);
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000000);
+	}
+
+	/** El emisor se identifica con su NIF o con el bloque IDOtro. */
+	@Test
+	void emisorGastoSinDocumento_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setEmisorFacturaRecibida(new DocumentoType());
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000000);
+	}
+
+	/** El NIF y el bloque IDOtro son una eleccion, por lo que se excluyen. */
+	@Test
+	void emisorGastoConNifYConIdOtro_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.getEmisorFacturaRecibida().setIDOtro(idOtro(CountryEnum.FR, "02", "FR12345678"));
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void emisorGastoConNifDeFormatoErroneo_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.getEmisorFacturaRecibida().setNIF(NIF_FORMATO_ERRONEO);
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000011);
+	}
+
+	@Test
+	void emisorGastoConNifDeLetraErronea_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.getEmisorFacturaRecibida().setNIF(NIF_LETRA_ERRONEA);
+		assertErroresGastos(peticionGastos(idGasto), InvoiceCommunicationError.LROE_2000011);
+	}
+
+	/** El NIF del proveedor no tiene que coincidir con el del obligado tributario. */
+	@Test
+	void emisorGastoDistintoDelObligadoTributario_Test() {
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.getEmisorFacturaRecibida().setNIF(OTRO_NIF);
+		assertValidaGastos(peticionGastos(idGasto));
+	}
+
+	@Test
+	void emisorGastoConIdOtro_Test() {
+		assertValidaGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.US, "03", "123456789"))));
+	}
+
+	@Test
+	void idTypeGastoObligatorio_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.US, null, "123456789"))),
+			InvoiceCommunicationError.LROE_2000000);
+	}
+
+	/** El esquema solo admite los tipos de documento 02, 03, 04, 05 y 06. */
+	@Test
+	void idTypeGastoNoAdmitido_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.US, "07", "123456789"))),
+			InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void idGastoIdOtroObligatorio_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.US, "03", null))),
+			InvoiceCommunicationError.LROE_2000000);
+	}
+
+	/** El ID del bloque IDOtro es de tipo TextMax20Type. */
+	@Test
+	void idGastoIdOtroDemasiadoLargo_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.US, "03", texto(21)))),
+			InvoiceCommunicationError.LROE_1000001);
+	}
+
+	/** El codigo de pais es obligatorio con los tipos de documento 03, 04, 05 y 06. */
+	@Test
+	void codigoPaisGastoObligatorio_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(null, "03", "123456789"))),
+			InvoiceCommunicationError.LROE_2000012);
+	}
+
+	/** El codigo de pais no es obligatorio cuando el emisor se identifica con un NIF-IVA. */
+	@Test
+	void codigoPaisGastoOpcionalConNifIva_Test() {
+		assertValidaGastos(peticionGastos(idGastoConIdOtro(idOtro(null, "02", "FR12345678"))));
+	}
+
+	@Test
+	void nifIvaGastoConPrefijoDeOtroPais_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.FR, "02", "PT123456789"))),
+			InvoiceCommunicationError.LROE_2000013);
+	}
+
+	@Test
+	void nifIvaGastoSinPrefijo_Test() {
+		assertErroresGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.FR, "02", "12345678"))),
+			InvoiceCommunicationError.LROE_2000013);
+	}
+
+	/** Grecia asigna los NIF-IVA con el prefijo EL y no con su codigo de pais. */
+	@Test
+	void nifIvaGastoDeGrecia_Test() {
+		assertValidaGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.GR, "02", "EL123456789"))));
+	}
+
+	/** Irlanda del Norte asigna los NIF-IVA con el prefijo XI y el codigo de pais GB. */
+	@Test
+	void nifIvaGastoDeIrlandaDelNorte_Test() {
+		assertValidaGastos(peticionGastos(idGastoConIdOtro(idOtro(CountryEnum.GB, "02", "XI123456789"))));
+	}
+
+	@Test
+	void gastosDuplicados_Test() {
+		assertErroresGastos(peticionGastos(idGasto(), idGasto()), InvoiceCommunicationError.LROE_1000005);
+	}
+
+	@Test
+	void gastosDistintos_Test() {
+		IDFacturaConEmisorType otro = idGasto();
+		otro.setNumFactura("20");
+		assertValidaGastos(peticionGastos(idGasto(), otro));
+	}
+
+	// *****************************************************************
+	// ************ [LROE_PJ_240_2 FACTURAS RECIBIDAS] *****************
+	// *****************************************************************
+
+	/**
+	 * Las facturas recibidas del modelo 240 se anulan con el mismo bloque
+	 * IDFacturaConEmisorType que los gastos con factura del modelo 140, por lo que
+	 * las validaciones son las mismas. La unica diferencia es que el capitulo 2 del
+	 * modelo 240 no se divide en subcapitulos.
+	 */
+	@Test
+	void peticion240RecibidasObligatoria_Test() {
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class,
+			() -> LroeValidation.validateAnulacionGastos((LROEPJ240FacturasRecibidasAnulacionPeticion) null));
+		assertEquals(List.of(InvoiceCommunicationError.LROE_1000001), e.getMessages());
+	}
+
+	@Test
+	void peticion240RecibidasValida_Test() {
+		assertValida240Recibidas(peticion240Recibidas(idGasto()));
+	}
+
+	@Test
+	void modelo240RecibidasErroneo_Test() {
+		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = peticion240Recibidas(idGasto());
+		lroe.getCabecera().setModelo("140");
+		assertErrores240Recibidas(lroe, InvoiceCommunicationError.LROE_1000020);
+	}
+
+	@Test
+	void capitulo240RecibidasErroneo_Test() {
+		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = peticion240Recibidas(idGasto());
+		lroe.getCabecera().setCapitulo("1");
+		assertErrores240Recibidas(lroe, InvoiceCommunicationError.LROE_1000023);
+	}
+
+	/** El capitulo 2 del modelo 240 no se divide en subcapitulos. */
+	@Test
+	void subcapitulo240RecibidasInformado_Test() {
+		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = peticion240Recibidas(idGasto());
+		lroe.getCabecera().setSubcapitulo("2.1");
+		assertErrores240Recibidas(lroe, InvoiceCommunicationError.LROE_1000024);
+	}
+
+	@Test
+	void facturasRecibidasObligatorias_Test() {
+		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = peticion240Recibidas(idGasto());
+		lroe.setFacturasRecibidas(null);
+		assertErrores240Recibidas(lroe, InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void facturasRecibidasVacias_Test() {
+		assertErrores240Recibidas(peticion240Recibidas(), InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void idRecibidaObligatorio_Test() {
+		assertErrores240Recibidas(peticion240Recibidas((IDFacturaConEmisorType) null),
+			InvoiceCommunicationError.LROE_1000001);
+	}
+
+	@Test
+	void numFacturaRecibidaObligatorio_Test() {
+		IDFacturaConEmisorType idRecibida = idGasto();
+		idRecibida.setNumFactura(null);
+		assertErrores240Recibidas(peticion240Recibidas(idRecibida),
+			InvoiceCommunicationError.LROE_2000000);
+	}
+
+	@Test
+	void fechaExpedicionRecibidaPosteriorAHoy_Test() {
+		IDFacturaConEmisorType idRecibida = idGasto();
+		idRecibida.setFechaExpedicionFactura(fecha(1));
+		assertErrores240Recibidas(peticion240Recibidas(idRecibida),
+			InvoiceCommunicationError.LROE_2000005);
+	}
+
+	@Test
+	void emisorRecibidaObligatorio_Test() {
+		IDFacturaConEmisorType idRecibida = idGasto();
+		idRecibida.setEmisorFacturaRecibida(null);
+		assertErrores240Recibidas(peticion240Recibidas(idRecibida),
+			InvoiceCommunicationError.LROE_2000000);
+	}
+
+	@Test
+	void emisorRecibidaConNifDeLetraErronea_Test() {
+		IDFacturaConEmisorType idRecibida = idGasto();
+		idRecibida.getEmisorFacturaRecibida().setNIF(NIF_LETRA_ERRONEA);
+		assertErrores240Recibidas(peticion240Recibidas(idRecibida),
+			InvoiceCommunicationError.LROE_2000011);
+	}
+
+	@Test
+	void codigoPaisRecibidaObligatorio_Test() {
+		assertErrores240Recibidas(peticion240Recibidas(idGastoConIdOtro(idOtro(null, "03", "123456789"))),
+			InvoiceCommunicationError.LROE_2000012);
+	}
+
+	@Test
+	void nifIvaRecibidaConPrefijoDeOtroPais_Test() {
+		assertErrores240Recibidas(
+			peticion240Recibidas(idGastoConIdOtro(idOtro(CountryEnum.FR, "02", "PT123456789"))),
+			InvoiceCommunicationError.LROE_2000013);
+	}
+
+	@Test
+	void facturasRecibidasDuplicadas_Test() {
+		assertErrores240Recibidas(peticion240Recibidas(idGasto(), idGasto()),
+			InvoiceCommunicationError.LROE_1000005);
+	}
+
+	// *****************************************************************
 	// *************************** [UTILES] ****************************
 	// *****************************************************************
 
@@ -708,6 +1078,105 @@ class LroeValidationTest {
 	private static Cabecera140Type cabeceraSinSG() {
 		Cabecera140Type cabecera = cabecera();
 		cabecera.setSubcapitulo("1.2");
+		return cabecera;
+	}
+
+	private void assertValidaGastos(LROEPF140GastosConFacturaAnulacionPeticion lroe) {
+		assertDoesNotThrow(() -> LroeValidation.validateAnulacionGastos(lroe));
+	}
+
+	private void assertErroresGastos(LROEPF140GastosConFacturaAnulacionPeticion lroe,
+			InvoiceCommunicationError... errores) {
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class,
+			() -> LroeValidation.validateAnulacionGastos(lroe));
+		assertEquals(List.of(errores), e.getMessages());
+	}
+
+	/** Peticion de anulacion del subcapitulo 2.1 del modelo 140. */
+	private static LROEPF140GastosConFacturaAnulacionPeticion peticionGastos(
+			IDFacturaConEmisorType... idGastos) {
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = new LROEPF140GastosConFacturaAnulacionPeticion();
+		lroe.setCabecera(cabeceraGastos());
+
+		AnulacionesGastosConFacturaType gastos = new AnulacionesGastosConFacturaType();
+		for (IDFacturaConEmisorType idGasto : idGastos) {
+			AnulacionGastoConFacturaType gasto = new AnulacionGastoConFacturaType();
+			gasto.setIDGasto(idGasto);
+			gastos.getGasto().add(gasto);
+		}
+		lroe.setGastos(gastos);
+		return lroe;
+	}
+
+	private static Cabecera140Type cabeceraGastos() {
+		Cabecera140Type cabecera = cabecera();
+		cabecera.setCapitulo("2");
+		cabecera.setSubcapitulo("2.1");
+		return cabecera;
+	}
+
+	/** Identificador valido de la factura recibida que se anula. */
+	private static IDFacturaConEmisorType idGasto() {
+		DocumentoType emisor = new DocumentoType();
+		emisor.setNIF(NIF_PROVEEDOR);
+
+		IDFacturaConEmisorType idGasto = new IDFacturaConEmisorType();
+		idGasto.setSerieFactura("A");
+		idGasto.setNumFactura("10");
+		idGasto.setFechaExpedicionFactura(fecha(0));
+		idGasto.setEmisorFacturaRecibida(emisor);
+		return idGasto;
+	}
+
+	/** Identificador de la factura recibida de un emisor sin NIF. */
+	private static IDFacturaConEmisorType idGastoConIdOtro(IDOtroType idOtro) {
+		DocumentoType emisor = new DocumentoType();
+		emisor.setIDOtro(idOtro);
+
+		IDFacturaConEmisorType idGasto = idGasto();
+		idGasto.setEmisorFacturaRecibida(emisor);
+		return idGasto;
+	}
+
+	private static IDOtroType idOtro(CountryEnum codigoPais, String idType, String id) {
+		IDOtroType idOtro = new IDOtroType();
+		idOtro.setCodigoPais(codigoPais);
+		idOtro.setIDType(idType);
+		idOtro.setID(id);
+		return idOtro;
+	}
+
+	private void assertValida240Recibidas(LROEPJ240FacturasRecibidasAnulacionPeticion lroe) {
+		assertDoesNotThrow(() -> LroeValidation.validateAnulacionGastos(lroe));
+	}
+
+	private void assertErrores240Recibidas(LROEPJ240FacturasRecibidasAnulacionPeticion lroe,
+			InvoiceCommunicationError... errores) {
+		InvoiceCommunicationException e = assertThrows(InvoiceCommunicationException.class,
+			() -> LroeValidation.validateAnulacionGastos(lroe));
+		assertEquals(List.of(errores), e.getMessages());
+	}
+
+	/** Peticion de anulacion del capitulo 2 del modelo 240. */
+	private static LROEPJ240FacturasRecibidasAnulacionPeticion peticion240Recibidas(
+			IDFacturaConEmisorType... idRecibidas) {
+		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = new LROEPJ240FacturasRecibidasAnulacionPeticion();
+		lroe.setCabecera(cabecera240Recibidas());
+
+		AnulacionesFacturasRecibidasType facturas = new AnulacionesFacturasRecibidasType();
+		for (IDFacturaConEmisorType idRecibida : idRecibidas) {
+			AnulacionFacturaRecibidaType facturaRecibida = new AnulacionFacturaRecibidaType();
+			facturaRecibida.setIDRecibida(idRecibida);
+			facturas.getFacturaRecibida().add(facturaRecibida);
+		}
+		lroe.setFacturasRecibidas(facturas);
+		return lroe;
+	}
+
+	private static Cabecera240Type cabecera240Recibidas() {
+		Cabecera240Type cabecera = cabecera240();
+		cabecera.setCapitulo("2");
+		cabecera.setSubcapitulo(null);
 		return cabecera;
 	}
 

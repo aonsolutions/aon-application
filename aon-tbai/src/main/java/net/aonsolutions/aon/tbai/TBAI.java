@@ -65,13 +65,6 @@ public class TBAI {
 		TicketBaiResponse tbaiResponse = (TicketBaiResponse) XMLUtils.unmarshal(response, TicketBaiResponse.class);
 	}
 	
-	public static void cancel(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception {
-		byte[] data = generateCancelXMl(icc, company, invoice);
-		byte[] xml = TbaiSigner.getInstance().sign(icc, data);
-		String uri = TbaiUri.getUrlAnulacion(icc);
-		byte[] response = XMLUtils.send(icc.getCertificate(), uri, xml);
-	}
-
 	public static byte[] generateAcceptXMl(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception{
 		TicketBai tbai = Invoice2tbai.build(company, invoice, icc, blockchain);
 		return XMLUtils.marshal(tbai, TicketBai.class);
@@ -80,11 +73,6 @@ public class TBAI {
 	public static byte[] generateModifyXMl(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception{
 		SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, icc, null, null, false);
 		return XMLUtils.marshal(tbai, SubsanacionModificacionTicketBAI.class);
-	}
-	
-	public static byte[] generateCancelXMl(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception{
-		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, icc);
-		return XMLUtils.marshal(tbai, AnulaTicketBai.class);
 	}
 	
 	protected static void save(Company company, Invoice invoice, byte[] request, byte[] response, InvoiceCommunicationConfiguration icc) throws ParserConfigurationException, SAXException, IOException, JAXBException {

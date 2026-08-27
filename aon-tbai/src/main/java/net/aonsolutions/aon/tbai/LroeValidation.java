@@ -18,20 +18,31 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaConSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaEmitidaSinSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionFacturaRecibidaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionGastoConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionIngresoSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasEmitidasSinSGType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesFacturasRecibidasType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesGastosConFacturaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesIngresosSinSGType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera240Type;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DocumentoType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaConEmisorType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaSinSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasSinSGAnulacionPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_2_facturasrecibidas_anulacionpeticion_v1_0_0.LROEPJ240FacturasRecibidasAnulacionPeticion;
+import net.aonsolutions.aon.tbai.lroe.IDType;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.anulacion.CabeceraFacturaType;
@@ -50,8 +61,10 @@ public class LroeValidation {
 	private static final String MODELO_140 = "140";
 	private static final String MODELO_240 = "240";
 	private static final String CAPITULO_1 = "1";
+	private static final String CAPITULO_2 = "2";
 	private static final String SUBCAPITULO_1_1 = "1.1";
 	private static final String SUBCAPITULO_1_2 = "1.2";
+	private static final String SUBCAPITULO_2_1 = "2.1";
 	private static final String ID_VERSION = "1.0";
 
 	private static final String FORMATO_FECHA = "dd-MM-yyyy";
@@ -68,6 +81,12 @@ public class LroeValidation {
 	 */
 	private static final int MAX_REGISTROS_SIN_SG = 10000;
 
+	/**
+	 * Numero maximo de anulaciones que admiten AnulacionesGastosConFacturaType y
+	 * AnulacionesFacturasRecibidasType.
+	 */
+	private static final int MAX_REGISTROS_GASTOS = 10000;
+
 	/** Longitud maxima del tipo TextMax20Type del esquema batuz_TiposBasicos. */
 	private static final int MAX_TEXTO_20 = 20;
 
@@ -77,6 +96,22 @@ public class LroeValidation {
 	private static final Pattern PATRON_NIF =
 		Pattern.compile("([a-zA-Z]\\d{7}[a-zA-Z])|(\\d{8}[a-zA-Z])|([a-zA-Z]\\d{8})");
 	private static final Pattern PATRON_FECHA = Pattern.compile("\\d{2}-\\d{2}-\\d{4}");
+
+	/**
+	 * Formato del NIF-IVA: el prefijo de dos letras del pais que lo ha asignado y
+	 * el numero de identificacion, sin exceder los 20 caracteres del tipo
+	 * TextMax20Type con el que se informa.
+	 */
+	private static final Pattern PATRON_NIF_IVA = Pattern.compile("[a-zA-Z]{2}[a-zA-Z0-9]{1,18}");
+
+	/**
+	 * Tipos de documento con los que se puede identificar al emisor de una factura
+	 * recibida, que son los valores del tipo TipoDocumentoIdentificativoEnum del
+	 * esquema batuz_Enumerados.
+	 */
+	private static final Set<String> ID_TYPES = Set.of(IDType.NIF_IVA.getName(),
+		IDType.PASAPORTE.getName(), IDType.DOCUMENTO_OFICIAL_PAIS.getName(),
+		IDType.CERTIFICADO_RESIDENCIA.getName(), IDType.OTRO.getName());
 
 	private LroeValidation() {
 
@@ -111,8 +146,12 @@ public class LroeValidation {
 	 * En los subcapitulos con software garante se leen del fichero TicketBAI y en
 	 * los subcapitulos sin software garante del bloque IDIngreso o IDFactura, que
 	 * no incluye el NIF del emisor.
+	 *
+	 * En el subcapitulo de gastos con factura se leen del bloque IDGasto, donde el
+	 * emisor es el proveedor y se puede identificar con su NIF o, si no lo tiene,
+	 * con el ID del bloque IDOtro.
 	 */
-	private record Factura(String nifEmisor, String serie, String numero, String fecha) {
+	private record Factura(String idEmisor, String serie, String numero, String fecha) {
 
 	}
 
@@ -124,7 +163,10 @@ public class LroeValidation {
 		/** Modelo que corresponde a la peticion que se valida: 140 o 240. */
 		final String modeloEsperado;
 
-		/** Subcapitulo que corresponde a la peticion que se valida: 1.1 o 1.2. */
+		/** Capitulo que corresponde a la peticion que se valida: 1 o 2. */
+		final String capituloEsperado;
+
+		/** Subcapitulo que corresponde a la peticion que se valida: 1.1, 1.2 o 2.1. */
 		final String subcapituloEsperado;
 
 		final Cabecera cabecera;
@@ -137,8 +179,10 @@ public class LroeValidation {
 		 */
 		final List<Factura> facturas = new ArrayList<>();
 
-		AnulacionContext(String modeloEsperado, String subcapituloEsperado, Cabecera cabecera) {
+		AnulacionContext(String modeloEsperado, String capituloEsperado, String subcapituloEsperado,
+				Cabecera cabecera) {
 			this.modeloEsperado = modeloEsperado;
+			this.capituloEsperado = capituloEsperado;
 			this.subcapituloEsperado = subcapituloEsperado;
 			this.cabecera = cabecera;
 		}
@@ -187,7 +231,7 @@ public class LroeValidation {
 
 		AnulacionConSGContext(String modeloEsperado, Cabecera cabecera,
 				List<AnulacionFacturaConSGType> registros) {
-			super(modeloEsperado, SUBCAPITULO_1_1, cabecera);
+			super(modeloEsperado, CAPITULO_1, SUBCAPITULO_1_1, cabecera);
 			this.registros = registros;
 		}
 
@@ -216,7 +260,7 @@ public class LroeValidation {
 		final List<IDFacturaType> registros;
 
 		AnulacionSinSGContext(String modeloEsperado, Cabecera cabecera, List<IDFacturaType> registros) {
-			super(modeloEsperado, SUBCAPITULO_1_2, cabecera);
+			super(modeloEsperado, CAPITULO_1, SUBCAPITULO_1_2, cabecera);
 			this.registros = registros;
 		}
 
@@ -228,6 +272,36 @@ public class LroeValidation {
 		@Override
 		int getMaxRegistros() {
 			return MAX_REGISTROS_SIN_SG;
+		}
+	}
+
+	/**
+	 * Peticion de anulacion de los gastos con factura del modelo 140
+	 * (LROE_PF_140_2_1) y de las facturas recibidas del modelo 240
+	 * (LROE_PJ_240_2), en las que cada anulacion identifica la factura recibida con
+	 * su serie, su numero, su fecha de expedicion y su emisor.
+	 */
+	private static class AnulacionGastosContext extends AnulacionContext {
+		/**
+		 * Identificadores de las facturas recibidas que se anulan: el IDGasto de cada
+		 * Gasto del modelo 140 o el IDRecibida de cada FacturaRecibida del modelo 240.
+		 */
+		final List<IDFacturaConEmisorType> registros;
+
+		AnulacionGastosContext(String modeloEsperado, String subcapituloEsperado, Cabecera cabecera,
+				List<IDFacturaConEmisorType> registros) {
+			super(modeloEsperado, CAPITULO_2, subcapituloEsperado, cabecera);
+			this.registros = registros;
+		}
+
+		@Override
+		int getNumRegistros() {
+			return AonCollectionUtils.size(registros);
+		}
+
+		@Override
+		int getMaxRegistros() {
+			return MAX_REGISTROS_GASTOS;
 		}
 	}
 
@@ -379,6 +453,89 @@ public class LroeValidation {
 		throwErrors(v);
 	}
 
+	// *****************************************************************
+	// *********** [VALIDACION ANULACION GASTOS 140/240] ***************
+	// *****************************************************************
+
+	/**
+	 * Valida el fichero de anulacion del subcapitulo LROE_PF_140_2_1 (personas
+	 * fisicas: gastos con factura recibida).
+	 *
+	 * @param lroe fichero de anulacion a validar
+	 * @throws InvoiceCommunicationException si el fichero no cumple alguna validacion
+	 */
+	public static void validateAnulacionGastos(LROEPF140GastosConFacturaAnulacionPeticion lroe)
+			throws InvoiceCommunicationException {
+		if (lroe == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.LROE_1000001);
+		}
+
+		validateAnulacionGastos(new AnulacionGastosContext(MODELO_140, SUBCAPITULO_2_1,
+			Cabecera.of(lroe.getCabecera()), idGastos(lroe.getGastos())));
+	}
+
+	/**
+	 * Valida el fichero de anulacion del capitulo LROE_PJ_240_2 (personas
+	 * juridicas: facturas recibidas).
+	 *
+	 * @param lroe fichero de anulacion a validar
+	 * @throws InvoiceCommunicationException si el fichero no cumple alguna validacion
+	 */
+	public static void validateAnulacionGastos(LROEPJ240FacturasRecibidasAnulacionPeticion lroe)
+			throws InvoiceCommunicationException {
+		if (lroe == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.LROE_1000001);
+		}
+
+		validateAnulacionGastos(new AnulacionGastosContext(MODELO_240, null,
+			Cabecera.of(lroe.getCabecera()), idRecibidas(lroe.getFacturasRecibidas())));
+	}
+
+	/**
+	 * Valida la peticion de anulacion de los gastos con factura del modelo 140 o de
+	 * las facturas recibidas del modelo 240. Las validaciones son las mismas para el
+	 * LROE_PF_140_2_1 y para el LROE_PJ_240_2, que solo se diferencian en el modelo
+	 * y el subcapitulo de la cabecera y en el nombre de los bloques que identifican
+	 * las facturas que se anulan.
+	 *
+	 * Se acumulan todos los errores encontrados y, si hay alguno, se lanza una
+	 * unica excepcion con todos ellos.
+	 *
+	 * A diferencia de los subcapitulos de facturas emitidas, el emisor de la
+	 * factura es el proveedor y no el obligado tributario, por lo que no se
+	 * comprueba que los dos coincidan sino que el documento con el que se
+	 * identifica tiene un formato correcto.
+	 *
+	 * Tampoco se comprueba que el ejercicio de la cabecera coincida con el anio de
+	 * la fecha de expedicion de las facturas, porque el ejercicio de una factura
+	 * recibida es el de su fecha de recepcion (ver LROE.getEjercicio), que no se
+	 * informa en la anulacion.
+	 *
+	 * @param v contexto con los datos de la peticion que se valida
+	 * @throws InvoiceCommunicationException si el fichero no cumple alguna validacion
+	 */
+	private static void validateAnulacionGastos(AnulacionGastosContext v)
+			throws InvoiceCommunicationException {
+		LroeValidation.<AnulacionGastosContext>primera(CABECERA)
+			.andThen(CABECERA_MODELO)
+			.andThen(CABECERA_CAPITULO)
+			.andThen(CABECERA_SUBCAPITULO)
+			.andThen(CABECERA_OPERACION)
+			.andThen(CABECERA_VERSION)
+			.andThen(CABECERA_EJERCICIO)
+			.andThen(CABECERA_OBLIGADO_TRIBUTARIO)
+			.andThen(CABECERA_OBLIGADO_TRIBUTARIO_NIF)
+			.andThen(CABECERA_OBLIGADO_TRIBUTARIO_NOMBRE_RAZON_SOCIAL)
+			.andThen(REGISTROS)
+			.andThen(REGISTROS_ID_GASTO)
+			.andThen(GASTOS_EMISOR_FACTURA_RECIBIDA)
+			.andThen(FACTURAS_FECHA_EXPEDICION)
+			.andThen(FACTURAS_DUPLICADAS)
+		.accept(v);
+
+		throwErrors(v);
+	}
+
 	/**
 	 * Devuelve la primera validacion de una cadena adaptada al contexto concreto
 	 * que se valida.
@@ -431,7 +588,8 @@ public class LroeValidation {
 	 * 3. Cabecera >> Capitulo
 	 *
 	 * 	- Campo obligatorio.
-	 * 	- Los ingresos y las facturas emitidas son el capitulo 1 de los dos modelos.
+	 * 	- Los ingresos y las facturas emitidas son el capitulo 1 de los dos modelos y
+	 * 	  los gastos y las facturas recibidas el capitulo 2.
 	 */
 	private static final Consumer<AnulacionContext> CABECERA_CAPITULO = v -> {
 		if (v.getCabecera() == null) return;
@@ -439,7 +597,7 @@ public class LroeValidation {
 		String capitulo = v.getCabecera().capitulo();
 		if (AonStringUtils.isBlank(capitulo)) {
 			v.addError(InvoiceCommunicationError.LROE_1000001);
-		} else if (AonStringUtils.notEquals(CAPITULO_1, capitulo)) {
+		} else if (AonStringUtils.notEquals(v.capituloEsperado, capitulo)) {
 			v.addError(InvoiceCommunicationError.LROE_1000023);
 		}
 	};
@@ -447,15 +605,22 @@ public class LroeValidation {
 	/**
 	 * 4. Cabecera >> Subcapitulo
 	 *
-	 * 	- Campo obligatorio en el capitulo 1 de los dos modelos.
-	 * 	- Las facturas emitidas con software garante son el subcapitulo 1.1 y las
-	 * 	  emitidas sin software garante el subcapitulo 1.2.
+	 * 	- Las facturas emitidas con software garante son el subcapitulo 1.1, las
+	 * 	  emitidas sin software garante el subcapitulo 1.2 y los gastos con factura
+	 * 	  del modelo 140 el subcapitulo 2.1.
+	 * 	- El capitulo 2 del modelo 240 (facturas recibidas) no se divide en
+	 * 	  subcapitulos, por lo que el campo, que es opcional en el esquema, no se
+	 * 	  puede informar.
 	 */
 	private static final Consumer<AnulacionContext> CABECERA_SUBCAPITULO = v -> {
 		if (v.getCabecera() == null) return;
 
 		String subcapitulo = v.getCabecera().subcapitulo();
-		if (AonStringUtils.isBlank(subcapitulo)) {
+		if (v.subcapituloEsperado == null) {
+			if (AonStringUtils.isNotBlank(subcapitulo)) {
+				v.addError(InvoiceCommunicationError.LROE_1000024);
+			}
+		} else if (AonStringUtils.isBlank(subcapitulo)) {
 			v.addError(InvoiceCommunicationError.LROE_1000001);
 		} else if (AonStringUtils.notEquals(v.subcapituloEsperado, subcapitulo)) {
 			v.addError(InvoiceCommunicationError.LROE_1000024);
@@ -561,12 +726,14 @@ public class LroeValidation {
 	};
 
 	/**
-	 * 11. Ingresos (modelo 140) / FacturasEmitidas (modelo 240)
+	 * 11. Ingresos / Gastos (modelo 140) / FacturasEmitidas / FacturasRecibidas
+	 *     (modelo 240)
 	 *
 	 * 	- El bloque que agrupa las anulaciones es obligatorio y debe contener al
 	 * 	  menos una anulacion.
 	 * 	- Los esquemas admiten como maximo 1.000 anulaciones en los subcapitulos con
-	 * 	  software garante y 10.000 en los subcapitulos sin software garante.
+	 * 	  software garante y 10.000 en los subcapitulos sin software garante y en los
+	 * 	  de gastos con factura y facturas recibidas.
 	 */
 	private static final Consumer<AnulacionContext> REGISTROS = v -> {
 		if (v.getNumRegistros() == 0 || v.getNumRegistros() > v.getMaxRegistros()) {
@@ -652,29 +819,148 @@ public class LroeValidation {
 	};
 
 	/**
-	 * 13. AnulacionTicketBai >> IDFactura >> Emisor >> NIF (subcapitulos 1.1)
+	 * 12. Gasto >> IDGasto (subcapitulo 2.1) / FacturaRecibida >> IDRecibida
+	 *     (capitulo 2 del modelo 240)
+	 *
+	 * 	- El bloque que identifica la factura recibida que se anula es obligatorio.
+	 * 	- El numero y la fecha de expedicion de la factura son obligatorios.
+	 * 	- La serie es opcional y ni ella ni el numero pueden exceder los 20
+	 * 	  caracteres.
+	 * 	- El bloque que identifica al emisor de la factura recibida es obligatorio.
+	 *
+	 * La factura que anula cada registro se guarda en el contexto para las
+	 * validaciones posteriores, que necesitan su contenido.
+	 */
+	private static final Consumer<AnulacionGastosContext> REGISTROS_ID_GASTO = v -> {
+		if (v.getNumRegistros() == 0) return;
+
+		for (IDFacturaConEmisorType idGasto : v.registros) {
+			if (idGasto == null) {
+				v.addError(InvoiceCommunicationError.LROE_1000001);
+				v.facturas.add(null);
+				continue;
+			}
+
+			if (AonStringUtils.isBlank(idGasto.getNumFactura())) {
+				v.addError(InvoiceCommunicationError.LROE_2000000);
+			} else if (AonStringUtils.length(idGasto.getNumFactura()) > MAX_TEXTO_20) {
+				v.addError(InvoiceCommunicationError.LROE_1000001);
+			}
+
+			if (AonStringUtils.length(idGasto.getSerieFactura()) > MAX_TEXTO_20) {
+				v.addError(InvoiceCommunicationError.LROE_1000001);
+			}
+
+			if (AonStringUtils.isBlank(idGasto.getFechaExpedicionFactura())) {
+				v.addError(InvoiceCommunicationError.LROE_2000000);
+			}
+
+			if (idGasto.getEmisorFacturaRecibida() == null) {
+				v.addError(InvoiceCommunicationError.LROE_2000000);
+			}
+
+			v.facturas.add(new Factura(idEmisor(idGasto.getEmisorFacturaRecibida()),
+				idGasto.getSerieFactura(), idGasto.getNumFactura(),
+				idGasto.getFechaExpedicionFactura()));
+		}
+	};
+
+	/**
+	 * 13. IDGasto / IDRecibida >> EmisorFacturaRecibida
+	 *
+	 * 	- El emisor se identifica con su NIF o con el bloque IDOtro, pero nunca con
+	 * 	  los dos a la vez.
+	 * 	- El NIF, si es el que identifica al emisor, debe ser un documento valido con
+	 * 	  el formato del tipo NIFType.
+	 */
+	private static final Consumer<AnulacionGastosContext> GASTOS_EMISOR_FACTURA_RECIBIDA = v -> {
+		if (v.getNumRegistros() == 0) return;
+
+		for (IDFacturaConEmisorType idGasto : v.registros) {
+			DocumentoType emisor = idGasto == null ? null : idGasto.getEmisorFacturaRecibida();
+			if (emisor == null) continue;
+
+			String nif = emisor.getNIF();
+			boolean conNif = AonStringUtils.isNotBlank(nif);
+			boolean conIdOtro = emisor.getIDOtro() != null;
+			if (conNif && conIdOtro) {
+				v.addError(InvoiceCommunicationError.LROE_1000001);
+				continue;
+			}
+			if (!conNif && !conIdOtro) {
+				v.addError(InvoiceCommunicationError.LROE_2000000);
+				continue;
+			}
+
+			if (conNif) {
+				if (!PATRON_NIF.matcher(nif).matches() || !AonDocumentUtil.isValid(nif)) {
+					v.addError(InvoiceCommunicationError.LROE_2000011);
+				}
+			} else validateIdOtro(v, emisor.getIDOtro());
+		}
+	};
+
+	/**
+	 * 14. IDGasto / IDRecibida >> EmisorFacturaRecibida >> IDOtro
+	 *
+	 * 	- El campo IDType es obligatorio y debe ser uno de los admitidos por el tipo
+	 * 	  TipoDocumentoIdentificativoEnum (02..06).
+	 * 	- El campo ID es obligatorio y no puede exceder los 20 caracteres.
+	 * 	- El campo CodigoPais es obligatorio cuando el IDType es 03, 04, 05 o 06.
+	 * 	- El ID, cuando el IDType es 02, debe tener el formato del NIF-IVA del pais.
+	 *
+	 * @param v contexto con los datos de la peticion que se valida
+	 * @param idOtro identificacion del emisor distinta del NIF
+	 */
+	private static void validateIdOtro(AnulacionGastosContext v, IDOtroType idOtro) {
+		String idType = idOtro.getIDType();
+		if (AonStringUtils.isBlank(idType)) {
+			v.addError(InvoiceCommunicationError.LROE_2000000);
+		} else if (!ID_TYPES.contains(idType)) {
+			v.addError(InvoiceCommunicationError.LROE_1000001);
+		}
+
+		String id = idOtro.getID();
+		if (AonStringUtils.isBlank(id)) {
+			v.addError(InvoiceCommunicationError.LROE_2000000);
+		} else if (AonStringUtils.length(id) > MAX_TEXTO_20) {
+			v.addError(InvoiceCommunicationError.LROE_1000001);
+		}
+
+		if (!AonStringUtils.equals(IDType.NIF_IVA.getName(), idType)) {
+			if (idOtro.getCodigoPais() == null) {
+				v.addError(InvoiceCommunicationError.LROE_2000012);
+			}
+		} else if (AonStringUtils.isNotBlank(id) && !esNifIva(idOtro.getCodigoPais(), id)) {
+			v.addError(InvoiceCommunicationError.LROE_2000013);
+		}
+	}
+
+	/**
+	 * 15. AnulacionTicketBai >> IDFactura >> Emisor >> NIF (subcapitulos 1.1)
 	 *
 	 * 	- El NIF del emisor de la factura que se anula debe coincidir con el del
 	 * 	  obligado tributario de la cabecera.
 	 *
 	 * Los subcapitulos sin software garante no informan del emisor de la factura,
-	 * por lo que no se comprueba nada en ellos.
+	 * por lo que no se comprueba nada en ellos, y en el subcapitulo de gastos el
+	 * emisor es el proveedor, por lo que no se puede exigir que coincida.
 	 */
 	private static final Consumer<AnulacionContext> FACTURAS_EMISOR_NIF = v -> {
 		String nifObligadoTributario = v.getNifObligadoTributario();
 		if (AonStringUtils.isBlank(nifObligadoTributario)) return;
 
 		for (Factura factura : v.facturas) {
-			if (factura == null || AonStringUtils.isBlank(factura.nifEmisor())) continue;
+			if (factura == null || AonStringUtils.isBlank(factura.idEmisor())) continue;
 
-			if (AonStringUtils.notEquals(nifObligadoTributario, factura.nifEmisor())) {
+			if (AonStringUtils.notEquals(nifObligadoTributario, factura.idEmisor())) {
 				v.addError(InvoiceCommunicationError.LROE_2000002);
 			}
 		}
 	};
 
 	/**
-	 * 14. FechaExpedicionFactura
+	 * 16. FechaExpedicionFactura
 	 *
 	 * 	- Debe ser una fecha correcta con formato dd-mm-yyyy que no puede ser
 	 * 	  posterior a la fecha actual.
@@ -690,7 +976,7 @@ public class LroeValidation {
 	};
 
 	/**
-	 * 15. Cabecera >> Ejercicio / FechaExpedicionFactura
+	 * 17. Cabecera >> Ejercicio / FechaExpedicionFactura
 	 *
 	 * 	- El ejercicio indicado en la cabecera debe coincidir con el del cuerpo, es
 	 * 	  decir, con el anio de la fecha de expedicion de todas las facturas que se
@@ -713,10 +999,10 @@ public class LroeValidation {
 	};
 
 	/**
-	 * 16. Ingreso / FacturaEmitida
+	 * 18. Ingreso / FacturaEmitida / Gasto / FacturaRecibida
 	 *
 	 * 	- La peticion no puede incluir dos anulaciones de la misma factura, que se
-	 * 	  identifica con el NIF del emisor, la serie, el numero y la fecha de
+	 * 	  identifica con el documento del emisor, la serie, el numero y la fecha de
 	 * 	  expedicion.
 	 */
 	private static final Consumer<AnulacionContext> FACTURAS_DUPLICADAS = v -> {
@@ -724,7 +1010,7 @@ public class LroeValidation {
 		for (Factura factura : v.facturas) {
 			if (factura == null) continue;
 
-			String clave = AonStringUtils.trimToEmpty(factura.nifEmisor())
+			String clave = AonStringUtils.trimToEmpty(factura.idEmisor())
 				+ "|" + AonStringUtils.trimToEmpty(factura.serie())
 				+ "|" + AonStringUtils.trimToEmpty(factura.numero())
 				+ "|" + AonStringUtils.trimToEmpty(factura.fecha());
@@ -749,6 +1035,60 @@ public class LroeValidation {
 		CabeceraFacturaType cabeceraFactura = anulacion.getIDFactura().getCabeceraFactura();
 		return new Factura(emisor == null ? null : emisor.getNIF(), cabeceraFactura.getSerieFactura(),
 			cabeceraFactura.getNumFactura(), cabeceraFactura.getFechaExpedicionFactura());
+	}
+
+	/**
+	 * Devuelve el documento con el que se identifica al emisor de la factura
+	 * recibida, que es su NIF o el ID del bloque IDOtro, o null si no se informa.
+	 */
+	private static String idEmisor(DocumentoType emisor) {
+		if (emisor == null) return null;
+
+		if (AonStringUtils.isNotBlank(emisor.getNIF())) return emisor.getNIF();
+		return emisor.getIDOtro() == null ? null : emisor.getIDOtro().getID();
+	}
+
+	/**
+	 * Comprueba si el identificador tiene el formato del NIF-IVA del pais indicado,
+	 * es decir, si empieza por el prefijo con el que el pais asigna los NIF-IVA.
+	 *
+	 * El prefijo es el codigo ISO del pais excepto en Grecia, que asigna los
+	 * NIF-IVA con el prefijo EL, y en Irlanda del Norte, que los asigna con el
+	 * prefijo XI y comparte el codigo de pais del Reino Unido.
+	 *
+	 * Cuando no se informa el codigo de pais, que solo es obligatorio con los demas
+	 * tipos de documento, unicamente se comprueba el formato del identificador.
+	 */
+	private static boolean esNifIva(CountryEnum codigoPais, String id) {
+		if (!PATRON_NIF_IVA.matcher(id).matches()) return false;
+		if (codigoPais == null) return true;
+
+		String prefijo = id.substring(0, 2).toUpperCase();
+		if (CountryEnum.GR.equals(codigoPais)) return "EL".equals(prefijo);
+		if (CountryEnum.GB.equals(codigoPais)) return "GB".equals(prefijo) || "XI".equals(prefijo);
+		return codigoPais.name().equals(prefijo);
+	}
+
+	/** Identificadores de las facturas recibidas de los gastos del subcapitulo LROE_PF_140_2_1. */
+	private static List<IDFacturaConEmisorType> idGastos(AnulacionesGastosConFacturaType gastos) {
+		if (gastos == null) return null;
+
+		List<IDFacturaConEmisorType> registros = new ArrayList<>();
+		for (AnulacionGastoConFacturaType gasto : gastos.getGasto()) {
+			registros.add(gasto == null ? null : gasto.getIDGasto());
+		}
+		return registros;
+	}
+
+	/** Identificadores de las facturas recibidas del capitulo LROE_PJ_240_2. */
+	private static List<IDFacturaConEmisorType> idRecibidas(AnulacionesFacturasRecibidasType facturas) {
+		if (facturas == null) return null;
+
+		List<IDFacturaConEmisorType> registros = new ArrayList<>();
+		for (AnulacionFacturaRecibidaType facturaRecibida : facturas.getFacturaRecibida()) {
+			registros.add(facturaRecibida == null ? null : facturaRecibida.getIDRecibida());
+		}
+		return registros;
 	}
 
 	/** Identificadores de las facturas de los ingresos del subcapitulo LROE_PF_140_1_2. */
@@ -794,8 +1134,9 @@ public class LroeValidation {
 
 /*
 	Validaciones de la anulacion de los subcapitulos LROE_PF_140_1_1,
-	LROE_PF_140_1_2, LROE_PJ_240_1_1 y LROE_PJ_240_1_2 que solo puede resolver la
-	DFB con la informacion de su sistema y que se reciben en la respuesta al envio:
+	LROE_PF_140_1_2, LROE_PF_140_2_1, LROE_PJ_240_1_1, LROE_PJ_240_1_2 y del
+	capitulo LROE_PJ_240_2 que solo puede resolver la DFB con la informacion de su
+	sistema y que se reciben en la respuesta al envio:
 
 	- B4_1000002 Todos los registros incluidos en la peticion son incorrectos.
 	- B4_1000003 Error al descomprimir el fichero.
