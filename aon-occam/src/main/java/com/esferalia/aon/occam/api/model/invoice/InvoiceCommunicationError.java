@@ -325,11 +325,13 @@ public enum InvoiceCommunicationError {
 	SII_4123("4123", "Error en la cabecera: el NIFRepresentante tiene un formato err\u00F3neo."),
 
 	// Errores que provocan el rechazo de la factura
+	SII_1103("1103", "Valor del campo IDType incorrecto."),
 	SII_1105("1105", "Valor del campo NumSerieFacturaEmisor incorrecto."),
 	SII_1106("1106", "Valor del campo FechaExpedicionFacturaEmisor incorrecto."),
 	SII_1112("1112", "El NIF de la factura debe ser el mismo que el NIF del titular del libro de registro."),
 	SII_1122("1122", "Al tratarse de un menor, el NIF del representante debe contener valor."),
 	SII_1123("1123", "Al tratarse de un menor, el NIF del representante no puede coincidir con el NIF del titular."),
+	SII_1124("1124", "El c\u00F3digo de pa\u00EDs es obligatorio cuando el tipo de identificaci\u00F3n es distinto de NIF-IVA."),
 	SII_1125("1125", "La FechaExpedicionFacturaEmisor es superior a la fecha actual."),
 	SII_1196("1196", "El valor del campo FechaExpedicionFacturaEmisor no debe ser inferior a la fecha actual menos veinte a\u00F1os."),
 	SII_1210("1210", "Valor del campo RefExterna incorrecto."),

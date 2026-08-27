@@ -4,14 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRFacturasRecibidas;
@@ -54,6 +57,7 @@ class FacturasRecibidasBajaTest {
 			            <NumSerieFacturaEmisor>FR/2026/0001</NumSerieFacturaEmisor>
 			            <FechaExpedicionFacturaEmisor>18-03-2026</FechaExpedicionFacturaEmisor>
 			        </ns2:IDFactura>
+			        <ns2:RefExterna>1234</ns2:RefExterna>
 			    </ns2:RegistroLRBajaRecibidas>
 			</ns2:BajaLRFacturasRecibidas>
 			""";
@@ -86,6 +90,7 @@ class FacturasRecibidasBajaTest {
 			            <NumSerieFacturaEmisor>FR/2026/0001</NumSerieFacturaEmisor>
 			            <FechaExpedicionFacturaEmisor>18-03-2026</FechaExpedicionFacturaEmisor>
 			        </ns2:IDFactura>
+			        <ns2:RefExterna>1234</ns2:RefExterna>
 			    </ns2:RegistroLRBajaRecibidas>
 			</ns2:BajaLRFacturasRecibidas>
 			""";
@@ -118,7 +123,22 @@ class FacturasRecibidasBajaTest {
 			            <NumSerieFacturaEmisor>FR/2026/0001</NumSerieFacturaEmisor>
 			            <FechaExpedicionFacturaEmisor>18-03-2026</FechaExpedicionFacturaEmisor>
 			        </ns2:IDFactura>
+			        <ns2:RefExterna>1234</ns2:RefExterna>
 			    </ns2:RegistroLRBajaRecibidas>
+			</ns2:BajaLRFacturasRecibidas>
+			""";
+
+	/** Cabecera sin registros: no hay ninguna factura recibida que dar de baja. */
+	private static final String XML_SIN_REGISTROS = """
+			<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+			<ns2:BajaLRFacturasRecibidas xmlns="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd" xmlns:ns2="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroLR.xsd" xmlns:ns3="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/ConsultaLR.xsd">
+			    <Cabecera>
+			        <IDVersionSii>1.1</IDVersionSii>
+			        <Titular>
+			            <NombreRazon>AON SOLUTIONS SL</NombreRazon>
+			            <NIF>B00000000</NIF>
+			        </Titular>
+			    </Cabecera>
 			</ns2:BajaLRFacturasRecibidas>
 			""";
 
@@ -132,6 +152,7 @@ class FacturasRecibidasBajaTest {
 	private Invoice invoice() {
 		return new Invoice()
 			.setId(1234)
+			.setType(InvoiceType.PURCHASE)
 			.setReferenceCode(SERIE_FACTURA)
 			.setIssueDate(FECHA_EMISION)
 			.setTaxDate(FECHA_DEVENGO)
@@ -148,9 +169,43 @@ class FacturasRecibidasBajaTest {
 		return new String(recibidasBaja.getBajaFacturasRecibidas(baja), StandardCharsets.UTF_8);
 	}
 
+	private String xmlBaja(InvoiceCommunicatorContext context) {
+		FacturasRecibidasBaja recibidasBaja = FacturasRecibidasBaja.getInstance();
+		BajaLRFacturasRecibidas baja = recibidasBaja.bajaFacturasRecibidas(context);
+		return new String(recibidasBaja.getBajaFacturasRecibidas(baja), StandardCharsets.UTF_8);
+	}
+
+	private InvoiceCommunicatorContext context(Invoice... invoices) {
+		return new InvoiceCommunicatorContext(null, null, null, List.of(invoices))
+			.setCompany(company());
+	}
+
 	@Test
 	void bajaDeUnaFacturaRecibida() {
 		assertEquals(XML_ESPERADO, xmlBaja(company(), invoice()));
+	}
+
+	/**
+	 * La baja del contexto solo lleva las facturas recibidas; las emitidas van al
+	 * libro registro de facturas expedidas (FacturasEmitidasBaja).
+	 */
+	@Test
+	void bajaDeLasFacturasRecibidasDelContexto() {
+		Invoice recibida = invoice();
+		Invoice emitida = invoice()
+			.setId(5678)
+			.setType(InvoiceType.SALES)
+			.setReferenceCode("FE/2026/0001");
+
+		assertEquals(XML_ESPERADO, xmlBaja(context(recibida, emitida)));
+	}
+
+	/** Sin facturas recibidas el mensaje no lleva ningun registro. */
+	@Test
+	void bajaSinFacturasRecibidasEnElContexto() {
+		Invoice emitida = invoice().setType(InvoiceType.SALES);
+
+		assertEquals(XML_SIN_REGISTROS, xmlBaja(context(emitida)));
 	}
 
 	@Test

@@ -205,6 +205,17 @@ public class SIIAeatPost extends SIIPost{
     	return array;
 	}
 
+	public RespuestaLRBajaFRecibidasType bajaFacturasRecibidas(InvoiceCommunicatorContext context, BajaLRFacturasRecibidas request) throws InvoiceCommunicationException {
+		try {
+			String uri = SIIUri.getInstance().getURI(context.getConfig(), SIIType.FACTURAS_RECIBIDAS);
+			String sumStr = marshal(BajaLRFacturasRecibidas.class, request); 
+			String response = post(uri, sumStr);	    	
+			return (RespuestaLRBajaFRecibidasType) unmarshal(RespuestaLRBajaFRecibidasType.class, response);			
+		} catch (JAXBException | SOAPException | IOException e) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
+		}
+	}
+	
 	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Invoice invoice, String uri) throws ParserConfigurationException, JAXBException, SOAPException, IOException {    
     	JSONArray array = new JSONArray();
     	

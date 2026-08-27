@@ -9,6 +9,7 @@ import javax.xml.namespace.QName;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -52,8 +53,42 @@ public class FacturasRecibidasBaja extends SIIBuilt {
 	public BajaLRFacturasRecibidas bajaFacturasRecibidas(Company company, Invoice invoice) {
 		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
 		baja.setCabecera(cabeceraBaja(company));
+		baja.getRegistroLRBajaRecibidas().add(buildBajaFacturaRecibida(invoice));
+		return baja;
+	}
 
+	/**
+	 * Da de baja varias facturas recibidas en el SII.
+	 *
+	 * Solo se dan de baja las facturas recibidas del contexto (compras, gastos y
+	 * no deducibles); las emitidas pertenecen al libro registro de facturas
+	 * expedidas (FacturasEmitidasBaja).
+	 *
+	 * @param context contexto de comunicacion con el SII
+	 * @return BajaLRFacturasRecibidas
+	 */
+	public BajaLRFacturasRecibidas bajaFacturasRecibidas(InvoiceCommunicatorContext context) {
+		BajaLRFacturasRecibidas baja = new BajaLRFacturasRecibidas();
+		baja.setCabecera(cabeceraBaja(context.getCompany()));
+		context.invoiceStream()
+			.filter(Invoice::isNotSales)
+			.forEach(invoice -> baja.getRegistroLRBajaRecibidas().add(buildBajaFacturaRecibida(invoice)));
+		return baja;
+	}
+
+	/**
+	 * Construye un registro de baja de factura recibida.
+	 *
+	 * La fecha de expedicion es la que informa el alta
+	 * (FacturasRecibidas.suministroFacturasRecibidas): la fecha de emision de la
+	 * factura del proveedor.
+	 *
+	 * @param invoice factura que se da de baja
+	 * @return LRBajaRecibidasType
+	 */
+	public LRBajaRecibidasType buildBajaFacturaRecibida(Invoice invoice) {
 		LRBajaRecibidasType factura = new LRBajaRecibidasType();
+		factura.setRefExterna(invoice.getId().toString());
 
 		IDFacturaRecibidaNombreBCType idFactura = new IDFacturaRecibidaNombreBCType();
 		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
@@ -62,10 +97,7 @@ public class FacturasRecibidasBaja extends SIIBuilt {
 		factura.setIDFactura(idFactura);
 
 		factura.setPeriodoLiquidacion(periodoLiquidacion(invoice.getTaxDate(), false));
-
-		baja.getRegistroLRBajaRecibidas().add(factura);
-
-		return baja;
+		return factura;
 	}
 
 	public byte[] getBajaFacturasRecibidas(BajaLRFacturasRecibidas suministro) {

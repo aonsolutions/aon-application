@@ -61,15 +61,19 @@ public class FacturasEmitidasBaja extends SIIBuilt {
 	 * serie y fecha de expedicion); si alguno de esos datos no coincide con lo
 	 * suministrado en su dia, la AEAT no localiza el registro.
 	 *
+	 * Solo se dan de baja las facturas emitidas del contexto; las recibidas
+	 * pertenecen al libro registro de facturas recibidas
+	 * (FacturasRecibidasBaja).
+	 *
 	 * @param context contexto de comunicacion con el SII
 	 * @return BajaLRFacturasEmitidas
 	 */
 	public BajaLRFacturasEmitidas bajaFacturasEmitidas(InvoiceCommunicatorContext context) {
 		BajaLRFacturasEmitidas baja = new BajaLRFacturasEmitidas();
 		baja.setCabecera(cabeceraBaja(context.getCompany()));
-		context.invoiceStream().forEach(invoice -> 
-			baja.getRegistroLRBajaExpedidas().add(buildBajaFacturaEmitida(context.getCompany(), invoice))
-		);
+		context.invoiceStream()
+			.filter(Invoice::isSales)
+			.forEach(invoice -> baja.getRegistroLRBajaExpedidas().add(buildBajaFacturaEmitida(context.getCompany(), invoice)));
 		return baja;
 	}
 

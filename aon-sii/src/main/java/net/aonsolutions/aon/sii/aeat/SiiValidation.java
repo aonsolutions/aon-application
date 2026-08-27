@@ -1,11 +1,13 @@
 package net.aonsolutions.aon.sii.aeat;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
@@ -17,10 +19,15 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.CabeceraSiiBaja;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaExpedidaBCType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDFacturaRecibidaNombreBCType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.IDOtroType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.PersonaFisicaJuridicaESType;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministroinformacion.RegistroSii.PeriodoLiquidacion;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRFacturasEmitidas;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.BajaLRFacturasRecibidas;
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBajaExpedidasType;
+import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.suministrolr.LRBajaRecibidasType;
+import net.aonsolutions.aon.sii.IDType;
 
 /**
  * Validaciones previas al envio de los mensajes del SII.
@@ -40,6 +47,7 @@ public class SiiValidation {
 	private static final int MAX_NOMBRE_RAZON = 120;
 	private static final int MAX_NUM_SERIE_FACTURA = 60;
 	private static final int MAX_REF_EXTERNA = 60;
+	private static final int MAX_ID_OTRO = 20;
 	private static final int ANIOS_ANTIGUEDAD_MAXIMA = 20;
 	private static final int PRIMER_EJERCICIO_TRIMESTRAL = 2018;
 
@@ -51,20 +59,26 @@ public class SiiValidation {
 		List.of("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
 	private static final List<String> PERIODOS_TRIMESTRALES = List.of("1T", "2T", "3T", "4T");
 
+	/** Tipos de identificacion admitidos en el bloque IDOtro (02..07). */
+	private static final List<String> ID_TYPES =
+		Arrays.stream(IDType.values()).map(IDType::getName).collect(Collectors.toList());
+
 	private SiiValidation() {
 
 	}
 
 	private static class BajaContext {
-		final BajaLRFacturasEmitidas baja;
+		final CabeceraSiiBaja cabecera;
+		final List<?> registros;
 		final List<InvoiceCommunicationError> errors = new LinkedList<>();
 
-		BajaContext(BajaLRFacturasEmitidas baja) {
-			this.baja = baja;
+		BajaContext(CabeceraSiiBaja cabecera, List<?> registros) {
+			this.cabecera = cabecera;
+			this.registros = registros;
 		}
 
 		CabeceraSiiBaja getCabecera() {
-			return baja.getCabecera();
+			return cabecera;
 		}
 
 		PersonaFisicaJuridicaESType getTitular() {
@@ -104,7 +118,59 @@ public class SiiValidation {
 			throw new InvoiceCommunicationException(InvoiceCommunicationError.SII_4102);
 		}
 
-		BajaContext v = new BajaContext(baja);
+		BajaContext v = new BajaContext(baja.getCabecera(), baja.getRegistroLRBajaExpedidas());
+		validateCabecera(v);
+
+		AonCollectionUtils.stream(baja.getRegistroLRBajaExpedidas())
+			.filter(Objects::nonNull)
+			.forEach(registro -> validateRegistroBajaExpedidas(v, registro));
+
+		if (!v.errors.isEmpty()) {
+			throw new InvoiceCommunicationException(v.errors);
+		}
+	}
+
+	// *********************************************************
+	// ******** [VALIDACION BAJA FACTURAS RECIBIDAS] ***********
+	// *********************************************************
+
+	/**
+	 * Valida el mensaje de baja del libro registro de facturas recibidas.
+	 *
+	 * Se acumulan todos los errores encontrados (cabecera y registros) y, si hay
+	 * alguno, se lanza una unica excepcion con todos ellos.
+	 *
+	 * @param baja mensaje de baja a validar
+	 * @throws InvoiceCommunicationException si el mensaje no cumple alguna validacion
+	 */
+	public static void validateFacturasRecibidasBaja(BajaLRFacturasRecibidas baja) throws InvoiceCommunicationException {
+		if (baja == null) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.SII_4102);
+		}
+
+		BajaContext v = new BajaContext(baja.getCabecera(), baja.getRegistroLRBajaRecibidas());
+		validateCabecera(v);
+
+		AonCollectionUtils.stream(baja.getRegistroLRBajaRecibidas())
+			.filter(Objects::nonNull)
+			.forEach(registro -> validateRegistroBajaRecibidas(v, registro));
+
+		if (!v.errors.isEmpty()) {
+			throw new InvoiceCommunicationException(v.errors);
+		}
+	}
+
+	// *********************************************************
+	// ******************* [CABECERA Y ENVIO] ******************
+	// *********************************************************
+
+	/**
+	 * La cabecera y el numero de registros se validan igual en los dos libros de
+	 * registro.
+	 *
+	 * @param v contexto de validacion
+	 */
+	private static void validateCabecera(BajaContext v) {
 		BAJA_CABECERA
 			.andThen(BAJA_CABECERA_ID_VERSION_SII)
 			.andThen(BAJA_CABECERA_TITULAR)
@@ -113,14 +179,6 @@ public class SiiValidation {
 			.andThen(BAJA_CABECERA_TITULAR_MENOR)
 			.andThen(BAJA_REGISTROS)
 		.accept(v);
-
-		AonCollectionUtils.stream(baja.getRegistroLRBajaExpedidas())
-			.filter(Objects::nonNull)
-			.forEach(registro -> validateRegistroBajaExpedidas(new RegistroContext(v, registro)));
-
-		if (!v.errors.isEmpty()) {
-			throw new InvoiceCommunicationException(v.errors);
-		}
 	}
 
 	/**
@@ -220,31 +278,66 @@ public class SiiValidation {
 	};
 
 	/**
-	 * 7. RegistroLRBajaExpedidas
+	 * 7. RegistroLRBajaExpedidas / RegistroLRBajaRecibidas
 	 *
 	 * 	- Debe informarse al menos un registro.
 	 * 	- No se puede superar el limite maximo de facturas a registrar (10.000).
 	 */
 	private static final Consumer<BajaContext> BAJA_REGISTROS = v -> {
-		List<LRBajaExpedidasType> registros = v.baja.getRegistroLRBajaExpedidas();
-		if (AonCollectionUtils.isEmpty(registros)) {
+		if (AonCollectionUtils.isEmpty(v.registros)) {
 			v.addError(InvoiceCommunicationError.SII_4102);
-		} else if (registros.size() > MAX_REGISTROS) {
+		} else if (v.registros.size() > MAX_REGISTROS) {
 			v.addError(InvoiceCommunicationError.SII_4117);
 		}
 	};
 
 	// *********************************************************
-	// ***** [VALIDACION REGISTRO BAJA FACTURAS EMITIDAS] ******
+	// *********** [VALIDACION REGISTRO DE LA BAJA] ************
 	// *********************************************************
-	private static record RegistroContext(BajaContext vc, LRBajaExpedidasType registro) {}
 
-	private static void validateRegistroBajaExpedidas(RegistroContext r) {
+	/**
+	 * Datos de un registro de baja comunes a los dos libros de registro. El
+	 * emisor de la factura se valida aparte porque se identifica de forma
+	 * distinta en cada libro.
+	 */
+	private static record RegistroContext(
+		BajaContext vc,
+		PeriodoLiquidacion periodoLiquidacion,
+		boolean idFactura,
+		String numSerieFacturaEmisor,
+		String fechaExpedicionFacturaEmisor,
+		String refExterna) {}
+
+	private static void validateRegistroBajaExpedidas(BajaContext v, LRBajaExpedidasType registro) {
+		IDFacturaExpedidaBCType idFactura = registro.getIDFactura();
+		RegistroContext r = new RegistroContext(v,
+			registro.getPeriodoLiquidacion(),
+			idFactura != null,
+			idFactura == null ? null : idFactura.getNumSerieFacturaEmisor(),
+			idFactura == null ? null : idFactura.getFechaExpedicionFacturaEmisor(),
+			registro.getRefExterna());
+
+		validateRegistro(r, rc -> validateEmisorExpedida(rc.vc(), idFactura));
+	}
+
+	private static void validateRegistroBajaRecibidas(BajaContext v, LRBajaRecibidasType registro) {
+		IDFacturaRecibidaNombreBCType idFactura = registro.getIDFactura();
+		RegistroContext r = new RegistroContext(v,
+			registro.getPeriodoLiquidacion(),
+			idFactura != null,
+			idFactura == null ? null : idFactura.getNumSerieFacturaEmisor(),
+			idFactura == null ? null : idFactura.getFechaExpedicionFacturaEmisor(),
+			registro.getRefExterna());
+
+		validateRegistro(r, rc -> validateEmisorRecibida(rc.vc(), idFactura));
+	}
+
+	private static void validateRegistro(RegistroContext r, Consumer<RegistroContext> emisor) {
 		BAJA_REGISTRO_PERIODO_LIQUIDACION
 			.andThen(BAJA_REGISTRO_EJERCICIO)
 			.andThen(BAJA_REGISTRO_PERIODO)
 			.andThen(BAJA_REGISTRO_ID_FACTURA)
-			.andThen(BAJA_REGISTRO_NIF_EMISOR)
+			.andThen(emisor)
 			.andThen(BAJA_REGISTRO_NUM_SERIE_FACTURA)
 			.andThen(BAJA_REGISTRO_FECHA_EXPEDICION)
 			.andThen(BAJA_REGISTRO_REF_EXTERNA)
@@ -257,7 +350,7 @@ public class SiiValidation {
 	 * 	- El bloque PeriodoLiquidacion es obligatorio.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_PERIODO_LIQUIDACION = r -> {
-		if (r.registro().getPeriodoLiquidacion() == null) {
+		if (r.periodoLiquidacion() == null) {
 			r.vc().addError(InvoiceCommunicationError.SII_4102);
 		}
 	};
@@ -271,7 +364,7 @@ public class SiiValidation {
 	 * 	  "14" y "15" que lo permiten en el alta.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_EJERCICIO = r -> {
-		PeriodoLiquidacion periodoLiquidacion = r.registro().getPeriodoLiquidacion();
+		PeriodoLiquidacion periodoLiquidacion = r.periodoLiquidacion();
 		if (periodoLiquidacion == null) return;
 
 		String ejercicio = periodoLiquidacion.getEjercicio();
@@ -293,7 +386,7 @@ public class SiiValidation {
 	 * 	  periodo actual.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_PERIODO = r -> {
-		PeriodoLiquidacion periodoLiquidacion = r.registro().getPeriodoLiquidacion();
+		PeriodoLiquidacion periodoLiquidacion = r.periodoLiquidacion();
 		if (periodoLiquidacion == null) return;
 
 		String periodo = periodoLiquidacion.getPeriodo();
@@ -327,45 +420,122 @@ public class SiiValidation {
 	 * 	  mismos datos con los que se dio de alta.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_ID_FACTURA = r -> {
-		if (r.registro().getIDFactura() == null) {
+		if (!r.idFactura()) {
 			r.vc().addError(InvoiceCommunicationError.SII_4102);
 		}
 	};
 
 	/**
-	 * 5. Agrupacion IDFactura >> IDEmisorFactura >> NIF
+	 * 5. Agrupacion IDFactura >> IDEmisorFactura >> NIF (facturas expedidas)
 	 *
 	 * 	- Campo obligatorio con formato de NIF valido.
 	 * 	- El NIF debe ser el mismo que el NIF del titular del libro de registro.
+	 *
+	 * @param v contexto de validacion
+	 * @param idFactura identificacion de la factura expedida
 	 */
-	private static final Consumer<RegistroContext> BAJA_REGISTRO_NIF_EMISOR = r -> {
-		IDFacturaExpedidaBCType idFactura = r.registro().getIDFactura();
+	private static void validateEmisorExpedida(BajaContext v, IDFacturaExpedidaBCType idFactura) {
 		if (idFactura == null) return;
 
 		String nif = idFactura.getIDEmisorFactura() == null ? null : idFactura.getIDEmisorFactura().getNIF();
 		if (AonStringUtils.isBlank(nif)) {
-			r.vc().addError(InvoiceCommunicationError.SII_4102);
+			v.addError(InvoiceCommunicationError.SII_4102);
 			return;
 		}
 		if (!AonDocumentUtil.isValid(nif)) {
-			r.vc().addError(InvoiceCommunicationError.SII_4111);
+			v.addError(InvoiceCommunicationError.SII_4111);
 		}
-		if (AonStringUtils.notEquals(r.vc().getTitularNif(), nif)) {
-			r.vc().addError(InvoiceCommunicationError.SII_1112);
+		if (AonStringUtils.notEquals(v.getTitularNif(), nif)) {
+			v.addError(InvoiceCommunicationError.SII_1112);
 		}
-	};
+	}
 
 	/**
-	 * 6. Agrupacion IDFactura >> NumSerieFacturaEmisor
+	 * 5. Agrupacion IDFactura >> IDEmisorFactura (facturas recibidas)
+	 *
+	 * 	- El bloque IDEmisorFactura es obligatorio.
+	 * 	- El campo NombreRazon es obligatorio y no puede exceder los 120 caracteres.
+	 * 	- El emisor es el proveedor, por lo que se identifica con su NIF o con el
+	 * 	  bloque IDOtro, pero nunca con los dos a la vez.
+	 * 	- El NIF, si es el que identifica al emisor, debe tener un formato valido.
+	 *
+	 * @param v contexto de validacion
+	 * @param idFactura identificacion de la factura recibida
+	 */
+	private static void validateEmisorRecibida(BajaContext v, IDFacturaRecibidaNombreBCType idFactura) {
+		if (idFactura == null) return;
+
+		IDFacturaRecibidaNombreBCType.IDEmisorFactura emisor = idFactura.getIDEmisorFactura();
+		if (emisor == null) {
+			v.addError(InvoiceCommunicationError.SII_4102);
+			return;
+		}
+
+		String nombreRazon = emisor.getNombreRazon();
+		if (AonStringUtils.isBlank(nombreRazon)) {
+			v.addError(InvoiceCommunicationError.SII_4102);
+		} else if (AonStringUtils.length(nombreRazon) > MAX_NOMBRE_RAZON) {
+			v.addError(InvoiceCommunicationError.SII_3004);
+		}
+
+		String nif = emisor.getNIF();
+		IDOtroType idOtro = emisor.getIDOtro();
+		boolean conNif = AonStringUtils.isNotBlank(nif);
+		boolean conIdOtro = idOtro != null;
+		if (conNif == conIdOtro) {
+			v.addError(InvoiceCommunicationError.SII_4102);
+			return;
+		}
+
+		if (conNif) {
+			if (!AonDocumentUtil.isValid(nif)) {
+				v.addError(InvoiceCommunicationError.SII_4111);
+			}
+		} else validateIdOtro(v, idOtro);
+	}
+
+	/**
+	 * 6. Agrupacion IDFactura >> IDEmisorFactura >> IDOtro (facturas recibidas)
+	 *
+	 * 	- El campo IDType es obligatorio y debe ser uno de los admitidos (02..07).
+	 * 	- El campo ID es obligatorio y no puede exceder los 20 caracteres.
+	 * 	- El campo CodigoPais solo deja de ser obligatorio cuando el emisor se
+	 * 	  identifica con un NIF-IVA.
+	 *
+	 * @param v contexto de validacion
+	 * @param idOtro identificacion del emisor distinta del NIF
+	 */
+	private static void validateIdOtro(BajaContext v, IDOtroType idOtro) {
+		String idType = idOtro.getIDType();
+		if (AonStringUtils.isBlank(idType)) {
+			v.addError(InvoiceCommunicationError.SII_4102);
+		} else if (!ID_TYPES.contains(idType)) {
+			v.addError(InvoiceCommunicationError.SII_1103);
+		}
+
+		String id = idOtro.getID();
+		if (AonStringUtils.isBlank(id)) {
+			v.addError(InvoiceCommunicationError.SII_4102);
+		} else if (AonStringUtils.length(id) > MAX_ID_OTRO) {
+			v.addError(InvoiceCommunicationError.SII_3004);
+		}
+
+		boolean nifIva = AonStringUtils.equals(IDType.NIF_IVA.getName(), idType);
+		if (idOtro.getCodigoPais() == null && !nifIva) {
+			v.addError(InvoiceCommunicationError.SII_1124);
+		}
+	}
+
+	/**
+	 * 7. Agrupacion IDFactura >> NumSerieFacturaEmisor
 	 *
 	 * 	- Campo obligatorio que no puede exceder los 60 caracteres.
 	 * 	- No puede contener caracteres de control.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_NUM_SERIE_FACTURA = r -> {
-		IDFacturaExpedidaBCType idFactura = r.registro().getIDFactura();
-		if (idFactura == null) return;
+		if (!r.idFactura()) return;
 
-		String numSerie = idFactura.getNumSerieFacturaEmisor();
+		String numSerie = r.numSerieFacturaEmisor();
 		if (AonStringUtils.isBlank(numSerie)) {
 			r.vc().addError(InvoiceCommunicationError.SII_4102);
 		} else if (AonStringUtils.length(numSerie) > MAX_NUM_SERIE_FACTURA) {
@@ -376,7 +546,7 @@ public class SiiValidation {
 	};
 
 	/**
-	 * 7. Agrupacion IDFactura >> FechaExpedicionFacturaEmisor
+	 * 8. Agrupacion IDFactura >> FechaExpedicionFacturaEmisor
 	 *
 	 * 	- Campo obligatorio con formato dd-mm-yyyy.
 	 * 	- La fecha de expedicion no podra ser superior a la fecha actual.
@@ -384,10 +554,9 @@ public class SiiValidation {
 	 * 	  veinte anios.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_FECHA_EXPEDICION = r -> {
-		IDFacturaExpedidaBCType idFactura = r.registro().getIDFactura();
-		if (idFactura == null) return;
+		if (!r.idFactura()) return;
 
-		String fecha = idFactura.getFechaExpedicionFacturaEmisor();
+		String fecha = r.fechaExpedicionFacturaEmisor();
 		if (AonStringUtils.isBlank(fecha)) {
 			r.vc().addError(InvoiceCommunicationError.SII_4102);
 			return;
@@ -411,12 +580,12 @@ public class SiiValidation {
 	};
 
 	/**
-	 * 8. RefExterna
+	 * 9. RefExterna
 	 *
 	 * 	- Campo opcional que no puede exceder los 60 caracteres.
 	 */
 	private static final Consumer<RegistroContext> BAJA_REGISTRO_REF_EXTERNA = r -> {
-		String refExterna = r.registro().getRefExterna();
+		String refExterna = r.refExterna();
 		if (AonStringUtils.isNotBlank(refExterna) && AonStringUtils.length(refExterna) > MAX_REF_EXTERNA) {
 			r.vc().addError(InvoiceCommunicationError.SII_1210);
 		}
@@ -454,9 +623,12 @@ public class SiiValidation {
 	- 3010 El presentador no tiene los permisos necesarios para actualizar esta factura.
 	- 3019 El ejercicio y el periodo indicados en la baja deben coincidir con el
 	       ejercicio y el periodo del alta del registro y, si hubiera sido modificado,
-	       con el indicado en la ultima modificacion (apartado "24. BAJA DE FACTURA").
+	       con el indicado en la ultima modificacion (apartado "24. BAJA DE FACTURA"
+	       de las facturas expedidas y "12. BAJA DE FACTURA" de las recibidas).
 	- 3902 La factura especificada no pertenece al titular registrado en el sistema.
 	- 4104 / 4123 El NIF del titular o del representante no esta identificado en el censo.
-	- 4114 / 4130 / 4132 El titular del certificado debe ser el titular del libro de
-	       registro, colaborador social, apoderado o sucesor.
+	- 4109 / 1116 / 1117 El NIF o el ID del emisor de la factura recibida no esta
+	       identificado en el censo.
+	- 4114 / 4130 / 4131 / 4132 / 4133 El titular del certificado debe ser el titular del
+	       libro de registro, colaborador social, apoderado o sucesor.
 */
