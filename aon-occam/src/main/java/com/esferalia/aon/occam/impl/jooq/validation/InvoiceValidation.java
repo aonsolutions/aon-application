@@ -163,6 +163,7 @@ public class InvoiceValidation {
 					.where(INVOICE.DOMAIN.eq(ivc.inv.getDomain()))
 					.and(registryCondition)
 					.and(INVOICE.REFERENCE_CODE.eq(ivc.inv.getReferenceCode()))
+					.and( InvoiceDAO.NOT_ANNULLED )
 					.and(invoiceTypeCondition)
 					.and(ivc.inv.getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(ivc.inv.getId()))					
 					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( ivc.inv.getIssueDate())))

@@ -2142,12 +2142,12 @@ public class AON {
 		}
 	}
 
-	public static Invoice annulInvoice(Occam occam, Integer invoiceId){
+	public static void annulInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getFinance().annulInvoice(ctx, invoiceId);
+			getFinance().annulInvoice(ctx, invoiceId);
 		}
 	}
-	
+
 	@Deprecated
 	public static void deleteInvoice(Occam occam, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
@@ -9468,4 +9468,5 @@ public class AON {
 			return getCommon().createRegistryAccount(ctx, domain, registryName, registryAlias, registrySource);
 		}
 	}
+
 }

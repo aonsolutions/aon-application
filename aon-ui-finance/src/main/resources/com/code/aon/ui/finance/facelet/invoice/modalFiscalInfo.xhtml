@@ -38,6 +38,7 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="fiscalInformation-accept"
 											value="#{bundle.aon_accept}"
+											rendered="#{!invoiceController.annulled}"
 											actionListener="#{invoiceController.acceptInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<rich:componentControl for="fiscalInformationModalPanel"

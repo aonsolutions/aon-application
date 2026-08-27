@@ -12,6 +12,7 @@
 	<ui:define name="content">
 		<aon:form id="saleInvoiceForm">
 			<aon:div id="menuExt">
+			 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
@@ -19,14 +20,14 @@
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice or saleInvoice.communicableInvoice}" />
-					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending	or saleInvoice.tbaiInvoice or saleInvoice.communicableInvoice}" />
+					<ui:param name="skipRemoveButton" value="#{!saleInvoice.proforma or !saleInvoice.removable or !saleInvoiceFinance.allPending or saleInvoice.tbaiInvoice or saleInvoice.communicableInvoice}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
-					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
+
 					<ui:define name="beforeSpinToolbarContent">
 					
 						<!-- ****************** IicketBAI ************************  --> 
-						<aon:if test="#{saleInvoice.tbaiInvoice and !saleInvoice.recorded}">
+						<aon:if test="#{saleInvoice.tbaiInvoice and !saleInvoice.recorded and !saleInvoice.annulled}">
 							<aon:commandButton id="tbaiInvoiceRemove"	
 								value="&#160;"
 								title="Anular"
@@ -38,7 +39,7 @@
 										value="#{true}" />
 							</aon:commandButton>
 						</aon:if>
-						<aon:if test="#{!saleInvoice.nevv and (saleInvoice.tbai || saleInvoice.lroe) and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
+						<aon:if test="#{!saleInvoice.annulled and !saleInvoice.nevv and (saleInvoice.tbai || saleInvoice.lroe) and !saleInvoice.tbaiInvoice and (saleInvoice.to.number le 0 or saleInvoice.uniqueNumberOfSeries)}"> 
 							<aon:commandButton id="acceptTbai"	
 								value="&#160;"
 								title="Emitir"
@@ -82,7 +83,7 @@
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
-								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+								rendered="#{!saleInvoice.annulled and (saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null)}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 								reRender="showNewMessageWindow">
 							</aon:commandButton>
@@ -117,7 +118,7 @@
 						
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae and !saleInvoice.proforma}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae and !saleInvoice.proforma and !saleInvoice.annulled}"
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
@@ -139,7 +140,7 @@
 							<aon:commandButton id="saleInvoice-uploadEdiFtp"
 								value="SERES"
 								title="Enviar al servidor FTP de Seresnet"
-								rendered="#{not saleInvoice.nevv}"
+								rendered="#{not saleInvoice.nevv and !saleInvoice.annulled}"
 								styleClass="aon-finding-toolbar-item aon-icon-seres"
 								actionListener="#{saleInvoice.ftpEdiUploader.onShowFtpEdi}">
 								<f:setPropertyActionListener target="#{saleInvoice.ftpEdiUploader.showEdiFtpWindow}"
@@ -162,7 +163,7 @@
 						<aon:menuItem id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
-							rendered="#{saleInvoice.toInvoiceTotalPrice != 0 and (!saleInvoice.recorded or saleInvoiceFinance.allPending)}"
+							rendered="#{!saleInvoice.annulled and (saleInvoice.toInvoiceTotalPrice != 0 and (!saleInvoice.recorded or saleInvoiceFinance.allPending))}"
 							iconClass="aon-icon-tree"
 							actionListener="#{saleInvoice.onGenerateFinances}"
 							accesskey="#{bundle.aon_key_finance}">
@@ -173,7 +174,7 @@
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
 							value="#{bundle.finance_rectify}"
-							rendered="#{saleInvoice.to.number > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource and !saleInvoice.tediSource and saleInvoiceDetail.model.rowCount > 0}"
+							rendered="#{!saleInvoice.annulled and (saleInvoice.to.number > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource and !saleInvoice.tediSource and saleInvoiceDetail.model.rowCount > 0)}"
 							iconClass="aon-icon-version"
 							actionListener="#{saleInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">
@@ -184,7 +185,7 @@
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
 								actionListener="#{saleInvoice.onRecordInvoice}"
-								rendered="#{saleInvoice.to.number > 0 and !saleInvoice.recorded and saleInvoiceDetail.model.rowCount > 0}"
+								rendered="#{!saleInvoice.annulled and (saleInvoice.to.number > 0 and !saleInvoice.recorded and saleInvoiceDetail.model.rowCount > 0)}"
 								iconClass="aon-icon-task-assume"
 								reRender="saleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -200,7 +201,7 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</aon:if>
-						<aon:if test="#{!saleInvoice.proforma}">>
+						<aon:if test="#{!saleInvoice.proforma}">
 							<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 								<ui:param name="signController" value="#{saleInvoiceSigner}" />
 								<ui:param name="skipSignButton" value="#{saleInvoice.signed or !certificate.signable}" />
@@ -236,6 +237,7 @@
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
 								iconClass="aon-icon-activity"
+								rendered="#{!saleInvoice.annulled}"
 								reRender="showActivityWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showActivityWindow}" 
 									value="#{true}" />							
@@ -244,6 +246,7 @@
 						<aon:menuItem id="projects"
 							value="#{bundle.aon_project}"
 							iconClass="aon-icon-statistics"
+							rendered="#{!saleInvoice.annulled}"
 							reRender="showProjectWindow">
 							<f:setPropertyActionListener target="#{saleInvoice.showProjectWindow}" 
 								value="#{true}" />							
@@ -253,6 +256,7 @@
 						<aon:menuItem id="sellers"
 							value="#{bundle.aon_module_commercial}"
 							iconClass="aon-icon-commercial"
+							rendered="#{!saleInvoice.annulled}"
 							reRender="showSellerWindow">
 							<f:setPropertyActionListener target="#{saleInvoice.showSellerWindow}" 
 								value="#{true}" />							
@@ -322,7 +326,7 @@
 							</aon:menuItem>
 						</aon:if>
 
-						<aon:if test="#{company.ediSupportEnabled}">
+						<aon:if test="#{company.ediSupportEnabled and !saleInvoice.annulled}">
 							<rich:menuSeparator />
 							<aon:menuItem iconClass="aon-icon-file-download">
 								<aon:htmlCommandLink id="saleInvoice-edi" style="font-size:1em"
@@ -419,7 +423,7 @@
 								
 								<!-- *** [ANULAR FACTURA VERIFACTU / NO VERIFACTU / SIF] *** -->
 								<aon:if test="#{!saleInvoice.issueable}">
-									<aon:if test="#{!saleInvoice.recorded}">
+									<aon:if test="#{!saleInvoice.recorded and !saleInvoice.annulled}">
 										<aon:if test="#{saleInvoice.verifactu or saleInvoice.noVerifactuInvoice or saleInvoice.sifInvoice}">
 											<!-- ** Verifactu / No Verifactu / SIF **  -->
 											<aon:if test="#{saleInvoice.communicableInvoice}">
@@ -505,6 +509,7 @@
 									immediate="true" styleClass="aon-icon-new"
 									style="margin-left: 5px; padding-left: 20px;"
 									title="Añadir Factura Rectificada"
+									rendered="#{!saleInvoice.annulled}"
 									reRender="showAddRectificationInvoiceWindow">
 									<f:setPropertyActionListener
 										target="#{saleInvoice.showAddRectificationInvoiceWindow}"

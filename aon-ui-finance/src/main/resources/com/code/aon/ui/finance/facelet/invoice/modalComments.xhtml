@@ -38,6 +38,7 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="comments-accept"
 											value="#{bundle.aon_accept}"
+											rendered="#{!invoiceController.annulled}"
 											actionListener="#{invoiceController.acceptInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<rich:componentControl for="commentsModalPanel"
@@ -69,6 +70,7 @@
 												</aon:div>
 											</aon:div>
 											<aon:inputTextarea id="Invoice_comments" cols="70" rows="4"
+												style="margin-top: 2em;"
 												value="#{invoiceController.to.comments}" />
 											
 										</aon:panelGrid>

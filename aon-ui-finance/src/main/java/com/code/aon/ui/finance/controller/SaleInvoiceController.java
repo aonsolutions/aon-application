@@ -166,7 +166,10 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public boolean isTbaiLroe() {
 		Invoice invoice = (Invoice) this.getTo();
-		return  (isTbai() || isLroe()) && isBizkaia() && invoice.getNumber() > 0;
+		return  (isTbai() || isLroe()) 
+			&& isBizkaia() 
+			&& !invoice.isProforma() 
+			&& !invoice.isAnnulled();
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
@@ -952,12 +955,7 @@ public class SaleInvoiceController extends InvoiceController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
-	public String getRemoveConfirmMessage() {
-		return this.isTbaiInvoice() 
-			? "La factura está enviada a TicketBAI. Al borrarla quedará anulada en TicketBai."
-			: "¿Borrar?";
-				
-	}
+	
 	LinkedList<SelectItem> digitalCertificates;
 	LinkedList<Certificate> certificates;
 	Integer certificate;
