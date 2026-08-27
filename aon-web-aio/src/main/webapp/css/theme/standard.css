@@ -35,6 +35,8 @@
 
 :root {
 	
+	--aonForegroundColor: #1e293b;
+	
 	--aonTopMenuSpecial: transparent;
 	
 	--aonBackgroundColor: #ffffff;
@@ -738,7 +740,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 
 .aonSidenav *,
 .aonToolbarTitle {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: 0.875rem;
 }
 
@@ -885,7 +887,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 }
 
 #aonCompanySpanTitle {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: 1rem;
 	font-family: "Inter-medium", sans-serif;
 }
@@ -1163,7 +1165,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 
 #aonLoginUserInput,
 #aonLoginPasswordInput{
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	background-color: #fff;
 	border: .0625rem solid #cbd5e1;
 
@@ -1190,7 +1192,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 }
 
 .aonDividerSpan {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: .875rem;
 	line-height: 1.5rem;
 	letter-spacing: 0;
@@ -1276,7 +1278,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	font-size: 14px;
 	border: .0625rem solid #cbd5e1;
 	background-color: #fff;
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	padding: 0;
 	margin-top: 1.5rem;
 	height: 2.5rem;
@@ -1378,7 +1380,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
     mask-size: contain;
     mask-position: center;
     mask-repeat: no-repeat;
-	background-color: #1e293b;
+	background-color: var(--aonForegroundColor);
 }
  
 #aonInvoiceHomeNewIssuedInvoiceButtonIcon{

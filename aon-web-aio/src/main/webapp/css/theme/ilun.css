@@ -1,1 +1,89 @@
 @import url("/css/theme/standard.css");
+
+:root{
+	--aonBlack: #0A0A0A;
+	--aonMidGray:#C9C9C7;
+	--aonDrakGray:#3A3A3A;
+	--aonOffWhite:#F3F3F1;
+	--aonPurple:oklch(52% .234 277);
+	
+	
+	--aonWarning: var(--aonMidGray);
+	
+	--aonForegroundColor:var(--aonOffWhite);
+	--aonTopMenuAvailable: var(--aonOffWhite);
+
+	--aonBackgroundColor: var(--aonBlack);
+	--aonBodyBackgroundColor: var(--aonDrakGray);
+	--aonHeaderBackgroundColor: var(--aonBlack);
+	
+	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+	--aonRadius: 1rem; /*16px*/
+	--aonShadow: 0 20px 60px -20px;
+	
+	--aonRadiusCard: 2.75rem; /*44px*/
+	--aonShadowCard: 0 30px 60px -25px rgba(0,0,0,.65), 0 8px 24px -12px rgba(0,0,0,.45);
+	
+	--aonShadowGlow: 0 20px 60px -20px var(--aonPurple);
+
+	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
+	--aonBorderHoverColor: var(--aonPurple);
+}
+
+
+#UlCompanies .aonLiSpan .material-icons{
+	color: var(--aonForegroundColor);
+	background-color: var(--aonForegroundColor);
+}
+
+.aonApplicationContent > #aonParentContent,
+.aonApplicationContent > #aonParentSidenav,
+#aonParentToolbar > #aonParentToolbarHeader{
+	box-shadow: var(--aonShadowCard);
+	border-radius: var(--aonRadiusCard);
+}
+
+.aonApplicationContent > #aonParentContent,
+.aonApplicationContent > #aonParentSidenav{
+	margin-bottom: 1rem;
+}
+
+#aonCompanyTabFilter {
+	border-radius: var(--aonRadius);
+}
+
+.aonLiSpan,
+.aonLiSpanSubtitle,
+.aonTabItemText 
+{
+	color: var(--aonForegroundColor);
+}
+
+#UlCompanies li:hover {
+	color:initial;
+	box-shadow: initial	;
+	background-color: initial;
+}
+
+#UlCompanies li {
+	border-color: var(--aonBorderColor);
+}
+
+#UlCompanies li:hover {
+	box-shadow: var(--aonShadowGlow);
+	border-color: var(--aonBorderHoverColor);
+}
+
+.aonTimeControlButton {
+	background-color: var(--aonPurple) !important;
+}
+
+
+.aonSidenav .aonSidenavTitleArrow ,
+i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
+	background-image: none;
+	color: var(--aonForegroundColor);
+	background-color: var(--aonForegroundColor);
+	mask: url('/icons/chevron-down.svg') no-repeat center;
+}
