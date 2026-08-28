@@ -61,6 +61,7 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 
 	private boolean something;
 	private final boolean showProrrate;
+	private final boolean showTotalAmount347;
 	private final Label title;
 	private final Label subTitle;
 	private final Label remarks;
@@ -71,14 +72,19 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 	private double sumSurchargeQuota = 0.0;
 	private double sumDeductibleQuota = 0.0;
 	private double sumProrratedQuota = 0.0;
-	
+	private double sumAmount347 = 0.0;
 	
 	public JsVatContextBreakdownGridPanel() {
-		this(false);
+		this(false, false);
 	}
 	
 	public JsVatContextBreakdownGridPanel(boolean showProrrate) {
+		this(showProrrate, false);
+	}
+	
+	public JsVatContextBreakdownGridPanel(boolean showProrrate, boolean showTotalAmount347) {
 		this.showProrrate = showProrrate;
+		this.showTotalAmount347 = showTotalAmount347;
 		
 		title = new Label();
 		title.setStyleName(AON.CSS.aonMarginTop());
@@ -341,6 +347,18 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 			tab.addLabelWidgetRow("TOTAL cuota IVA prorrateada", sumProrratedQuotaLabel);
 		}
 		
+		if (showTotalAmount347) {
+			Label sumAmount347Title = new Label( "TOTAL importe 347" );
+			sumAmount347Title.setStyleName(AON.CSS.aonBold());
+			sumAmount347Title.addStyleName(AON.CSS.aonBackgroundLigthGray());
+			
+			AonDoubleLabel sumAmount347Label = new AonDoubleLabel(sumAmount347);
+			sumAmount347Label.addStyleName(AON.CSS.aonTextRight());
+			sumAmount347Label.addStyleName(AON.CSS.aonBold());
+	
+			tab.addLabelWidgetRow(sumAmount347Title, sumAmount347Label);
+		}
+		
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.addStyleName(AON.CSS.aonMarginBottom());
 		tab.addStyleName(AON.CSS.aonBlockCenter());
@@ -373,6 +391,7 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 				sumSurchargeQuota += vc.getSurchargeQuota();
 				sumDeductibleQuota += vc.isSales()?0.0:vc.getDeductibleQuota();
 				sumProrratedQuota += vc.isProrrated()?vc.getProrrateQuota():vc.getDeductibleQuota();
+				sumAmount347 += vc.getAmount347();
 			}
 			paintRows( 0 );
 		}

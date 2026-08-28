@@ -151,6 +151,9 @@ public class JsVatContext extends JavaScriptObject {
 	public final native boolean hasDuaLinked() /*-{
 		return this.duaLinked;
 	}-*/;
+	public final native double getAmount347() /*-{
+		return this.amount347;
+	}-*/;
 	
 	public final boolean isRectification() {
 		return (getRectificationType() == RectificationType.NORMAL_RECTIFIER.ordinal());
@@ -158,4 +161,5 @@ public class JsVatContext extends JavaScriptObject {
 	public final boolean isSales() {
 		return (getInvoiceType() == InvoiceType.SALES.ordinal());
 	}
+
 }
