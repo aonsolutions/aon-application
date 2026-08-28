@@ -20,9 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 class InvoiceConsoleAnalysisPanel extends SimpleLayoutPanel {
 
-	private static final String SIN_ESTADO = "Sin estado";
-	private static final String SIN_COMUNICACION = "Sin comunicaci\u00F3n";
-
 	private final FlowPanel container = new FlowPanel();
 
 	public InvoiceConsoleAnalysisPanel() {
@@ -39,7 +36,7 @@ class InvoiceConsoleAnalysisPanel extends SimpleLayoutPanel {
 		something = paintTypes(ica) || something;
 
 		if (!something) {
-			Label noInfo = new Label("No hay informaci\u00F3n disponible para la selecci\u00F3n de facturas");
+			Label noInfo = new Label(AON.MSG.noAnalysisInformation());
 			noInfo.setStyleName(AON.CSS.aonBlockCenter());
 			noInfo.addStyleName(AON.CSS.aonMarginTop());
 			noInfo.addStyleName(AON.CSS.aonBold());
@@ -50,14 +47,14 @@ class InvoiceConsoleAnalysisPanel extends SimpleLayoutPanel {
 	// ----------------------------------------------------------- [RESUMEN]
 
 	private boolean paintTotals(InvoiceConsoleAnalysis ica) {
-		boolean facturas = has(ica.getInvoiceInfo());
+		boolean invoices = has(ica.getInvoiceInfo());
 		boolean proformas = has(ica.getProformaInfo());
-		if (!facturas && !proformas) return false;
+		if (!invoices && !proformas) return false;
 
-		AonDisplayGrid grid = newGrid("Concepto");
-		if (facturas) addInfoRow(grid, "Facturas", ica.getInvoiceInfo());
-		if (proformas) addInfoRow(grid, "Proformas", ica.getProformaInfo());
-		container.add(AonGroupPanel.get("Resumen", grid));
+		AonDisplayGrid grid = newGrid(AON.MSG.concept());
+		if (invoices) addInfoRow(grid, AON.MSG.invoices(), ica.getInvoiceInfo());
+		if (proformas) addInfoRow(grid, AON.MSG.proforma(), ica.getProformaInfo());
+		container.add(AonGroupPanel.get(AON.MSG.summary(), grid));
 		return true;
 	}
 
@@ -81,7 +78,7 @@ class InvoiceConsoleAnalysisPanel extends SimpleLayoutPanel {
 		HashMap<InvoiceCommunicationStatus, InvoiceCollectionInfo> statusMap = ica.getTypesInfo().get(type);
 		if (statusMap == null || statusMap.isEmpty()) return false;
 
-		AonDisplayGrid grid = newGrid("Estado");
+		AonDisplayGrid grid = newGrid(AON.MSG.status());
 
 		int totalCount = 0;
 		double totalAmount = 0;
@@ -93,49 +90,48 @@ class InvoiceConsoleAnalysisPanel extends SimpleLayoutPanel {
 			totalCount += info.getTotalCount();
 			totalAmount += info.getTotalAmount();
 		}
-		InvoiceCollectionInfo sinEstado = statusMap.get(null);
-		if (sinEstado != null) {
-			addInfoRow(grid, SIN_ESTADO, sinEstado);
-			totalCount += sinEstado.getTotalCount();
-			totalAmount += sinEstado.getTotalAmount();
+		InvoiceCollectionInfo noStatus  = statusMap.get(null);
+		if (noStatus  != null) {
+			addInfoRow(grid, AON.MSG.withoutStatus(), noStatus );
+			totalCount += noStatus .getTotalCount();
+			totalAmount += noStatus .getTotalAmount();
 		}
 
 		if (statusMap.size() > 1) {
 			grid.addFooterRow()
-				.addCell(bold("Total"), AON.CSS.aonWidth200())
+				.addCell(bold(AON.MSG.total()), AON.CSS.aonWidth200())
 				.addCell(bold(new AonIntegerLabel(totalCount)), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
 				.addCell(bold(new AonDoubleLabel(totalAmount)), AON.CSS.aonWidth150(), AON.CSS.aonTextRight())
 			;
 		}
 
-		String titulo = type == null ? SIN_COMUNICACION : type.getDescription();
-		container.add(AonGroupPanel.get(titulo, grid));
+		String title = type == null ? AON.MSG.noCommunication() : type.getDescription();
+		container.add(AonGroupPanel.get(title, grid));
 		return true;
 	}
 
 	// ------------------------------------------------------------ [COMUNES]
 
-	private AonDisplayGrid newGrid(String primeraColumna) {
+	private AonDisplayGrid newGrid(String column) {
 		AonDisplayGrid grid = new AonDisplayGrid();
-		grid.setWidth("100%");
 		grid.addHeaderRow()
-			.addCell(new Label(primeraColumna), AON.CSS.aonWidth200())
-			.addCell(new Label("Facturas"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
-			.addCell(new Label("Importe"), AON.CSS.aonWidth150(), AON.CSS.aonTextRight())
+			.addCell(new Label(column), AON.CSS.aonWidth200(), AON.CSS.aonTextLeft())
+			.addCell(new Label(AON.MSG.invoices()), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
+			.addCell(new Label(AON.MSG.amount()), AON.CSS.aonWidth150(), AON.CSS.aonTextRight())
 		;
 		return grid;
 	}
 
-	private void addInfoRow(AonDisplayGrid grid, String etiqueta, InvoiceCollectionInfo info) {
+	private void addInfoRow(AonDisplayGrid grid, String label, InvoiceCollectionInfo info) {
 		grid.addRow()
-			.addCell(new Label(etiqueta), AON.CSS.aonWidth200())
+			.addCell(new Label(label), AON.CSS.aonWidth200())
 			.addCell(new AonIntegerLabel(info.getTotalCount()), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
 			.addCell(new AonDoubleLabel(info.getTotalAmount()), AON.CSS.aonWidth150(), AON.CSS.aonTextRight())
 		;
 	}
 
-	private Widget bold(String texto) {
-		InlineLabel label = new InlineLabel(texto);
+	private Widget bold(String text) {
+		InlineLabel label = new InlineLabel(text);
 		label.setStyleName(AON.CSS.aonBold());
 		return label;
 	}

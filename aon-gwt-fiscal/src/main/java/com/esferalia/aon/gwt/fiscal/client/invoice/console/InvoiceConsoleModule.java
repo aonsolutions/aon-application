@@ -156,7 +156,7 @@ public class InvoiceConsoleModule  implements EntryPoint {
 	}
 
 	private void analyze(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
-		toolbar.startRun("Analizando");
+		toolbar.startRun(AON.MSG.analyzing());
 		INVOICE_SERVICE.analyze(opts.getOccam(), params, new AsyncCallback<InvoiceConsoleAnalysis>() {
 			@Override
 			public void onSuccess(InvoiceConsoleAnalysis result) {
@@ -179,7 +179,7 @@ public class InvoiceConsoleModule  implements EntryPoint {
         dialog.setAnimationEnabled(true);
 		dialog.setGlassEnabled(true);
 		dialog.setModal(true);
-		dialog.setCaption("An\u00E1lisis de facturas");
+		dialog.setCaption(AON.MSG.invoiceAnalysis());
 		InvoiceConsoleAnalysisPanel panel = new InvoiceConsoleAnalysisPanel();
 		panel.paint(analysis);
 		dialog.add(panel);

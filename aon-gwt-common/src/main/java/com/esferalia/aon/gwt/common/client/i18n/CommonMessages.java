@@ -4574,5 +4574,20 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Confirma que desea descontabilizar {0} cuotas de amortizaci\u00F3n?") 
 	String confirmMultipleUnrecord(int selectedCount);
 
+	@DefaultMessage("Sin estado")
+	String withoutStatus();
+	
+	@DefaultMessage("No hay informaci\u00F3n disponible para la selecci\u00F3n de facturas")
+	String noAnalysisInformation();
+	
+	@DefaultMessage("An\u00E1lisis")
+	String analysis();
+	
+	@DefaultMessage("Analizando...")
+	String analyzing();
+	
+	@DefaultMessage("An\u00E1lisis de facturas")
+	String invoiceAnalysis();
+
 }
 

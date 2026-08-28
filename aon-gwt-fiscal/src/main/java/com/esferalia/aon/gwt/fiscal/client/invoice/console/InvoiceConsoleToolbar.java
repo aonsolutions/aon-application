@@ -37,7 +37,7 @@ class InvoiceConsoleToolbar extends AonToolbar {
 		refresh = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		this.add(refresh);
 		
-		analyze = new AonToolbarButton("An\u00E1lisis", AON.CSS.aonIconWizard());
+		analyze = new AonToolbarButton(AON.MSG.analysis(), AON.CSS.aonIconWizard());
 		this.add(analyze);
 		
 		showFilter = new AonToolbarButton(AON.MSG.showFilter(), AON.CSS.aonIconFilterOn());
