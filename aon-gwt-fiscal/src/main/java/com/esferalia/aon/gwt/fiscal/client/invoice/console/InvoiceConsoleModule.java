@@ -14,12 +14,14 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.Wnd;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleToolbar.ToolbarAsyncCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -128,6 +130,8 @@ public class InvoiceConsoleModule  implements EntryPoint {
 			aonLayoutPanel.animate(200);
 		});
 		
+		toolbar.addClickHandlerToAnalyze(e -> analyze(opts, filterPanel.getWidgetParams(opts) ) );
+		
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
 		aonLayoutPanel.add(content);
@@ -149,6 +153,38 @@ public class InvoiceConsoleModule  implements EntryPoint {
 		content.setWidget(table);
 		table.addInvoiceCheckedHandler(e -> selectionHandler.select( e.getInvoice() ) );
 		table.addInvoiceUncheckedHandler(e -> selectionHandler.unselect( e.getInvoice() ) );
+	}
+
+	private void analyze(InvoiceModuleOptions opts, InvoiceConsoleParams params) {
+		toolbar.startRun("Analizando");
+		INVOICE_SERVICE.analyze(opts.getOccam(), params, new AsyncCallback<InvoiceConsoleAnalysis>() {
+			@Override
+			public void onSuccess(InvoiceConsoleAnalysis result) {
+				toolbar.endRun();
+				showAnalysis(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				toolbar.endRun();
+				Window.alert("Error analizando facturas [" + caught.getMessage() + "]");
+			}
+		});
+	}
+
+	private void showAnalysis(InvoiceConsoleAnalysis analysis) {
+		AonCustomPopup dialog = new AonCustomPopup();
+		dialog.setWidth(Math.min(1000, Window.getClientWidth() - 200) + "px");
+		dialog.setHeight(Math.min(700, Window.getClientHeight() - 200) + "px");
+        dialog.setAnimationEnabled(true);
+		dialog.setGlassEnabled(true);
+		dialog.setModal(true);
+		dialog.setCaption("An\u00E1lisis de facturas");
+		InvoiceConsoleAnalysisPanel panel = new InvoiceConsoleAnalysisPanel();
+		panel.paint(analysis);
+		dialog.add(panel);
+		dialog.center();
+		dialog.show();
 	}
 
 	public static void run() {

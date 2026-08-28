@@ -574,6 +574,9 @@ public class Invoice implements Serializable, HasAudit {
 		if (this.details == null) this.details = new LinkedList<>();
 		return this.details;
 	}
+	public boolean hasPrepayments() {
+		return detailStream().filter(d -> d.isPrepayment()).count() > 0; 
+	}
 	
 	// ---------------------------------------------------- [FINANCES]
 	public Stream<Finance> financeStream() {

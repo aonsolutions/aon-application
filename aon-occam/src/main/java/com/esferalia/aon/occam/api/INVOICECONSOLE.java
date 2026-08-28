@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 
@@ -41,4 +42,9 @@ public class INVOICECONSOLE {
 		}
 	}
 
+	public static InvoiceConsoleAnalysis analyze(Occam occam, InvoiceConsoleParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().invoiceConsoleAnalysis(ctx, params);
+		}
+	}
 }
