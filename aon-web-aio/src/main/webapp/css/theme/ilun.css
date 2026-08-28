@@ -10,6 +10,9 @@
 	
 	--aonWarning: var(--aonMidGray);
 	
+	--aonHoverColor: var(--aonPurple);
+	--aonButtonColor: var(--aonPurple);
+
 	--aonForegroundColor:var(--aonOffWhite);
 	--aonTopMenuAvailable: var(--aonOffWhite);
 
@@ -29,6 +32,11 @@
 
 	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
 	--aonBorderHoverColor: var(--aonPurple);
+
+}
+
+.aonBody {
+	color: var(--aonForegroundColor);
 }
 
 
@@ -37,17 +45,65 @@
 	background-color: var(--aonForegroundColor);
 }
 
-.aonApplicationContent > #aonParentContent,
-.aonApplicationContent > #aonParentSidenav,
-#aonParentToolbar > #aonParentToolbarHeader{
-	box-shadow: var(--aonShadowCard);
+aon-toolbar > header.aonToolbar,
+.aonApplicationContent > .aonSidenav,
+.aonApplicationContent > #aonParentContent.aonContentBeta
+{
+	box-shadow: var(--aonShadowCard) ;
 	border-radius: var(--aonRadiusCard);
 }
 
-.aonApplicationContent > #aonParentContent,
-.aonApplicationContent > #aonParentSidenav{
+.aonSeparator{
+	background-color: var(--aonBackgroundColor);
+}
+
+.aonApplicationContent > .aonSidenav,
+.aonApplicationContent > #aonParentContent.aonContentBeta
+{
 	margin-bottom: 1rem;
 }
+
+/* 
+	Menu 
+*/
+#aonSuiteMenu .aonFlex {
+	height: 100%;
+}
+
+.suiteMenuContent .suiteMenuCardCard,
+.aonCardsPanel .aonDashboardCard .aonCard  {
+	padding: 1rem;
+	box-shadow: var(--aonShadowCard) ;
+	border-radius: var(--aonRadiusCard);
+	background-color: var(--aonBackgroundColor);
+	
+}
+
+.suiteMenuContent .suiteMenuCardCard .aonCard{
+	border-radius:  none;	
+	background-color: transparent;
+}
+.aonCardsPanel  .aonDashboardCard  .aonCard .aonCardTitle,
+.suiteMenuContent .suiteMenuCardCard .aonCard .aonCardText,
+.suiteMenuContent .suiteMenuCardCard .aonCard .aonCardTitle {
+	color: var(--aonForegroundColor);
+}
+
+.aonCardsPanel  .aonDashboardCard  .aonCard .aonCardTitle,
+.suiteMenuContent .suiteMenuCardCard .aonCard .aonCardTitle {
+	border-color: var(--aonBorderColor);
+}
+
+.suiteMenuContent .suiteMenuCardCard .suiteMenuCardDataDiv:hover{
+	background-color: initial; /* remove hover background color */
+}
+.suiteMenuContent .suiteMenuCardCard .suiteMenuCardDataDiv:hover .aonCardText {
+    color: var(--aonHoverColor);
+}
+
+/* 
+	Company Tab 
+*/
 
 #aonCompanyTabFilter {
 	border-radius: var(--aonRadius);
@@ -76,9 +132,13 @@
 }
 
 .aonTimeControlButton {
-	background-color: var(--aonPurple) !important;
+	background-color: var(--aonButtonColor) !important;
 }
 
+
+/* 
+	Sidenav ( Left ) 
+*/
 
 .aonSidenav .aonSidenavTitleArrow ,
 i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
@@ -87,3 +147,61 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 	background-color: var(--aonForegroundColor);
 	mask: url('/icons/chevron-down.svg') no-repeat center;
 }
+
+
+/*
+    Menu and Sidenav ( Left )
+*/
+
+#aonMenu #aonMenuSidenav {
+	margin-left: 1rem;
+	margin-right: 1rem;
+	margin-bottom: 1rem;
+	margin-top: calc(var(--aonToolbarHeight) + 1rem);
+} 
+
+#aonMenuAnchor, 
+#aonMenuAnchor.close{
+	margin-left: 0px;
+	color: var(--aonForegroundColor);
+	background-color: var(--aonBackgroundColor);
+}
+
+#aonMenuAnchor.close{
+	width: 100%;
+}
+
+#aonMenuSidenav #aonMenuList {
+	color: var(--aonForegroundColor);
+    box-shadow: var(--aonShadowCard);
+    border-radius: var(--aonRadiusCard);
+    background-color: var(--aonBackgroundColor);
+    height: calc(100vh - var(--aonHeaderHeight) - var(--aonToolbarHeight) - 2rem);
+}
+
+#aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover{
+	background-color: initial;
+    color: var(--aonHoverColor);
+}
+
+#rootPanel{
+	margin-left: calc(237px + 1rem) !important
+}
+
+#rootPanel.closeSidenav {
+  margin-left: calc(68px + 1rem) !important;
+}
+
+#rootPanel #aonDesktop #aonDesktopMainContent {
+	margin-left: 0px !important;
+}
+
+/*
+    Buttons
+*/	
+
+#expandHirin {
+	background: none;
+	background-color: var(--aonButtonColor);	
+}
+

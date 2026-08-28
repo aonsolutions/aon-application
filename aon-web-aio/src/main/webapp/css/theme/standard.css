@@ -64,6 +64,9 @@
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 	
 	--favicon: /assets/aon-ai-favicon.svg;
+	
+	--aonHeaderHeight : 68px;
+	--aonToolbarHeight : 68px;
 }
 
 body {
@@ -125,8 +128,8 @@ body {
 }
 
 #aonHome .aonMenuSidenav{
-	margin-top: 68px;
  	height: calc(100vh - 136px); 
+	margin-top: var(--aonToolbarHeight);
 }
 
 /*

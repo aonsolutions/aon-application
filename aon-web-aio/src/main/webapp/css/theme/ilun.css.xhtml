@@ -2,6 +2,57 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 	
 	
-     <ui:include src="/css/theme/standard.css.xhtml" />
+	<ui:include src="/css/theme/standard.css.xhtml" />
+	<style>
+		:root{
+			--aonBlack: #0A0A0A;
+			--aonMidGray:#C9C9C7;
+			--aonDrakGray:#3A3A3A;
+			--aonOffWhite:#F3F3F1;
+			--aonPurple:oklch(52% .234 277);
+			
+			
+			--aonWarning: var(--aonMidGray);
+			
+			--aonHoverColor: var(--aonPurple);
+			--aonButtonColor: var(--aonPurple);
 
+			--aonForegroundColor:var(--aonOffWhite);
+			--aonTopMenuAvailable: var(--aonOffWhite);
+
+			--aonBackgroundColor: var(--aonBlack);
+			--aonBodyBackgroundColor: var(--aonDrakGray);
+			--aonHeaderBackgroundColor: var(--aonBlack);
+			
+			--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+			--aonRadius: 1rem; /*16px*/
+			--aonShadow: 0 20px 60px -20px;
+			
+			--aonRadiusCard: 2.75rem; /*44px*/
+			--aonShadowCard: 0 30px 60px -25px rgba(0,0,0,.65), 0 8px 24px -12px rgba(0,0,0,.45);
+			
+			--aonShadowGlow: 0 20px 60px -20px var(--aonPurple);
+
+			--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
+			--aonBorderHoverColor: var(--aonPurple);
+
+		}
+		
+		body{
+            background-color: var(--aonBodyBackgroundColor);
+        }
+		
+		
+		#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"]) .aon-finding-title-toolbar {
+			border-radius: var(--aonRadiusCard) ;
+			background-color: var(--aonBackgroundColor) !important;
+		}
+		
+		.aon-finding-title-internal {
+          	color: var(--aonForegroundColor) !important;
+        }
+		
+	</style>
+		
 </ui:composition>
