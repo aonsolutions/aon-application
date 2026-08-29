@@ -64,11 +64,14 @@
         }
         
         .aonCard,
+        .aon-group,
         .aon-panelGrid,
         .aon-dataScroller,
         .rich-tabpanel-content,
         .aon-dataTable, 
         .aon-editDataTable,
+        .aon-dataTable-footer,
+        .aon-editDataTable-footer,
         .rich-stglpanel,
         .tbl-tab-search-odd,
         .tbl-tab-search-even,
@@ -79,7 +82,14 @@
         .aonCards .aonCard .aon-panelGrid-odd, 
         .aonCards .aonCard .aon-panelGrid-even,
         .aon-panelGrid-search .aon-panelGrid-odd, 
-        .aon-panelGrid-search .aon-panelGrid-even{
+        .aon-panelGrid-search .aon-panelGrid-even,
+        .aon-group table, 
+        .aon-group table thead, 
+        .aon-group table tr, 
+        .aon-group .aon-dataScroller, 
+        .aon-group th, 
+        .aon-group-title,
+        .aon-group .aon-editDataTable-footer {
 			background-color: var(--aonBackgroundColor) !important;
 		}
 		
@@ -101,7 +111,11 @@
 		.rich-table-header > th ,
 		.rich-tab-active,
 		.rich-tab-inactive,
-		.rich-tabpanel-content
+		.rich-tabpanel-content,
+		
+		.aon-editDataTable th .aon-input-required,
+		
+		.aon-group-title
 		{
           	color: var(--aonForegroundColor) !important;
         }
@@ -124,7 +138,8 @@
 			border-color: var(--aonBorderHoverColor);
 		}
 		
-		.aon-dataTable > tbody > tr.aon-table-row-hover td {
+		.aon-dataTable > tbody > tr.aon-table-row-hover td,
+		.aon-editDataTable > tbody > tr.aon-table-row-hover td {
 			border-color: var(--aonBorderHoverColor) !important;
 		}
 
@@ -157,7 +172,7 @@
 		.aon-finding-toolbar-item .material-symbols-outlined{
 			color: var(--aonForegroundColor) !important;
 		}
-		
+		.aon-editDataTable .aon-icon-reset,
 		.aon-dataTable .aon-icon-rowSelector, 
 		.aon-editDataTable .aon-table-row-link, 
 		.aon-finding-toolbar-item.aon-icon-excel,
@@ -234,11 +249,19 @@
 		.aon-editDataTable .aon-table-row-link {
 		  mask-image: url(aonResource/9.23-SNAPSHOT/images/aon-right-arrow.png);
 		}
+		
+		.aon-editDataTable .aon-icon-reset {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/plus.svg);
+		}
 
 		.aon-search-lookup-button, 
 		.rich-modalpanel .aon-commandButton,
 		.aon-finding-toolbar-item-group div[id$="save-container"]{
 			background-color: var(--aonButtonColor) !important;
+		}
+		
+		a, a:hover, a:visited {
+			color: var(--aonHoverColor) !important;
 		}
 		
 		
