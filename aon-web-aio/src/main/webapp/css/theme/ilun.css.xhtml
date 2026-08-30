@@ -89,10 +89,27 @@
         .aon-group .aon-dataScroller, 
         .aon-group th, 
         .aon-group-title,
-        .aon-group .aon-editDataTable-footer {
+        .aon-group .aon-editDataTable-footer,
+		div[id$="messageList"], 
+		div[id$="GraphContainer"], 
+		div[id$="fiscal_status_div"]{
 			background-color: var(--aonBackgroundColor) !important;
 		}
 		
+		div[id$="messageList"], 
+		div[id$="GraphContainer"], 
+		div[id$="fiscal_status_div"]{
+			border-radius: 0px !important;
+		}
+		
+		div[id$="GraphContainer"] svg rect[fill="#ffffff"] {
+  			fill: var(--aonBackgroundColor) !important;
+		}
+
+		div[id$="GraphContainer"] svg text {
+  			fill: var(--aonForegroundColor) !important;
+		}
+
 		.aon-panelGrid-odd, .aon-panelGrid-even{
 			border-color: transparent;	
 		}
