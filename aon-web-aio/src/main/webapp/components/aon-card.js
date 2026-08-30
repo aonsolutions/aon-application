@@ -81,9 +81,7 @@ export class AonCard extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.CARD;
     	div.className = 'aonCard';
-		if(LS.isNewTheme()) {
-			div.style.boxShadow = "none";
-		} 
+		div.style.boxShadow = "none";
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 
@@ -95,7 +93,7 @@ export class AonCard extends AonElement {
 		let section1 = this.createElement(TAG.SECTION);
 		section1.id = this.TITLE_SECTION1;
 		section1.className = 'aonCardTitleSection';
-		if(LS.isNewTheme() && this.getApp()) {
+		if(this.getApp()) {
 			let arrowTitleSpan = this.createElement(TAG.SPAN);
 			arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
 			arrowTitleSpan.style.borderColor = this.getApp().color;

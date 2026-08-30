@@ -1,0 +1,269 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	
+	<ui:include src="/css/theme/standard.css.xhtml" />
+	<style>
+		:root{
+			--aonBlack: #0A0A0A;
+			--aonMidGray:#C9C9C7;
+			--aonDarkGray:#3A3A3A;
+			--aonOffWhite:#F3F3F1;
+			--aonPurple:oklch(52% .234 277);
+			
+			
+			--aonWarning: var(--aonMidGray);
+			
+			--aonHoverColor: var(--aonPurple);
+			--aonButtonColor: var(--aonPurple);
+
+			--aonForegroundColor:var(--aonOffWhite);
+			--aonTopMenuAvailable: var(--aonOffWhite);
+
+			--aonBackgroundColor: var(--aonBlack);
+			--aonBodyBackgroundColor: var(--aonDarkGray);
+			--aonHeaderBackgroundColor: var(--aonBlack);
+			
+			--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+			--aonRadius: 1rem; /*16px*/
+			--aonShadow: 0 20px 60px -20px;
+			
+			--aonRadiusCard: 2.75rem; /*44px*/
+			--aonShadowCard: 0 30px 60px -25px rgba(0,0,0,.65), 0 8px 24px -12px rgba(0,0,0,.45);
+			
+			--aonShadowGlow: 0 20px 60px -20px var(--aonPurple);
+
+			--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
+			--aonBorderHoverColor: var(--aonPurple);
+
+		}
+		
+		body{
+			color: var(--aonForegroundColor);
+            background-color: var(--aonBodyBackgroundColor);
+        }
+        
+        .aon-inputText, 
+        .aon-inputSecret, 
+        .aon-inputTextarea, 
+        .aon-form select, 
+        .aon-selectOneMenu, 
+        .aon-lookupInputText, 
+        .aon-lookupSuggestText, 
+        .aon-form input[type="text"], 
+        .aon-selectInputDate-inputClass, 
+        .rich-inslider-field {
+        	color: var(--aonForegroundColor);
+			border-color: var(--aonDarkGray);
+			background-color: var(--aonDarkGray) ;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+			border-color: var(--aonBorderHoverColor) !important;	
+        }
+        
+        .aonCard,
+        .aon-group,
+        .aon-panelGrid,
+        .aon-dataScroller,
+        .rich-tabpanel-content,
+        .aon-dataTable, 
+        .aon-editDataTable,
+        .aon-dataTable-footer,
+        .aon-editDataTable-footer,
+        .rich-stglpanel,
+        .tbl-tab-search-odd,
+        .tbl-tab-search-even,
+        .aon-panelGrid-search,
+        .aon-panelGrid-search table,
+        .aon-panelGrid-odd, 
+        .aon-panelGrid-even,
+        .aonCards .aonCard .aon-panelGrid-odd, 
+        .aonCards .aonCard .aon-panelGrid-even,
+        .aon-panelGrid-search .aon-panelGrid-odd, 
+        .aon-panelGrid-search .aon-panelGrid-even,
+        .aon-group table, 
+        .aon-group table thead, 
+        .aon-group table tr, 
+        .aon-group .aon-dataScroller, 
+        .aon-group th, 
+        .aon-group-title,
+        .aon-group .aon-editDataTable-footer {
+			background-color: var(--aonBackgroundColor) !important;
+		}
+		
+		.aon-panelGrid-odd, .aon-panelGrid-even{
+			border-color: transparent;	
+		}
+        
+		.aon-portlet-title,
+        .tbl-tab-search-odd,
+        .tbl-tab-search-even,
+        .aon-note-internal-new,
+		.aon-finding-title-internal,
+		
+		.aon-dataTable > tbody > tr > td, 
+		.aon-editDataTable > tbody > tr > td, 
+		.aon-dataTable-header > th, 
+		.aon-editDataTable-header > th, 
+
+		.rich-table-header > th ,
+		.rich-tab-active,
+		.rich-tab-inactive,
+		.rich-tabpanel-content,
+		
+		.aon-editDataTable th .aon-input-required,
+		
+		.aon-group-title
+		{
+          	color: var(--aonForegroundColor) !important;
+        }
+        
+        .rich-tab-active,
+        .rich-table-thead,
+        .rich-tabhdr-cell-active,
+        .aon-finding-title-toolbar + .aon-scroll-area .rich-table-thead th {
+  			background-color:var(--aonHeaderBackgroundColor);
+		}
+
+		.aon-table-row-hover ,
+		.aon-dataTable-row-odd1:hover,
+		.aon-dataTable-row-even1:hover {
+			background-color:initial !important;
+		}
+		
+		.aon-table-row-hover{
+			box-shadow: var(--aonShadowGlow);
+			border-color: var(--aonBorderHoverColor);
+		}
+		
+		.aon-dataTable > tbody > tr.aon-table-row-hover td,
+		.aon-editDataTable > tbody > tr.aon-table-row-hover td {
+			border-color: var(--aonBorderHoverColor) !important;
+		}
+
+		.aon-dataTable > th, 
+		.aon-editDataTable > th, 
+		.aon-dataTable-header > th, 
+		.aon-editDataTable-header > th {
+			border-bottom: none !important;
+		}
+		
+		
+		.aon-dataScroller,
+		.rich-tab-bottom-line {
+		  border:none;
+		}
+
+		#aonContent\:contentScrollDiv > form:not([id*="aonContent:mainForm"]) .aon-scroll-area,
+		#aonContent\:contentScrollDiv > form:not([id*="aonCont.aonToolbar2ent:mainForm"]) .aon-finding-title-toolbar {
+			box-shadow: var(--aonShadowCard);
+			border-radius: var(--aonRadiusCard) ;
+			background-color: var(--aonBackgroundColor) !important;
+		}
+		
+		.aon-dataTable > tbody > tr > td,
+		 .aon-editDataTable > tbody > tr > td,
+		 .aon-editDataTable > tfoot > tr > td {
+		  border-color: var(--aonBorderColor) !important;
+		}
+
+		.aon-finding-toolbar-item .material-symbols-outlined{
+			color: var(--aonForegroundColor) !important;
+		}
+		.aon-editDataTable .aon-icon-reset,
+		.aon-dataTable .aon-icon-rowSelector, 
+		.aon-editDataTable .aon-table-row-link, 
+		.aon-finding-toolbar-item.aon-icon-excel,
+		input.aon-finding-toolbar-item.aon-icon-reset,
+		input.aon-finding-toolbar-item.aon-icon-cancel,
+		input.aon-finding-toolbar-item.aon-icon-rubber, 
+		input.aon-finding-toolbar-item.aon-icon-search{
+			mask-position: center;	
+			mask-repeat: no-repeat;
+			color: var(--aonForegroundColor);		
+			background-image: none !important;
+			background-color: var(--aonForegroundColor);
+		}
+		
+		.aon-finding-toolbar-item.aon-icon-new:hover, 
+		.aon-finding-toolbar-item.aon-icon-csv:hover, 
+		.aon-finding-toolbar-item.aon-icon-pdf:hover, 
+		.aon-finding-toolbar-item.aon-icon-info:hover, 
+		.aon-finding-toolbar-item.aon-icon-excel:hover, 
+		.aon-finding-toolbar-item.aon-icon-audit:hover, 
+		.aon-finding-toolbar-item.aon-icon-reset:hover, 
+		.aon-finding-toolbar-item.aon-icon-accept:hover, 
+		.aon-finding-toolbar-item.aon-icon-cancel:hover, 
+		.aon-finding-toolbar-item.aon-icon-rubber:hover, 
+		.aon-finding-toolbar-item.aon-icon-printer:hover, 
+		.aon-finding-toolbar-item.aon-icon-search:hover, 
+		.aon-finding-toolbar-item.aon-icon-delete:hover, 
+		.aon-finding-toolbar-item.aon-icon-invoice:hover, 
+		.aon-finding-toolbar-item.aon-icon-webmail2:hover, 
+		.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover, 
+		.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover, 
+		.aon-finding-toolbar-item.rich-fileupload-ico-add:hover, 
+		.aon-finding-toolbar-item.aon-icon-filter:hover, 
+		.aon-finding-toolbar-item.aon-icon-filter-off:hover, 
+		.aon-finding-toolbar-item.aon-icon-attach-file:hover, 
+		.aon-finding-toolbar-item.aon-icon-task-assume:hover, 
+		.aon-finding-toolbar-item.aon-icon-task-liberate:hover, 
+		.aon-finding-toolbar-item.aon-icon-close:hover, 
+		.aon-finding-toolbar-item.aon-lookupButton-clear:hover, 
+		.aon-finding-toolbar-item.aon-event-repeat:hover, 
+		.aon-finding-toolbar-item.aon-icon-clear:hover, 
+		.aon-finding-toolbar-item.aon-icon-visibility-off:hover, 
+		.aon-finding-toolbar-item.aon-icon-add-task:hover, 
+		.aon-finding-toolbar-item.aon-icon-ink-selection:hover, 
+		.aon-finding-toolbar-item.aon-icon-remove-selection:hover, 
+		.aon-finding-toolbar-item.aon-icon-done-all:hover, 
+		.aon-finding-toolbar-item.aon-icon-remove-done:hover,
+		.aon-finding-toolbar-item.aon-dropDownMenu:hover{
+				color: var(--aonHoverColor);
+				background-color: var(--aonHoverColor);
+		}
+	
+		.aon-finding-toolbar-item.aon-icon-rubber {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/eraser.svg);
+		}
+
+		.aon-finding-toolbar-item.aon-icon-excel {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/file-spreadsheet.svg);
+		}
+	
+		input.aon-finding-toolbar-item.aon-icon-reset {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/plus.svg);
+		}
+	
+		input.aon-finding-toolbar-item.aon-icon-search {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/file-search.svg);
+		}
+		
+		input.aon-finding-toolbar-item.aon-icon-cancel {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/arrow-left.svg);
+		}
+	
+		.aon-dataTable .aon-icon-rowSelector, 
+		.aon-editDataTable .aon-table-row-link {
+		  mask-image: url(aonResource/9.23-SNAPSHOT/images/aon-right-arrow.png);
+		}
+		
+		.aon-editDataTable .aon-icon-reset {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/plus.svg);
+		}
+
+		.aon-search-lookup-button, 
+		.rich-modalpanel .aon-commandButton,
+		.aon-finding-toolbar-item-group div[id$="save-container"]{
+			background-color: var(--aonButtonColor) !important;
+		}
+		
+		a, a:hover, a:visited {
+			color: var(--aonHoverColor) !important;
+		}
+		
+	</style>
+		
+</ui:composition>

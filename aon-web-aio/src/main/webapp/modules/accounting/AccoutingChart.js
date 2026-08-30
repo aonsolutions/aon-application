@@ -3,7 +3,6 @@ import { waitEl } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as UTILS from "./AccountingUtils.js";
-import * as LS from "../../services/localStorageService.js";
 
 let selectedElement,
   chartData,
@@ -747,7 +746,7 @@ const colChart = (div, data, selectedPeriod, isMobile, filter, aonIframe, leyend
       setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center"});
 
       let divCol = document.createElement("div");
-      divCol.style.width = isMobile ? "100%" : (LS.isNewTheme() && !leyend ? "100%" : "70%");
+      divCol.style.width = isMobile ? "100%" : (!leyend ? "100%" : "70%");
       divCol.id = "divCol";
       div.appendChild(divCol);
 

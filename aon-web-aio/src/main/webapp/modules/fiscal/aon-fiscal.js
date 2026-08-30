@@ -15,7 +15,6 @@ import { FiscalUtils } from "./FiscalUtils.js";
 import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import * as GWT from "../../gwt/gwt.js";
 import { RETENTION_PANEL, VAT_PANEL } from "./FiscalOptions.js";
-import * as LS from "../../services/localStorageService.js";
 import { AonFutureTax } from "./tax/aon-future-tax.js";
 
 export class AonFiscal extends AonElement {
@@ -79,17 +78,6 @@ export class AonFiscal extends AonElement {
 		if (this.isMobile()) {
 			application.addMobileSidenavHeader(FISCAL);
 		} else {
-			if (!LS.isNewTheme()) {
-				application.addToolbarOption2(VAT_PANEL, () => {
-					application.closeSidenav();
-					this.showView(FISCAL_VIEWS.VAT_PANEL);
-				});
-
-				application.addToolbarOption2(RETENTION_PANEL, () => {
-					application.closeSidenav();
-					this.showView(FISCAL_VIEWS.IRPF_REPORT);
-				});
-			}
 			application.addTitleToolSection("Estimaciones");
 		}
 

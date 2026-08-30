@@ -1,12 +1,9 @@
 import { AonElement } from './AonElement.js';
 import { getRegistries, getRegistryAddress } from '../services/service.js';
 
-import { AonSuggestion} from './aon-suggestion.js';
-
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
 import { AonAddress } from './aon-address.js';
 
-import * as LS from '../services/localStorageService.js';
 import { AonNewSuggestion } from './aon-new-suggestion.js';
 
 export class AonRegistry extends AonElement {
@@ -80,7 +77,7 @@ export class AonRegistry extends AonElement {
     span1.style.width="25%";
     span1.style.marginRight = "2px";
     div.appendChild(span1);
-    let doc = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
+    let doc = new AonNewSuggestion();
     doc.id = this.DOCUMENT;
     doc.title = MSG.NIF;
     doc.readonly = this.isReadonly();
@@ -136,7 +133,7 @@ export class AonRegistry extends AonElement {
     let span2 = this.createElement(TAG.SPAN);
     span2.style.width="75%";
     div.appendChild(span2);
-    let name = LS.isNewTheme() ? new AonNewSuggestion() : new AonSuggestion();
+    let name = new AonNewSuggestion();
     name.id = this.NAME;
     name.name = CONSTANT.NAME;
     name.title = MSG.BUSINESS_NAME;

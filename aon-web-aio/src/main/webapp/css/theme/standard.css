@@ -35,6 +35,8 @@
 
 :root {
 	
+	--aonForegroundColor: #1e293b;
+	
 	--aonTopMenuSpecial: transparent;
 	
 	--aonBackgroundColor: #ffffff;
@@ -62,6 +64,9 @@
 	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
 	
 	--favicon: /assets/aon-ai-favicon.svg;
+	
+	--aonHeaderHeight : 68px;
+	--aonToolbarHeight : 68px;
 }
 
 body {
@@ -87,10 +92,11 @@ body {
   fill:var(--logo-image-color, #4e48df);
 }
 
-.aonNewLogo{
-	background-image: url("../../assets/aonsolutions-ai-logo.svg");
+.aonNewLogo,
+.aonLoginLogo{
 	width: var(--aonCustomizeHeaderLogoWidth);
 	height: var(--aonCustomizeHeaderLogoHeight);
+	background-image: url("../../assets/aonsolutions-ai-logo.svg");
 }
 
 .aonHeader{
@@ -122,8 +128,8 @@ body {
 }
 
 #aonHome .aonMenuSidenav{
-	margin-top: 68px;
  	height: calc(100vh - 136px); 
+	margin-top: var(--aonToolbarHeight);
 }
 
 /*
@@ -195,19 +201,9 @@ body {
 	color: var(--aonWhite);
 }
 
-.aonHeaderAppDiv * {
-	display: none;
-}
 
 .aonHeaderAppDiv {
     background-image: url("../../assets/aonsolutions-ai-logo.svg");
-	background-position: 50%;
-	background-repeat: no-repeat;
-	cursor: pointer;
-	height: 40px;
-	padding: 0 0 0 68px;
-	position: relative;
-	width: 160px;
 }
 
 #uploads{
@@ -747,7 +743,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 
 .aonSidenav *,
 .aonToolbarTitle {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: 0.875rem;
 }
 
@@ -894,7 +890,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 }
 
 #aonCompanySpanTitle {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: 1rem;
 	font-family: "Inter-medium", sans-serif;
 }
@@ -1056,11 +1052,6 @@ aon-fiscal-menu .suiteMenuDiv2{
 	padding: .5rem 0;
 }
 
-.aonLoginLogo {
-	width: var(--aonCustomizeLoginLogoWidth);
-	height: var(--aonCustomizeLoginLogoHeight);
-	background-image: url("../../assets/aon-ai-logo.svg");
-}
 
 #aonLogin .aonToolbar2 {
 	height: 68px; /*4rem;*/
@@ -1177,7 +1168,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 
 #aonLoginUserInput,
 #aonLoginPasswordInput{
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	background-color: #fff;
 	border: .0625rem solid #cbd5e1;
 
@@ -1204,7 +1195,7 @@ aon-fiscal-menu .suiteMenuDiv2{
 }
 
 .aonDividerSpan {
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	font-size: .875rem;
 	line-height: 1.5rem;
 	letter-spacing: 0;
@@ -1290,7 +1281,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
 	font-size: 14px;
 	border: .0625rem solid #cbd5e1;
 	background-color: #fff;
-	color: #1e293b;
+	color: var(--aonForegroundColor);
 	padding: 0;
 	margin-top: 1.5rem;
 	height: 2.5rem;
@@ -1392,7 +1383,7 @@ ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
     mask-size: contain;
     mask-position: center;
     mask-repeat: no-repeat;
-	background-color: #1e293b;
+	background-color: var(--aonForegroundColor);
 }
  
 #aonInvoiceHomeNewIssuedInvoiceButtonIcon{
@@ -2525,31 +2516,6 @@ aon-search > span {
 	padding-left: 12px;
 }
 
-#aonHeaderSearch {
-  position: absolute;
-  top: 20;
-  right: 15;
-  z-index: 5;
-
-  transform: translateX(100%);
-  opacity: 0;
-
-  transition: transform .3s ease, opacity .2s ease;
-  /* pointer-events: none; evita clics cuando está oculto */
-}
-
-#aonHeaderSearch.open {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-#aonHeaderSearch.open + * #aonHeaderCompany{
-	display: none !important;
-}
-
-#aonHeaderSearchDiv{
-	display: block;
-}
 
 i[id$="aonHeaderSearchDivButtonIcon"],
 #accountingUploadInvoiceLabel i{
