@@ -8,6 +8,7 @@
 	--aonPurple:oklch(52% .234 277);
 	
 	
+	--aonError: var(--aonPurple);
 	--aonWarning: var(--aonMidGray);
 	
 	--aonHoverColor: var(--aonPurple);
@@ -32,6 +33,8 @@
 
 	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
 	--aonBorderHoverColor: var(--aonPurple);
+	
+	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
 
 }
 
@@ -130,7 +133,7 @@ aon-toolbar > header.aonToolbar,
 	box-shadow: var(--aonShadowGlow);
 	border-color: var(--aonBorderHoverColor);
 }
-
+--defaultWelcomeImg: /assets/aon-ai-black-logo.svg;
 .aonTimeControlButton {
 	background-color: var(--aonButtonColor) !important;
 }
@@ -204,4 +207,56 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 	background: none;
 	background-color: var(--aonButtonColor);	
 }
+
+
+/*
+	Login
+*/
+.aonToolbar2{
+	border-bottom: none;
+}
+
+#loginContent > div:first-of-type{
+    box-shadow: var(--aonShadowCard);
+    border-radius: var(--aonRadiusCard);
+   	border-color: var(--aonBackgroundColor);
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aonDividerSpan,
+.aonInputBoxLabel > span{
+	color: var(--aonForegroundColor) ;
+	background-color: var(--aonBackgroundColor) ;
+}
+
+.aonLoginButton{
+	background: none;
+	background-color: var(--aonButtonColor);	
+}
+
+.aonLoginButton:hover{
+	background-color: var(--aonButtonColor);	
+}
+aonButtonColor
+#aonLoginUserInput, 
+#aonLoginPasswordInput{
+	color: var(--aonForegroundColor) ;
+	background-color: var(--aonDarkGray) ;
+}
+	
+.aonMagicButton{
+	color: var(--aonBackgroundColor);
+	background-color: var(--aonOffWhite);
+}
+
+.aonMagicButton:hover{
+	color: var(--aonForegroundColor);
+	background-color: var(--aonButtonColor);
+}
+
+#aonLoginUserInput {
+	background-color: var(--aonDarkGray);
+}
+
+
 
