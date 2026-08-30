@@ -131,6 +131,8 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			wait.ignoring(StaleElementReferenceException.class);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
 			
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderSearchDivButtonIconButton"))).click();
+
 			wait.until(ExpectedConditions.elementToBeClickable(By.id("search-input"))).sendKeys("asesor");
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuHelp")));
 			String empleados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuEmployees"))).getText();
@@ -163,6 +165,8 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
 			wait.ignoring(StaleElementReferenceException.class);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+			
+			wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderSearchDivButtonIconButton"))).click();
 			
 			wait.until(ExpectedConditions.elementToBeClickable(By.id("search-input"))).sendKeys("asesor");
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonHeaderSearchDialogMenuHelp")));
