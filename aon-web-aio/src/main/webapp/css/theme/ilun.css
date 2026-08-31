@@ -33,6 +33,8 @@
 
 	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
 	--aonBorderHoverColor: var(--aonPurple);
+
+	--aonTopAppTextColor: var(--aonForegroundColor);
 	
 	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
 
@@ -73,6 +75,8 @@ aon-toolbar > header.aonToolbar,
 	height: 100%;
 }
 
+.aonCard.rightPanelcardDiv,
+.rightPanelLangCard .aonCard,
 .suiteMenuContent .suiteMenuCardCard,
 .aonCardsPanel .aonDashboardCard .aonCard  {
 	padding: 1rem;
@@ -86,10 +90,19 @@ aon-toolbar > header.aonToolbar,
 	border-radius:  none;	
 	background-color: transparent;
 }
+
+.aonCardTitle,
+.rightPanel .helpCardText *,
+.rightPanel div[id$="CardContent"] .material-icons,
+.rightPanel div[id$="CardContent"] :not(.material-icons),
 .aonCardsPanel  .aonDashboardCard  .aonCard .aonCardTitle,
 .suiteMenuContent .suiteMenuCardCard .aonCard .aonCardText,
 .suiteMenuContent .suiteMenuCardCard .aonCard .aonCardTitle {
 	color: var(--aonForegroundColor);
+}
+
+.rightPanel div[id$="CardContent"] .material-icons{
+	background-color: var(--aonForegroundColor);
 }
 
 .aonCardsPanel  .aonDashboardCard  .aonCard .aonCardTitle,
@@ -100,8 +113,18 @@ aon-toolbar > header.aonToolbar,
 .suiteMenuContent .suiteMenuCardCard .suiteMenuCardDataDiv:hover{
 	background-color: initial; /* remove hover background color */
 }
+
+.rightPanel div[id$="CardContent"] > div > div:hover *,
+.rightPanel div[id$="CardContent"] > div > div.selected *,
 .suiteMenuContent .suiteMenuCardCard .suiteMenuCardDataDiv:hover .aonCardText {
     color: var(--aonHoverColor);
+    background-color: transparent;
+}
+
+.rightPanel div[id$="CardContent"] > div > div:hover,
+.rightPanel div[id$="CardContent"] > div > div.selected {
+	cursor: pointer;
+	background-color: initial; /* remove hover background color */
 }
 
 /* 
@@ -133,8 +156,10 @@ aon-toolbar > header.aonToolbar,
 	box-shadow: var(--aonShadowGlow);
 	border-color: var(--aonBorderHoverColor);
 }
---defaultWelcomeImg: /assets/aon-ai-black-logo.svg;
+
+.aonButton,
 .aonTimeControlButton {
+	color: var(--aonForegroundColor) !important;
 	background-color: var(--aonButtonColor) !important;
 }
 
@@ -171,7 +196,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 }
 
 #aonMenuAnchor.close{
-	width: 100%;
+	width: initial;
 }
 
 #aonMenuSidenav #aonMenuList {
@@ -224,7 +249,8 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 }
 
 .aonDividerSpan,
-.aonInputBoxLabel > span{
+.aonInputBoxLabel > span,
+.rightPanel .toolbarSidenavPanel{
 	color: var(--aonForegroundColor) ;
 	background-color: var(--aonBackgroundColor) ;
 }

@@ -1,1 +1,334 @@
 @import url("/css/theme/standard.gwt.css");
+
+:root{
+	--aonBlack: #0A0A0A;
+	--aonMidGray:#C9C9C7;
+	--aonDarkGray:#3A3A3A;
+	--aonOffWhite:#F3F3F1;
+	--aonPurple:oklch(52% .234 277);
+	
+	
+	--aonError: var(--aonPurple);
+	--aonWarning: var(--aonMidGray);
+	
+	--aonHoverColor: var(--aonPurple);
+	--aonButtonColor: var(--aonPurple);
+
+	--aonForegroundColor:var(--aonOffWhite);
+	--aonTopMenuAvailable: var(--aonOffWhite);
+
+	--aonBackgroundColor: var(--aonBlack);
+	--aonBodyBackgroundColor: var(--aonDarkGray);
+	--aonHeaderBackgroundColor: var(--aonBlack);
+	
+	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+	--aonRadius: 1rem; /*16px*/
+	--aonShadow: 0 20px 60px -20px;
+	
+	--aonRadiusCard: 2.75rem; /*44px*/
+	--aonShadowCard: 0 30px 60px -25px rgba(0,0,0,.65), 0 8px 24px -12px rgba(0,0,0,.45);
+	
+	--aonShadowGlow: 0 20px 60px -20px var(--aonPurple);
+
+	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
+	--aonBorderHoverColor: var(--aonPurple);
+	
+	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
+	
+	--aonSuccesColor: var(--aonBorderColor);
+	--aonErrorColor: var(--aonBorderHoverColor);
+
+}
+
+body,
+.aonBody {
+	color: var(--aonForegroundColor);
+}
+
+.gwt-Label,
+.gwt-Selector,
+.aon_custom_row,
+.aon_custom_card div,
+.aon_custom_text_box_title,
+.aon_custom_table_cell_footer,
+.aon_custom_table_cell_header,
+.aon_display_grid_cell,
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+	color: var(--aonForegroundColor);
+}
+
+
+select,
+.aon_between_input, 
+.aon_custom_text_box_input{
+	color: var(--aonForegroundColor);
+	border-color: var(--aonDarkGray);
+	background-color: var(--aonDarkGray) ;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus,
+.aon_between_input:focus, 
+.aon_custom_text_box_input:focus{
+	border-color: var(--aonBorderHoverColor) !important;	
+}
+
+
+.aon_custom_row,
+.aon_display_grid_row,
+.aon_display_grid_cell{
+	border-color: var(--aonBorderColor) !important;	
+}
+.aon_custom_row:hover,
+.aon_display_grid_row:hover,
+.aon_display_grid_row:hover .aon_display_grid_cell 
+{
+	box-shadow: var(--aonShadowGlow) !important;
+	border-color: var(--aonBorderHoverColor) !important;	
+}
+
+.aon_grid_header, 
+.aon_custom_table_header, 
+.aon_custom_table_footer, 
+.aon_display_grid_header_row, 
+.dataGridWidget > div:first-child,
+.gwt-TabLayoutPanelContentContainer,
+.aon-MainCreta-Events *, 
+.aon-EmployeeTree-Events * ,
+div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom{
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aon-Model,
+.aon-Model-Detail,
+#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) {
+	background-color: var(--aonBodyBackgroundColor) !important;
+}
+
+.aon_custom_table_header{
+	border-color: transparent;
+}
+
+.aon_toolbar,
+.aon_flex_column,
+.aon-MainAgreement-ToolBar, 
+.aon-MainAgreement-Agreements,
+.aon-EmployeeTree,
+.aon-EmployeeTree-Employees, 
+.aon-MainCreta-Enterprises,
+.aon-MainCreta-Details,
+.aon-EmployeeTree-EmployeeDetail,
+.aon_custom_dialog,
+.aon_custom_dialog .popupContent,
+#rootPanel .aon-center-panel,
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent,
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer,
+div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom
+ {
+	box-shadow: var(--aonShadowCard) !important;
+	border-radius: var(--aonRadiusCard) !important;
+}
+
+.aon_toolbar,
+.aon_flex_column,
+.aon-MainAgreement-ToolBar, 
+.aon-MainAgreement-Agreements,
+.aon-EmployeeTree,
+.aon-EmployeeTree-Employees, 
+.aon-MainCreta-Enterprises,
+.aon-MainCreta-Details,
+.aon-EmployeeTree-EmployeeDetail,
+.aon_custom_dialog,
+.aon_custom_dialog .popupContent,
+#rootPanel .aon-center-panel{
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has(> .gwt-TreeItem):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has(> .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem):hover ,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has(> tbody > tr > td > .gwt-TreeItem-selected){
+	color: var(--aonHoverColor) !important;
+	background-color: initial !important;
+}
+
+/* .aon-EmployeeTree-Employees */
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style] {
+	color: var(--aonForegroundColor) !important;
+}
+
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
+	box-shadow: var(--aonShadowCard) !important;
+	border-radius: var(--aonRadiusCard) !important;
+	border-color: var(--aonBodyBackgroundColor) !important;
+	background-color: var(--aonBodyBackgroundColor) !important;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected, 
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	border-radius: var(--aonRadius) !important;
+	box-shadow: var(--aonShadowCard) !important;
+	background-color:var(--aonBackgroundColor) !important;
+}
+
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+  background-color: transparent !important;
+}
+
+.gwt-Selector .gwt-Button,
+.aon_toolbar_button.aon_icon_save, 
+[class^="gwt-"] .aon_ok_button, 
+[class^="gwt-"] .aon_cancel_button:not(.aon_toolbar_button), 
+.gwt-Selector .popupContent .aon_button_dialog, 
+.gwt-Selector .popupContent .aon_ok_button_small, 
+.gwt-Selector .popupContent .aon_cancel_button_small,
+.gwt-Selector .gwt-PopupPanel .gwt-Button,
+.aon-finding-toolbar-item.aon_icon_save{
+	background-color: var(--aonButtonColor) !important;
+}
+
+
+.aon_button:disabled, 
+.aon_expand_button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.aon_message_error {
+	background-color: var(--aonErrorColor) !important;
+}
+
+.aon_icon_info,
+.aon_icon_list, 
+.aon-icon-list,
+.aon_icon_tgss,
+.aon_icon_pdf,
+.aon_icon_add,
+.aon-icon-new, 
+.aon_icon_back, 
+.aon_icon_close,
+.aon-icon-reset,
+.aon_icon_receipt,
+.aon_toolbar_button.aon_icon_receipt,
+.aon_icon_check,
+.aon_icon_checked,
+.aon_icon_excel, 
+.aon-icon-excel, 
+.aon-icon-delete,
+.aon_icon_delete, 
+.aon_icon_refresh,
+.aon_icon_undo_all,
+.aon_icon_download, 
+.aon-icon-download,
+.aon-icon-import-excel-trans, 
+.aon-icon-export-excel-trans  {
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-image: none;
+	background-color: var(--aonForegroundColor); ;
+}
+.aon_icon_info:hover,
+.aon_icon_list:hover, 
+.aon-icon-list:hover,
+.aon_icon_undo_all:hover,
+.aon_icon_tgss:hover,
+.aon_button:hover,
+.aon_icon_pdf:hover,
+.aon_icon_close:hover,
+.aon_icon_add:hover, 
+.aon_icon_back:hover
+.aon-icon-new:hover, 
+.aon-icon-reset:hover,
+.aon_icon_check:hover
+.aon_icon_checked:hover,
+.aon_icon_receipt:hover,
+.aon_toolbar_button.aon_icon_receipt:hover,
+.aon_icon_excel:hover, 
+.aon-icon-excel:hover, 
+.aon-icon-delete:hover,
+.aon_icon_delete:hover, 
+.aon_icon_refresh:hover,
+.aon_icon_download:hover, 
+.aon-icon-download:hover,
+.aon-icon-import-excel-trans:hover, 
+.aon-icon-export-excel-trans:hover {
+	background-color: var(--aonBorderHoverColor);
+}
+
+.aon_icon_add, 
+.aon-icon-new, 
+.aon-icon-reset  {
+	mask-image: url(/icons/plus.svg);
+}
+
+.aon_icon_receipt,
+.aon_toolbar_button.aon_icon_receipt{
+	mask-image: url(/icons/file-text.svg);
+}
+	
+.aon_icon_excel, 
+.aon-icon-excel, 
+.aon-icon-import-excel-trans, 
+.aon-icon-export-excel-trans  {	
+	mask-image: url(/icons/file-x.svg);
+}
+
+.aon_icon_info {
+  mask-image: url(/icons/info.svg);
+}
+
+.aon_icon_refresh {
+  	mask-image: url(/icons/refresh-cw.svg);
+}
+
+.aon_icon_back {
+  	mask-image: url(/icons/arrow-left.svg);
+}
+
+.aon_icon_pdf {
+  	mask-image: url(/icons/file-pdf.svg);
+}
+
+.aon_icon_download, 
+.aon-icon-download {
+  	mask-image: url(/icons/download.svg);
+}
+
+.aon_icon_list, 
+.aon-icon-list {
+  mask-image: url(/icons/list.svg);
+}
+
+.aon_icon_delete, 
+.aon-icon-delete {
+  	mask-image: url(/icons/trash-2.svg);
+}
+
+.aon_icon_undo_all {
+	mask-image: url(/icons/reply-all.svg);
+}
+
+.aon_icon_close {
+  	mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE5IDYuNDFMMTcuNTkgNSAxMiAxMC41OSA2LjQxIDUgNSA2LjQxIDEwLjU5IDEyIDUgMTcuNTkgNi40MSAxOSAxMiAxMy40MSAxNy41OSAxOSAxOSAxNy41OSAxMy40MSAxMnoiLz48L3N2Zz4=');
+}
+
+.aon_icon_check {
+  	mask-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Z"/></svg>');
+}
+
+.aon_icon_checked {
+  	mask-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m424-348 248-248-20-20-228 228-114-114-20 20 134 134ZM232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q12 0 22-10t10-22v-496q0-12-10-22t-22-10H232q-12 0-22 10t-10 22v496q0 12 10 22t22 10Zm-32-560v560-560Z"/></svg>');
+}
+
+.aon_icon_tgss {
+  mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAhklEQVR4Xu2SSwqAMAwFowgi4rk9gId05w38JFA3r7WmsYKoA7MJySO0IfpRsGYyCDZZDYJNVoNgk9XnULMDO5O/Jbq4GTU9+SExk5BtMCCmmoL84ZjJz1Ji4QBZpMLiGbjdbhYw9KPhLdtg8Qry03JG2ptOPjlt8O3ho5tRow2f2M7NvJANURy8WwUNP2MAAAAASUVORK5CYII=');
+}
+
+

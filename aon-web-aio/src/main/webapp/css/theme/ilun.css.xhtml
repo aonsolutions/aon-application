@@ -102,12 +102,17 @@
 			border-radius: 0px !important;
 		}
 		
+		div[id$="GraphContainer"] svg text {
+			fill: var(--aonForegroundColor) !important;
+		}
+
 		div[id$="GraphContainer"] svg rect[fill="#ffffff"] {
   			fill: var(--aonBackgroundColor) !important;
 		}
 
-		div[id$="GraphContainer"] svg text {
-  			fill: var(--aonForegroundColor) !important;
+		div[id$="GraphContainer"] svg rect[fill="#f3f3f3"],
+		div[id$="GraphContainer"] svg rect[fill="#e0e0e0"] {
+			fill: var(--aonBorderColor) !important;
 		}
 
 		.aon-panelGrid-odd, .aon-panelGrid-even{
@@ -241,7 +246,7 @@
 				color: var(--aonHoverColor);
 				background-color: var(--aonHoverColor);
 		}
-	
+		
 		.aon-finding-toolbar-item.aon-icon-rubber {
 			mask-image: url(aonResource/9.23-SNAPSHOT/icons/eraser.svg);
 		}
