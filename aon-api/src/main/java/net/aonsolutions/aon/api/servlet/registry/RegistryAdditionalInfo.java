@@ -13,7 +13,8 @@ public enum RegistryAdditionalInfo {
 	BILLABLE,
 	DOMAIN_LINKED,
 	RPROFILE,
-	REGISTRY_COMPANY;
+	REGISTRY_COMPANY,
+	STATUS_NOTE;
 
 	private RegistryAdditionalInfo() {
 		// TODO Auto-generated constructor stub

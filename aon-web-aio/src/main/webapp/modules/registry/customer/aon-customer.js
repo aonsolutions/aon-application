@@ -39,6 +39,8 @@ export class AonCustomer extends AonReg {
 
 	// Method to call GWT sync module
 	linkSigDomain;
+	
+	statusReason;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -995,6 +997,11 @@ export class AonCustomer extends AonReg {
 
 			try {
 				await this.saveNote(selectTag.getDetail().name, date);
+				
+				// El registry en memoria no se recarga: sin esto el tooltip
+				// seguiria mostrando el motivo anterior
+				this.statusReason = selectTag.getDetail().name;
+				
 				this.buildStatusRegistry();
 				this.save();
 			} catch (err) {
@@ -1311,6 +1318,7 @@ export class AonCustomer extends AonReg {
 	}
 
 	setCustomer(customer) {
+		this.statusReason = customer ? customer.statusReason : null;
 		this.registry = new Customer(customer);
 	}
 
