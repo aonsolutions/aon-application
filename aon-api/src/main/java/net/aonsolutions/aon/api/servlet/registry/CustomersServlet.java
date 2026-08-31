@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonValidationUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -256,6 +257,30 @@ public class CustomersServlet extends AonApiHttpServlet {
 		if (api.getData().opt(IJsonNames.EMAIL) != null) {
 			filter = filter.and(f.getEmailProperty().like(JsonUtils.getString(api.getData(), IJsonNames.EMAIL)));
 		}
+		
+		// Rango de F. Estado (fecha de la ultima nota de estado)
+		filter = andDateRange(filter, f.getStatusDateProperty(),
+				api.getData(), "statusDateFrom", "statusDateTo");
+
+		// Rango de F. Bloqueo (expiration_date, solo lo tienen los BLOCKED)
+		filter = andDateRange(filter, f.getExpirationDateProperty(),
+				api.getData(), "blockDateFrom", "blockDateTo");
+		
+		return filter;
+	}
+	
+	private static Filter andDateRange(Filter filter, Property<java.sql.Date> property,
+			JSONObject data, String fromKey, String toKey) {
+
+		Date from = AonDateUtils.simpleParse(JsonUtils.getString(data, fromKey));
+		Date to   = AonDateUtils.simpleParse(JsonUtils.getString(data, toKey));
+
+		if (null != from)
+			filter = filter.and(property.ge(AonDateUtils.toSql(from)));
+
+		if (null != to)
+			filter = filter.and(property.le(AonDateUtils.toSql(to)));
+
 		return filter;
 	}
 

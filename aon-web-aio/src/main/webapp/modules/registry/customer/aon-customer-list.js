@@ -197,6 +197,10 @@ export class AonCustomerList extends AonRegistryList {
 					projectType: detail.projectType,
 					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
+					statusDateFrom: detail.statusDateFrom,
+					statusDateTo: detail.statusDateTo,
+					blockDateFrom: detail.blockDateFrom,
+					blockDateTo: detail.blockDateTo,
 					type : detail.type,
 					page:1,
 					isSig: this.isSig()
@@ -221,6 +225,9 @@ export class AonCustomerList extends AonRegistryList {
 				this.setFilter(this.filter);
 				this.parent.setFilterCustomers(this.filter);
 				this.setSearchValues();	
+				
+				let filterCount = this.getElement("aonOfficePanelToolbarHeaderToolSectionSearchCountFilter");
+				if (filterCount) filterCount.style.display = 'none';
 			}, 300);
 		});
 
@@ -280,21 +287,21 @@ export class AonCustomerList extends AonRegistryList {
 		if((this.filter.status ||  []).includes("ACTIVE")){
 			active.value = true;
 		} else {
-			active.clear();
+			this.clearFilterComponent(active);
 		}
 
 		let inactive = this.getElement("inactive");
 		if((this.filter.status ||  []).includes("INACTIVE")){
 			inactive.value = true;
 		} else {
-			inactive.clear();
+			this.clearFilterComponent(inactive);
 		}
 
 		let blocked = this.getElement("blocked");
         if((this.filter.status ||  []).includes("BLOCKED")){
 			blocked.value = true;
 		} else {
-			blocked.clear();
+			this.clearFilterComponent(blocked);
 		}
 
 		const typeEl = this.getElement("type");
@@ -311,6 +318,75 @@ export class AonCustomerList extends AonRegistryList {
 			typeInput.value = '';
 			typeEl.setValue('');
 		}
+		
+		// Los rangos de fecha no se reconstruyen: buildOptionsFilter solo se
+		// llama una vez y el nodo es el mismo, asi que hay que repoblarlos
+		// a mano igual que el resto de campos
+		this.setDateFilterValues();
+
+		// Target no tiene ni notas de estado ni expiracion
+		typeEl.addEventListener(EVENT.SELECT, () => this.toggleDateFilters(typeEl.value));
+		this.toggleDateFilters(type);
+	}
+	
+	/**
+	 * Los filtros de fecha solo aplican a clientes. Al ocultarlos se limpian:
+	 * getValues() serializa el formulario entero y arrastraria valores que el
+	 * usuario ya no ve.
+	 */
+	toggleDateFilters(type) {
+		const hidden = String(type) === "false";
+
+		["statusDateRange", "blockDateRange"].forEach(id => {
+			const wrap = this.getElement(id);
+			if (wrap) wrap.style.display = hidden ? 'none' : '';
+		});
+
+		if (hidden) {
+			["statusDateFrom", "statusDateTo", "blockDateFrom", "blockDateTo"]
+			.forEach(name => {
+				const el = this.getElement(name);
+				if (el && el.clear) el.clear();
+			});
+		}
+	}
+	
+	setDateFilterValues() {
+		["statusDateFrom", "statusDateTo", "blockDateFrom", "blockDateTo"]
+		.forEach(name => {
+			const el = this.getElement(name);
+			if (!el) return;
+
+			const value = this.filter[name];
+
+			if (value) {
+				if (typeof el.setDate === 'function') el.setDate(value);
+				else el.value = value;
+			} else {
+				this.clearFilterComponent(el);
+			}
+		});
+	}
+	
+	/**
+	 * Reset visual de un componente del filtro. No basta con clear(): en varios
+	 * componentes solo resetea el estado interno y el input pintado se queda
+	 * con el valor anterior (clearFormData de AonSearch usa setDate('') y
+	 * checked = false por este mismo motivo).
+	 */
+	clearFilterComponent(el) {
+		if (!el) return;
+
+		if (typeof el.setDate === 'function') el.setDate('');
+		else if (typeof el.clear === 'function') el.clear();
+
+		if ('checked' in el) el.checked = false;
+
+		// Ultimo recurso: el input real, que es lo que ve el usuario
+		el.querySelectorAll('input').forEach(input => {
+			if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
+			else input.value = '';
+		});
 	}
 
 	downloadExcel(type) {

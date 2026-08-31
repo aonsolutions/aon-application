@@ -907,6 +907,8 @@ public interface Properties {
 		Property<Integer> getRegistryRelationProperty();
 		
 		Property<Integer> getRaddInfoDomainProperty();
+		
+		Property<java.sql.Date> getStatusDateProperty();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties {

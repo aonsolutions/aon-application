@@ -1,6 +1,7 @@
 import { AonCheckbox } from "../../components/aon-checkbox.js";
+import { AonDate } from "../../components/aon-date.js";
 import { AON_WORKGROUP } from "../../environments/aonTag.js";
-import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 
 
 const AON_CUSTOMER = {
@@ -186,10 +187,54 @@ const CustomerFilter = [
     },
     {
         type: CONSTANT.HTML_ELEMENT,
+        id: "statusDateRange",
+        element: getDateRange("statusDateRange", "F. Estado", "statusDateFrom", "statusDateTo")
+    },
+    {
+        type: CONSTANT.HTML_ELEMENT,
+        id: "blockDateRange",
+        element: getDateRange("blockDateRange", "F. Bloqueo", "blockDateFrom", "blockDateTo")
+    },
+    {
+        type: CONSTANT.HTML_ELEMENT,
         id: CONSTANT.HTML_ELEMENT,
         element: getButtonsStatus()
     }
 ];
+
+/**
+ * Pareja desde/hasta en horizontal. El div va como HTML_ELEMENT porque
+ * divOpts apila sus hijos directos; los inputs siguen siendo descendientes
+ * con name propio, que es lo que serializa getValues().
+ */
+function getDateRange(id, title, fromName, toName) {
+    const wrap = document.createElement(TAG.DIV);
+    wrap.id = id;
+
+    const row = document.createElement(TAG.DIV);
+    row.style.display = 'flex';
+    row.style.gap = '10px';
+    wrap.appendChild(row);
+
+    const cell = (name, cellTitle) => {
+        const el = new AonDate();
+        el.id = name;
+        el.name = name;
+        el.title = cellTitle;
+
+        const div = document.createElement(TAG.DIV);
+        div.style.flex = '1';
+        div.style.minWidth = '0';   // sin esto el input no encoge y desborda
+        div.appendChild(el);
+
+        return div;
+    };
+
+    row.appendChild(cell(fromName, title + " (" + ( MSG.FROM || 'Desde' ) + ")"));
+    row.appendChild(cell(toName, title + " (" + ( MSG.TO || 'Hasta' ) + ")"));
+
+    return wrap;
+}
 
 export const OfficeEnums = {
     OfficeViews,
