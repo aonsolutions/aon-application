@@ -53,6 +53,7 @@ body,
 .aon_custom_text_box_title,
 .aon_custom_table_cell_footer,
 .aon_custom_table_cell_header,
+.aon_display_grid_cell,
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
 	color: var(--aonForegroundColor);
 }
@@ -75,12 +76,17 @@ textarea:focus,
 }
 
 
-.aon_custom_row {
-	border-color: var(--aonBorderColor);	
+.aon_custom_row,
+.aon_display_grid_row,
+.aon_display_grid_cell{
+	border-color: var(--aonBorderColor) !important;	
 }
-.aon_custom_row:hover {
-	box-shadow: var(--aonShadowGlow);
-	border-color: var(--aonBorderHoverColor);	
+.aon_custom_row:hover,
+.aon_display_grid_row:hover,
+.aon_display_grid_row:hover .aon_display_grid_cell 
+{
+	box-shadow: var(--aonShadowGlow) !important;
+	border-color: var(--aonBorderHoverColor) !important;	
 }
 
 .aon_grid_header, 
@@ -90,10 +96,16 @@ textarea:focus,
 .dataGridWidget > div:first-child,
 .gwt-TabLayoutPanelContentContainer,
 .aon-MainCreta-Events *, 
-.aon-EmployeeTree-Events * {
-	background-color: var(--aonBackgroundColor);
+.aon-EmployeeTree-Events * ,
+div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom{
+	background-color: var(--aonBackgroundColor) !important;
 }
 
+.aon-Model,
+.aon-Model-Detail,
+#rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) {
+	background-color: var(--aonBodyBackgroundColor) !important;
+}
 
 .aon_custom_table_header{
 	border-color: transparent;
@@ -112,7 +124,8 @@ textarea:focus,
 .aon_custom_dialog .popupContent,
 #rootPanel .aon-center-panel,
 .aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent,
-.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer
+.aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer,
+div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom
  {
 	box-shadow: var(--aonShadowCard) !important;
 	border-radius: var(--aonRadiusCard) !important;
@@ -150,9 +163,11 @@ textarea:focus,
 	color: var(--aonForegroundColor) !important;
 }
 
+
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
 	box-shadow: var(--aonShadowCard) !important;
 	border-radius: var(--aonRadiusCard) !important;
+	border-color: var(--aonBodyBackgroundColor) !important;
 	background-color: var(--aonBodyBackgroundColor) !important;
 }
 
@@ -190,6 +205,9 @@ textarea:focus,
 	background-color: var(--aonErrorColor) !important;
 }
 
+.aon_icon_info,
+.aon_icon_list, 
+.aon-icon-list,
 .aon_icon_tgss,
 .aon_icon_pdf,
 .aon_icon_add,
@@ -206,6 +224,7 @@ textarea:focus,
 .aon-icon-delete,
 .aon_icon_delete, 
 .aon_icon_refresh,
+.aon_icon_undo_all,
 .aon_icon_download, 
 .aon-icon-download,
 .aon-icon-import-excel-trans, 
@@ -215,7 +234,10 @@ textarea:focus,
 	background-image: none;
 	background-color: var(--aonForegroundColor); ;
 }
-
+.aon_icon_info:hover,
+.aon_icon_list:hover, 
+.aon-icon-list:hover,
+.aon_icon_undo_all:hover,
 .aon_icon_tgss:hover,
 .aon_button:hover,
 .aon_icon_pdf:hover,
@@ -258,6 +280,10 @@ textarea:focus,
 	mask-image: url(/icons/file-x.svg);
 }
 
+.aon_icon_info {
+  mask-image: url(/icons/info.svg);
+}
+
 .aon_icon_refresh {
   	mask-image: url(/icons/refresh-cw.svg);
 }
@@ -275,10 +301,20 @@ textarea:focus,
   	mask-image: url(/icons/download.svg);
 }
 
+.aon_icon_list, 
+.aon-icon-list {
+  mask-image: url(/icons/list.svg);
+}
+
 .aon_icon_delete, 
 .aon-icon-delete {
   	mask-image: url(/icons/trash-2.svg);
 }
+
+.aon_icon_undo_all {
+	mask-image: url(/icons/reply-all.svg);
+}
+
 .aon_icon_close {
   	mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE5IDYuNDFMMTcuNTkgNSAxMiAxMC41OSA2LjQxIDUgNSA2LjQxIDEwLjU5IDEyIDUgMTcuNTkgNi40MSAxOSAxMiAxMy40MSAxNy41OSAxOSAxOSAxNy41OSAxMy40MSAxMnoiLz48L3N2Zz4=');
 }
@@ -294,4 +330,5 @@ textarea:focus,
 .aon_icon_tgss {
   mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAhklEQVR4Xu2SSwqAMAwFowgi4rk9gId05w38JFA3r7WmsYKoA7MJySO0IfpRsGYyCDZZDYJNVoNgk9XnULMDO5O/Jbq4GTU9+SExk5BtMCCmmoL84ZjJz1Ji4QBZpMLiGbjdbhYw9KPhLdtg8Qry03JG2ptOPjlt8O3ho5tRow2f2M7NvJANURy8WwUNP2MAAAAASUVORK5CYII=');
 }
+
 
