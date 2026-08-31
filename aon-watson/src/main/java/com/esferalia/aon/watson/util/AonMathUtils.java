@@ -124,6 +124,9 @@ public class AonMathUtils {
 	public static boolean isLessThanZero(double value) {
 		return round( value ) < 0.0;
 	}
+	public static boolean isLessThanOrEqualZero(double value) {
+		return round( value ) <= 0.0;
+	}
 
 	/**
 	 * Devuelve verdadero si el valor es menor que valueToCompare 
