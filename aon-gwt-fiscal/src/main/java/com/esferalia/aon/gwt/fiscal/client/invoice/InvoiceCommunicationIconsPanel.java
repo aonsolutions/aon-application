@@ -17,7 +17,16 @@ public class InvoiceCommunicationIconsPanel extends FlowPanel {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
 		if (AonCollectionUtils.isEmpty(invoice.getCommunicationInfo())) {
-			add( new InvoiceCommunicationIcon( options, invoice, null, null ));
+			options.getCommunicationConfiguration()
+				.ifPresentOrElse(icc -> {
+					AonCollectionUtils.stream( icc.getTypes( invoice.getType(), invoice.getExpDate() ))
+						.forEach( type -> add( new InvoiceCommunicationIcon( options, invoice, type, null ) ) );
+					if (icc.isNoSif( invoice.getExpDate() )) {
+						add( new InvoiceCommunicationIcon( options, invoice ) );
+					}
+				}
+				, () -> add( new InvoiceCommunicationIcon( options, invoice, null, null ) )
+			);
 		} else {
 			AonCollectionUtils.valuesStream(invoice.getCommunicationInfo())
 				.filter( Objects::nonNull )

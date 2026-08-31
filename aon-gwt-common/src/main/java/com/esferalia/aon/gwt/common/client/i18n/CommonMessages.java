@@ -4588,6 +4588,11 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("An\u00E1lisis de facturas")
 	String invoiceAnalysis();
-
+	
+	@DefaultMessage("Sin sistema facturaci\u00F3n")
+	String noSif();
+	
+	@DefaultMessage("Archivada")
+	String archived();
 }
 
