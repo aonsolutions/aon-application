@@ -53,7 +53,7 @@ public class LROE140 extends LROE {
 	}
 	
 	@Deprecated
-	protected Cabecera140Type buildCabecera(Person person, LROEInfo info) {
+	protected static Cabecera140Type buildCabecera(Person person, LROEInfo info) {
 		Cabecera140Type cabecera = new Cabecera140Type();
 		cabecera.setModelo(info.getModelo());
 		NIFPersonaType nif = new NIFPersonaType();
@@ -109,7 +109,7 @@ public class LROE140 extends LROE {
 	}
 	
 	@Deprecated
-	protected JSONObject buildJSON(Person person, LROEInfo info) {
+	protected static JSONObject buildJSON(Person person, LROEInfo info) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, "LROE");
 		json.put(IJsonNames.APA, info.getSubcapitulo());

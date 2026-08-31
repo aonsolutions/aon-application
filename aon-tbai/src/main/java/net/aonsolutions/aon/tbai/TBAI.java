@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -18,6 +19,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -31,7 +34,9 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.DataRequestType;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -106,41 +111,138 @@ public class TBAI {
 		
 		return dataRequest;		
 	}
+	
+	// **************************************************************
+	// ************************************************ [MODEL] *****
+	// **************************************************************		
 
-	
-	// **************************************************************
-	// ************************************************ [CANCEL] ****
-	// **************************************************************
-	
-	static class TbaiBajaContext {
+	static class TbaiContext {
 		Invoice invoice;
-		AnulaTicketBai request;
+		TicketBai acceptRequest;
+		TbaiBlockchain blockchain;
+		AnulaTicketBai cancelRequest;
 		
-		public TbaiBajaContext(Invoice invoice, AnulaTicketBai request) {
+		public TbaiContext(Invoice invoice, AnulaTicketBai request) {
 			this.invoice = invoice;
-			this.request = request;
+			this.cancelRequest = request;
+		}
+		
+		public TbaiContext(Invoice invoice, TicketBai request) {
+			this.invoice = invoice;
+			this.acceptRequest = request;
 		}
 		
 		public Invoice getInvoice() {
 			return invoice;
 		}
 		
-		public AnulaTicketBai getRequest() {
-			return request;
+		public AnulaTicketBai getCancelRequest() {
+			return cancelRequest;
+		}
+		
+		public TicketBai getAcceptRequest() {
+			return acceptRequest;
+		}
+
+		public TbaiBlockchain getBlockchain() {
+			return blockchain;
+		}
+		
+		public void setBlockchain(TbaiBlockchain blockchain) {
+			this.blockchain = blockchain;
 		}
 	}
 	
+	// **************************************************************
+	// ************************************************ [ACCEPT] ****
+	// **************************************************************
+		
+	public static TbaiBlockchain getBlockchain(AONContext ctx, Integer actualInvoice) {
+		DataResponse dr = DataResponseDAO.getLastDataResponse(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+			.and(f.getSourceIdProperty().ne(actualInvoice))
+			.and(f.getCodeProperty().ne("baja"))).orElse(new DataResponse());
+		
+		DataResponseDetail drd = dr.getId() != null ? DataResponseDAO.getDataResponseDetailStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("blockchain")))
+			.findFirst()	
+			.orElse(new DataResponseDetail()) : new DataResponseDetail();
+		
+		return TbaiBlockchain.fromJSON(drd.getDataValue());
+	}
+	
+	public static TbaiBlockchain getBlockchain(TicketBai tbai, Invoice invoice) throws InvoiceCommunicationException {
+		try {
+			return new TbaiBlockchain().setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
+				.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
+				.setSignature(TbaiSign.getSign(XMLUtils.marshal(tbai, TicketBai.class)).substring(0, 100));
+		} catch (ParserConfigurationException | SAXException | IOException | JAXBException e) {
+			e.printStackTrace();
+			throw new InvoiceCommunicationException(e);
+		}	
+	}
+	
+	public static InvoiceCommunicatorContext accept(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		try {
+			TbaiBlockchain blockchain = getBlockchain(ctx, context.invoiceStream().findFirst().map(Invoice::getId).orElse(null));
+			List<TbaiContext> list = new LinkedList<>();
+			for(Invoice invoice : context.invoiceStream().toList()) {
+//				InvoiceDAO.accept(ctx, invoice);
+				TbaiContext accept = new TbaiContext(invoice, Invoice2tbai.build(context.getCompany(), invoice, context.getConfig(), blockchain));
+				list.add(accept);
+//				TbaiValidation.validateEmision(accept.getAcceptRequest());
+				blockchain = getBlockchain(accept.getAcceptRequest(), invoice);
+			}
+		
+			for(TbaiContext tc : list) {
+				byte[] requestBytes = XMLUtils.marshal(tc.getAcceptRequest(), TicketBai.class);
+				byte[] requestBytesSigned = TbaiSigner.getInstance().sign(context.getConfig(), requestBytes);
+				String uri = TbaiUri.getUrlEmision(context.getConfig());
+				byte[] responseBytes = XMLUtils.send(context.getConfig().getCertificate(), uri, requestBytesSigned);
+				saveAccept(ctx, context, tc, requestBytes, responseBytes);
+			}
+		
+			return context;
+		} catch (JAXBException | IOException | AonSignerException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
+			throw new InvoiceCommunicationException(e);
+		}
+	}
+	
+	private static InvoiceCommunicatorContext saveAccept(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, byte[] requestBytes, byte[] responseBytes) throws JAXBException {
+		// SAVE INVOICE DATA 
+		// SAVE BLOCKCHAIN DATA tc.getBlockchain()
+ 		
+		InvoiceBatch invoiceBatch = InvoiceCommunicationDAO.saveAccept(ctx, context.getDomain(), InvoiceCommunicationType.TBAI, requestBytes, responseBytes);
+		TicketBaiResponse response = (TicketBaiResponse) XMLUtils.unmarshal(responseBytes, TicketBaiResponse.class);
+
+		Salida salida = response.getSalida();
+	    String estado = salida != null ? salida.getEstado() : null;
+	    boolean ok = "00".equals(estado) || "01".equals(estado);
+		InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, tc.invoice.getId(), 
+				ok ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+		return context;
+	}
+
+	// **************************************************************
+	// ************************************************ [CANCEL] ****
+	// **************************************************************
+	
+	
+	
 	public static InvoiceCommunicatorContext cancel(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
 		try {
-			List<TbaiBajaContext> bajaList = context.invoiceStream()
-					.map(i -> new TbaiBajaContext(i, Invoice2tbai.buildBaja(context.getCompany(), i, context.getConfig()))).toList();
+			List<TbaiContext> bajaList = context.invoiceStream()
+					.map(i -> new TbaiContext(i, Invoice2tbai.buildBaja(context.getCompany(), i, context.getConfig()))).toList();
 			
-			for(TbaiBajaContext baja : bajaList) {
-				TbaiValidation.validateAnulacion(baja.getRequest());
+			for(TbaiContext baja : bajaList) {
+				TbaiValidation.validateAnulacion(baja.getCancelRequest());
 			}
 			
-			for(TbaiBajaContext baja : bajaList) {
-				byte[] requestBytes = XMLUtils.marshal(baja.getRequest(), AnulaTicketBai.class);
+			for(TbaiContext baja : bajaList) {
+				byte[] requestBytes = XMLUtils.marshal(baja.getCancelRequest(), AnulaTicketBai.class);
 				byte[] requestBytesSigned = TbaiSigner.getInstance().sign(context.getConfig(), requestBytes);
 				String uri = TbaiUri.getUrlAnulacion(context.getConfig());
 				byte[] responseBytes = XMLUtils.send(context.getConfig().getCertificate(), uri, requestBytesSigned);

@@ -1,0 +1,47 @@
+<ns2:LROEPF140IngresosConFacturaConSGAltaRespuesta xmlns:ns2="https://www.batuz.eus/fitxategiak/batuz/LROE/esquemas/LROE_PF_140_1_1_Ingresos_ConfacturaConSG_AltaRespuesta_V1_0_2.xsd">
+   <Cabecera>
+      <Modelo>140</Modelo>
+      <Capitulo>1</Capitulo>
+      <Subcapitulo>1.1</Subcapitulo>
+      <Operacion>A00</Operacion>
+      <Version>1.0</Version>
+      <Ejercicio>2022</Ejercicio>
+      <ObligadoTributario>
+         <NIF>79732487C</NIF>
+         <ApellidosNombreRazonSocial>ARRIOLA LEJARDI ANE</ApellidosNombreRazonSocial>
+      </ObligadoTributario>
+   </Cabecera>
+   <DatosPresentacion>
+      <FechaPresentacion>28-04-2020 16:56:29</FechaPresentacion>
+      <NIFPresentador>79732487C</NIFPresentador>
+   </DatosPresentacion>
+   <Registros>
+      <Registro>
+         <Identificador>
+            <IDFactura>
+               <SerieFactura>A2022</SerieFactura>
+               <NumFactura>0399</NumFactura>
+               <FechaExpedicionFactura>06-05-2022</FechaExpedicionFactura>
+            </IDFactura>
+         </Identificador>
+         <SituacionRegistro>
+            <EstadoRegistro>Incorrecto</EstadoRegistro>
+            <CodigoErrorRegistro>B4_2000003</CodigoErrorRegistro>
+            <DescripcionErrorRegistroES>Registro duplicado.</DescripcionErrorRegistroES>
+			<DescripcionErrorRegistroEU>Erregistro bikoiztua.</DescripcionErrorRegistroEU>
+         </SituacionRegistro>
+      </Registro>
+      <Registro>
+         <Identificador>
+            <IDFactura>
+               <SerieFactura>A2022</SerieFactura>
+               <NumFactura>0400</NumFactura>
+               <FechaExpedicionFactura>12-05-2022</FechaExpedicionFactura>
+            </IDFactura>
+         </Identificador>
+         <SituacionRegistro>
+            <EstadoRegistro>Correcto</EstadoRegistro>
+         </SituacionRegistro>
+      </Registro>
+   </Registros>
+</ns2:LROEPF140IngresosConFacturaConSGAltaRespuesta>

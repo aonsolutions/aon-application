@@ -37,6 +37,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.C
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaFacturasEmitidasType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_altapeticion_v1_0_2.LROEPJ240FacturasEmitidasConSGAltaPeticion;
+import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_altarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGAltaRespuesta;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultapeticion_v1_0_0.LROEPJ240FacturasEmitidasConSGConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_1_facturasemitidas_consg_consultarespuesta_v1_0_1.LROEPJ240FacturasEmitidasConSGConsultaRespuesta;
@@ -60,7 +61,11 @@ public class LROE240_1_1 extends LROE240 {
 	private static final String CAPITULO = "1";
 	private static final String SUBCAPITULO = "1.1";
 	
-	private static LROEPJ240FacturasEmitidasConSGAltaPeticion build(Company company, Invoice invoice, LROEInfo info, byte[] data) {
+	/**
+	 * Construye la peticion de alta de facturas emitidas con software garante. El
+	 * fichero TicketBAI ya firmado se incorpora en el nodo TicketBai.
+	 */
+	public static LROEPJ240FacturasEmitidasConSGAltaPeticion buildAlta(Company company, Invoice invoice, LROEInfo info, byte[] data) {
 		LROEPJ240FacturasEmitidasConSGAltaPeticion proba = new LROEPJ240FacturasEmitidasConSGAltaPeticion();
 		proba.setCabecera(buildCabecera(company, info));
 
@@ -88,20 +93,44 @@ public class LROE240_1_1 extends LROE240 {
 	public LROEResponse alta(Company company, InvoiceCommunicationConfiguration icc, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
 			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(icc, invoice));
-			final LROEPJ240FacturasEmitidasConSGAltaPeticion p240 = build(company, invoice, info, tbai); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasConSGAltaPeticion.class );
-			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
-
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p240, bos );
-			byte[] xml = bos.toByteArray();
+			byte[] xml = buildAltaXml(company, invoice, info, tbai);
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return sendAlta(icc, company, info, xml).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
+		}
+	}
+	
+	/**
+	 * Serializa la peticion de alta tal y como se incorpora al cuerpo de la peticion,
+	 * antes de comprimirla en GZIP.
+	 */
+	public static byte[] buildAltaXml(Company company, Invoice invoice, LROEInfo info, byte[] tbai) throws JAXBException {
+		return XMLUtils.marshal(buildAlta(company, invoice, info, tbai), LROEPJ240FacturasEmitidasConSGAltaPeticion.class);
+	}
+	
+	/**
+	 * Comprime y envia al servicio de entradas la peticion de alta indicada, sin
+	 * persistir ni la peticion ni la respuesta.
+	 */
+	public LROEResponse sendAlta(InvoiceCommunicationConfiguration icc, Company company, LROEInfo info, byte[] requestXml) throws IOException {
+		LROEResponse response = post(icc, TbaiUri.getUrlEmision(icc), buildJSON(company, info), toGzip(requestXml));
+		return readRespuesta(response);
+	}
+	
+	/**
+	 * Lee la situacion de los registros del objeto de respuesta del alta. Si la
+	 * respuesta no se puede interpretar se conserva el estado que traen las cabeceras.
+	 */
+	private LROEResponse readRespuesta(LROEResponse response) {
+		if (response.getData() == null) return response;
+		try {
+			LROEPJ240FacturasEmitidasConSGAltaRespuesta respuesta = (LROEPJ240FacturasEmitidasConSGAltaRespuesta)
+				XMLUtils.unmarshal(response.getData(), LROEPJ240FacturasEmitidasConSGAltaRespuesta.class);
+			return readRegistros(response, respuesta.getRegistros());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return response;
 		}
 	}
 	
