@@ -33,6 +33,8 @@
 
 	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
 	--aonBorderHoverColor: var(--aonPurple);
+
+	--aonTopAppTextColor: var(--aonForegroundColor);
 	
 	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
 
