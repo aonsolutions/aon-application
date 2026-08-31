@@ -1,4 +1,6 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -35,14 +37,19 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.registry.RegistryNoteUtils;
+
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -256,9 +263,55 @@ public class RegistryServlet extends AonApiHttpServlet {
 						if(company != null && !company.isEmpty()) object.put(IJsonNames.REGISTRY_COMPANY, CompanyJSON.toJSON(company));
 					}
 				}
+				
+				if(RegistryAdditionalInfo.STATUS_NOTE.equals(rai)) {
+					Optional<RegistryNote> note = AON.getRegistryNoteStream(api.getDomain(), api.getUser(),
+							f -> f.getRegistryProperty().eq(registryId)
+								.and(f.getNoteTypeProperty().eq(NoteType.CUSTOMER_STATUS.value())))
+						.filter(n -> null != n.getNoteDate())
+						.max(Comparator.comparing(RegistryNote::getNoteDate));
+
+					String reason = note.isPresent()
+							? RegistryNoteUtils.extractReason(note.get().getComments())
+							: null;
+
+					String statusDate = getStatusDate(object, note);
+
+					object.put("statusDate", null == statusDate ? JSONObject.NULL : statusDate);
+					object.put("statusReason", null == reason ? JSONObject.NULL : reason);
+				}
+				
 			});
 		}
 		return object;
+	}
+	
+	/**
+	 * Fecha a mostrar en la columna F. Estado:
+	 *
+	 *  1. F. Expiracion de la ultima nota de estado (solo la llevan los BLOCKED)
+	 *  2. Fecha de la propia nota
+	 *  3. Creacion del registro, cuando nunca ha cambiado de estado
+	 */
+	private static String getStatusDate(JSONObject object, Optional<RegistryNote> note) {
+		Date date = null;
+
+		if (note.isPresent()) {
+			// simpleParse es el par de simpleFormat, que es lo que escribio la nota
+			date = AonDateUtils.simpleParse(
+					RegistryNoteUtils.extractExpirationDate(note.get().getComments()));
+
+			if (null == date)
+				date = note.get().getNoteDate();
+		}
+
+		if (null == date) {
+			long creation = object.optLong(IJsonNames.CREATION_DATE, 0L);
+			if (creation > 0) date = new Date(creation);
+		}
+
+		// Mismo formato que expirationDate: el front lo trocea por '-'
+		return null == date ? null : AonDateUtils.format(date, AonDateUtils.SIMPLE_DATE_FORMAT4);
 	}
 	
 	public static void saveRegistryAdditionalInfo(AonApiData api, Integer registryId, Integer registryDomain) {

@@ -146,8 +146,17 @@ public class CustomersServlet extends AonApiHttpServlet {
 				: 50;
 
 		if (isTarget(api)) {
-			return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(),
-					api.getUser().getLogin(), f -> targetFilter(api, f), perPage * (page - 1), perPage));
+			JSONArray array = new JSONArray();
+
+			AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), f -> targetFilter(api, f), perPage * (page - 1), perPage)
+				.forEach(target -> {
+					JSONObject object = TargetJSON.toJSON(target);
+					array.put(RegistryServlet.getRegistryAdditionalInfo(
+							object, api, api.getData(), target.getId(), null));
+				});
+
+			return array;
 		} else {
 			
 			boolean isSig = api.getData().optBoolean("isSig");

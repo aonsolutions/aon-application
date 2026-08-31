@@ -14,6 +14,15 @@ export class AonCustomerList extends AonRegistryList {
 	parent;
 	office;
 	clientFile;
+	
+	// checkbox 5 + 10 + 24 + 13 + 9 + 9 + 9 + 6 + 10 + 5 = 100
+	columnWidths = {
+		document: '10%',
+		name:     '24%',
+		alias:    '13%',
+		status:   '9%',
+		link:     '6%'
+	};
 
 	constructor(parent) {
 		super();
@@ -27,16 +36,22 @@ export class AonCustomerList extends AonRegistryList {
 	}
 	
 	async getRegistries() {
-		this.filter = { ...this.filter, additional_info: ["MEDIA"] };
+		this.filter = { ...this.filter, additional_info: ["MEDIA", "STATUS_NOTE"] };
 		let customers = await getCustomers(this.filter);
- 
+
 		(customers || []).forEach(c => {
 			c.contact = this.buildContactCell(c.media);
- 
+
+			// F. Estado: fecha de la ultima nota de estado o, si no la hay,
+			// la creacion del registro (ya viene resuelto desde el back)
+			c.statusDateText = this.formatShortDate(c.statusDate);
+
+			c.info = this.buildInfoCell(c.statusReason);
+
 			// OJO AL ORDEN: se calcula antes de tocar c.status, que es lo que
 			// distingue un bloqueo programado de uno ya efectivo
 			c.blockDate = this.buildBlockDate(c);
- 
+
 			// La columna Estado usa MSG[c.status]. Ponemos el estado efectivo
 			// para que lo que se ve coincida con lo que filtra: un BLOCKED con
 			// fecha futura se lista como ACTIVE.
@@ -44,7 +59,7 @@ export class AonCustomerList extends AonRegistryList {
 			// cliente completo al servidor usando solo el id.
 			if (c.effectiveStatus) c.status = c.effectiveStatus;
 		});
- 
+
 		return customers;
 	}
  
@@ -69,9 +84,14 @@ export class AonCustomerList extends AonRegistryList {
 		return `${parts[2]}/${parts[1]}/${parts[0]}`;
 	}
  
+	addColumnsAfterStatus() {
+		this.TABLE.addColumn('F. Estado', 'string', 'statusDateText', '9%');
+		this.TABLE.addColumn('F. Bloqueo', 'string', 'blockDate', '9%');
+	}
+
 	addCustomColumns() {
-		this.TABLE.addColumn('Bloqueo', 'string', 'blockDate', '10%');
 		this.TABLE.addColumn('Contacto', 'html', 'contact', '10%');
+		this.TABLE.addColumn('', 'html', 'info', '5%');   // sin titulo
 	}
 	
 	buildContactCell(media) {
@@ -102,9 +122,28 @@ export class AonCustomerList extends AonRegistryList {
 	    return wrap;
 	}
 
+	/**
+	 * Icono de info con el motivo del ultimo estado. Sin motivo no se pinta
+	 * icono, pero hay que devolver siempre un nodo: AonTable hace appendChild
+	 * directo sobre el valor de las columnas 'html'.
+	 */
+	buildInfoCell(reason) {
+		const wrap = document.createElement('span');
+		if (!reason) return wrap;
+
+		const i = document.createElement('i');
+		i.className = 'material-icons';
+		i.textContent = 'info';
+		i.style.color = '#5f6368';
+		i.title = reason;
+		wrap.appendChild(i);
+
+		return wrap;
+	}
+
 	async getCustomerCustom(registry){
 		if(registry && registry.id){
-			let additional_info = ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT'];
+			let additional_info = ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT', 'STATUS_NOTE'];
 			if(this.isOffice()) {
 				additional_info.push('REGISTRY_COMPANY');
 				additional_info.push('RRELATIONSHIP');
