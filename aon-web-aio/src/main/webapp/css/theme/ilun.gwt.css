@@ -3,7 +3,7 @@
 :root{
 	--aonBlack: #0A0A0A;
 	--aonMidGray:#C9C9C7;
-	--aonDrakGray:#3A3A3A;
+	--aonDarkGray:#3A3A3A;
 	--aonOffWhite:#F3F3F1;
 	--aonPurple:oklch(52% .234 277);
 	
@@ -18,7 +18,7 @@
 	--aonTopMenuAvailable: var(--aonOffWhite);
 
 	--aonBackgroundColor: var(--aonBlack);
-	--aonBodyBackgroundColor: var(--aonDrakGray);
+	--aonBodyBackgroundColor: var(--aonDarkGray);
 	--aonHeaderBackgroundColor: var(--aonBlack);
 	
 	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
@@ -38,16 +38,35 @@
 
 }
 
+body,
 .aonBody {
 	color: var(--aonForegroundColor);
 }
 
+.gwt-Label,
 .gwt-Selector,
 .aon_custom_row,
 .aon_custom_table_cell_footer,
 .aon_custom_table_cell_header {
 	color: var(--aonForegroundColor);
 }
+
+select,
+.aon_between_input, 
+.aon_custom_text_box_input{
+	color: var(--aonForegroundColor);
+	border-color: var(--aonDarkGray);
+	background-color: var(--aonDarkGray) ;
+}
+
+input:focus, 
+select:focus, 
+textarea:focus,
+.aon_between_input:focus, 
+.aon_custom_text_box_input:focus{
+	border-color: var(--aonBorderHoverColor) !important;	
+}
+
 
 .aon_custom_row {
 	border-color: var(--aonBorderColor);	
@@ -61,8 +80,17 @@
 .aon_custom_table_header, 
 .aon_custom_table_footer, 
 .aon_display_grid_header_row, 
-.dataGridWidget > div:first-child {
+.dataGridWidget > div:first-child,
+.gwt-TabLayoutPanelContentContainer,
+.aon-MainCreta-Events *, 
+.aon-EmployeeTree-Events * {
 	background-color: var(--aonBackgroundColor);
+}
+
+
+
+.aon_custom_table_header{
+	border-color: transparent;
 }
 
 .aon_toolbar,
@@ -97,4 +125,31 @@
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem,
 .gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style] {
 	color: var(--aonForegroundColor) !important;
+}
+
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs{
+	box-shadow: var(--aonShadowCard) !important;
+	border-radius: var(--aonRadiusCard) !important;
+	background-color: var(--aonBodyBackgroundColor) !important;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected, 
+.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	box-shadow: var(--aonShadowCard) !important;
+	background-color:var(--aonBackgroundColor) !important;
+}
+
+.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+  background-color: transparent !important;
+}
+
+.aon_toolbar_button.aon_icon_save, 
+.aon-finding-toolbar-item.aon_icon_save{
+	background-color: var(--aonButtonColor) !important;
+}
+
+.aon_button:disabled, 
+.aon_expand_button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }

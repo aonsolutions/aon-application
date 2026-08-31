@@ -133,8 +133,10 @@ aon-toolbar > header.aonToolbar,
 	box-shadow: var(--aonShadowGlow);
 	border-color: var(--aonBorderHoverColor);
 }
---defaultWelcomeImg: /assets/aon-ai-black-logo.svg;
+
+.aonButton,
 .aonTimeControlButton {
+	color: var(--aonForegroundColor) !important;
 	background-color: var(--aonButtonColor) !important;
 }
 
@@ -171,7 +173,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 }
 
 #aonMenuAnchor.close{
-	width: 100%;
+	width: initial;
 }
 
 #aonMenuSidenav #aonMenuList {
