@@ -9,11 +9,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-public class InvoiceCommunicationIconsPanel extends FlowPanel {
-	public InvoiceCommunicationIconsPanel(InvoiceModuleOptions options,  Invoice invoice ) {
+public class InvoiceCommunicationPanel extends FlowPanel {
+	public InvoiceCommunicationPanel(InvoiceModuleOptions options,  Invoice invoice ) {
 		this(options, invoice, true);
 	}
-	public InvoiceCommunicationIconsPanel(InvoiceModuleOptions options,  Invoice invoice , boolean clickable ) {
+	public InvoiceCommunicationPanel(InvoiceModuleOptions options,  Invoice invoice , boolean clickable ) {
 		setStyleName(AON.CSS.aonNowrap());
 		addStyleName(AON.CSS.aonFlexBetween());
 		if (AonCollectionUtils.isEmpty(invoice.getCommunicationInfo())) {
