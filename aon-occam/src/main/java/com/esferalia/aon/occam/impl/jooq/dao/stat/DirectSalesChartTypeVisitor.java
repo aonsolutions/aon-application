@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.stat.invoice.IDirectSalesChartTypeVisit
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -638,6 +639,7 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 	//SelectLimitStep para ir creando la condicion de la where, primero con los InvoiceType y luego con ProductCategory...
 	private Condition getInvoiceCondition() {
 		Condition c = INVOICE.DOMAIN.eq(this.ctx.getDomainId());
+		c = c.and( InvoiceDAO.NOT_ANNULLED );
 		Condition typeCondition = null;
 		if (params.isSalesSelected()) {
 			typeCondition = INVOICE.TYPE.eq(InvoiceType.SALES.value()); 	

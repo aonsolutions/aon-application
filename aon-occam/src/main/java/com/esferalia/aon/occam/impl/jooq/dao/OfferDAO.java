@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -235,7 +236,41 @@ public class OfferDAO {
 		offerDetail.setId(id);
 		return offerDetail;
 	}
-		
+	
+	protected static void restorePendingOffer(AONContext ctx, Integer domain, Integer offerDetailId) {
+		if (offerDetailId == null) return;
+		Integer offer = ctx.getDslContext()
+			.select(OFFER_DETAIL.OFFER)
+			.from(OFFER_DETAIL)
+			.where(OFFER_DETAIL.ID.eq(offerDetailId).and(OFFER_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(OFFER_DETAIL.OFFER);
+		if (offer == null) return;
+
+		int count = ctx.getDslContext().update(OFFER_DETAIL)
+			.set(OFFER_DETAIL.STATUS, OfferDetailStatus.PENDING.value())
+			.set(OFFER_DETAIL.MODIFICATION_USER, ctx.getUser())
+			.set(OFFER_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(OFFER_DETAIL.ID.eq(offerDetailId).and(OFFER_DETAIL.DOMAIN.eq(domain)))
+			.execute();
+		ctx.log().debug("UPDATE OFFER_DETAIL (PENDIENTE): {0} ({1} filas)",offerDetailId,count);
+
+		int invoiced = ctx.getDslContext().fetchCount(OFFER_DETAIL
+			, OFFER_DETAIL.OFFER.eq(offer)
+				.and(OFFER_DETAIL.DOMAIN.eq(domain))
+				.and(OFFER_DETAIL.STATUS.eq(OfferDetailStatus.ON_INVOICE.value())));
+		if (invoiced > 0) return;
+
+		count = ctx.getDslContext().update(OFFER)
+			.set(OFFER.STATUS, OfferStatus.PENDING.value())
+			.set(OFFER.MODIFICATION_USER, ctx.getUser())
+			.set(OFFER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(OFFER.ID.eq(offer).and(OFFER.DOMAIN.eq(domain))
+				.and(OFFER.STATUS.ne(OfferStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE OFFER (PENDIENTE): {0} ({1} filas)",offer,count);
+	}
+
+	
 	public static class OfferDetailFiller extends Filler implements Function<Record,OfferDetail> {
 
 		@Override

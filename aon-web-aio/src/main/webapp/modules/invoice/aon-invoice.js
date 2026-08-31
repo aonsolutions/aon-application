@@ -412,12 +412,10 @@ export class AonInvoice extends AonElement {
 		total.readonly = this.invoice.isReadonly()
 			|| this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1
 			|| this.invoice.details.length > 0;
-		if (LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
+		if (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0)
 			total.disabled = CONSTANT.TRUE;
 		parent.appendChild(total);
-		if (!LS.isNewTheme() && (this.invoice.taxes.filter(f => TaxType.IVA === f.tax).length > 1 || this.invoice.details.length > 0))
-			total.disabled = CONSTANT.TRUE;
-		total.onChange(() => this.onChangeInvoiceTotal(total.value));	
+		total.onChange(() => this.onChangeInvoiceTotal(total.value));
 	}
 
 	setFocus(focusId) {
@@ -733,9 +731,7 @@ export class AonInvoice extends AonElement {
 
 		this.buildDetailCard(content);
 		this.buildFinanceCard(content);
-		if (LS.isNewTheme()) {
-			this.showFieldsMessages(content);
-		}
+		this.showFieldsMessages(content);
 	}
 
 	buildAmortization() {

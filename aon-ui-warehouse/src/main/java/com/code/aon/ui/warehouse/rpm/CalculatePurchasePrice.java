@@ -56,8 +56,8 @@ public class CalculatePurchasePrice {
 		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if(product.isInventoriable() && product.isManufactured()) 
 			return item.getPurchasePrice();
-							
-		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, months, workplaceId, warehouseId, inventoryDate);
+		Integer itemId = item.getId();
+		LinkedList<InvoiceDetail> invoiceList = AON.getLastInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, itemId, months, workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getLastIncomeDetailListUntilDate(domain.getName(), domain.getId(), user, item, months, workplaceId, warehouseId, inventoryDate);
 		
 		Double invoiceSum = invoiceList.stream().mapToDouble(x -> x.getPrice() * (1 -(x.getDiscount()/100.0)) * Math.abs(x.getQuantity())).sum();
@@ -77,7 +77,8 @@ public class CalculatePurchasePrice {
 		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if((product.isInventoriable() && product.isManufactured())) 
 			return item.getPurchasePrice();
-		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
+		Integer itemId = item.getId();
+		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, itemId, workplaceId, warehouseId, inventoryDate);
 		LinkedList<IncomeDetail> incomeList = AON.getIncomeDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
 		
 		LinkedList<Fifo> fifoList = new LinkedList<Fifo>();
@@ -173,7 +174,8 @@ public class CalculatePurchasePrice {
 		}
 			
 		// COMPRAS (Facturas)
-		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domain.getName(), item.getDomain(), user, item, workplaceId, warehouseId, inventoryDate);
+		Integer itemId = item.getId();
+		InvoiceDetail invoiceDetail = AON.getLastInvoiceDetailUntilDate(domain.getName(), item.getDomain(), user, itemId, workplaceId, warehouseId, inventoryDate);
 		Double price2 = 0.0;
 		Date date2 = new Date();
 		if(invoiceDetail.getId() != null){

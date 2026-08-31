@@ -7,7 +7,6 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -186,27 +185,6 @@ public class FiscalUtils {
 		if (params.getService() != null) {
 			buf.append(params.getService().booleanValue() ?" (Serv. SI)":" (Serv. NO)");
 		} 
-		return buf.length()>0 ? buf.insert(0,FILTRO).toString():"";
-	}
-
-	public static String toString(OperationParams params) {
-		StringBuilder buf = new StringBuilder();
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(DD_MM_YYYY);
-		if (params.getFromDate() != null) {
-			buf.append(DESDE);
-			buf.append( dateFormatter.format(params.getFromDate()));
-			buf.append(")");
-		}
-		if (params.getToDate() != null) {
-			buf.append(HASTA);
-			buf.append( dateFormatter.format(params.getToDate()));
-			buf.append(")");
-		}
-		if (params.getActivity() != null) {
-			buf.append(ACTIVIDAD);
-			buf.append(params.getActivity());
-			buf.append(")");
-		}
 		return buf.length()>0 ? buf.insert(0,FILTRO).toString():"";
 	}
 

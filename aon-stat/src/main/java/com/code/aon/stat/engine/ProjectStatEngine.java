@@ -36,6 +36,7 @@ public class ProjectStatEngine implements Serializable {
 					+ " INNER JOIN invoice_detail id ON id.invoice = i.id"
 					+ " WHERE "
 					+ DomainManager.getSQLWhereClause("i.domain")
+					+ " AND (i.annulled = 0 or i.annulled is null)" // NO ANULADAS
 					+ " AND i.type = 1 " + " AND id.project = ? "
 					+ " AND i.issue_date BETWEEN ? AND ?";
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
@@ -128,6 +129,7 @@ public class ProjectStatEngine implements Serializable {
 					+ " INNER JOIN invoice_detail id ON id.invoice = i.id"
 					+ " WHERE "
 					+ DomainManager.getSQLWhereClause("i.domain")
+					+ " AND (i.annulled = 0 or i.annulled is null)" // NO ANULADAS
 					+ " AND i.type != 1 " + " AND id.project = ? "
 					+ " AND i.issue_date BETWEEN ? AND ?";
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
@@ -291,6 +293,7 @@ public class ProjectStatEngine implements Serializable {
 			+" FROM invoice i"
 			+" INNER JOIN invoice_detail id ON id.invoice = i.id"
 			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+			+" AND (i.annulled = 0 or i.annulled is null)" // NO ANULADAS
 			+" AND i.type = 1"
 			+" AND id.project = ?"
 			+" AND i.issue_date BETWEEN ? AND ?"
@@ -349,6 +352,7 @@ public class ProjectStatEngine implements Serializable {
 			+" INNER JOIN invoice_detail id ON id.invoice = i.id"
 			+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
 			+" AND i.type != 1"
+			+" AND (i.annulled = 0 or i.annulled is null)" // NO ANULADAS
 			+" AND id.project = ?"
 			+" AND i.issue_date BETWEEN ? AND ?"
 			+" GROUP BY i.id"

@@ -24,7 +24,6 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectField;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -36,6 +35,7 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.invoice.IInvoiceChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -349,6 +349,7 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 	//SelectLimitStep para ir creando la condicion de la where, primero con los InvoiceType y luego con ProductCategory...
 	private Condition getInvoiceCondition(AONContext ctx, StatParams params) {
 		Condition c = INVOICE.DOMAIN.eq(ctx.getDomainId());
+		c = c.and( InvoiceDAO.NOT_ANNULLED);
 		c = c.and(SecurityDAO.getUserScopesCondition(ctx, INVOICE.SCOPE));
 		c = c.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL));		
 		if (params.getFrom() != null) {

@@ -244,6 +244,8 @@ public class Mod140DAO {
 	private static Collection<Condition> getConditions(Mod140Params params) {
 		LinkedList<Condition> list = new LinkedList<Condition>();
 		list.add(INVOICE.DOMAIN.equal(params.getDomain()));
+		list.add(INVOICE.NUMBER.ge(0));   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+		list.add(InvoiceDAO.NOT_ANNULLED); // No facturas anuladas
 		if ( params.getFromDate() != null) {
 			list.add((params.isFilterByTaxDateEnabled()
 					?INVOICE.TAX_DATE

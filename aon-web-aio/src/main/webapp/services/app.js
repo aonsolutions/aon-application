@@ -459,7 +459,7 @@ export const NOTES = {
   app: "note",
   title: MSG.NOTES,
   description: MSG.NOTES,
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
+  icon: AON_ICONS.AON_NEW_NOTES,
   aonSymbol: AON_SYMBOLS.BOOKMARK,
   symbol: MATERIAL_ICONS.PINBOARD,
   newIcon: AON_ICONS.AON_NEW_NOTES,

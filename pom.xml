@@ -215,7 +215,6 @@
     <!-- UTILITY -->
     <module>aon-file-format</module>
     <module>aon-file-bank</module>
-    <module>aon-file-tax</module>
     <module>aon-file-payroll</module>
     <module>aon-file-seres</module>
     <module>aon-facturae</module>

@@ -1,0 +1,2597 @@
+@font-face {
+  font-family:"Inter-regular";
+  src: url(/fonts/Inter-Regular.woff) format("woff");
+  font-weight:400;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-medium";
+  src: url(/fonts/Inter-Medium.woff) format("woff");
+  font-weight:500;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-semibold";
+  src: url(/fonts/Inter-SemiBold.woff) format("woff");
+  font-weight:600;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-bold";
+  src: url(/fonts/Inter-Bold.woff) format("woff");
+  font-weight:700;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Inter-extrabold";
+  src: url(/fonts/Inter-ExtraBold.woff) format("woff");
+  font-weight:800;
+  font-style:normal;
+}
+
+.aon-symbols-outlined {
+	font-weight: normal;
+}
+
+:root {
+	
+	--aonForegroundColor: #1e293b;
+	
+	--aonTopMenuSpecial: transparent;
+	
+	--aonBackgroundColor: #ffffff;
+	--aonBackgroundColor2: #f1f5f9;
+	--colorNeutralBackground2: #ffffff;
+	--aonHeaderBackgroundColor: #0f172a;
+	--aonHeaderButtonColor: var(--aonWhite);
+	
+	--aonTopMenuAvailable: var(--aonBlack);
+	
+	--aonFontFamily: 'Inter-regular', sans-serif;
+	
+	--aonNote: none;
+	--aonInvoice: none;
+	--aonDocumental: none;
+	--aonTimecontrol: none;
+	--aonMessenger: none;
+	--aonPayroll: none;
+	
+	
+	--aonCustomizeLoginLogoWidth: 155px;
+	--aonCustomizeLoginLogoHeight: 32px;
+	--aonCustomizeHeaderLogoWidth: var(--aonCustomizeLoginLogoWidth);
+	--aonCustomizeHeaderLogoHeight: var(--aonCustomizeLoginLogoHeight);
+	--aonCustomizeButtonBackground: linear-gradient(to right, #0f172a, #0f172a, #0E1030, #586078);
+	
+	--favicon: /assets/aon-ai-favicon.svg;
+	
+	--aonHeaderHeight : 68px;
+	--aonToolbarHeight : 68px;
+}
+
+body {
+	--isFutureTheme: true;
+}
+
+.aonBody{
+	font-size: 0.875rem;
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.rootPanel{
+	border-top: none ;
+	border-left: none;
+	border-color: var(--aonBackgroundColor2);
+	background-color: var(--aonBackgroundColor2) !important;
+}
+
+.logo-text{
+  fill:var(--logo-text-color, #ffffff);
+}
+.logo-image{
+  fill:var(--logo-image-color, #4e48df);
+}
+
+.aonNewLogo,
+.aonLoginLogo{
+	width: var(--aonCustomizeHeaderLogoWidth);
+	height: var(--aonCustomizeHeaderLogoHeight);
+	background-image: url("../../assets/aonsolutions-ai-logo.svg");
+}
+
+.aonHeader{
+	height: 68px; /*4rem;*/
+	min-height: 68px; /*4rem;*/
+	background-color: var(--aonHeaderBackgroundColor);
+	position: relative;
+}
+
+.aonHeaderCompany{
+	height: 40px;
+	margin-right: 1rem;
+	display: flex !important;
+	align-items: center;
+	padding-top: .5rem;
+}
+
+#aonMenu:has(.aonMenuSidenav.close) .aonMenuTopnav {
+	margin-left: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .rootPanel {
+	height: calc(100vh - 136px);
+	margin-top: 68px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rootPanel {
+	height: calc(100vh - 68px);
+}
+
+#aonHome .aonMenuSidenav{
+ 	height: calc(100vh - 136px); 
+	margin-top: var(--aonToolbarHeight);
+}
+
+/*
+#aonHome:has(.aonMenuTopNavVisible) .aonMenuSidenav {
+ 	height: calc(100vh - 136px); 
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonMenuSidenav {
+ height: calc(100vh - 68px); 
+}
+*/
+
+#aonHome:has(.aonMenuTopNavVisible) .rightPanel {
+	height: calc(100vh - 136px);
+	margin-top: 69px;
+}
+
+#aonHome:has(.aonMenuTopNavHide) .rightPanel {
+	height: calc(100vh - 68px);
+	margin-top: 1px;
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonApplicationContent {
+	height: calc(100vh - 201px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonApplicationContent {
+	height: calc(100vh - 133px);
+}
+
+#aonHome:has(.aonMenuTopNavVisible) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 301px);
+}
+
+#aonHome:has(.aonMenuTopNavHide) .aonContentBeta .aonTable tbody {
+	height: calc(100vh - 233px);
+}
+
+.aonMenuTopnav {
+	top: 68px; /*4rem;*/
+    border-color: var(--aonBackgroundColor);
+    background-color: var(--aonBackgroundColor);
+    margin-left: 237px;
+}
+
+.aonMenuTopnav.closeSidenav{
+	 margin-left: 237px;
+}
+
+.aonMenuSideNav {
+	top: 68px; /*4rem;*/
+    background-color: #f8fafc;
+}
+
+.aonNewMenuSideNavUl{
+	/* padding-top: 15.25px; */
+    background-color: var(--aonWhite);
+    height: 100%;
+}
+
+.aonHeader #aonHeaderCompanyName {
+    font-family: 'Inter-medium', sans-serif;
+}
+
+.aonHeader .material-icons, 
+.aonHeader #aonHeaderCompanyName,
+#applications .material-symbols-outlined, 
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--aonWhite);
+}
+
+
+.aonHeaderAppDiv {
+    background-image: url("../../assets/aonsolutions-ai-logo.svg");
+}
+
+#uploads{
+	display:none;
+}
+
+#new:hover,
+#home:hover,
+#topMenuHome:hover,
+#apps:hover,
+#invoice:hover,
+#comunica:hover,
+#documental:hover,
+#accounting:hover,
+#fiscal:hover,
+#payroll:hover,
+#timecontrol:hover,
+#note:hover,
+#messenger:hover,
+#warehouse:hover,
+#office:hover,
+#garage:hover,
+#academy:hover,
+#commerce:hover,
+#console:hover,
+#comercialMenu:hover,
+#commerceMenu:hover,
+#managementMenu:hover,
+#treasuryMenu:hover,
+#warehouseMenu:hover,
+#groupwareMenu:hover,
+#accountingMenu:hover,
+#fiscalMenu:hover,
+#payrollMenu:hover,
+#marketingMenu:hover,
+#configurationMenu:hover,
+#enterpriseMenu:hover,
+#consoleMenu:hover,
+#aonApplication:hover,
+#Superset:hover {
+  background-color:inherit;
+  
+}
+.aonNewMenuAppSpan {
+	line-height: 1.5rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#aonMenuListAppImgTop-managementMenu,
+#aonMenuListAppImgTop-invoice,
+#aonMenuListAppImgTop-new,
+#aonMenuListAppImgTop-note,
+#aonMenuListAppImgTop-office,
+#aonMenuListAppImgTop-warehouse,
+#aonMenuListAppImgTop-documental,
+#aonMenuListAppImgTop-accounting,
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-messenger,
+#aonMenuListAppImgTop-payroll,
+#aonMenuListAppImgTop-aonApplication,
+#aonMenuListAppImgTop-accountingMenu,
+#aonMenuListAppImgTop-timecontrol,
+#aonMenuListAppImgTop-fiscalMenu,
+#aonMenuListAppImgTop-payrollMenu,
+#aonMenuListAppImgTop-configurationMenu,
+#aonMenuListAppImgTop-enterpriseMenu,
+#aonMenuListAppImgTop-comercialMenu,
+#aonMenuListAppImgTop-treasuryMenu,
+#aonMenuListAppImgTop-groupwareMenu,
+#aonMenuListAppImgTop-marketingMenu,
+#aonMenuListAppImgTop-warehouseMenu,
+#aonMenuListAppImgTop-apps,
+#aonMenuListAppImgTop-expandHirin,
+#aonMenuListAppImgTop-contentIndex,
+#aonMenuAnchorDivIcon,
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
+#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon,
+#createEnterpriseButtonIcon,
+#removeEnterpriseButtonIcon
+{
+	/* color: var(--aonTopAppTextColor); */
+}
+
+#aonMenuListAppImgTop-expandHirin {
+	color: white;
+}
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div i {
+  transition:transform .2s ease
+}
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a>div span {
+  transition:transform .2s ease;
+}
+
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a:hover>div i {
+  transform:scale(1.4)
+}
+#aonMenu #aonMenuTopnav #aonTopMenuDiv>div>a:hover>div span {
+  transform:scale(1.2)
+}
+
+#aonMenuListAppImgTop-new{
+    transition: transform 0.5s;
+}
+
+#aonMenuListAppImgTop-new.open{
+	transform: rotate(-45deg);
+}
+
+#aonMenuListAppImgTop-fiscal,
+#aonMenuListAppImgTop-accounting{
+	color: transparent !important;
+}
+
+#aonMenuListAppImgTop-fiscal{
+	scale: unset;
+}
+
+#aonSigninToolbarHeaderToolSectionsyncButtonIcon{
+	mask-image: url('/icons/refresh-cw.svg') ;	
+}
+
+#aonMenuListAppImgTop-aonApplication{
+	visibility: hidden;
+}
+#aonApplication {
+	background-repeat: no-repeat;
+	background-position-x: 22px;
+	background-position-y: center;
+	background-image: url('/icons/aon.svg');
+}
+
+#aonConfig > span > i {
+    mask-image: url('/icons/settings.svg') ;
+}
+
+#aonSigninToolbarHeaderToolSectionfile_downloadButtonIcon,
+i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"] {
+	mask-image: url('/icons/download.svg') ;
+}
+
+#aonEventAddToolbarHeaderToolSectionhistoricButtonIcon{
+	mask-image: url('/icons/clipboard-list.svg') ;
+}
+
+
+i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
+	width: 24px;
+	height: 24px;
+	background-color: var(--aonTopAppTextColor);
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+    mask-image: url('/icons/chevron-down.svg') ;
+    
+    transition: transform 0.5s;
+}
+
+i[id$="ToolbarHeaderTitleSectionMenuIcon"].closeIcon {
+	transform: rotate(-90deg);
+}
+
+
+#_aonMenuList-new {
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	position: relative;
+}
+
+/* ========================== Suite Menu Styles ========================== */
+
+.suiteMenuContent{
+	margin: 1rem 0;
+	background-color: var(--aonBackgroundColor2);	
+}
+
+aon-fiscal-menu .suiteMenuContent{
+	margin: 0;
+}
+
+aon-fiscal-menu .suiteMenuDiv2{
+	padding: 0;
+}
+
+.suiteMenuDiv{
+	margin: 0;
+}
+
+.suiteMenuContent .aonSidenavTitle {
+  font-family: "Inter-semibold";
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  letter-spacing: -0.0075rem;
+}
+
+
+.suiteMenuContent aon-card {
+	display: block;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	background-color: #fff;
+	margin-left: 0;
+}
+
+.suiteMenuContent  .aonCardTitleSection * {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  letter-spacing: -0.005rem;
+  font-family: "Inter-semibold", sans-serif;
+}
+
+.suiteMenuContent  .aonCardText {
+	font-size: 17px;
+	color: #64748b;
+	text-decoration: none;
+}
+
+.suiteMenuContent  .aonCard {
+	border-radius: 5px;
+	padding: 0px;
+	margin: 0px;
+	min-width: auto;
+}
+
+.suiteMenuCardDataDiv {
+	margin-top: 0px;
+	padding: 10px 15px 10px 15px;
+}
+.suiteMenuCardDataDiv:hover {
+	background-color: #f1f5f9;
+}
+
+.suiteMenuContent  .aonCard > div[id$="Title"]{
+	padding: 6px 0px;
+}
+
+.suiteMenuContent  .aonCard > div[id$="Content"] {
+	padding: 0px 0px 30px 0px;
+}
+
+.aonSidenavTitle{
+	margin-top: 10px;
+}
+
+/*
+.suiteMenuDiv2{
+	padding: 0 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+	gap: 1rem;
+}
+*/
+
+.suiteMenuCardCard{
+	min-width: auto;
+	max-width: none;
+	margin-left: 1rem;
+}
+
+.suiteMenuCardCard .aonCardTitle{
+	margin: 0 1rem 1rem;
+}
+
+.aonSideNavFiscalCircle{
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6rem !important;
+}
+
+/* ========================== Sidenav Menu Styles  ========================== */
+
+#rootPanel {
+  margin-left: 237px !important; /*13.75rem; !important;*/
+}
+
+#rootPanel > div {
+	background-color: transparent !important;
+}
+
+#rootPanel.closeSidenav {
+  margin-left: 68px !important; /*13.75rem; !important;*/
+  padding-left: 0px;
+}
+
+#aonMenu #aonMenuSidenav  {
+	width: 237px; /*13.75rem;*/
+	min-width: 237px; /*13.75rem;*/
+	max-width: 237px; /*13.75rem;*/
+	height: calc(100vh - 3.75rem);
+	overflow-y: auto;
+	box-sizing: border-box;
+	background-color: var(--aonBackgroundColor2);
+}
+
+#aonMenuList-new,
+#aonMenuList{
+	margin-top: 0;
+}
+
+#aonMenuList-contentIndex {
+	display: flex;
+}
+
+#expandHirin {
+	display: flex;
+	background: linear-gradient(to right, #FB5722, #FB5722, #0E1030, #586078);
+	background-size: 300% 100%;
+	background-position: 0 0;
+	transition: background .1s ease;
+	box-shadow: rgba(0,0,0,.07) 0 .0625rem .0625rem,rgba(0,0,0,.07) 0 .125rem .125rem,rgba(0,0,0,.07) 0 .25rem .25rem,rgba(0,0,0,.07) 0 .5rem .5rem,rgba(0,0,0,.07) 0 1rem 1rem;
+	border-radius: .375rem;
+	cursor: pointer;
+	margin: .5rem !important;
+	color: white;
+	padding: 0 .9rem !important;
+	height: 45px;
+}
+
+#expandHirin:hover {
+	background:var(--aonCustomizeButtonBackground);
+	background-position: 100% 0;
+	background-size: 300% 100%;
+	color: white;
+}
+
+#aonParentSidenav{
+	padding-bottom: 2rem;
+}
+
+/*
+ ------------------ Menu Collapse Button
+*/
+
+#aonMenuAnchor {
+	background-color: white;
+	left: 0;
+	top: 68;
+	padding-left: 0;
+	height: 68px;
+	width: 237px;
+	margin-left: 4px;
+	z-index: 2;
+	transition: none;
+}
+
+#aonMenuAnchor.close {
+	width: 68px;
+	border-radius: 0px;
+	top: 68px;
+	width: 75px;
+	background-color: #ffff;
+}
+
+#aonMenuAnchorDiv {
+	flex-direction: row;
+	gap: 1.25rem;
+	height: 100%;
+	justify-content: start;
+	padding: 0 1.25rem;
+}
+
+#aonMenuAnchor.close #aonMenuAnchorDiv {
+	padding: 0 1.5rem;
+	margin-left: 0px;
+}
+
+#aonMenuAnchorDivIcon {
+	/*background: url('/icons/arrow-left-circle.svg') no-repeat center;*/
+	/* mask-image: url('/icons/arrow-left-circle.svg'); */
+	transition: transform 0.5s;
+	padding: 0px;
+}
+
+#aonMenuAnchor.close #aonMenuAnchorDivIcon {
+	transform: rotate(-180deg);
+}
+
+#aonMenuAnchor #aonMenuAnchorDivIcon {
+	min-height: 25.5px;
+	min-width: 25.5px;
+}
+
+.aonMenuAnchorDivSpan {
+	font-size: 1rem;
+	line-height: 1.5rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#aonMenuSidenav.close {
+	width: 68px !important; /*13.75rem;*/
+	min-width: 0 !important; /*13.75rem;*/
+	justify-content: center;
+}
+
+#aonMenuAnchor.close .aonMenuAnchorDivSpan {
+	display: block;
+	visibility: collapse;
+}
+
+#aonMenuSidenav.close #expandHirin {
+	padding: 0 .7rem !important;
+}
+
+#aonMenu #aonMenuSidenav{
+	transition: none;
+}
+
+/*
+#aonMenu #aonMenuSidenav #new {
+	display: none;	
+}
+*/
+
+#aonMenu #aonMenuSidenav .aonMenuSidenavLiSeleted,
+#aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover {
+	background-color: var(--aonBackgroundColor2);
+}
+
+#aonMenu #aonMenuSidenav .aonNewMenuAppDiv {
+	flex-direction: row;
+	justify-content: left;
+	gap: 1.25rem;
+  	padding: 0 1rem;
+}
+
+#aonMenu #aonMenuSidenav .aonNewMenuAppSpan {
+	font-size: 1rem;
+}
+
+#aonMenuSidenav  {
+	width: 68px; /*13.75rem;*/
+	min-width: 0; /*13.75rem;*/
+}
+
+/*
+ ------------------ Tooltip
+*/
+
+.tooltip {
+	position: fixed;
+	z-index: 9999;
+	max-width: 300px;
+	padding: 10px 12px;
+	background: #2f3746;
+	color: #fff;
+	font-size: 14px;
+	border-radius: 8px;
+	pointer-events: none;
+
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity .15s ease, transform .15s ease;
+}
+
+.tooltip.visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+
+
+/* ========================== App Styles  ========================== */
+
+.aonContentBeta:has(#aonInvoiceHome) {
+  background-color: var(--aonBackgroundColor2) !important;
+}
+
+#aonConfiguration .aonContentBeta:has(#aonSuiteMenu) {
+	background-color: var(--aonBackgroundColor2) !important;
+	padding: 0rem !important;
+	margin: 0rem !important;
+}
+
+.aonSidenav,
+.aonToolbar,
+#aonParent .aonContentBeta,
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
+#aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta{
+	border-radius: .375rem;
+	margin: 1rem 1rem 0rem 1rem;
+	background-color: var(--aonBackgroundColor);	
+}
+
+/*#aonConfigurationNew .aonContentBeta*/
+
+#aonFiscalBetaContent.aonContentBeta{
+	margin: 1rem 1rem 0rem 1rem;
+}
+
+#aonFiscalBetaContent.aonContentBeta #rootPanel > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)
+
+#aonSignin .aonContentBeta,
+#aonDocumental .aonContentBeta,
+#aonLaboral .aonContentBeta,
+#aonInvoice .aonContentBeta,
+#aonConfiguration .aonContentBeta,
+#aonConfigurationNew .aonContentBeta,
+#aonWarehouse .aonContentBeta,
+#aonMessenger .aonContentBeta,
+#aonOfficePanel .aonContentBeta,
+#aonFiscal .aonContentBeta,
+#aonAccounting .aonContentBeta{
+	padding: 1.25rem 1.25rem 0 1.25rem;
+}
+
+
+
+.closeSidenav {
+	margin: 0;
+	flex-basis: 0;
+}
+
+.aonRightSidenav {
+    /* flex-basis: 225px !important; */	
+	background-color: var(--aonBackgroundColor2);	
+}
+
+.aonSidenav {
+  white-space:nowrap;
+  padding-top: .5rem;
+}
+
+.aonSidenav *,
+.aonToolbarTitle {
+	color: var(--aonForegroundColor);
+	font-size: 0.875rem;
+}
+
+.aonSubMenuOptions .chevronDowm{
+	display: inline-block !important;
+	width: 18px;
+	height: 18px;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-down.svg');
+}
+
+.aonSubMenuOptions .chevronRight{
+	display: inline-block !important;
+	width: 21px;
+	height: 21px;
+	background: url('/icons/chevron-right.svg') no-repeat center;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/chevron-right.svg');
+}
+
+.aonAppMenuSidenavList i.material-icons,
+.aonAppMenuSidenavList aon-icon {
+	display: none;
+}
+
+.aonIconButton i.material-icons {
+	display: block;
+}
+
+.aonToolbarTitle,
+.aonSidenav .aonMenuItemSpan {
+	font-family: "Inter-medium", sans-serif;
+}
+
+.aonSidenav .aonAppMenuSidenavList{
+	padding: .425rem 1.25rem .425rem 2rem;	
+	position: relative;
+}
+
+.aonSidenav .aonAppMenuSidenavList.aonSubMenuOptions {
+	padding: .425rem 1.25rem .425rem 3rem;
+}
+
+.aonSidenav .aonSidenavTitle {
+	padding: 0 1rem;
+	padding-top: 6px;
+	display: flex;
+	gap: .3rem;
+	align-items: center;
+	cursor: pointer;
+}
+
+.aonSidenav .aonSidenavTitleArrow {
+	border:none;
+	min-width: 24px;
+	min-height: 24px;
+	visibility: visible;
+	background: url('/icons/chevron-down.svg') no-repeat center;
+	
+	transition: transform 0.3s;
+}
+
+.aonSidenav .aonSidenavTitleArrow.closeIcon {
+	transform: rotate(-90deg);
+}
+
+
+.aonSidenav .aonAppMenuSidenavList:hover,
+.aonSidenav .aonAppMenuSidenavListSelected {
+	border-radius: 0px;
+    background-color: var(--aonBackgroundColor2);
+	border-left-color: transparent !important; /* we need override element style*/
+}
+
+.aonSidenav .aonSidenavTitle span {
+    letter-spacing: -0.005rem;
+	text-transform: uppercase;
+    font-family: "Inter-bold", sans-serif;
+}
+
+.aonSidenavTitleButton {
+	margin-top: 0px;
+}
+
+#aonInvoiceHomeUploadInvoice .aonUpload,
+#accountingUploadInvoice .aonUpload {
+	border:none;
+	color: #fff;
+	align-items: flex-start;
+	margin-top: 0.5rem; /*Warn*/
+	transition: background .3s ease;
+	background: var(--aonCustomizeButtonBackground);
+}
+
+#aonInvoiceHomeUploadInvoice .aonUpload *,
+#accountingUploadInvoice .aonUpload * {
+	color: #fff;
+}	
+
+#aonInvoiceHomeUploadInvoice .aonUpload:hover,
+#accountingUploadInvoice .aonUpload:hover {
+    background: #004bfb;
+}
+#aonInvoiceHomeUploadInvoice .aonNewUploadLabel,
+#accountingUploadInvoice .aonNewUploadLabel {
+	color: #fff;
+	font-size: 1rem;
+}
+
+.aonDashboardButton {
+    border: 0;
+}
+	
+/* ========================== Buttons Styles  ========================== */
+.aonButton {
+	background-color: #0f172a;
+	color: #fff;
+	border: 0;
+}
+
+.aonTimeControlButton {
+	text-transform: lowercase;
+	background-color: #0f172a !important;
+}
+
+/* ========================== Companies Styles  ========================== */
+
+.aonWelcomeDiv {
+	display: none;	
+}
+
+.aonParentDiv {
+	position: relative;
+}
+
+.aonCompanyDiv {
+	/*margin: 2rem 0px 0px 2rem;*/
+	padding: 2rem;
+}
+
+#aonCompanySpanTitle {
+	color: var(--aonForegroundColor);
+	font-size: 1rem;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#aonParentSidenavsigning {
+	margin-bottom: 2rem;
+}
+
+
+/* ========================== Tabs Styles  ========================== */
+
+.aonTab {
+	padding: .625rem;
+	display: flex;
+	align-content: center;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	gap: .5rem;
+	border-radius: .375rem;
+	background-color: var(--aonBackgroundColor2);
+	margin-left: 0;
+}
+
+#aonCompanyTabFilter{
+	width: 100%;
+	background-color: var(--aonBackgroundColor2);
+}
+
+.aonTab .aonTabItem{
+	padding: 0;
+}
+
+.aonTab .aonTabItemText {
+	padding: .625rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	font-size: .875rem;
+	
+}
+
+.aonTab .aonTabItemText:hover{
+	background-color: var(--aonBackgroundColor);
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aonTab .aonTabItemTextSelected {
+	border-bottom: none;
+	background-color: var(--aonBackgroundColor);
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aonCompanyDiv{
+	width: 96%;
+}
+
+#UlCompanies {
+  list-style: none;
+  padding: .625rem 0 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+
+#UlCompanies .aonLiBeta {
+	min-height: 78px;
+	/*margin-right: 1.5rem;*/
+}
+
+#UlCompanies li {
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+	border-radius: .375rem;
+	padding: 11px; /*.625rem;*/
+	cursor: pointer;
+	border: .0625rem solid #e2e8f0;
+	color: #64748b;
+}
+
+#UlCompanies li:hover {
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+	background-color: #64748b;
+	color: #fff;
+}
+
+#UlCompanies li:hover * {
+	color: #fff;
+}
+
+#UlCompanies li:hover .aonLiSpan .material-icons {
+    background-color:#fff;
+}
+
+#UlCompanies li .aonLiSpan > span:not(.aonLiSpanSubtitle) {
+	font-size: 0.875rem;
+	font-family: "Inter-semibold", sans-serif;
+}
+
+#UlCompanies .aonLiSpan .material-icons {
+	width: 25.5px;
+	height: 25.5px;
+	border-radius: 0;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color:#64748b;
+    mask-image: url('/icons/building.svg') ;
+}
+
+
+#UlCompanies .aonLiSpan .material-icons[icon="work"] {
+  mask-image: url('/icons/briefcase.svg');
+}
+
+#UlCompanies .aonLiSpan .material-icons[icon="share"] {
+  mask-image: url('/icons/share-2.svg');
+}
+
+#UlCompanies .aonLiSpan .material-icons[icon="apartment"] {
+  mask-image: url('/icons/building-2.svg');
+}
+
+#UlCompanies .aonLiSpan .material-icons[icon="domain_disabled"] {
+  mask-image: url('/icons/building-off.svg');
+}
+
+#UlCompanies > li > span:nth-of-type(3){
+	width: 25.5px;
+	height: 25.5px;
+	border-radius: 0;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color:#64748b;
+    mask-image: url('/icons/chevron-right.svg') ;
+}
+
+#UlCompanies > li:hover > span:nth-of-type(3) {
+	background-color: white;
+}
+
+/* ========================== Login Styles  ========================== */
+#aonLogin {
+	font-size: 17px;
+	font-family: var(--aonFontFamily);
+}
+
+.aonLoginTitle {
+	display: none;
+}
+
+.aonLoginSubTitle {
+	font-size: 17px;
+	padding: .5rem 0;
+}
+
+
+#aonLogin .aonToolbar2 {
+	height: 68px; /*4rem;*/
+	min-height: 68px; /*4rem;*/
+	background-color: var(--aonHeaderBackgroundColor);
+}
+
+#aonLogin button {
+	height: 42.5px; /*2.5rem;*/
+	padding: .5rem 1rem;
+	border-radius: .375rem;
+	cursor: pointer;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+	text-transform: lowercase;
+	font-size: 1rem;
+}
+
+.aonLoginButton {
+	border: none;
+    background-color: #0f172a;
+ 	border-radius: 4px;
+	color: var(--aonWhite);
+	cursor: pointer;
+	font-family: var(--aonFontFamily);
+	height: 3rem;
+	letter-spacing: .75px;
+	margin-top: 1rem;
+	width: 100%;
+}
+
+.aonLoginButton  {
+	background: var(--aonCustomizeButtonBackground);
+	background-position-x: 0%;
+	background-position-y: 0%;
+	background-size: auto;
+	background-size: 300% 100%;
+	background-position: 0 0;
+	transition: background .3s ease;
+}
+.aonLoginButton:hover {
+	background-position: 100% 0;
+}
+
+.aonLoginForm {
+	height: fit-content;
+	border-radius: .375rem;
+	width: 425px; /*25rem;*/
+	background-color: #fff;
+	border: .0625rem solid #e2e8f0;
+	box-shadow: 0 .25rem .375rem 0 #0f172a0D;
+}
+
+.aonInputBoxLabelInputError {
+	border: 1px solid #d2d2d6 !important;
+}
+
+.aonLoginFormContent {
+	border: none;
+	padding-top: 0;
+	gap: .5rem;
+}
+
+#aonLogin .aonToolbar2 * {
+	color: #fff;
+}
+
+.aonInputBoxLabel {
+	display: flex;
+  	flex-direction: column-reverse;
+  	width: 100%;
+  	max-width: 100%;
+  	gap: .375rem;
+  	box-sizing: border-box;
+  	overflow: hidden;	
+}
+
+.aonInputBoxLabel > span{
+	position: inherit;
+}
+
+.aonTextareaBoxLabel {
+	display: flex;
+  	flex-direction: column-reverse;
+  	width: 100%;
+  	max-width: 100%;
+  	gap: .375rem;
+  	box-sizing: border-box;
+  	overflow: hidden;	
+}
+
+.aonTextareaBoxLabel > span{
+	position: inherit;
+}
+
+#aonLoginUserTitle,
+#aonLoginPasswordTitle {
+	font-family: "Inter-regular", sans-serif;
+	font-size: 17px; /*1rem;*/
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}
+
+.aonInputBoxLabelSpanError {
+  color: #0f172a;
+}
+
+#aonLoginUserInput::placeholder,
+#aonLoginPasswordInput::placeholder{
+  font-size: .875rem;
+  letter-spacing: 0;
+  font-family: "Inter-regular", sans-serif;
+}
+
+#aonLoginUserInput,
+#aonLoginPasswordInput{
+	color: var(--aonForegroundColor);
+	background-color: #fff;
+	border: .0625rem solid #cbd5e1;
+
+	height: 2.5rem;
+	box-sizing: border-box;
+	border-radius: .375rem;
+	padding: .5rem .75rem .5rem .75rem;
+}
+
+.aonWelcomeLogoLogin {
+	display: flex;
+	max-width: 200px;
+	max-height: 7rem;
+	margin: 2rem 0 1rem 0;
+}
+
+#aonLoginPasswordIcon {
+	top: 2px;
+}
+
+.aonInputMsgError {
+  font-family: "Inter-semibold", sans-serif;
+  font-size: .875rem;
+}
+
+.aonDividerSpan {
+	color: var(--aonForegroundColor);
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+	font-family: "Inter-medium", sans-serif;
+}
+
+#divTitleForm {
+	margin-bottom: 0 !important;
+}
+
+.aonDividerButtons{
+	border-bottom: none;
+}
+
+#aonLoginPasswordIconButtonIconButton {
+	top: 26px;
+	right: 12px;
+	position: relative;
+}
+
+#aonHeaderDialogHelpOptionDialogMenuContent {
+	border:none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi img {
+	display: none;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi span {
+	color: #475569;
+    font-size: 1rem !important;
+    display: flex;
+    justify-content: center;
+    width: 6rem;
+    align-items: center;;
+    cursor: pointer;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover {
+	background-color: #475569 !important;
+}
+
+ul#aonHeaderDialogHelpOptionDialogMenuList li.aonAppLi:hover span {
+	color: white;
+}
+
+/* ========================== Card Styles  ========================== */	
+
+.aonCard {
+	border:none;
+}
+
+.aonCardTitle{
+	border-bottom: .1rem solid #cbd5e1;
+}
+
+.aonCardTitleSection *:not(.material-icons) {
+	font-size: 1rem;
+	padding-top: 0;
+  	padding-bottom: 0.75rem;
+	padding-left: 0.25rem;
+	font-family: "Inter-semibold", sans-serif;
+}
+
+.aonDashboard .aonCard .aonSidenavTitleArrow {
+	display: none;
+}
+
+.aonCardTitleSection #enterpriseLinked,
+.aonCardTitleSection #statusDiv,
+.aonCardTitleSection #enterpriseLinked > div > *:not(.material-icons),
+.aonCardTitleSection #statusDiv > *:not(.material-icons) {
+	padding: 0;
+}
+
+.aonCardTitleSection #enterpriseLinked > div,
+.aonCardTitleSection #statusDiv {
+	align-items: center;
+}
+
+.aonInputGroup input {
+	text-overflow: ellipsis;
+	font-size: 14px;
+	border: .0625rem solid #cbd5e1;
+	background-color: #fff;
+	color: var(--aonForegroundColor);
+	padding: 0;
+	margin-top: 1.5rem;
+	height: 2.5rem;
+	padding: .5rem .75rem .5rem .75rem;
+	border-radius: .375rem;
+	box-sizing: border-box;
+}
+
+#aonCustomerOfficeGeneralCardTableRow1 {
+	font-size: .7rem;
+}
+
+.aonInputLabel{
+	font-family: "Inter-medium";
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}
+
+.aonInputIconLabel{
+	top: 21px;
+}
+
+.aonDashboardButton span {
+  letter-spacing: 0;
+  line-height: 1.5rem;
+  font-size: .875rem;
+  text-transform: lowercase;
+  font-family: "Inter-medium", sans-serif;
+}
+
+#payrollTitleSection2OpcionesButtonSpan {
+	padding: 0;
+	display: flex;
+}
+
+#payrollTitleSection2OpcionesButtonSpan {
+	padding: 0;
+	display: flex;
+}
+
+#payrollTitleSection2OpcionesButton {
+	position: relative;
+	background-color: var(--aonTopAppTextColor) !important;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/more-vertical.svg');
+	padding: 0;
+	height: 1.5rem;
+}
+
+
+/* ========================== Invoice Styles  ========================== */
+.aonContentBeta{
+	min-width: 0;
+	flex-grow: 1;
+	border-radius: .375rem;
+	background-color: var(--aonBackgroundColor2);
+}
+
+#aonInvoiceRegistryAddressAddIconButton {
+	top: 15px;
+}
+
+/* #aonInvoiceSheetDataGeneral {
+	display: block !important;
+} */
+
+#aonInvoiceHomeNewIncomeButton,
+#aonInvoiceHomeNewExpenseButton,
+#aonMenuList-apps{
+	display: none;	
+}
+
+
+#aonInvoiceHomeCardPanel {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#aonInvoiceHomeCardPanel aon-card {
+  width: 32%;
+  min-width: 18.75rem;
+}
+
+#aonInvoiceHomeFastPanel aon-dashboard-button {
+  width: 32%;
+  min-width: 18.75rem;
+}
+
+#aonInvoiceHomeNewIssuedInvoiceButtonIcon,
+#aonInvoiceHomeNewReceivedInvoiceButtonIcon,
+#aonInvoiceHomeNewTicketInvoiceButtonIcon { 
+	width: 25.5px;
+	height: 25.5px;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+	background-color: var(--aonForegroundColor);
+}
+ 
+#aonInvoiceHomeNewIssuedInvoiceButtonIcon{
+    mask-image: url('/icons/file-up.svg') ;
+}
+
+#aonInvoiceHomeNewReceivedInvoiceButtonIcon{
+    mask-image: url('/icons/file-down.svg') ;
+}
+
+#aonInvoiceHomeNewTicketInvoiceButtonIcon{
+    mask-image: url('/icons/sticker.svg') ;
+}
+
+
+i[id$="DateIconButtonIcon"],
+i[id$="RegistryRemoveRegistryIcon"],
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"],
+i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
+i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"], 
+i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"],
+i[id$="ToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSearchAdvancedButtonIcon"],
+i[id$="ToolbarHeaderToolSectionBackButtonIcon"],
+i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
+i[id$="ToolbarHeaderToolSectionRejectButtonIcon"],
+i[id$="ToolbarHeaderToolSectionPreviousButtonIcon"],
+i[id$="ToolbarHeaderToolSectionNextButtonIcon"],
+i[id$="ToolbarHeaderToolSectionOptionsButtonIcon"],
+i[id$="ToolbarHeaderToolSectionAcceptButtonIcon"],
+i[id$="ToolbarHeaderToolSectionReject1ButtonIcon"],
+i[id$="ToolbarHeaderToolSectionbar_chartMessengerButtonIcon"],
+i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"],
+i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"],
+i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"],
+i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"],
+/* i[id$="ToolbarHeaderToolSectionRestoreButtonIcon"], */
+i[id$="aonSigninToolbarHeaderToolSectionsyncButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDownloadFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonNewDialognote_addIcon"],
+i[id$="aonNewDialogaccount_balance_walletIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"],
+i[id$="aonNewDialogadd_commentIcon"],
+i[id$="aonNewDialogperson_addIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i
+{
+	width: 24px;
+	height: 24px;
+	background-color: var(--aonTopAppTextColor);
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+}
+
+i[id$="aonNewDialogaccount_balance_walletIcon"] {
+	mask-image: url('/icons/coins.svg') ;
+}
+
+i[id$="aonNewDialogadd_commentIcon"] {
+	mask-image: url('/icons/message-square.svg') ;
+}
+
+i[id$="aonNewDialogperson_addIcon"] {
+	mask-image: url('/icons/user-plus.svg') ;
+}
+
+i[id$="aonNewDialogcloud_uploadIcon"]{
+    mask-image: url('/icons/rotate-ccw.svg') ;	
+}
+
+i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]{
+	display: none;
+	color:transparent;
+}
+
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]) {
+
+	border: 0;
+  	border-radius: .375rem;
+	
+	min-width: 200px;
+	background-image: none;
+	background-color: #0f172a !important;
+	
+	height: 32px;
+  	padding: 0px;
+  	margin-bottom: 2px;	  
+	margin-right: 15px;
+	
+}	
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]):before{
+	content: '';
+	width: 32px;
+	height: 32px;
+	mask-size: 24px;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-image: url('/icons/save.svg') ;
+	background-color: white;
+
+  	margin-right: 8px;
+	display: inline-block;
+}
+
+button:has( > i[id$="ToolbarHeaderToolSectionSaveButtonIcon"]):after {
+  	top: -4px;      		
+  	height: 32px;
+  	position: relative;
+
+	color:white;  	
+	content: 'guardar';
+  	font-size: 0.9rem;
+  	vertical-align: middle;
+  	text-transform: lowercase;
+	display: inline-block;
+  	font-family: "Inter-medium", sans-serif;
+}
+
+i[id$="ToolbarHeaderToolSectiontoolbarLabelsButtonIcon"]{
+	mask-image: url('/icons/tag.svg') ;
+}
+
+
+i[id$="ToolbarHeaderToolSectionCerradasButtonIcon"]{
+	mask-image: url('/icons/check-circle.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionArchivadasButtonIcon"]{
+	mask-image: url('/icons/archive.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionSYNCHRONIZEButtonIcon"] {
+    mask-image: url('/icons/refresh-cw.svg') ;	
+}
+
+i[id$="ToolbarHeaderToolSectionbar_chartMessengerButtonIcon"]{
+    mask-image: url('/icons/bar-chart-2.svg') ;
+}
+
+i[id$='ToolbarHeaderToolSectionSearchAdvancedButtonIcon'] {
+    mask-image: url('/icons/filter.svg') ;	
+}
+
+i[id$="DateIconButtonIcon"]{
+	mask-image: url('/icons/calendar.svg') ;
+}
+
+i[id$="RegistryRemoveRegistryIcon"] {
+    mask-image: url('/icons/x-circle.svg') ;
+	
+}
+
+i[id$="ToolbarHeaderToolSectionRejectButtonIcon"]{
+	mask-image: url('/icons/report.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionAcceptButtonIcon"]{
+	mask-image: url('/icons/check.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionOptionsButtonIcon"] {
+    mask-image: url('/icons/more-vertical.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionPreviousButtonIcon"]{
+	mask-image: url('/icons/chevron-left.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionNextButtonIcon"] {
+    mask-image: url('/icons/chevron-right.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionDeleteButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionDeleteFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionDeleteFileButtonIcon"],
+#removeEnterpriseButtonIcon {
+	mask-image: url('/icons/trash-2.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionBackButtonIcon"] {
+	mask-image: url('/icons/arrow-left.svg') ;
+}
+
+i[id$="aonNewDialognote_addIcon"] {
+	mask-image: url('/icons/file-plus-2.svg') ;
+}
+
+
+i[id$="ToolbarHeaderToolSectionUploadFileButtonIcon"],
+i[id$="aonNewDialogcloud_uploadIcon"],
+#accountingUploadInvoiceLabel i {
+    mask-image: url('/icons/upload-cloud.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionRefreshButtonIcon"] {
+    mask-image: url('/icons/rotate-cw.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionAddInvoiceButtonIcon"],
+i[id$="ToolbarHeaderToolSectionaddButtonIcon"],
+i[id$="aonDocumentalToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="aonConfigurationNewToolbarHeaderToolSectionAddButtonIcon"],
+i[id$="aonConfigurationToolbarHeaderToolSectionAddButtonIcon"],
+#createEnterpriseButtonIcon{
+    mask-image: url('/icons/plus.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionSearchSearchButtonIcon"],
+#aon-search-buttonIconButton i,
+i[id$="aonHeaderSearchDivButtonIcon"] {
+    mask-image: url('/icons/search.svg') ;
+}
+
+i[id$="ToolbarHeaderToolSectionmore_vertButtonIcon"] {
+    mask-image: url('/icons/more-vertical.svg') ;
+}
+
+i[id$="aonOfficePanelToolbarHeaderToolSectionAddButtonIcon"] {
+	mask-image: url('/icons/plus.svg') ;
+}
+
+i[id$="aonOfficePanelToolbarHeaderToolSectionSearchAdvancedButtonIcon"] {
+	mask-image: url('/icons/filter.svg') ;
+}
+
+/* ========================== Table Styles  ========================== */
+
+.aonTable { width: 100%; table-layout: fixed; }
+
+.aonTable thead tr,
+.aonTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;   /* <- la pieza que falta: fuerza los anchos declarados */
+}
+
+.aonTable th {
+	border: none
+ }
+
+.aonTable thead {
+  background-color: #e2e8f0;
+}
+
+.aonTable thead th {
+	height: 3.25rem;
+	font-family: "Inter-bold", sans-serif;
+	font-size: .8125rem;
+	color: #5f6368;
+	border-radius: .375rem;
+	vertical-align: middle;
+}
+
+.aonTable tbody {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+
+}
+
+.aonTable tbody tr {
+	font-family: "Inter-regular", sans-serif;
+	font-size: .8125rem;
+	color: #5f6368;
+	border-radius: .375rem;
+	border: .0625rem solid #e2e8f0 !important;
+}
+
+.aonTable tbody tr td {
+	color: #64748b;
+	height: 3rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 9.375rem;
+}
+
+.aonTable tbody tr:hover, .aonTableTrChecked {
+  background-color: var(--aonBackgroundColor2);
+}
+
+.aonTable .aonTableEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================== TimeControl Styles  ========================== */
+
+.profile-letters {
+  border: none;
+  border-radius: 0px;
+}
+
+td .aonCheckbox  {
+	margin-left: 9px;
+}
+
+.aonCheckbox >span::before {
+	width: 14px;
+	height: 14px;
+	border: 1px solid;
+	margin-left: 1.5px;
+ 	margin-top: 3px;
+}
+
+.aonCheckbox > input {
+	left: -11px;
+	top: -9px;
+}
+
+/*=========================== Right Panel Styles  ========================== */
+
+aon-right-panel {
+  background: #f8fafc;
+}
+.rightPanel  {
+	top: 68px;
+	border:none;
+	margin-top: 0px !important;
+	background-color: var(--aonBackgroundColor2);
+}
+
+.rightPanel #aonRightPanelContent {
+	padding: 1rem;
+	overflow-y: scroll;
+	height: 85%;
+}
+
+.rightPanelAboutContactCard {
+	margin-left: 0;
+}
+
+#aonHelpAboutContactCardContent > div > div {
+	align-items: center;
+	margin: 0 !important;
+	padding: .5rem !important;
+}
+
+.rightPanel span:not(.material-icons) {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0;
+  font-family: "Inter-medium";
+}
+
+.rightPanel aon-card .aonCard{
+	margin: 0px;
+	padding: 0px;;
+	border-radius: .375rem;
+}
+
+.rightPanel .divLogout,
+.rightPanel .configCardText{
+	border: none;
+	background-color: #0f172a;
+	border-radius: 4px;
+	color: var(--aonWhite);
+	cursor: pointer;
+	font-family: var(--aonFontFamily);
+	height: 2.5rem;
+	letter-spacing: .75px;
+	margin-top: 0px;
+	width: 100%;
+}
+
+.rightPanel .helpCardText{
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	cursor: pointer;
+}
+
+.helpCardText {
+	display: flex;
+  	justify-content: center;
+}
+
+#aonHelpAboutContactCardTitle,
+#aonHelpScheduleContactCardTitle {
+	margin-bottom: 0;
+}
+
+#aonHelpAboutContactCardCard > .aonCardTitle div,
+#aonHelpScheduleContactCardCard > .aonCardTitle div {
+	padding-left: 1rem;
+}
+
+#notificationsHelp,
+#aonRightPanelEditButton,
+#aonRightPanelNotificationButton{
+	display: none !important;
+}
+
+#openNotificationButton {
+	display: block;
+}
+
+.rightPanel .divLogout *,
+.rightPanel .configCardText *{
+	color: #fff;	
+	font-size: 1rem;
+}
+
+.rightPanel .helpCardText *{
+	color: #0f172a;	
+	font-size: 1rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv > div:first-child{
+	font-size: 1.2rem
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv > div:not(:first-child){
+	font-size: 1rem
+}
+
+#loginContent > div {
+	flex-direction: column;
+}
+
+#loginContent > div:first-child{
+	background-color: white;
+    border-radius: .375rem;
+    padding: 1.25rem;
+}
+
+.helpCardText:hover,
+.configCardText:hover {
+  background-color: #bdc6d3 !important;
+}
+
+.aonUserPasswordLink {
+  font-size: 1rem;
+  text-decoration: none;
+  justify-content: center;
+  padding: .5rem 1rem;
+}
+
+.rightPanel div[id$="CardContent"]{
+	padding: 1rem;
+}
+
+.rightPanel div[id$="CardContent"] *:not(.material-icons) {
+	color: #64748b;
+}
+
+.rightPanel div[id$="CardContent"] .material-icons {
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+}
+
+.rightPanel #aonConfig{
+	display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+}
+
+#aonConfig > span > i,
+#aonRightPanelCloseButton > button > i,
+#openNotificationButton > button > i,
+#aonLoginPanelLogout > div > i {
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: white;
+}
+
+.rightPanel .helpCardText .material-icons{
+	width: 23px;
+	height: 23px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #0f172a;
+}
+
+#helpContent > span.helpCardText:hover
+#aonConfig .configCardText:hover {
+	background-color: #64748b !important;
+}
+
+#aonConfig .configCardText {
+	display: flex;
+	justify-content: center;
+}
+
+#helpContent > span.helpCardText:nth-of-type(1) > i {
+	mask-image: url('/icons/book-open.svg') ;
+}
+
+#helpContent > span.helpCardText:nth-of-type(2) > i {
+	mask-image: url('/icons/bell.svg') ;
+}
+
+#helpContent > span.helpCardText:nth-of-type(3) > i {
+	mask-image: url('/icons/award.svg') ;
+}
+
+#aonContactIcon1{
+	 mask-image: url('/icons/building.svg') ;
+}
+
+#aonContactIcon2{
+	 mask-image: url('/icons/phone.svg') ;
+}
+
+#aonContactIcon3,
+i[id$="aonDocumentalToolbarHeaderToolSectionSendFileButtonIcon"],
+i[id$="aonDocumentalSheetToolbarHeaderToolSectionSendFileButtonIcon"]{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon4{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon5{
+	 mask-image: url('/icons/mail.svg') ;
+}
+
+#aonContactIcon6{
+	 mask-image: url('/icons/clock-4.svg') ;
+}
+
+#aonContactIcon7{
+	 mask-image: url('/icons/clock-4.svg') ;
+}
+
+#aonLoginPanelLogout > div > i {
+	mask-image: url('/icons/log-out.svg') ;
+}
+
+#aonRightPanelCloseButton > button > i {
+	mask-image: url('/icons/x-square.svg') ;
+}
+
+#openNotificationButton > button > i {
+	mask-image: url('/icons/external-link.svg') ;
+}
+
+.rightPanel div[id$="CardContent"] > div > div{
+	padding: .5rem !important;
+}
+
+.rightPanel div[id$="CardContent"] > div > div:hover,
+.rightPanel div[id$="CardContent"] > div > div.selected {
+	background-color: #f1f5f9;
+}
+
+.rightPanel #aonConfigThemesCardTitle,
+.rightPanel #aonConfigHelpLangCardTitle {
+	margin-bottom: 0;
+}
+
+
+.rightPanel .toolbarSidenavPanel{
+	color: #fff;
+	background: #475569;
+	padding: .5rem 1.25rem;
+	
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.rightPanel .toolbarSidenavPanel * {
+	color: #fff;	
+}
+
+.rightPanel .toolbarSidenavPanel *:not(.material-icons) {
+	font-size: 1.25rem !important;
+}
+
+.rightPanel .toolbarSidenavPanel #aonRightPanelConfigButton,
+.rightPanel .toolbarSidenavPanel #aonRightPanelHelpButton {
+	display: none !important;
+}
+
+.rightPanel i[class~="configPanelLanguageI"] {
+	width: 24px;
+	height: 24px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+}
+
+#aonConfigThemesCardCard i[class~="configPanelLanguageI"]{
+    mask-image: url('/icons/palette.svg') ;
+}
+
+#aonConfigHelpLangCardContent i[class~="configPanelLanguageI"]{
+    mask-image: url('/icons/globe.svg') ;
+}
+
+.rightPanel.hiddenSidenav.open {
+	height: 100% !important;
+}
+
+.divLogout{
+	position: initial;
+}
+
+.profile-avatar-letters{
+	background-color: #475569;
+  	color: #fff;
+}
+
+.userPanelDivUserInfo{
+	width: 100%;
+	max-width: 100%;
+	
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv{
+	margin: .2rem 1rem;
+	display: flex;
+	align-items: center;
+	
+	height: 24px;
+	mask-size: contain;
+	mask-position: center;
+	mask-repeat: no-repeat;
+}
+
+#loginContent > div > div.userPanelDivUserInfo {
+	margin-bottom: 0;
+}
+
+#loginContent > div:first-of-type {
+	padding: 1.25rem !important;
+  	border-radius: .375rem;
+  	background-color: #fff;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(1){
+	justify-content: center;
+	margin-bottom: .3rem;
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(2) > i{
+	width: 24px;
+	mask-image: url('/icons/mail.svg') ;
+	background-image: url('/icons/mail.svg');
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(3) > i{
+	width: 24px;
+	mask-image: url('/icons/phone.svg') ;
+	background-image: url('/icons/phone.svg');
+}
+
+.userPanelDivUserInfo .userPanelNameInfoDiv:nth-of-type(4) > i{
+	width: 24px;
+	mask-image: url('/icons/user.svg') ;
+	background-image: url('/icons/user.svg');
+}
+
+/* ========================== Header Customer Styles  ========================== */
+.aonSecondaryToolbar{
+	border: none;
+}
+
+.aonSecondaryToolbarTitle{
+	font-family: "Inter-medium";
+	font-size: .875rem;
+	line-height: 1.5rem;
+	letter-spacing: 0;
+}
+
+.aonInputBoxLabel > input {
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 ;
+	height: 2.15rem;
+	font-size: .8125rem;
+}
+
+.aonTextareaBoxLabel > textarea {
+	border-radius: .375rem !important;
+	border: .0625rem solid #cbd5e1 ;
+	height: 2.15rem;
+	min-height: 2.15rem;
+	font-size: .8125rem;
+}
+
+/* ========================== Office Styles  ========================== */
+
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan{
+	border: .0625rem solid #cbd5e1 !important;
+	border-radius: .375rem;
+	height: 2.5rem;
+}
+
+@media (1080px <= width <= 1400px) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+}
+
+@media (1401px <= width) {
+  .aonCardsPanel {
+	grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+}
+
+/* ========================== Search Styles  ========================== */
+
+#aonMenuLeftop-applications {
+	display: none;
+}
+
+#aonHeaderSearchDialogMenu span {
+	color: #64748b;
+	font-family: "Inter-regular", sans-serif;
+}
+
+#aonHeaderSearchDialogMenu span[header],
+#aonHeaderSearchDialogMenu b[decorate] {
+	color:var(--aonHeaderBackgroundColor);
+}
+
+#aonHeaderSearchDialogMenu i.material-icons {
+	color:transparent;
+	min-width: 19px;
+	min-height: 19px;
+	mask-size: 18px;
+	mask-position: center;
+	mask-repeat: no-repeat;
+	background-color: #64748b;
+	mask-image: url('/icons/arrow-right.svg');
+	
+}
+
+#aonHeaderSearchDialogMenu i.material-icons:has(+span>span[header]) {
+	background-color:var(--aonHeaderBackgroundColor);
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="euro_symbol"]  {
+	mask-image: url('/icons/euro.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="handshake"]  {
+	mask-image: url('/icons/hear-handshake.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="trolley"]  {
+	mask-image: url('/icons/truck.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="monitoring"]  {
+	mask-image: url('/icons/line-chart.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="calculate"]{
+	mask-image: url('/icons/calculator.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="open_in_new"]  {
+	mask-image: url('/icons/external-link.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="help"]  {
+	mask-image: url('/icons/help-circle.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="apps"]  {
+	mask-image: url('/icons/grip-vertical.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="share"]  {
+	mask-image: url('/icons/share-2.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="apartment"]  {
+	mask-image: url('/icons/building-2.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="domain_disabled"]  {
+	mask-image: url('/icons/building-off.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="work"] {
+	mask-image: url('/icons/briefcase.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="person"] {
+	mask-image: url('/icons/user.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="group"] {
+	mask-image: url('/icons/users.svg');
+}
+
+#aonHeaderSearchDialogMenu i.material-icons[icon="business"] {
+	mask-image: url('/icons/building.svg');
+}
+
+
+aon-icon[icon='excel'],
+aon-icon[icon='aon_excel']{
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	background-size: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+aon-icon[icon='aon_excel']{
+	background-color:white;
+	mask-image: url('/icons/x-square.svg');
+}
+
+aon-icon[icon='excel']{
+	background-color:black;
+	mask-image: url('/icons/file-spreadsheet.svg');
+}
+
+aon-icon[icon='excel'] > svg,
+aon-icon[icon='aon_excel'] > svg {
+	display: none;
+}
+
+button:has(aon-icon[icon='aon_excel']) {
+	width: 30px;
+	height: 30px;
+	margin: 10px;
+	min-width: 24px;
+	min-height: 24px;
+	border-radius: 0px;
+	background-color:black !important;
+}
+
+aon-new-fixed-button .newFixedButton {
+	position: absolute;
+	z-index: 5;
+	right: 30;
+	bottom: 20;
+	
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 0.0625rem 0.0625rem, rgba(0, 0, 0, 0.07) 0px 0.125rem 0.125rem, rgba(0, 0, 0, 0.07) 0px 0.25rem 0.25rem, rgba(0, 0, 0, 0.07) 0px 0.5rem 0.5rem, rgba(0, 0, 0, 0.07) 0px 1rem 1rem;
+  	background: linear-gradient(to right, rgb(0, 75, 251), rgb(0, 75, 251), rgb(14, 16, 48), rgb(88, 96, 120)) 0px 0px / 300% 100%;
+    background-position-x: 0px;
+    background-position-y: 0px;
+  	background-position: 0px 0px;
+  	transition: background 0.1s;
+  	width: 4rem;
+  	height: 4rem;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	border-radius: 100%;
+  	padding: unset;
+  	color: white;
+  	border: none;
+  	cursor: pointer;
+  	
+  	transition: transform 0.5s;
+}
+
+aon-new-fixed-button .newFixedButton.open{
+	transform: rotate(-45deg);
+	background-position: 100% 0px;
+}
+
+aon-new-fixed-button .newFixedButton:hover {
+    background: var(--aonCustomizeButtonBackground);
+	background-position: 100% 0px;
+	background-size: 300% 100%;
+    
+}
+
+aon-new-fixed-button .newFixedButton .plus {
+    pointer-events: none;
+    mask-image: url('/icons/plus-circle.svg');
+  	width: 2.5rem;
+  	height: 2.5rem;
+  	mask-size: contain;
+  	mask-position: center;
+  	mask-repeat: no-repeat;
+  	background-color: white;
+}
+
+aon-home:has( #rootPanel > iframe ) aon-new-fixed-button .newFixedButton{
+	right: 13px;
+  	bottom: 15px;
+}
+
+.aonSwitch > span::before {
+    content: "";
+    float: right;
+    border-radius: 7px;
+    width: 2.3rem;
+    height: 1.3rem;
+    
+    background-color: #cbd5e1;
+    box-shadow: inset 0 .1875rem .3125rem rgba(126, 126, 126, .3), inset 0 -0.1875rem .3125rem hsla(0, 0%, 100%, .7);
+    cursor: pointer;
+    border-radius: 1.375rem;
+    transition: background-color .3s;
+}
+
+.aonSwitch > span::after {
+    content: "";
+    position: absolute;
+    top: 0.35rem;
+    height: 1rem;
+    width: 1rem;
+    right: 1.1rem;
+    bottom: .125rem;
+    border-radius: 50%;
+    transition: transform .3s;
+}
+
+.aonSwitch > input,
+.aonSwitch > input:checked {
+    background-color: transparent;
+}
+
+.aonSwitch > input:checked + span::before {
+	background-color: #cbd5e1;
+}
+
+.aonSwitch > input:checked + span::after {
+	background-color: var(--aonHeaderBackgroundColor);
+	transform: translateX(14px);
+}
+
+aon-input[readonly="true"] input, 
+aon-input[disabled="true"] input, 
+aon-input[disabled="disabled"] input, 
+aon-new-input[readonly="true"] input, 
+aon-new-input[disabled="true"] input, 
+aon-new-input[disabled="disabled"] input, 
+aon-new-number[readonly="true"] input, 
+aon-new-number[disabled="true"] input, 
+aon-new-number[disabled="disabled"] input,
+aon-new-suggestion[readonly="true"] input, 
+aon-new-suggestion[disabled="true"] input, 
+aon-new-suggestion[disabled="disabled"] input, 
+aon-email[readonly="true"] input, 
+aon-email[disabled="true"] input, 
+aon-email[disabled="disabled"] input, 
+aon-new-date[readonly="true"] input, 
+aon-new-date[disabled="true"] input, 
+aon-new-date[disabled="disabled"] input, 
+aon-new-select[readonly="true"] input, 
+aon-new-select[disabled="true"] input, 
+aon-new-select[disabled="disabled"] input, 
+aon-new-textarea[readonly="true"] input, 
+aon-new-textarea[disabled="true"] input, 
+aon-new-textarea[disabled="disabled"] input, 
+aon-iban[readonly="true"] input, 
+aon-iban[disabled="true"] input, 
+aon-iban[disabled="disabled"] input, 
+aon-quantity[readonly="true"] input, 
+aon-quantity[disabled="true"] input, 
+aon-quantity[disabled="disabled"] input, 
+aon-autosize-textarea[readonly="true"] input, 
+aon-autosize-textarea[disabled="true"] input, 
+aon-autosize-textarea[disabled="disabled"] input, 
+textarea[readonly="true"] input, 
+textarea[disabled="true"] input, 
+textarea[disabled="disabled"] input {
+	background-color: #e2e8f0;
+  	cursor: not-allowed;
+}
+
+aon-search > span {
+	border-bottom: none !important;
+    border-radius: .375rem;
+    border: .0625rem solid #cbd5e1 !important;
+}
+
+/* #aonDocumentalSidenavUserCategoriesList li > span:last-of-type,
+#aon-notesSidenavTagsList li > span:last-of-type,
+#aonWarehouseSidenavWarehousesList li > span:last-of-type {
+	display: block !important;
+} */
+
+#aonDocumentalSidenavUserCategoriesList aon-icon-button.aonOfficePanelSidenavTypesListOption,
+#aon-notesSidenavTagsList aon-icon-button.aonOfficePanelSidenavTypesListOption,
+#aonWarehouseSidenavWarehousesList aon-icon-button.aonOfficePanelSidenavTypesListOption {
+	mask-image: url(/icons/edit.svg);
+}
+
+#aonMessengerToolbarHeaderToolSectionexcelButtonIconButton,
+#aonLaboralToolbarHeaderToolSectionexcelButtonIconButton {
+	background-color: transparent !important; 
+}
+
+#aonMessengerToolbarHeaderToolSectionexcelButtonAonIcon,
+#aonLaboralToolbarHeaderToolSectionexcelButtonAonIcon {
+	background-color: black !important;
+}
+
+#aon-notesToolbarHeaderToolSectionOrderButtonIcon,
+#orderOptDialogDialogMenuContent i{
+	mask-size: 22px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: rgb(95, 99, 104);
+    mask-image: url(/icons/filter.svg);
+}
+
+#orderOptDialogDialogMenuContent i{
+	mask-size: 16px;
+}
+
+.aonDialogContent{
+	padding: 1rem 0;
+}
+
+.aonDialogContent > label{
+	mask-size: 26px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: rgb(66, 66, 66);
+    color: rgb(66, 66, 66) !important;
+    mask-image: url(/icons/x-square.svg);
+    margin-right: .5rem !important;
+    margin-top: -15px !important;
+}
+
+.aonDialogContent > div:first-of-type{
+	border-bottom: 1px solid;
+    padding: 0 0 1rem 1rem;
+    font-family: "Inter-semibold";
+    font-size: 1.25rem !important;
+    line-height: 1.75rem;
+    letter-spacing: -0.005rem;
+}
+
+.aonDialogContent > div:nth-child(4){
+	padding: .2rem 1rem;
+}
+
+.aonDialogContent > div:last-of-type{
+	padding: 0 1rem;
+}
+
+.newMenuContent{
+	align-items: start;
+}
+
+.newMenuContent.isFixedButton{
+	align-items: end;
+}
+
+.aonSidenav > div {
+	padding-bottom: 0px !important;
+}
+
+.aonCheckbox:hover>input,
+.aonCheckbox>input:focus,
+.aonCheckbox:hover>input:focus,
+.aonCheckbox>input:active {
+	opacity: 0;
+}
+
+.menu-option {
+	width: max-content;
+}
+
+.menu-children.open{
+	flex-direction: row;
+	margin-top: 10px;
+	padding-left: 0;
+}
+
+.menu-option.open{
+	width: 100%;
+	justify-content: center;	
+}
+
+.menu-option:hover i,
+.menu-children > div:hover i,
+.menu-option.open i {
+	background-color: #ffff;
+}
+
+#aonMenuBar-office {
+	display: block;
+}
+
+/* Invoice Future Sidenav options */
+
+#aonInvoiceSidenavIncomes {
+	display: block;
+}
+
+#aonInvoiceSidenavExpenses {
+	display: block;
+}
+
+#aonInvoiceSidenavDocument {
+	display: block;
+}
+
+#aonInvoiceSidenavManagement {
+	display: block;
+}
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected {
+	left: -12px;
+	width: calc(100% + 12px);
+}
+
+#aonInvoiceSidenav  ul ul .aonAppMenuSidenavList:hover span,
+#aonInvoiceSidenav ul ul .aonAppMenuSidenavListSelected span{
+	padding-left: 12px;
+}
+
+
+i[id$="aonHeaderSearchDivButtonIcon"],
+#accountingUploadInvoiceLabel i{
+	background-color: #ffff;
+}
+
+#aonHeaderSearchDialogMenuDialogMenuContent{
+  left: auto !important;
+  right: 15;
+  top: 55 !important;
+}
+
+#accountingUploadInvoice div{
+	width: 95%;
+}
+
+#accountingUploadInvoiceLabel{
+	justify-content: space-between;
+  	width: 100%;
+}
+
+
+/* #aonMenuListAppTitle-documental {
+	color: transparent;
+}
+
+#aonMenuListAppTitle-documental:before  {
+	content: 'Mi nube';
+	position: absolute;
+	display: inline-block;
+	color: rgb(66, 66, 66);
+}
+ */
+ 
+.material-icons {
+  font-variation-settings: "FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
+  font-size: 24px;
+  display: inline-block;
+}
+
+#aonConfigurationRegistryBankCardTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardEmailTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardPhoneTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+#aonConfigurationRegistryMediaCardWebTable .aonInputBox .aonIconButton {
+	top: 0px;
+}
+
+.aonIconButtonTop {
+	margin-top: 1.9rem;
+	display: block;
+}
+
+.aonSwitchTop {
+	top: 15px;
+	display: block;
+	position: relative;
+	left: 15px;
+}
+
+#aonConfigurationContent.aonContentBeta:has( iframe ) ,
+#aonConfigurationNewContent.aonContentBeta:has( iframe ) {
+	margin: 0px;
+	padding: 0px;
+	background-color: var(--aonBackgroundColor2);
+}
+
+.aonSidenavAddButton{
+	border-radius: 50%;
+	background-color: #0f172a;
+}

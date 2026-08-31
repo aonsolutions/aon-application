@@ -465,7 +465,7 @@ export class AonApplication extends AonElement {
     sidenavTitle.title = data.name;
     sidenavTitle.style.cursor = "pointer";
     sidenavTitle.style.userSelect = "none";
-    sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
+    sidenavTitle.style.marginLeft = "10px";
 
     let arrowTitleSpan = this.createElement(TAG.SPAN);
     arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
@@ -474,7 +474,7 @@ export class AonApplication extends AonElement {
     let arrowTitle = this.createElement("i");
     arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
     arrowTitle.className = "material-icons aonVerticalMiddle";
-    sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
+    sidenavTitle.appendChild(arrowTitleSpan);
 
     sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
 	  const ul = div.querySelector("ul");
@@ -584,7 +584,7 @@ export class AonApplication extends AonElement {
       sidenavTitle.title = data.name;
       sidenavTitle.style.cursor = "pointer";
       sidenavTitle.style.userSelect = "none";
-      sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
+      sidenavTitle.style.marginLeft = "10px";
 
       let arrowTitleSpan = this.createElement(TAG.SPAN);
       arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
@@ -593,7 +593,7 @@ export class AonApplication extends AonElement {
       let arrowTitle = this.createElement("i");
       arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
       arrowTitle.className = "material-icons aonVerticalMiddle";
-      sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
+      sidenavTitle.appendChild(arrowTitleSpan);
 
       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
 
@@ -653,7 +653,7 @@ export class AonApplication extends AonElement {
               let i = this.createElement(TAG.I);
               i.id = data.id + 'icon';
               let iconClass = "material-icons";
-              if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+              if(data.app) i.style.color = data.app.color;
               if(option.icon_color) {
                 i.title = option.id;
                 i.color = option.icon_color;
@@ -793,7 +793,7 @@ export class AonApplication extends AonElement {
         let i = this.createElement(TAG.I);
         i.id = id + 'icon';
         let iconClass = "material-icons";
-        if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+        if(data.app) i.style.color = data.app.color;
         if(option.icon_color) {
           i.title = option.id;
           i.color = option.icon_color;
@@ -809,20 +809,11 @@ export class AonApplication extends AonElement {
         ai.icon  = option.aonIcon.icon;
         ai.size  = "18px";
         li.appendChild(ai);
-        if(LS.isNewTheme() && data.app) ai.color = data.app.color;
+        if(data.app) ai.color = data.app.color;
         if(option.icon_color) {
           ai.title = option.id;
           ai.color = option.icon_color;
         }
-        li.addEventListener(EVENT.MOUSEOVER, () => {
-          if(!LS.isNewTheme()) 
-            this.getElement(id + "AonIcon").color = option.aonIcon.color;
-        });
-
-        li.addEventListener(EVENT.MOUSELEAVE, () => {
-          if(!LS.isNewTheme()) 
-            this.getElement(id + "AonIcon").color = "#5f6368";
-        });
       } else if (option.img) {
         let img = this.createElement(TAG.IMG);
         if(option.style) {
@@ -1009,7 +1000,7 @@ export class AonApplication extends AonElement {
               let i = this.createElement(TAG.I);
               i.id = data.id + 'icon';
               let iconClass = "material-icons";
-              if(LS.isNewTheme() && data.app) i.style.color = data.app.color;
+              if(data.app) i.style.color = data.app.color;
               if(option.icon_color) {
                 i.title = option.id;
                 i.color = option.icon_color;

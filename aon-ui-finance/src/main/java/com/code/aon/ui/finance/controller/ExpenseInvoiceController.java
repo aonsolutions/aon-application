@@ -122,6 +122,7 @@ public class ExpenseInvoiceController extends InvoiceController {
 						+ " INNER JOIN invoice i ON i.id = id.invoice"
 						+ " WHERE i.registry = " + invoice.getRegistry().getId()
 						+ " AND i.type = " + InvoiceType.EXPENSES.ordinal()
+						+ " AND (i.annulled = 0 or i.annulled is null)"
 						+ " AND id.line = " + line
 						+ " AND id.item is not null"
 						+ " ORDER BY i.issue_date desc,i.id desc"

@@ -237,7 +237,7 @@ public class MainEntryPoint implements EntryPoint {
 	private enum AccountingEntryPoint {
 		AccountingOperationReport {
 			void run() {
-				com.esferalia.aon.gwt.fiscal.client.report.OperationReportNew.run();
+				com.esferalia.aon.gwt.fiscal.client.report.OperationReport.run();
 			}
 		},
 		AmortizationModule {

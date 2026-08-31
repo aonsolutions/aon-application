@@ -2398,6 +2398,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), inv.getRegistry().getId());
 		criteria.addNotEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), inv.getId());
+		Invoice.addNotAnnulledExpression(invoiceBean, criteria);
 		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), false);
 		for (ITransferObject ito : invoiceBean.getList(criteria)) {
 			Invoice invoice = (Invoice)ito;

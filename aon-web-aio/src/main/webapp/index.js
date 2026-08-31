@@ -41,10 +41,8 @@ const load = () => {
 	console.debug("We need all the luck we can get.");
 	
     LS.setAonSolutions(true);
-    // TODO: Skip reload
-	LS.set(LS.NEW_THEME, true);
 
-	loadScripts(); 
+	loadScripts();
 
 	loadTheme()
 	.finally(loadIsReadOnly)
@@ -68,7 +66,11 @@ export const loadTheme = async () => {
 	let paramCss = getParam(LS.THEME) || LS.getTheme() ;
 	let mobileCss = UA.isAndroidOldApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
 	if(UA.isAndroid35App()) mobileCss = LS.AON_MOBILE_ANDROID_35;
-	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || LS.CUSTOM_THEME || LS.AON_THEME);
+	let themeUrl = UA.isMobile() ? mobileCss : (paramCss || LS.CUSTOM_THEME );
+	return loadThemeUrl(themeUrl).catch((err) => loadThemeUrl(LS.DEFAULT_THEME));
+}
+
+export const loadThemeUrl = async (themeUrl) => {	
 	return new Promise((resolve, reject) => {
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);

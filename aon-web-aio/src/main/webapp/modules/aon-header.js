@@ -106,7 +106,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = (LS.isNewTheme() || this.newTheme) ? `${CSS.AON_HEADER} ${CSS.AON_HEADER_START} ` : CSS.AON_HEADER_BETA;
+		div.className = `${CSS.AON_HEADER} ${CSS.AON_HEADER_START} `;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();
@@ -137,7 +137,7 @@ export class AonHeader extends AonElement {
 
 		let aonLogo = this.createElement(TAG.DIV);
 		aonLogo.id = "aonLogo";
-		aonLogo.className = (LS.isNewTheme() || this.newTheme) ? "aonNewLogo" : "aonLogo";
+		aonLogo.className = "aonNewLogo";
 		aonLeftTopMenu.appendChild(aonLogo);
 
 		let aonHeaderApp = this.createElement(TAG.DIV);
@@ -167,10 +167,6 @@ export class AonHeader extends AonElement {
 		let aonHeaderButtons = this.createElement(TAG.DIV);
 		aonHeaderButtons.id = 'aonHeaderButtons';
 		aonHeaderButtons.className = "aonHeaderButtons";
-		if (!LS.isNewTheme() && !this.newTheme) {
-			aonHeaderButtons.style.display = "flex";
-			aonHeaderButtons.style.alignItems = "center";
-		}
 
 		let aonHeaderCompany = this.createElement(TAG.SPAN);
 		aonHeaderCompany.id = this.AON_HEADER_COMPANY;
@@ -293,16 +289,6 @@ export class AonHeader extends AonElement {
 		this.buildLogo();
 
 		if (!this.isMobile()) {
-			if (!LS.isNewTheme() && !this.newTheme) {
-				let aonHeaderButtons = this.getElement('aonHeaderButtons');
-				aonHeaderButtons.style.position = 'absolute';
-				aonHeaderButtons.style.right = '20px';
-				aonHeaderButtons.style.top = '10px';
-
-				let aonHeaderSearch2 = this.getElement('aonHeaderSearch');
-				aonHeaderSearch2.style.marginLeft = '108px';
-			}
-
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
 				this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
@@ -535,11 +521,6 @@ export class AonHeader extends AonElement {
 			//	aonHeaderCompanyName.innerHTML = name; 
 			//} ) ;
 
-			if (!LS.isNewTheme() && !this.newTheme) {
-				let aonShowMenu = this.getElement('aonShowMenu');
-				aonShowMenu.style.display = 'none';
-			}
-
 			let aonMenu = this.getElement('aonMenu');
 			aonMenu.removeAttribute('company');
 			aonMenu.removeAttribute('user');
@@ -668,8 +649,6 @@ export class AonHeader extends AonElement {
 		let aonHeaderSearch = this.getElement(this.AON_HEADER_SEARCH);
 		// aonHeaderSearch.style.display = company ? 'none' : 'flex';
 		aonHeaderSearch.style.display = 'flex';
-		if (!LS.isNewTheme() && !this.newTheme)
-			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
 		aonHeaderHome.style.display = company ? 'block' : 'none';
@@ -1220,15 +1199,7 @@ export class AonHeader extends AonElement {
 		localStorage.setItem("aon_domain_document", company.document);
 		localStorage.setItem("onlyOne", onlyOne);
 
-		if (!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')) {
-			let aonShowMenu = this.getElement('aonShowMenu');
-			aonShowMenu.style.display = 'block';
-		}
-
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
-		if (!LS.isNewTheme()) {
-			aonHeaderHome.style.display = 'block';
-		}
 
 		let aonHeaderCompanyName = this.getElement(this.AON_HEADER_COMPANY_NAME);
 		aonHeaderCompanyName.innerHTML = company.name;

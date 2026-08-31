@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
@@ -427,6 +428,7 @@ public abstract class Mod303Declaration {
 						.from(INVOICE)
 						.where(INVOICE.DOMAIN.eq(mod303.getDomain()))
 						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(start), AonDateUtils.toSql(end)))
+						.and(InvoiceDAO.NOT_ANNULLED)
 						.limit(1)
 						.fetch()
 						.stream()

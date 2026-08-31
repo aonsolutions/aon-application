@@ -1,6 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
 import { CONSTANT, MATERIAL_ICONS, TAG, EVENT, CSS } from '../environments/environments.js';
-import * as LS from '../services/localStorageService.js';
 
 export class AonAppMenu extends AonElement {
 
@@ -85,7 +84,7 @@ export class AonAppMenu extends AonElement {
         sidenavTitle.title = data.name;
         sidenavTitle.style.cursor = "pointer";
         sidenavTitle.style.userSelect = "none";
-        sidenavTitle.style.marginLeft = LS.isNewTheme() ? "10px": "2px";
+        sidenavTitle.style.marginLeft = "10px";
     
         let arrowTitleSpan = this.createElement(TAG.SPAN);
         arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
@@ -94,7 +93,7 @@ export class AonAppMenu extends AonElement {
         let arrowTitle = this.createElement("i");
         arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
         arrowTitle.className = "material-icons aonVerticalMiddle";
-        sidenavTitle.appendChild(LS.isNewTheme() ? arrowTitleSpan : arrowTitle);
+        sidenavTitle.appendChild(arrowTitleSpan);
     
         sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
           const ul = div.querySelector("ul");
@@ -150,19 +149,15 @@ export class AonAppMenu extends AonElement {
           li.id = id;
           li.title = option.name;
     
-          li.className = LS.isNewTheme() 
-              ? "aonAppMenuSidenavListBeta aonOpacity"
-              : "aonAppMenuSidenavList aonOpacity sidenavHover";  
-          
-          if(LS.isNewTheme() ) {
-            li.addEventListener(EVENT.MOUSEOVER, () => {
-                        li.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb';
-                    });
-    
-                    li.addEventListener(EVENT.MOUSELEAVE, () => {
-                        li.style.backgroundColor = 'transparent';
-                    });
-          }
+          li.className = "aonAppMenuSidenavListBeta aonOpacity";
+
+          li.addEventListener(EVENT.MOUSEOVER, () => {
+            li.style.backgroundColor = this.getApp().backgroundColor || '#eaf1fb';
+          });
+
+          li.addEventListener(EVENT.MOUSELEAVE, () => {
+            li.style.backgroundColor = 'transparent';
+          });
     
     
           ul.appendChild(li);
@@ -286,8 +281,6 @@ export class AonAppMenu extends AonElement {
                   el.style.removeProperty("font-weight");
               });
               li.style.fontWeight= "bold"
-              if(!LS.isNewTheme())
-                li.style.backgroundColor = "#d3e3fd";
     
               this.selected = id;
               let toolbar = this.getElement(this.TOOLBAR);
