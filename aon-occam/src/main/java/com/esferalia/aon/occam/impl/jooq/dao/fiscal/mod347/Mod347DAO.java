@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod347;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
@@ -25,7 +25,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
@@ -36,12 +35,18 @@ import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -166,15 +171,6 @@ public class Mod347DAO {
 	}
 	
 	public static Mod347 initialize(AONContext ctx, int year) {	
-		
-		// Ponemos por defecto el año, según la fecha actual, si estamos en enero o febrero ponemos
-		// el año anterior (se supone que queremos hacer el del ultimo periodo del año anterior)
-		// en caso contrario ponemos el año actual
-//		Date today = new Date();
-//		int year = AonDateUtils.getYear(today);		
-//		if (AonDateUtils.getMonth(today) == 0 || AonDateUtils.getMonth(today) == 1) {
-//			year = year - 1;			
-//		}
 		
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		
 		Mod347 mod347 = new Mod347();
@@ -805,10 +801,6 @@ public class Mod347DAO {
 							Country country = vat.getRegistryDocumentCountry();
 							if (country == null || country == Country.ES) {
 	
-//								if (AonStringUtils.length(document) > 9) {									
-//									throw new AonCoreException("La longitud del NIF del Declarado no puede ser mayor de 9 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-//								} 
-									
 								declared.setDocument(document);
 									
 								// La provincia no la tengo en VATContext, se obtiene de RADRESS de la dirección principal 
@@ -817,10 +809,6 @@ public class Mod347DAO {
 								);
 	
 							} else {
-								
-//								if (AonStringUtils.length(document) > 15) {									
-//									throw new AonCoreException("La longitud del NIF Operador Comunitario no puede ser mayor de 15 caracteres. ["+document+" - "+name+" - Factura "+vat.getDocumentNumber()+"]");
-//								}	
 								
 								declared.setOperatorNif(AonStringUtils.substring((country.getIso2() + document), 0, 17));
 								declared.setCountry(country);
@@ -964,104 +952,10 @@ public class Mod347DAO {
 			
 	}
 	
-	// --------------- INVOICES INFO --------------- 
-	
-	public static String getInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
-		
-		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
-		
-		// Información Desglose de facturas
-		if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN) {
-			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod347, declared));			
-		} else if (infoKey == FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN) {
-			return MessageFormat.format(INFO_MSG, getInvoicesInfoRental(ctx, mod347, declared));			
-		} 
-		
-		return null;
-	}
-	
-	private static String getInvoicesInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
-
-		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod347)
-				+ " DE " + mod347.getYear()
-				+ " (OPERACIONES) ";
-		
-		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
-				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
-				" - " + (declared.getName() == null ? "" : declared.getName());				
-		
-		return Mod347Formatter.formatInvoices347(title, subtitle
-				, getVatBreakdown(ctx, mod347, declared)
-				    .filter(vat -> !(mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING) )  // Si el modelo es de Canarias no sacar las facturas de arrendamientos de locales
-					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
-		
-	}
-	
-	private static String getInvoicesInfoRental(AONContext ctx, Mod347 mod347, Mod347Declared declared) {
-
-		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod347)
-				+ " DE " + mod347.getYear()
-				+ " (ARRENDAMIENTO DE LOCALES) ";
-		
-		String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
-				" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
-				" - " + (declared.getName() == null ? "" : declared.getName());				
-		
-		return Mod347Formatter.formatInvoices347(title, subtitle
-				, getVatBreakdown(ctx, mod347, declared)
-				    .filter(vat -> mod347.isCanarias() && vat.hasRetention() && vat.getWithholdingType() == WithholdingType.RENTING)  // Si el modelo es de Canarias sacar las facturas de arrendamientos de locales
-					.collect(Collectors.toCollection(LinkedList::new)),mod347.getYear(), declared.isVatAccrual());
-		
-	}
-	
-	private static Stream<VatContext> getVatBreakdown(final AONContext ctx, final Mod347 mod347, final Mod347Declared declared) {
-		
-		// Tipo de Facturas según la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
-		final InvoiceType invoiceType1;
-		final InvoiceType invoiceType2;
-		
-		// Tipo de transaccion según si está marcado o no ISP (solo compras)
-		final InvoiceTransactionType invoiceTransaction1;
-		final InvoiceTransactionType invoiceTransaction2;
-		
-		if (declared.getType() == Mod347Key.A) {       // Adquisiciones de bienes y servicios superiores a 3.005,06 euros (Compras y Gastos)
-			invoiceType1 = InvoiceType.PURCHASE;
-			invoiceType2 = InvoiceType.EXPENSES;			
-			invoiceTransaction1 = declared.isIsp() ? InvoiceTransactionType.OTHER_ISP : InvoiceTransactionType.NATIONAL;
-			invoiceTransaction2 = null;
-	    }
-	    else if (declared.getType() == Mod347Key.B) {  // Entregas de bienes y prestaciones de servicios superiores a 3.005,06 euros (Ventas)
-	    	invoiceType1 = InvoiceType.SALES;
-	    	invoiceType2 = null;
-	    	invoiceTransaction1 = InvoiceTransactionType.NATIONAL;
-	    	invoiceTransaction2 = InvoiceTransactionType.OTHER_ISP;
-	    }
-	    else {
-	    	invoiceType1 = null;
-	    	invoiceType2 = null;
-	    	invoiceTransaction1 = null;
-			invoiceTransaction2 = null;
-	    }
-		
-		Date fromDate = AonDateUtils.getYearFirstDay(mod347.getYear());
-		Date toDate = AonDateUtils.getYearLastDay(mod347.getYear());
-		String registryDocument = AonStringUtils.isBlank(declared.getOperatorNif())
-			? declared.getDocument()
-			: AonStringUtils.substring(declared.getOperatorNif(),2); 
-		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
-			.filter( vat -> AonStringUtils.equals(AonStringUtils.trimToEmpty(vat.getRegistryDocument()),AonStringUtils.trimToEmpty(registryDocument)))
-			.filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY || (vat.getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY && vat.isService()) || (vat.getTransaction() == InvoiceTransactionType.CAN_CEU_MEL && vat.isService()) ) &&  // Nacional o ISP o intracomunitarias o servicios extracomunitarios
-		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
-		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
-	                    );  
-	}
-	
-	private static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
+	protected static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
 		return Stream.concat(
-				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
+				 VATDAO.getVatBreakdown(ctx, mod347)
+				,VATDAO.getPeriodCritCajaVatBreakdown(ctx, mod347)
 			)			
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && vat.getTransaction() == InvoiceTransactionType.NATIONAL && AonMathUtils.isZero(vat.getPercentage())) )
