@@ -1,1 +1,100 @@
 @import url("/css/theme/standard.gwt.css");
+
+:root{
+	--aonBlack: #0A0A0A;
+	--aonMidGray:#C9C9C7;
+	--aonDrakGray:#3A3A3A;
+	--aonOffWhite:#F3F3F1;
+	--aonPurple:oklch(52% .234 277);
+	
+	
+	--aonError: var(--aonPurple);
+	--aonWarning: var(--aonMidGray);
+	
+	--aonHoverColor: var(--aonPurple);
+	--aonButtonColor: var(--aonPurple);
+
+	--aonForegroundColor:var(--aonOffWhite);
+	--aonTopMenuAvailable: var(--aonOffWhite);
+
+	--aonBackgroundColor: var(--aonBlack);
+	--aonBodyBackgroundColor: var(--aonDrakGray);
+	--aonHeaderBackgroundColor: var(--aonBlack);
+	
+	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+	--aonRadius: 1rem; /*16px*/
+	--aonShadow: 0 20px 60px -20px;
+	
+	--aonRadiusCard: 2.75rem; /*44px*/
+	--aonShadowCard: 0 30px 60px -25px rgba(0,0,0,.65), 0 8px 24px -12px rgba(0,0,0,.45);
+	
+	--aonShadowGlow: 0 20px 60px -20px var(--aonPurple);
+
+	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
+	--aonBorderHoverColor: var(--aonPurple);
+	
+	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
+
+}
+
+.aonBody {
+	color: var(--aonForegroundColor);
+}
+
+.gwt-Selector,
+.aon_custom_row,
+.aon_custom_table_cell_footer,
+.aon_custom_table_cell_header {
+	color: var(--aonForegroundColor);
+}
+
+.aon_custom_row {
+	border-color: var(--aonBorderColor);	
+}
+.aon_custom_row:hover {
+	box-shadow: var(--aonShadowGlow);
+	border-color: var(--aonBorderHoverColor);	
+}
+
+.aon_grid_header, 
+.aon_custom_table_header, 
+.aon_custom_table_footer, 
+.aon_display_grid_header_row, 
+.dataGridWidget > div:first-child {
+	background-color: var(--aonBackgroundColor);
+}
+
+.aon_toolbar,
+.aon-MainAgreement-ToolBar, 
+.aon-MainAgreement-Agreements,
+.aon-EmployeeTree,
+.aon-EmployeeTree-Employees, 
+.aon-MainCreta-Enterprises,
+.aon-MainCreta-Details,
+.aon-EmployeeTree-EmployeeDetail,
+
+#rootPanel .aon-center-panel,
+#rootPanel .aon-center-panel .aon_flex_column
+{
+	box-shadow: var(--aonShadowCard) !important;
+	border-radius: var(--aonRadiusCard) !important;
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem:hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem-selected,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has(> .gwt-TreeItem):hover,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree div:has(> .gwt-TreeItem-selected),
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree > div > table:has(.gwt-TreeItem):hover ,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree table:has(> tbody > tr > td > .gwt-TreeItem-selected){
+	color: var(--aonHoverColor) !important;
+	background-color: initial !important;
+}
+
+/* .aon-EmployeeTree-Employees */
+.gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem,
+.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem .material-icons[style] {
+	color: var(--aonForegroundColor) !important;
+}
