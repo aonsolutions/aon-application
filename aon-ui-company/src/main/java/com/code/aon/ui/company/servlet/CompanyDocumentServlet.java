@@ -139,10 +139,12 @@ public class CompanyDocumentServlet extends HttpServlet {
 		Attach attach = getAttachment(req);
 		
 		if ( attach == null || attach.getData() == null) {
-			attach = new Attach();
-			attach.setMimeType(MimeType.PNG);
-			attach.setDescription("transparent");
-			attach.setData(CompanyDocumentServlet.class.getResourceAsStream("transparent.png").readAllBytes());
+//			attach = new Attach();
+//			attach.setMimeType(MimeType.PNG);
+//			attach.setDescription("transparent");
+//			attach.setData(CompanyDocumentServlet.class.getResourceAsStream("transparent.png").readAllBytes());
+			res.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 
 		Integer length = attach.getData().length;

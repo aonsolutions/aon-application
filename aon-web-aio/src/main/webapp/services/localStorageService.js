@@ -12,7 +12,6 @@ export const AON_APPLICATION_TOP = 'aon_application_top'; // ¿?
 export const AON_SOLUTIONS = 'aon_solutions';
 export const AON_LANGUAGE = 'aon_language';
 export const ONLY_ONE = 'onlyOne';
-export const NEW_THEME = 'new_theme';
 export const SUITE = 'suite';
 export const FIXED_BUTTON = 'fixedButton';
 export const HIDE_SIDENAV = 'hideSidenav';
@@ -35,6 +34,7 @@ export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 export const FUTURE_THEME = '/css/theme/future.css';
 export const CUSTOM_THEME = '/css/theme/customview.css';
+export const DEFAULT_THEME = '/css/theme/standard.css';
 
 export const IS_FUTURE_THEME = 'isFutureTheme';
 
@@ -369,17 +369,6 @@ export const isOnlyOne = () => {
 
 export const setOnlyOne = (onlyOne) => {
     set(ONLY_ONE, onlyOne);
-}
-
-export const isNewTheme = () => {
-    const newTheme = get(NEW_THEME);
-    return newTheme &&  CONSTANT.FALSE !== newTheme;
-}
-
-export const setNewTheme = (newTheme, reload) => {
-    set(NEW_THEME, newTheme);
-    set(THEME, FUTURE_THEME);
-    if(reload) location.reload();
 }
 
 export const isSuite = () => {
