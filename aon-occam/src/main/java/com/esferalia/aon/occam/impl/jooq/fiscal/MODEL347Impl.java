@@ -9,7 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod347.Mod347DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod347.Mod347InfoDAO;
 
 public class MODEL347Impl implements IMODEL347 {
 
@@ -57,7 +58,7 @@ public class MODEL347Impl implements IMODEL347 {
 	}
 	@Override
 	public String getInfo(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) {
-		return Mod347DAO.getInfo(ctx, mod347, declared, infoKey);
+		return Mod347InfoDAO.getInfo(ctx, mod347, declared, infoKey);
 	}
 	@Override
 	public Mod347 duplicate(AONContext ctx, Mod347 mod347) {

@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod180.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod184.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod190.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod193.Mod193DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod347.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod390DAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
