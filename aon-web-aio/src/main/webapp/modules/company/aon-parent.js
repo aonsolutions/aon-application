@@ -40,9 +40,7 @@ export class AonParent extends AonElement {
 		this.createApplication("aonParentMain", "Parent", new AonApplication(), true);
 
 		this.buildSidenav();
-		if(LS.isNewTheme()) {
-			this.getApplication().getSidenav().style.display = 'none';
-		}
+		this.getApplication().getSidenav().style.display = 'none';
 		this.init();
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
@@ -254,74 +252,60 @@ export class AonParent extends AonElement {
 	build() {
 		let aonParent = this.getElement('aonParentMain');
 		let content = this.createDiv();
-		if(LS.isNewTheme()) {
-			content.className = CSS.AON_COMPANY_DIV;
-		}
+		content.className = CSS.AON_COMPANY_DIV;
 		let div = this.createDiv();
-		if(!LS.isNewTheme()) {
-			div.style.borderBottom = '1px solid #5f6368';
-			div.style.marginTop = '15px';
-			div.style.marginLeft = '20px';
-			div.style.marginRight = '20px';
-			div.style.paddingBottom = '10px';
-			div.style.paddingLeft = '16px';
-		} else {
-			div.className = CSS.AON_COMPANY_TITLE_DIV;
-		}
+		div.className = CSS.AON_COMPANY_TITLE_DIV;
 
-		if(LS.isNewTheme()) {
+		let userOption = new AonDialogMenu();
+		userOption.id = 'aonCompanyDialogOption';
+		this.appendChild(userOption);
 
-			let userOption = new AonDialogMenu();
-			userOption.id = 'aonCompanyDialogOption';
-			this.appendChild(userOption);
+		let span = this.createSpan();
+		span.id = 'aonCompanyDialogOptionTitle';
+		span.innerHTML = MSG.COMPANY_SELECTION;
+		span.style.fontSize = '20px';
+		span.style.fontWeight = '500';
+		div.appendChild(span);
 
-			let span = this.createSpan();
-			span.id = 'aonCompanyDialogOptionTitle';
-			span.innerHTML = MSG.COMPANY_SELECTION;
-			span.style.fontSize = '20px';
-			span.style.fontWeight = '500';
-			div.appendChild(span);
-		
-			let filterButton = new AonIconButton();
-			filterButton.icon = MATERIAL_ICONS.MORE_VERT;	
-			filterButton.title = "Filtrar";
-			filterButton.onClick((() => {
-				const top  = filterButton.getBoundingClientRect().top;
-				const left = filterButton.getBoundingClientRect().left;
-				let d = this.getElement('aonCompanyDialogOption');
-				let filterOptions = [{
-						id: 'active',
-						name: MSG.ACTIVES,
-						icon: 'domain',
-						fn: () => this.init({active: true, domainActive:true})
-					}, {
-						id: 'inactive',
-						name: MSG.INACTIVES,
-						icon: 'domain_disabled',
-						fn: () => this.init({inactive: true, domainActive:false})
-					}, {
-						id: 'shared',
-						name: MSG.SHARED,
-						icon: MATERIAL_ICONS.SHARE,
-						fn: () => this.init({shared: true})
-					}, {
-						id: 'consultancy',
-						name: MSG.ENVIRONMENT,
-						icon: MATERIAL_ICONS.APARTMENT,
-						fn: () => this.init({entorno:true, type:"CONSULTANCY"})
-					},{
-						id: 'office',
-						name: MSG.OFFICE,
-						icon: 'work',
-						fn: () => this.init({despacho:true, type:"OFFICE"})
-					}
-				];	
-				d.setMenuOptions(filterOptions, top, left);
-				d.open();
-			}))
-			div.appendChild(filterButton);
-		} else div.innerHTML = MSG.COMPANIES.toUpperCase();
-		
+		let filterButton = new AonIconButton();
+		filterButton.icon = MATERIAL_ICONS.MORE_VERT;
+		filterButton.title = "Filtrar";
+		filterButton.onClick((() => {
+			const top  = filterButton.getBoundingClientRect().top;
+			const left = filterButton.getBoundingClientRect().left;
+			let d = this.getElement('aonCompanyDialogOption');
+			let filterOptions = [{
+					id: 'active',
+					name: MSG.ACTIVES,
+					icon: 'domain',
+					fn: () => this.init({active: true, domainActive:true})
+				}, {
+					id: 'inactive',
+					name: MSG.INACTIVES,
+					icon: 'domain_disabled',
+					fn: () => this.init({inactive: true, domainActive:false})
+				}, {
+					id: 'shared',
+					name: MSG.SHARED,
+					icon: MATERIAL_ICONS.SHARE,
+					fn: () => this.init({shared: true})
+				}, {
+					id: 'consultancy',
+					name: MSG.ENVIRONMENT,
+					icon: MATERIAL_ICONS.APARTMENT,
+					fn: () => this.init({entorno:true, type:"CONSULTANCY"})
+				},{
+					id: 'office',
+					name: MSG.OFFICE,
+					icon: 'work',
+					fn: () => this.init({despacho:true, type:"OFFICE"})
+				}
+			];
+			d.setMenuOptions(filterOptions, top, left);
+			d.open();
+		}))
+		div.appendChild(filterButton);
+
 		content.appendChild(div);
 		
 		let ul = this.createElement(TAG.UL);
@@ -329,18 +313,12 @@ export class AonParent extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.NO_SCROLLBAR);
 		ul.style.overflowY = 'auto';
-		if(!LS.isNewTheme()) {
-			ul.style.marginLeft = '20px';
-			ul.style.marginRight = '20px';
-			ul.style.height = 'calc(100vh - 104px)';
-		} else {
-			ul.style.maxHeight = '700px';
-			ul.style.padding = '.5rem';
-			ul.style.border = '1px solid #ddd';
-			ul.style.borderRadius = '5px';
-			ul.style.width = "500px";
-		}
-		
+		ul.style.maxHeight = '700px';
+		ul.style.padding = '.5rem';
+		ul.style.border = '1px solid #ddd';
+		ul.style.borderRadius = '5px';
+		ul.style.width = "500px";
+
 		content.appendChild(ul);
 		ul.addEventListener("scroll", () => {
 			let scrollTop = ul.scrollTop;
@@ -376,7 +354,7 @@ export class AonParent extends AonElement {
 
 	buildLi(company, color) {
 		let li = this.createElement(TAG.LI);
-		li.className = LS.isNewTheme() ? 'aonLiBeta' : 'aonLi';
+		li.className = 'aonLiBeta';
 		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		li.addEventListener(EVENT.CLICK, () => {
 			this.companySelection(company, false);
@@ -430,20 +408,11 @@ export class AonParent extends AonElement {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
 
-		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
-			let aonShowMenu = this.getElement('aonShowMenu');
-			aonShowMenu.style.display = 'block';
-		}
 		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
 		// aonHeaderHelp.style.display = 'block';
 
 		let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
 		aonHeaderSearch.style.display = 'none';
-
-		if(!LS.isNewTheme()) {
-			let aonHeaderHome = this.getElement(BASE_ID + 'Home');
-			aonHeaderHome.style.display = 'block';
-		}
 
 		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
 		aonHeaderCompanyName.innerHTML = company.name;
@@ -455,7 +424,6 @@ export class AonParent extends AonElement {
 			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
 		} else {
-			aonHeaderHome.style.right = '140px';
 			aonHeaderCompany.style.right = '180px';
 		}
 		

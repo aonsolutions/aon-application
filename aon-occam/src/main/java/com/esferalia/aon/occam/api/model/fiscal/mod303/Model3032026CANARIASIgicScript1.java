@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -22,7 +21,6 @@ public enum Model3032026CANARIASIgicScript1 implements IModelScript<Mod303Key> {
 	,DVG08 ("IGIC devengado (8)"								, new Mod303Key[]{Mod303Key.CA_DB08, Mod303Key.CA_DT08, Mod303Key.CA_DC08},MODEL_INVOICE_VAT_BREAKDOWN)
 	,DVG09 ("Operaciones con inversi\u00F3n del sujeto pasivo"	, new Mod303Key[]{Mod303Key.CA_C019, null			  , Mod303Key.CA_C020},MODEL_INVOICE_VAT_BREAKDOWN)
 	,DVG10 ("Modificaci\u00F3n bases y cuotas" 					, new Mod303Key[]{Mod303Key.CA_C021, null			  , Mod303Key.CA_C022},MODEL_INVOICE_VAT_BREAKDOWN)
-//	,DVG11 ("Cuotas devueltas en r\u00E9gimen de viajeros"		, new Mod303Key[]{Mod303Key.CA_C023, null			  , Mod303Key.CA_C024},NONE)
 	,DVG11 (Mod303Key.CA_C025.getDescription()					, new Mod303Key[]{null			   , null			  , Mod303Key.CA_C025},COMPUTE)
 	;
 	

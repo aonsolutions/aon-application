@@ -9,6 +9,20 @@ export class AonRegistryList extends AonElement {
 	TABLE;
 	more;
 	filter;	
+	
+	// Anchos por defecto; una subclase puede sobrescribir this.columnWidths
+	static DEFAULT_WIDTHS = {
+		document: '10%',
+		name:     '30%',
+		alias:    '15%',
+		status:   '10%',
+		link:     '8%'
+	};
+
+	getColumnWidth(key) {
+		return (this.columnWidths && this.columnWidths[key])
+			|| AonRegistryList.DEFAULT_WIDTHS[key];
+	}
 
 	connectedCallback () {
 		this.clear();
@@ -29,24 +43,27 @@ export class AonRegistryList extends AonElement {
 
 	build() {
 	    this.selectabledTable();
-	    this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', '10%');
-	    this.TABLE.addColumn(MSG.NAME,  'string', 'name',  '30%', undefined, true);
-		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', '15%', undefined, true);
-	    this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', '10%');
-	
+	    this.TABLE.addColumn(MSG.DOCUMENT, 'string', 'document', this.getColumnWidth('document'));
+	    this.TABLE.addColumn(MSG.NAME,  'string', 'name',  this.getColumnWidth('name'), undefined, true);
+		this.TABLE.addColumn(MSG.ALIAS, 'string', 'alias', this.getColumnWidth('alias'), undefined, true);
+	    this.TABLE.addColumn(MSG.STATUS, 'string', 'statusText', this.getColumnWidth('status'));
+
+	    this.addColumnsAfterStatus();
+
 	    if(this.selectable){
-	        this.TABLE.addColumn('Vinc.', 'string', 'link', '8%');
+	        this.TABLE.addColumn('Vinc.', 'string', 'link', this.getColumnWidth('link'));
 	    }
-	
-	    this.addCustomColumns(); 
-	
+
+	    this.addCustomColumns();
+
 	    this.TABLE.addEventListener(EVENT.MORE, () => {
 	        if(this.more) this.loadMore();
 	    });
 	    this.init();
 	}
 	
-	addCustomColumns() {}   // por defecto no hace nada
+	addColumnsAfterStatus() {}  // por defecto no hace nada
+	addCustomColumns() {}       // por defecto no hace nada
 
 	selectabledTable(){
 		if(this.selectable){

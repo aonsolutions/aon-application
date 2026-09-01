@@ -17,6 +17,10 @@ const TRANSACTION = `transaction`;
 
 const SUGGESTED_ACCOUNT = `${API_URL}/registry/suggestedAccount`;
 
+const REMOTE_CUSTOMERS = (domainName) => `https://${domainName}/ms/api/customers`;
+// Use when testing with local server, for example: http://localhost:8080/ms/api/customers
+//const REMOTE_CUSTOMERS_LOCAL = (domainName) => `http://${domainName}:8080/ms/api/customers`;
+
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
 export const saveRegistry = (data) => put(`${API_URL}/registry`, data);
 
@@ -24,10 +28,13 @@ export const getCustomers = (data) => post(CUSTOMERS, data);
 export const getCustomer = (data) => post(`${CUSTOMERS}/${data.id}`, data);
 export const getCustomerEmails = (data) => post(`${CUSTOMERS}/${data.id}/${EMAILS}`, data);
 export const saveCustomer = (data) => put(`${CUSTOMERS}/${data.id}`, data);
+
 //export const saveCustomerNote = (data) => putPro(`${PRO_URL}/${CUSTOMERS}/note`, data);
 // LOCAL
 export const saveCustomerNote = (data) => put(`${CUSTOMERS}/note`, data);
 export const saveCustomerNotePro = (data, headers) => putPro(`${CUSTOMERS}/note`, data, headers);
+
+export const saveCustomerDomainStatus = (data) => putPro(`${REMOTE_CUSTOMERS(data.domainName)}/domainStatus`, data, { domain_name: data.domainName, domain_id: data.domainId });
 
 export const getTarget = (data) => get(`${TARGETS}/${data.id}`, data);
 export const saveTarget = (data) => post(`${TARGETS}`, data);

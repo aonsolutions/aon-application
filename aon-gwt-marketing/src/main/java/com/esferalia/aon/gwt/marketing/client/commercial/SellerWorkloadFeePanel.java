@@ -211,7 +211,15 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		tab.addInlineStyle(customerLabel, COLS.DES.getStyles());
 		tab.addRow(row, customerLabel, COLS.DES.getColWidth());
 		
-		Label statusLabel = new Label(fee.getCustomer().getStatus().getDescription());
+		Label statusLabel = new Label(fee.getCustomer().getEffectiveStatus().getDescription());
+		 
+		// Un bloqueo programado se ve como Activo: se avisa en el tooltip
+		if (fee.getCustomer().isBlockScheduled()) {
+			statusLabel.setTitle("Bloqueo programado para el "
+					+ AonDateUtils.formatDate(fee.getCustomer().getExpirationDate()));
+			statusLabel.getElement().getStyle().setColor("orange");
+		}
+ 
 		tab.addRow(row, statusLabel, COLS.STA.getColWidth());
 		
 		Label productLabel = new Label(fee.getDescription());

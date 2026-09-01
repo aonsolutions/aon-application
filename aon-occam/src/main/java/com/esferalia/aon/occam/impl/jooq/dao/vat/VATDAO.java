@@ -1129,4 +1129,27 @@ public class VATDAO  {
 			,getPreviousNotInModelCritCajaVatBreakdown(ctx,mod)
 			).flatMap(vt -> vt);
 	}
+	
+	// ***************************************************************************************
+	// **** FACTURAS CRITERIO DE CAJA PENDIENTES DEL AÑO ACTUAL (SE USA EN EL MODELO 347) ****
+	// ***************************************************************************************
+	public static Stream<VatContext> getPeriodCritCajaVatBreakdown(AONContext ctx, final IFiscalModel mod ) {
+		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod.getYear()));
+		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod.getYear()));
+		return getLastPeriodCritCajaVatBreakdownSelect(ctx)
+			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
+			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value()))
+			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))	// Criterio de Caja.
+			.and(INVOICE.NUMBER.ge(0))    // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
+			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.fetch()
+			.stream()
+			.map(new VatContextLastPeriodCritCajaFiller())
+			.map(vat -> vat.setFinancePending(true))
+		;
+	}
+	
 }

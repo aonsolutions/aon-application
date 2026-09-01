@@ -28,7 +28,6 @@ import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
 import { DataAttachSource } from "../../../models/DataAttachSource.js";
-import * as LS from "../../../services/localStorageService.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { AonDate } from "../../../components/aon-date.js";
 import { AonTaxDetail } from "./aon-tax-detail.js";
@@ -135,11 +134,7 @@ export class AonTax extends AonElement {
       aonTable.addColumn("Hacienda", "", "hacienda", "10%");
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
-      if (LS.isNewTheme()) {
-        aonTable.addColumn("Estado", "string", "statusHtml", "12%");
-      } else {
-        aonTable.addColumn("Estado", "", "statusText", "12%");
-      }
+      aonTable.addColumn("Estado", "string", "statusHtml", "12%");
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
       aonTable.addColumn('', 'icons', 'icons', '100px');
 

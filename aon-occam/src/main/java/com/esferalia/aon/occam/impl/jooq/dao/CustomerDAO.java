@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -10,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
 import java.sql.Timestamp;
@@ -27,6 +27,7 @@ import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -105,6 +106,8 @@ public class CustomerDAO {
         @Override public Property<Integer> getRelatedRegistryProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.RELATED_REGISTRY); }
 		
         @Override public Property<Integer> getRaddInfoDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ID); }
+        
+		@Override public Property<java.sql.Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<>(STATUS_DATE);}
         
 		}
 
@@ -629,6 +632,19 @@ public class CustomerDAO {
 		
 		delete(ctx, id);
 	}
+	
+	/**
+	 * Fecha del ultimo cambio de estado: nota mas reciente de tipo
+	 * CUSTOMER_STATUS y, si el cliente nunca ha cambiado de estado, su creacion.
+	 * Replica en SQL lo que pinta la columna F. Estado del listado.
+	 */
+	private static final Field<java.sql.Date> STATUS_DATE = DSL.coalesce(
+			DSL.field(DSL.select(DSL.max(RNOTE.NOTE_DATE))
+					.from(RNOTE)
+					.where(RNOTE.REGISTRY.eq(CUSTOMER.REGISTRY))
+					.and(RNOTE.DOMAIN.eq(CUSTOMER.DOMAIN))
+					.and(RNOTE.NOTE_TYPE.eq(NoteType.CUSTOMER_STATUS.value()))),
+			CUSTOMER.CREATION_DATE.cast(SQLDataType.DATE));
 	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************

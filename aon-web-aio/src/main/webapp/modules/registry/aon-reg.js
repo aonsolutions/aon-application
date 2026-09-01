@@ -408,6 +408,9 @@ export class AonReg extends AonElement {
 			title += ` (bloqueo ${date})`;
 			tooltip = `Bloqueo programado para el ${date}`;
 		}
+
+		// Solo Customer aporta motivo; en el resto de registros no existe
+		if (this.statusReason) tooltip += `\nMotivo: ${this.statusReason}`;
  
 		statusDiv = this.createElement(TAG.DIV);
 		statusDiv.id = id;

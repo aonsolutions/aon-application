@@ -3,7 +3,7 @@ import { signin, getManifest, magicLink, getCompanies, getUser, MOBILE_ACTION, a
 
 import "../company/aon-mobile-desktop.js";
 
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
@@ -94,7 +94,12 @@ export class AonLogin extends AonElement {
     loginContent.appendChild(loginDivForm);
     
     let welcomeImg = this.createElement(TAG.IMG);
-	welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
+	
+	welcomeImg.onerror = () => 	 {
+		welcomeImg.onerror = () => welcomeImg.style.display = 'none';
+		welcomeImg.src = getComputedStyle(document.body).getPropertyValue(`--${CONSTANT.DEFAULT_WELCOME_IMG}`); 
+	}; // Hide image if it fails to load
+	
 	this.getWelcomeImage().then( img => welcomeImg.src = img );
 	this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 	welcomeImg.classList.add(CSS.AON_WELCOME_LOGO_LOGIN);
@@ -698,7 +703,7 @@ export class AonLogin extends AonElement {
         resolve(`${window.location.protocol}//${LS.getCompany()?.domain || window.location.hostname}:${window.location.port}/aonDocuments/company.logo`);
 		});
     }
-
+	
 	getWelcomeMessage() {
 		return new Promise((resolve, reject) => {
 			if ( LS.getCompany()?.name ) {
@@ -713,6 +718,8 @@ export class AonLogin extends AonElement {
 			} 
 		});  
 	}
+	
+	
 }
 if(!window.customElements.get(TAG.AON_LOGIN)){
 	window.customElements.define(TAG.AON_LOGIN, AonLogin);

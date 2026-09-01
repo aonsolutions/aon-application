@@ -8,6 +8,7 @@ export class Customer extends Registry {
     transaction;
     status;
     expirationDate;
+    statusReason;
     scope;
     eInvoice;
     invoicingGroup;
@@ -31,6 +32,7 @@ export class Customer extends Registry {
             this.transaction = customer.transaction || 'NAC';
             this.status = customer.status;
             this.expirationDate = customer.expirationDate || null;
+            this.statusReason = customer.statusReason || null;
             this.scope = customer.scope;
             this.eInvoice = customer.eInvoice;
             this.invoicingGroup = customer.invoicingGroup;
@@ -50,6 +52,7 @@ export class Customer extends Registry {
             this.withholding = false;
             this.surcharge = false;
             this.expirationDate = null;
+            this.statusReason = null;
         }   
 
     }

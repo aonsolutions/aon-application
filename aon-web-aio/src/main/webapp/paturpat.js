@@ -43,11 +43,8 @@ const load = () => {
 	console.debug("We need all the luck we can get.");
 	
     LS.setAonSolutions(true);
-    // TODO: Skip reload
-	LS.set(LS.NEW_THEME, true);
-	LS.set(LS.NEW_THEME, true);
-	
-	loadScripts(); 
+
+	loadScripts();
 
 
 	loadThemeOld()

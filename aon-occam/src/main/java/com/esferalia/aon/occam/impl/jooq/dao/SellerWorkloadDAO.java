@@ -12,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -23,16 +22,12 @@ import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_AL
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.script.ScriptException;
@@ -42,19 +37,17 @@ import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record3;
 import org.jooq.Record4;
-import org.jooq.Record5;
+import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
-import com.esferalia.aon.jooq.tables.Rnote;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -64,11 +57,13 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO.FeeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO.ProjectHolderFiller;
@@ -81,16 +76,16 @@ public class SellerWorkloadDAO {
 	// ------------------------------------------------------------------
 	// Filtro de estado de cliente.
 	//
-	// La regla validada (fuente de la verdad = customer.status):
-	//   - status 0 (activo): siempre ACTIVO.
-	//   - status 1/2 (inactivo/bloqueado): se mira la ULTIMA nota tipo 6
-	//     cuya descripcion coincide con el estado (contiene "Inactivo" o
-	//     "Bloqueado"). Si esa nota lleva una fecha de expiracion en el
-	//     comentario y AUN NO HA LLEGADO (fecha > hoy) -> ACTIVO ese dia.
-	//     En caso contrario -> el estado real (INACTIVO o BLOQUEADO).
+	// Fuente de la verdad: customer.status + customer.expiration_date.
+	//   status 0 ACTIVO    -> nunca lleva fecha -> ACTIVO
+	//   status 1 INACTIVO  -> nunca lleva fecha -> INACTIVO
+	//   status 2 BLOQUEADO -> lleva SIEMPRE fecha:
+	//        fecha  > hoy -> ACTIVO (el bloqueo aun no ha llegado)
+	//        fecha <= hoy -> BLOQUEADO
+	//   status nulo -> ACTIVO (criterio conservador)
 	//
-	// El mapa expMap se calcula UNA sola vez por peticion (no por seller ni
-	// por mes) y se consulta en memoria dentro de los bucles.
+	// Ambos campos se leen en las mismas consultas que ya unen con CUSTOMER,
+	// asi que no hace falta ninguna estructura auxiliar ni consulta extra.
 	// ------------------------------------------------------------------
 	public static class StatusFilter {
 		// Filtros marcados en pantalla
@@ -99,21 +94,14 @@ public class SellerWorkloadDAO {
 		public final boolean blocked;
 		// true si hay que aplicar la regla de estado (customers null o 1)
 		public final boolean apply;
-		// registry*10 + estado(1|2) -> fecha de expiracion (o null)
-		public final Map<Integer, java.sql.Date> expMap;
 
-		public StatusFilter(boolean apply, boolean active, boolean inactive, boolean blocked,
-				Map<Integer, java.sql.Date> expMap) {
+		public StatusFilter(boolean apply, boolean active, boolean inactive, boolean blocked) {
 			this.apply = apply;
 			this.active = active;
 			this.inactive = inactive;
 			this.blocked = blocked;
-			this.expMap = expMap;
 		}
 	}
-
-	private static final Pattern EXP_DATE = Pattern.compile("(\\d{4}-\\d{2}-\\d{2})");
-	private static final java.sql.Date HOY = java.sql.Date.valueOf(LocalDate.now());
 
 	private SellerWorkloadDAO() {
 	}
@@ -220,84 +208,20 @@ public class SellerWorkloadDAO {
 
 	}
 
-	// ------------------------------------------------------------------
-	// Carga del mapa de expiraciones (UNA sola query por peticion).
-	// Clave: registry*10 + estado (1=inactivo, 2=bloqueado).
-	// Valor: fecha de expiracion parseada del comentario (o null si no hay).
-	// ------------------------------------------------------------------
-	private static Map<Integer, java.sql.Date> loadExpirationMap(AONContext ctx, Integer[] domainIds) {
-		Rnote r1 = RNOTE.as("r1");
-		Rnote r2 = RNOTE.as("r2");
-
-		// estado_nota normalizado (2 si contiene Bloqueado, 1 si contiene Inactivo)
-		Field<Integer> estadoR2 = DSL
-				.when(r2.DESCRIPTION.likeIgnoreCase("%Bloqueado%"), 2)
-				.when(r2.DESCRIPTION.likeIgnoreCase("%Inactivo%"), 1);
-
-		Table<?> m = DSL
-				.select(r2.REGISTRY.as("reg"), estadoR2.as("estado_nota"), DSL.max(r2.ID).as("max_id"))
-				.from(r2)
-				.where(r2.NOTE_TYPE.eq((byte) 6))
-				.and(r2.DOMAIN.in(domainIds))
-				.and(r2.DESCRIPTION.likeIgnoreCase("%Inactivo%").or(r2.DESCRIPTION.likeIgnoreCase("%Bloqueado%")))
-				.groupBy(r2.REGISTRY, estadoR2)
-				.asTable("m");
-
-		Field<Integer> estadoR1 = DSL
-				.when(r1.DESCRIPTION.likeIgnoreCase("%Bloqueado%"), 2)
-				.when(r1.DESCRIPTION.likeIgnoreCase("%Inactivo%"), 1);
-
-		Result<Record3<Integer, Integer, String>> rows = ctx.getDslContext()
-				.select(r1.REGISTRY, estadoR1.as("estado_nota"), r1.COMMENTS)
-				.from(r1)
-				.join(m).on(r1.ID.eq(m.field("max_id", Integer.class)))
-				.where(r1.NOTE_TYPE.eq((byte) 6))
-				.and(r1.DOMAIN.in(domainIds))
-				.fetch();
-
-		Map<Integer, java.sql.Date> map = new HashMap<>();
-		for (Record3<Integer, Integer, String> r : rows) {
-			Integer reg = r.value1();
-			Integer estado = r.value2();
-			if (reg == null || estado == null) {
-				continue;
-			}
-			java.sql.Date fecha = null;
-			String comments = r.value3();
-			if (comments != null) {
-				Matcher mt = EXP_DATE.matcher(comments);
-				if (mt.find()) {
-					try {
-						fecha = java.sql.Date.valueOf(mt.group(1));
-					} catch (IllegalArgumentException ignore) {
-						// fecha malformada -> null (equivalente a STR_TO_DATE NULL)
-					}
-				}
-			}
-			map.put(reg * 10 + estado, fecha);
-		}
-		return map;
-	}
-
-	/** Estado efectivo: 0 activo, 1 inactivo, 2 bloqueado. Reproduce el CASE validado. */
-	private static int estadoEfectivo(byte status, Integer registry, Map<Integer, java.sql.Date> expMap) {
-		if (status == 0) {
-			return 0;
-		}
-		java.sql.Date fecha = expMap.get(registry * 10 + (int) status);
-		if (fecha != null && fecha.after(HOY)) {
-			return 0; // inactivacion/bloqueo aun no ha llegado -> activo hoy
-		}
-		return status; // 1 o 2
-	}
-
 	/** true si el cliente debe incluirse segun los filtros marcados. */
-	private static boolean incluir(byte status, Integer registry, StatusFilter sf) {
+	private static boolean incluir(Byte status, Date expiration, StatusFilter sf) {
 		if (!sf.apply) {
 			return true; // sin filtro de estado
 		}
-		int e = estadoEfectivo(status, registry, sf.expMap);
-		return (sf.active && e == 0) || (sf.inactive && e == 1) || (sf.blocked && e == 2);
+
+		// safeValueOf(null) devuelve null y effective(null, ...) devuelve ACTIVE:
+		// mismo criterio conservador que se aplicaba antes.
+		RegistryStatus efectivo = RegistryExpirationUtils
+				.effective(RegistryStatus.safeValueOf(status), expiration);
+
+		return (sf.active && RegistryStatus.ACTIVE.equals(efectivo))
+				|| (sf.inactive && RegistryStatus.INACTIVE.equals(efectivo))
+				|| (sf.blocked && RegistryStatus.BLOCKED.equals(efectivo));
 	}
 
 	public static List<SellerWorkload> getList(CloseableAONContext ctx, SellerWorkloadParams params) {
@@ -306,7 +230,7 @@ public class SellerWorkloadDAO {
 		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 
 		Integer[] domainIds = SecurityDAO.getInheritanceDomainIds(ctx);
-		StatusFilter sf = getCustomerStatusCondition(ctx, params, domainIds);
+		StatusFilter sf = getCustomerStatusCondition(params);
 
 		List<SellerWorkload> sellers = new ArrayList<>();
 
@@ -475,7 +399,7 @@ public class SellerWorkloadDAO {
 		Date end = AonDateUtils.toSql(params.getPeriodEnd());
 
 		Integer[] domainIds = SecurityDAO.getInheritanceDomainIds(ctx);
-		StatusFilter sf = getCustomerStatusCondition(ctx, params, domainIds);
+		StatusFilter sf = getCustomerStatusCondition(params);
 
 		HashSet<Integer> customerFeeIds = new HashSet<Integer>();
 		HashSet<Integer> invoiceIds = new HashSet<Integer>();
@@ -502,8 +426,9 @@ public class SellerWorkloadDAO {
 
 			// ---- FEES por SELLER ----
 			if (null != params.getSeller()) {
-				SelectConditionStep<Record3<Integer, Integer, Byte>> select = ctx.getDslContext()
-						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
+				SelectConditionStep<Record4<Integer, Integer, Byte, Date>> select = ctx.getDslContext()
+						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS,
+								CUSTOMER.EXPIRATION_DATE)
 						.from(CUSTOMER_FEE)
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -518,8 +443,9 @@ public class SellerWorkloadDAO {
 
 			// ---- FEES por TASK_HOLDER (proyecto) ----
 			if (null != params.getTaskHolder()) {
-				SelectConditionStep<Record3<Integer, Integer, Byte>> select = ctx.getDslContext()
-						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
+				SelectConditionStep<Record4<Integer, Integer, Byte, Date>> select = ctx.getDslContext()
+						.selectDistinct(CUSTOMER_FEE.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS,
+								CUSTOMER.EXPIRATION_DATE)
 						.from(CUSTOMER_FEE)
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 						.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -534,8 +460,9 @@ public class SellerWorkloadDAO {
 
 			// ---- INVOICES por SELLER ----
 			if (null != params.getSeller()) {
-				SelectConditionStep<Record3<Integer, Integer, Byte>> invoiceSelect = ctx.getDslContext()
-						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
+				SelectConditionStep<Record4<Integer, Integer, Byte, Date>> invoiceSelect = ctx.getDslContext()
+						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS,
+								CUSTOMER.EXPIRATION_DATE)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -549,8 +476,9 @@ public class SellerWorkloadDAO {
 
 			// ---- INVOICES por TASK_HOLDER (proyecto) ----
 			if (null != params.getTaskHolder()) {
-				SelectConditionStep<Record3<Integer, Integer, Byte>> invoiceSelect = ctx.getDslContext()
-						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS)
+				SelectConditionStep<Record4<Integer, Integer, Byte, Date>> invoiceSelect = ctx.getDslContext()
+						.selectDistinct(INVOICE_DETAIL.ID, CUSTOMER.REGISTRY, CUSTOMER.STATUS,
+								CUSTOMER.EXPIRATION_DATE)
 						.from(INVOICE_DETAIL)
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -600,51 +528,39 @@ public class SellerWorkloadDAO {
 	}
 
 	/**
-	 * Recorre las filas (id, registry, status) y añade el id a la coleccion
+	 * Recorre las filas (id, registry, status, expiration_date) y añade el id
+	 * a la coleccion
 	 * solo si el cliente pasa el filtro de estado.
 	 */
-	private static void addFilteredIds(Result<Record3<Integer, Integer, Byte>> rows,
+	private static void addFilteredIds(Result<Record4<Integer, Integer, Byte, Date>> rows,
 			Field<Integer> idField, StatusFilter sf, HashSet<Integer> target) {
-		for (Record3<Integer, Integer, Byte> r : rows) {
+		for (Record4<Integer, Integer, Byte, Date> r : rows) {
 			Integer id = r.get(idField);
 			Integer registry = r.get(CUSTOMER.REGISTRY);
-			Byte status = r.get(CUSTOMER.STATUS);
-			if (status == null) {
-				status = (byte) 0; // sin status -> activo, conservador
-			}
+
 			if (registry == null) {
 				target.add(id); // sin registry no podemos filtrar; conservador
 				continue;
 			}
-			if (incluir(status, registry, sf)) {
+
+			if (incluir(r.get(CUSTOMER.STATUS), r.get(CUSTOMER.EXPIRATION_DATE), sf)) {
 				target.add(id);
 			}
 		}
 	}
 
 	// ------------------------------------------------------------------
-	// Construye el StatusFilter: decide si aplica la regla de estado y,
-	// si aplica, precarga el mapa de expiraciones UNA sola vez.
+	// Construye el StatusFilter: decide si aplica la regla de estado.
+	// Ya no precarga nada: el estado y la fecha viajan en cada consulta.
 	// ------------------------------------------------------------------
-	private static StatusFilter getCustomerStatusCondition(AONContext ctx, SellerWorkloadParams params,
-			Integer[] domainIds) {
+	private static StatusFilter getCustomerStatusCondition(SellerWorkloadParams params) {
 
 		boolean apply = (params.getCustomers() == null || params.getCustomers() == (byte) 1);
 
-		boolean active = apply && Boolean.TRUE.equals(params.getCustomerActive());
-		boolean inactive = apply && Boolean.TRUE.equals(params.getCustomerInactive());
-		boolean blocked = apply && Boolean.TRUE.equals(params.getCustomerBlocked());
-
-		// El mapa solo hace falta si hay algun cliente inactivo/bloqueado que
-		// pueda tener expiracion futura, es decir si se filtra por estado.
-		Map<Integer, java.sql.Date> expMap;
-		if (apply && (inactive || blocked || active)) {
-			expMap = loadExpirationMap(ctx, domainIds);
-		} else {
-			expMap = new HashMap<>();
-		}
-
-		return new StatusFilter(apply, active, inactive, blocked, expMap);
+		return new StatusFilter(apply,
+				apply && Boolean.TRUE.equals(params.getCustomerActive()),
+				apply && Boolean.TRUE.equals(params.getCustomerInactive()),
+				apply && Boolean.TRUE.equals(params.getCustomerBlocked()));
 	}
 
 	public static List<Integer> getFeeIdsList(CloseableAONContext ctx, SellerWorkloadParams params) {
@@ -908,9 +824,10 @@ public class SellerWorkloadDAO {
 
 		while (start.before(end)) {
 
-			Result<Record5<Double, Double, String, Short, Integer>> result = ctx.getDslContext()
+			Result<Record7<Double, Double, String, Short, Integer, Byte, Date>> result = ctx.getDslContext()
 					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR,
-							CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.CUSTOMER)
+							CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.CUSTOMER,
+							CUSTOMER.STATUS, CUSTOMER.EXPIRATION_DATE)
 					.from(CUSTOMER_FEE).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(CUSTOMER_FEE.SELLER.eq(seller))
 					.and(condition)
@@ -920,9 +837,9 @@ public class SellerWorkloadDAO {
 					.and(recalculatedBillingDateAdjusted.lessThan(start))
 					.fetch();
 
-			Result<Record5<Double, Double, String, Integer, Byte>> invoiceResult = ctx.getDslContext()
+			Result<Record6<Double, Double, String, Integer, Byte, Date>> invoiceResult = ctx.getDslContext()
 					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR,
-							INVOICE.REGISTRY, CUSTOMER.STATUS)
+							INVOICE.REGISTRY, CUSTOMER.STATUS, CUSTOMER.EXPIRATION_DATE)
 					.from(INVOICE_DETAIL)
 					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -932,11 +849,7 @@ public class SellerWorkloadDAO {
 					.and(InvoiceDAO.NOT_ANNULLED)
 					.fetch();
 
-			// Necesitamos el STATUS del cliente en fees para filtrar. Lo consultamos
-			// una vez por seller a un mapa (registry -> status) para no re-consultar.
-			Map<Integer, Byte> statusByCustomer = statusMapForFees(ctx, seller, domainIds);
-
-			computePeriod(sellerWorkload, start, result, invoiceResult, sf, statusByCustomer);
+			computePeriod(sellerWorkload, start, result, invoiceResult, sf);
 
 			start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
 			endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
@@ -973,9 +886,10 @@ public class SellerWorkloadDAO {
 
 		while (start.before(end)) {
 
-			Result<Record5<Double, Double, String, Short, Integer>> result = ctx.getDslContext()
+			Result<Record7<Double, Double, String, Short, Integer, Byte, Date>> result = ctx.getDslContext()
 					.select(CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR,
-							CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.CUSTOMER)
+							CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.CUSTOMER,
+							CUSTOMER.STATUS, CUSTOMER.EXPIRATION_DATE)
 					.from(CUSTOMER_FEE).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 					.where(CUSTOMER_FEE.PROJECT.in(projectIds))
 					.and(condition)
@@ -985,9 +899,9 @@ public class SellerWorkloadDAO {
 					.and(recalculatedBillingDateAdjusted.lessThan(start))
 					.fetch();
 
-			Result<Record5<Double, Double, String, Integer, Byte>> invoiceResult = ctx.getDslContext()
+			Result<Record6<Double, Double, String, Integer, Byte, Date>> invoiceResult = ctx.getDslContext()
 					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR,
-							INVOICE.REGISTRY, CUSTOMER.STATUS)
+							INVOICE.REGISTRY, CUSTOMER.STATUS, CUSTOMER.EXPIRATION_DATE)
 					.from(INVOICE_DETAIL)
 					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 					.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(INVOICE.REGISTRY))
@@ -997,50 +911,18 @@ public class SellerWorkloadDAO {
 					.and(InvoiceDAO.NOT_ANNULLED)
 					.fetch();
 
-			Map<Integer, Byte> statusByCustomer = statusMapForProject(ctx, projectIds, domainIds);
-
-			computePeriod(sellerWorkload, start, result, invoiceResult, sf, statusByCustomer);
+			computePeriod(sellerWorkload, start, result, invoiceResult, sf);
 
 			start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
 			endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 		}
 	}
 
-	// Mapa registry->status de los clientes de un seller (una consulta ligera).
-	private static Map<Integer, Byte> statusMapForFees(AONContext ctx, Integer seller, Integer[] domainIds) {
-		Map<Integer, Byte> map = new HashMap<>();
-		ctx.getDslContext()
-			.selectDistinct(CUSTOMER.REGISTRY, CUSTOMER.STATUS)
-			.from(CUSTOMER_FEE)
-			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-			.where(CUSTOMER_FEE.SELLER.eq(seller))
-			.and(CUSTOMER_FEE.DOMAIN.in(domainIds))
-			.fetch()
-			.forEach(r -> map.put(r.get(CUSTOMER.REGISTRY), r.get(CUSTOMER.STATUS)));
-		return map;
-	}
-
-	private static Map<Integer, Byte> statusMapForProject(AONContext ctx, List<Integer> projectIds, Integer[] domainIds) {
-		Map<Integer, Byte> map = new HashMap<>();
-		if (projectIds == null || projectIds.isEmpty()) {
-			return map;
-		}
-		ctx.getDslContext()
-			.selectDistinct(CUSTOMER.REGISTRY, CUSTOMER.STATUS)
-			.from(CUSTOMER_FEE)
-			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-			.where(CUSTOMER_FEE.PROJECT.in(projectIds))
-			.and(CUSTOMER_FEE.DOMAIN.in(domainIds))
-			.fetch()
-			.forEach(r -> map.put(r.get(CUSTOMER.REGISTRY), r.get(CUSTOMER.STATUS)));
-		return map;
-	}
-
 	// Suma un periodo aplicando el filtro de estado en memoria.
 	private static void computePeriod(SellerWorkload sellerWorkload, Date periodStart,
-			Result<Record5<Double, Double, String, Short, Integer>> feeResult,
-			Result<Record5<Double, Double, String, Integer, Byte>> invoiceResult,
-			StatusFilter sf, Map<Integer, Byte> statusByCustomer) {
+			Result<Record7<Double, Double, String, Short, Integer, Byte, Date>> feeResult,
+			Result<Record6<Double, Double, String, Integer, Byte, Date>> invoiceResult,
+			StatusFilter sf) {
 
 		double netSum = 0.0;
 		double totalSum = 0.0;
@@ -1050,11 +932,8 @@ public class SellerWorkloadDAO {
 
 		for (Record record : feeResult) {
 			Integer cust = record.get(CUSTOMER_FEE.CUSTOMER);
-			Byte status = statusByCustomer.get(cust);
-			if (status == null) {
-				status = (byte) 0; // sin registro de status -> tratar como activo
-			}
-			if (!incluir(status, cust, sf)) {
+
+			if (!incluir(record.get(CUSTOMER.STATUS), record.get(CUSTOMER.EXPIRATION_DATE), sf)) {
 				continue;
 			}
 
@@ -1082,11 +961,8 @@ public class SellerWorkloadDAO {
 
 		for (Record record : invoiceResult) {
 			Integer reg = record.get(INVOICE.REGISTRY);
-			Byte status = record.get(CUSTOMER.STATUS);
-			if (status == null) {
-				status = (byte) 0;
-			}
-			if (!incluir(status, reg, sf)) {
+
+			if (!incluir(record.get(CUSTOMER.STATUS), record.get(CUSTOMER.EXPIRATION_DATE), sf)) {
 				continue;
 			}
 

@@ -1,5 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod347;
 
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomain;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentDomainName;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getCurrentUser;
+import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.getRootPanel;
+
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -7,15 +12,29 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
-
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.AonJSFiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod347Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -29,9 +48,6 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import static com.esferalia.aon.gwt.fiscal.client.EntryPointUtils.*;
-import com.google.gwt.core.client.EntryPoint;
 
 public class Model347  implements EntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(Model347.class.getName());
@@ -107,6 +123,14 @@ public class Model347  implements EntryPoint {
 			breakdownPanel.setWidget(panel);
 			breakdownPanel.scrollToTop();
 		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
 
 		@Override
 		public void cleanInfoPanel() {
@@ -114,6 +138,7 @@ public class Model347  implements EntryPoint {
 			if (w != null) {
 				breakdownPanel.remove( breakdownPanel.getWidget() ); 
 			}
+			closeFootPanel(); 
 		}
 
 		public void onSelect(Mod347 mod347, Integer selectedIndexDeclared,  Integer selectedIndexAsset, int tabPanelIndex) {
@@ -175,6 +200,78 @@ public class Model347  implements EntryPoint {
 			tabLayout.selectTab(INFORMATION_TAB);
 			closeFootPanel();
 		}
+		
+		public void showInvoiceVatBreakdownInfo(AonTableButton button, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo fiscalModelKeyInfo) {
+			
+			button.setEnabled(false);
+			final PopupPanel popup = new PopupPanel(false, true);
+			popup.add(new AonSplash());
+			popup.setGlassEnabled(true);
+			popup.setAnimationEnabled(true);
+			popup.center();
+			Model347.SERVICE.getInfo(getOptions().getOccam(), 
+					mod347, declared, fiscalModelKeyInfo, new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+
+						@Override
+						public void onSuccess(String result) {
+							popup.hide();
+							JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel(false, true);
+							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+							
+							String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+									+ FiscalModelUtils.getModelName(mod347)
+									+ " DE " + mod347.getYear()
+									+ (fiscalModelKeyInfo == FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN ? " (ARRENDAMIENTO DE LOCALES)" :  " (OPERACIONES)") ;
+							
+							String subtitle =  "Clave "+ (Mod347Key.safeValue(declared.getType()) == null ? "" : declared.getType().getValue()) +
+									" - " + (AonStringUtils.isNotBlank(declared.getOperatorNif()) ? declared.getOperatorNif() : (declared.getDocument() == null ? "" : declared.getDocument())) +
+									" - " + (declared.getName() == null ? "" : declared.getName());				
+							
+							grid.setTitle(title);
+							grid.setSubTitle(subtitle);
+							
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsVatContext> array = arrayObject.cast();
+							grid.render(array);
+							showInfoPanelWidget(grid);
+							button.setEnabled(true);
+						}
+					}
+			);
+			
+		}
+		
+		private void showInvoice(JsVatContext vt) {
+			int invoiceId = vt.getInvoice();
+			Model347.SERVICE.getInvoice(getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+				@Override
+				public void onSuccess(Invoice inv) {
+					AonCustomPopup dialog = new AonCustomPopup();
+					dialog.setWidth((Window.getClientWidth() - 100) + "px");
+					dialog.setHeight((Window.getClientHeight() - 100) + "px");
+					dialog.setAnimationEnabled(true);
+					dialog.setGlassEnabled(true);
+					dialog.setModal(true);
+					dialog.setCaption(AON.MSG.invoice());
+					dialog.add(new AonInvoiceViewer(inv));
+					dialog.center();
+					dialog.show();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					showError(caught.getMessage());
+				}
+			});
+		}
+		
 	}
 
 	private Model347ModuleOptions options;

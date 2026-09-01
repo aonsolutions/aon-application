@@ -133,6 +133,8 @@ export const DOWNLOAD_EXCEL_INVOICE = 'downloadExcelInvoice';
 export const DUE_DATE = 'dueDate';
 export const DUPLICATE = 'duplicate';
 export const DUPLICATE_INVOICE = 'duplicateInvoice';
+export const DEFAULT_WELCOME_IMG = 'defaultWelcomeImg';
+
 
 // ----- E
 
