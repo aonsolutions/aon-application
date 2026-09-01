@@ -3,14 +3,13 @@ package com.esferalia.aon.gwt.fiscal.client.booking;
 import java.util.HashMap;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AonHttpCallback;
 import com.esferalia.aon.gwt.common.client.json.BookingJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
@@ -40,23 +39,16 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String domainBookingJson = response.getText();
-		            	Booking booking = BookingJSON.parseBookingJSON(JSONParser.parseStrict(domainBookingJson).isObject());
-		            	callback.onSuccess(booking);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<Booking>(callback) {
+	            @Override
+	            protected Booking parse(Response response) {
+	            	return BookingJSON.parseBookingJSON(JSONParser.parseStrict(response.getText()).isObject());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+	
 	}
 	
 	public void getBooking(String host, String endPoint, HashMap<String, String> headers, AsyncCallback<Booking> callback) {
@@ -73,23 +65,16 @@ public class BookingApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String domainBookingJson = response.getText();
-		            	Booking booking = BookingJSON.parseBookingJSON(JSONParser.parseStrict(domainBookingJson).isObject());
-		            	callback.onSuccess(booking);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<Booking>(callback) {
+	            @Override
+	            protected Booking parse(Response response) {
+	            	return BookingJSON.parseBookingJSON(JSONParser.parseStrict(response.getText()).isObject());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+		
 	}
 	
 	public void exportCustomerBookingResume(String host, String endPoint, HashMap<String, String> headers, AsyncCallback<Void> callback) {
@@ -106,21 +91,13 @@ public class BookingApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(null, new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+		
 	}
 	
 	public void getCustomerBooking(String host, String endPoint, Integer customerId, AsyncCallback<List<Booking>> callback) {
@@ -136,56 +113,37 @@ public class BookingApi {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
 		requestBuilder.setHeader("session_id", sessionId);
 		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String responseBody = response.getText();
-		            	List<Booking> bookingList = BookingJSON.parseBookingJSONArr(responseBody);
-		            	callback.onSuccess(bookingList);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+		 try {
+	        requestBuilder.sendRequest(null, new AonHttpCallback<List<Booking>>(callback) {
+	            @Override
+	            protected List<Booking> parse(Response response) {
+	                return BookingJSON.parseBookingJSONArr(response.getText());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void getDomainCompanies(String host, String endPoint, AsyncCallback<List<DomainCompany>> callback) {
-		// Create a URL builder and add query parameters
-		UrlBuilder urlBuilder = new UrlBuilder();
-		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-		urlBuilder.setHost(host);
-		urlBuilder.setPath(endPoint);
-		
-		// Create the request builder with the complete URL
-		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
-		requestBuilder.setHeader("session_id", sessionId);
-		
-		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		                String responseBody = response.getText();
-		                List<DomainCompany> domainCompanies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-		                callback.onSuccess(domainCompanies);
-		                
-		            }
-		        }
+	    UrlBuilder urlBuilder = new UrlBuilder();
+	    urlBuilder.setProtocol(Window.Location.getProtocol());
+	    urlBuilder.setHost(host);
+	    urlBuilder.setPath(endPoint);
 
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, urlBuilder.buildString());
+	    requestBuilder.setHeader("session_id", sessionId);
+
+	    try {
+	        requestBuilder.sendRequest(null, new AonHttpCallback<List<DomainCompany>>(callback) {
+	            @Override
+	            protected List<DomainCompany> parse(Response response) {
+	                return DomainCompanyJSON.parseDomainCompanyJSONArr(response.getText());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void getDomainCompanies(String host, String endPoint, JSONObject body, AsyncCallback<List<DomainCompany>> callback) {
@@ -200,24 +158,15 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		                String responseBody = response.getText();
-		                List<DomainCompany> domainCompanies = DomainCompanyJSON.parseDomainCompanyJSONArr(responseBody);
-		                callback.onSuccess(domainCompanies);
-		                
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<List<DomainCompany>>(callback) {
+	            @Override
+	            protected List<DomainCompany> parse(Response response) {
+	                return DomainCompanyJSON.parseDomainCompanyJSONArr(response.getText());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 
 	public void syncDomainCustomer(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -232,21 +181,12 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void unsyncDomainCustomer(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -261,21 +201,12 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 
 	public void syncCustomerBooking(String host, String endPoint, HashMap<String, String> headers, JSONObject body, AsyncCallback<Response> callback) {
@@ -292,21 +223,15 @@ public class BookingApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(response);
-		            } 
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Response>(callback) {
+	            @Override
+	            protected Response parse(Response response) {
+	                return response;
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void unsyncCustomerBooking(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -321,21 +246,12 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            } 
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 
 	public void enableDomainRemote(String host, String endPoint, HashMap<String, String> headers, AsyncCallback<Void> callback) {
@@ -352,21 +268,12 @@ public class BookingApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(null, new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}	
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 
 	public void getDomainUsers(String host, String endPoint, HashMap<String, String> headers, AsyncCallback<List<User>> callback) {
@@ -383,23 +290,15 @@ public class BookingApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String responseBody = response.getText();
-		            	List<User> users = DomainCompanyJSON.parseUsersJSONArr(responseBody);
-		            	callback.onSuccess(users);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<List<User>>(callback) {
+	            @Override
+	            protected List<User> parse(Response response) {
+	                return DomainCompanyJSON.parseUsersJSONArr(response.getText());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void syncSupportAgentCustomer(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -414,21 +313,12 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void createBookingUser(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -443,21 +333,12 @@ public class BookingApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 }

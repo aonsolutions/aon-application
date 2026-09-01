@@ -156,13 +156,6 @@ public class CustomerDAO {
 		}
 	}
 	
-	private static Field<Boolean> hasDomain = DSL.exists(
-		    DSL.selectOne()
-		       .from(RADDINFO)
-		       .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
-		       .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%"))
-		).as("has_domain");
-	
 	private static SelectOnConditionStep<Record> select(AONContext ctx) {
 		return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
@@ -223,44 +216,49 @@ public class CustomerDAO {
 		 }).collect(Collectors.toList()).stream();
 	}
 	
-	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
-		return ctx.getDslContext()
+	/** Condicion reutilizable: el registro tiene al menos un AON_DOMAIN% en raddinfo. */
+	private static final Condition HAS_DOMAIN_CONDITION = DSL.exists(
+	        DSL.selectOne()
+	           .from(RADDINFO)
+	           .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
+	           .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%")));
+
+	// se mantiene en la proyeccion: CustomerFiller lo lee para setRelationship(...)
+	private static Field<Boolean> hasDomain = DSL.field(HAS_DOMAIN_CONDITION).as("has_domain");
+
+	private static SelectConditionStep<Record> sigSelect(AONContext ctx, CustomerFilter filter) {
+	    return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
 	            .select(hasDomain)
-		        .from(CUSTOMER)
-		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME)
-				.offset(offset)
-				.limit(limit)				
-				.fetch()
-				.stream()
-				.filter(r -> r.getValue(hasDomain))
-				.map(new CustomerFiller());
+	        .from(CUSTOMER)
+	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 	}
-	
+
+	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+	    return sigSelect(ctx, filter)
+	            .and(HAS_DOMAIN_CONDITION)   // antes se filtraba en el stream, tras el limit
+	            .orderBy(REGISTRY.NAME)
+	            .offset(offset)
+	            .limit(limit)
+	            .fetch()
+	            .stream()
+	            .map(new CustomerFiller());
+	}
+
 	public static Stream<Customer> getSigNotLinkedStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
-		return ctx.getDslContext()
-	            .selectDistinct(CUSTOMER.fields())
-	            .select(REGISTRY.fields())
-	            .select(DOMAIN.fields())
-	            .select(hasDomain)
-		        .from(CUSTOMER)
-		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME)
-				.offset(offset)
-				.limit(limit)				
-				.fetch()
-				.stream()
-				.filter(r -> !r.getValue(hasDomain))
-				.map(new CustomerFiller());
+	    return sigSelect(ctx, filter)
+	            .and(DSL.not(HAS_DOMAIN_CONDITION))
+	            .orderBy(REGISTRY.NAME)
+	            .offset(offset)
+	            .limit(limit)
+	            .fetch()
+	            .stream()
+	            .map(new CustomerFiller());
 	}
 	
 	public static List<Customer> getList(AONContext ctx, CustomerFilter filter) {
