@@ -513,6 +513,7 @@ public interface CommonService extends RemoteService {
 	List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException;
 	List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException;
+	HashMap<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException;
 	
 	LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry) throws AonCoreException;
 	
