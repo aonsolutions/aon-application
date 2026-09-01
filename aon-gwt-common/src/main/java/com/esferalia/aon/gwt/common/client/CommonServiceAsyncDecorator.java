@@ -1481,6 +1481,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds, AsyncCallback<HashMap<Integer, List<DomainSigAddInfo>>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerIds, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> callback) throws AonCoreException {

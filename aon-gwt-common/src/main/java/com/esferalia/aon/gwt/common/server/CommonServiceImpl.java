@@ -1790,6 +1790,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return result;
 	}
 	
+
+	@Override
+	public HashMap<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException {
+		return new HashMap<>( AON.getDomainSigAddInfo(domainName, domainId, user, customerIds) );
+	}
+	
 	@Override
 	public LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry) throws AonCoreException {
 		Optional<RegistryRelationship> existRelationShip = AON_SOLUTIONS.getRegistryRelationship(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRelatedRegistryProperty().eq(customerRelatedRegistry).and(f.getDomainProperty().eq(domainId)).and(f.getRelationshipProperty().eq(-1)));

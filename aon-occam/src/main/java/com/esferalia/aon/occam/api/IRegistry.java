@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -250,6 +252,7 @@ public interface IRegistry {
 	public List<String> getRAddInfoAviableAttributes(CloseableAONContext ctx, RegistryAddInfoFilter filter);
 	
 	public List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry);
+	public Map<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(AONContext ctx, ArrayList<Integer> customerIds);
 	
 	// ------------------- RDIRSTAFF
 	
