@@ -948,7 +948,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		
 		assertEquals(1424.40 / 30 * 10, Double.valueOf(baseCgp.getExpression()), DELTA);
-		assertEquals(1424.40 / 30 * 10 + 3000.00 / 30 * 21, salary.getProfessionalBase(), DELTA);
+		assertEquals(1424.40 / 30 * 10 + 3000.00 / 30 * (get(endDate, Calendar.DAY_OF_MONTH) - 10 ), salary.getProfessionalBase(), DELTA);
 		
 		SalaryData baseCgc = salary.getSalaryDatas().stream().filter( data -> data.getName().equals("BASE_CGC_E"))
 		.peek( data -> System.out.println(data.getName() + " = " + data.getExpression() + " [" + data.getStartDate() + ".." + data.getEndDate() + "]"))
@@ -956,7 +956,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		.findAny().orElseThrow();
 
 		assertEquals(1435.20 / 30.00 * 10 , Double.valueOf(baseCgc.getExpression()), DELTA);
-		assertEquals(1435.20 / 30.00 * 10 + 3000.00 / 30 * 21 , salary.getCommonBase(), DELTA);
+		assertEquals(1435.20 / 30.00 * 10 + 3000.00 / 30 * (get(endDate, Calendar.DAY_OF_MONTH) - 10 ) , salary.getCommonBase(), DELTA);
 	}
 
 	@Test
