@@ -48,12 +48,16 @@ body,
 
 .gwt-Label,
 .gwt-Selector,
+.dataGridCell,
+.dataGridHeader,
+.aon-outputLabel,
 .aon_custom_row,
 .aon_custom_card div,
 .aon_custom_text_box_title,
 .aon_custom_table_cell_footer,
 .aon_custom_table_cell_header,
 .aon_display_grid_cell,
+.gwt-CheckBox label,
 .gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
 	color: var(--aonForegroundColor);
 }
@@ -123,6 +127,7 @@ div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom{
 .aon_custom_dialog,
 .aon_custom_dialog .popupContent,
 #rootPanel .aon-center-panel,
+.aon-panelGrid-search,
 .aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent,
 .aon-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer,
 div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom
@@ -142,7 +147,11 @@ div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom
 .aon-EmployeeTree-EmployeeDetail,
 .aon_custom_dialog,
 .aon_custom_dialog .popupContent,
-#rootPanel .aon-center-panel{
+#rootPanel .aon-center-panel,
+.aon-panelGrid-search,
+.aon-panelGrid-search .aon-panelGrid-odd,
+.aon-panelGrid-search .aon-panelGrid-even{
+	border-color: var(--aonBackgroundColor) !important;
 	background-color: var(--aonBackgroundColor) !important;
 }
 
@@ -331,4 +340,34 @@ div#rootPanel div div div div div.aon_scroll_area.aon_margin_bottom
   mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAYCAYAAAARfGZ1AAAAhklEQVR4Xu2SSwqAMAwFowgi4rk9gId05w38JFA3r7WmsYKoA7MJySO0IfpRsGYyCDZZDYJNVoNgk9XnULMDO5O/Jbq4GTU9+SExk5BtMCCmmoL84ZjJz1Ji4QBZpMLiGbjdbhYw9KPhLdtg8Qry03JG2ptOPjlt8O3ho5tRow2f2M7NvJANURy8WwUNP2MAAAAASUVORK5CYII=');
 }
 
+.aon-panelGrid-search{
+	padding: 1rem;
+}
 
+/**/
+.gwt-viz-container {
+	padding-top: 1rem;
+}
+
+.gwt-viz-container svg text {
+	fill: var(--aonForegroundColor);
+}
+
+.gwt-viz-container svg rect[fill="#ffffff"] {
+	fill: var(--aonDarkGray);
+}
+
+.gwt-viz-container svg rect[fill="#e6e6e6"] {
+	fill: var(--aonBlack);
+}
+
+
+.aon_aeat_background_color,
+.aon_araba_background_color {
+	background-color: var(--aonBackgroundColor) !important;
+}
+
+.aon_display_table:has(.aon_aeat_background_color),
+.aon_display_table:has(.aon_araba_background_color){
+	border-color: transparent !important;
+}

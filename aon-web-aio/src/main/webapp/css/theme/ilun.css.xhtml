@@ -137,7 +137,8 @@
 		
 		.aon-editDataTable th .aon-input-required,
 		
-		.aon-group-title
+		.aon-group-title,
+		.aon-message-big
 		{
           	color: var(--aonForegroundColor) !important;
         }
@@ -194,6 +195,7 @@
 		.aon-finding-toolbar-item .material-symbols-outlined{
 			color: var(--aonForegroundColor) !important;
 		}
+		.rich-modalpanel .aon-popupWindow-close,
 		.aon-editDataTable .aon-icon-reset,
 		.aon-dataTable .aon-icon-rowSelector, 
 		.aon-editDataTable .aon-table-row-link, 
@@ -266,6 +268,10 @@
 		input.aon-finding-toolbar-item.aon-icon-cancel {
 			mask-image: url(aonResource/9.23-SNAPSHOT/icons/arrow-left.svg);
 		}
+		
+		.rich-modalpanel .aon-popupWindow-close {
+			mask-image: url(aonResource/9.23-SNAPSHOT/images/aon-cancel.svg);
+		}
 	
 		.aon-dataTable .aon-icon-rowSelector, 
 		.aon-editDataTable .aon-table-row-link {
@@ -284,6 +290,29 @@
 		
 		a, a:hover, a:visited {
 			color: var(--aonHoverColor) !important;
+		}
+		
+		/* Modals */
+		.aon-popupWindow-title,
+		.rich-modalpanel .rich-mpnl-body {
+			color: var(--aonForegroundColor) !important;
+		}
+
+		.rich-modalpanel .rich-mpnl-content {
+			padding: 2rem !important;
+			border-color: transparent !important;
+			box-shadow: var(--aonShadowCard) !important;
+			border-radius: var(--aonRadius) !important;
+			background-color: var(--aonBodyBackgroundColor) !important;
+		}
+		.aon-popupWindow-title,
+		.rich-modalpanel .rich-mp-content-table{
+			border-color: transparent !important;
+			background-color: var(--aonBodyBackgroundColor) !important;
+		}
+		
+		.aon-icon-big-info {
+		  	background-image: url('data:image/svg+xml;utf-8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 16V12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8H12.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 		}
 		
 	</style>

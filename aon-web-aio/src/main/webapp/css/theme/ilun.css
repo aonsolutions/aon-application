@@ -34,6 +34,7 @@
 	--aonBorderColor: color-mix(in oklab, var(--aonPurple) 40%, transparent);
 	--aonBorderHoverColor: var(--aonPurple);
 
+	--aonCardColor: var(--aonBackgroundColor);
 	--aonTopAppTextColor: var(--aonForegroundColor);
 	
 	--defaultWelcomeImg: /assets/aon-ai-logo.svg;
@@ -58,7 +59,8 @@ aon-toolbar > header.aonToolbar,
 	border-radius: var(--aonRadiusCard);
 }
 
-.aonSeparator{
+.aonSeparator,
+.aonTable thead{
 	background-color: var(--aonBackgroundColor);
 }
 
@@ -77,6 +79,7 @@ aon-toolbar > header.aonToolbar,
 
 .aonCard.rightPanelcardDiv,
 .rightPanelLangCard .aonCard,
+#aonOfficePanel .aonContentBeta,
 .suiteMenuContent .suiteMenuCardCard,
 .aonCardsPanel .aonDashboardCard .aonCard  {
 	padding: 1rem;
@@ -91,14 +94,22 @@ aon-toolbar > header.aonToolbar,
 	background-color: transparent;
 }
 
+.aonLiSpan,
+.aonCheckbox,
 .aonCardTitle,
+.aonLiSpanSubtitle,
+.aonTabItemText,
+.aonTable thead th,
+.aonTable tbody tr td,
+.aonTable tbody tr td .material-icons,
 .rightPanel .helpCardText *,
+[placeholder]:empty::before,
 .rightPanel div[id$="CardContent"] .material-icons,
 .rightPanel div[id$="CardContent"] :not(.material-icons),
 .aonCardsPanel  .aonDashboardCard  .aonCard .aonCardTitle,
 .suiteMenuContent .suiteMenuCardCard .aonCard .aonCardText,
 .suiteMenuContent .suiteMenuCardCard .aonCard .aonCardTitle {
-	color: var(--aonForegroundColor);
+	color: var(--aonForegroundColor) !important;	
 }
 
 .rightPanel div[id$="CardContent"] .material-icons{
@@ -117,8 +128,8 @@ aon-toolbar > header.aonToolbar,
 .rightPanel div[id$="CardContent"] > div > div:hover *,
 .rightPanel div[id$="CardContent"] > div > div.selected *,
 .suiteMenuContent .suiteMenuCardCard .suiteMenuCardDataDiv:hover .aonCardText {
-    color: var(--aonHoverColor);
     background-color: transparent;
+    color: var(--aonHoverColor) !important;
 }
 
 .rightPanel div[id$="CardContent"] > div > div:hover,
@@ -135,12 +146,6 @@ aon-toolbar > header.aonToolbar,
 	border-radius: var(--aonRadius);
 }
 
-.aonLiSpan,
-.aonLiSpanSubtitle,
-.aonTabItemText 
-{
-	color: var(--aonForegroundColor);
-}
 
 #UlCompanies li:hover {
 	color:initial;
@@ -148,13 +153,18 @@ aon-toolbar > header.aonToolbar,
 	background-color: initial;
 }
 
-#UlCompanies li {
-	border-color: var(--aonBorderColor);
+
+#UlCompanies li,
+.aonTable tbody tr{
+	border-color: var(--aonBorderColor) !important;
 }
 
-#UlCompanies li:hover {
-	box-shadow: var(--aonShadowGlow);
-	border-color: var(--aonBorderHoverColor);
+#UlCompanies li:hover,
+.aonTable tbody tr:hover,
+.aonTable tbody tr:active {
+	box-shadow: var(--aonShadowGlow) !important;
+	border-color: var(--aonBorderHoverColor) !important;
+	background-color: var(--aonBackgroundColor) !important;
 }
 
 .aonButton,
@@ -209,7 +219,7 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 
 #aonMenu #aonMenuSidenav .aonNewMenuSideNavLi:hover{
 	background-color: initial;
-    color: var(--aonHoverColor);
+    color: var(--aonHoverColor) !important;
 }
 
 #rootPanel{
@@ -228,7 +238,8 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
     Buttons
 */	
 
-#expandHirin {
+#expandHirin,
+.aonIconButton {
 	background: none;
 	background-color: var(--aonButtonColor);	
 }
@@ -263,12 +274,27 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 .aonLoginButton:hover{
 	background-color: var(--aonButtonColor);	
 }
-aonButtonColor
+
+aon-search,
+aonButtonColor,
+aon-input input,
+aon-select input,
+aon-new-input input,
+aon-new-select input,
+.aonSearchInput,
 #aonLoginUserInput, 
 #aonLoginPasswordInput{
 	color: var(--aonForegroundColor) ;
 	background-color: var(--aonDarkGray) ;
 }
+
+aon-input input,
+aon-select input,
+aon-new-input input,
+aon-new-select input {
+	border-color: transparent;
+}
+
 	
 .aonMagicButton{
 	color: var(--aonBackgroundColor);
@@ -285,4 +311,25 @@ aonButtonColor
 }
 
 
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan{
+	height: 2.0rem;
+	align-items: center;
+}
 
+#aonOfficePanelToolbarHeaderToolSectionSearchSpan i.material-icons{
+	color: transparent;
+}
+
+/* Lists Filter */
+
+.aonSearchInput{
+	height: auto;
+}
+
+aon-search > span {
+	border-color: var(--aonDarkGray);	
+}
+
+aon-search > span:focus {
+	border-color: var(--BorderHoverColor);	
+}
