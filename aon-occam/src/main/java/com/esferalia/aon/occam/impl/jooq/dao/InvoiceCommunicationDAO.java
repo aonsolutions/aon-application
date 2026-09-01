@@ -745,6 +745,10 @@ public class InvoiceCommunicationDAO {
 	// *********** INVOICE COMMUNICATION COMMON ********************
 	// *************************************************************
 
+	public static InvoiceBatch saveAccept(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
+		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.REGISTER, request, response);
+	}
+	
 	public static InvoiceBatch saveCancel(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
 		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.ANNULMENT, request, response);
 	}
