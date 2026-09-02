@@ -4,6 +4,7 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -577,12 +578,20 @@ class SistemaREDI {
 	        org.w3c.dom.Document arq1 = parseEmbeddedXml(first.getWebResponse().getContentAsString());
 
 	        // ---------- PASO 2: seleccionar el autorizado indicado por authCode ----------
-	        // authCode viene con ceros a la izquierda (p.ej. "00312622"); el param1 que
-	        // espera Prosa es el número sin relleno ("312622").
-	        String numeroAut = (authCode == null ? "" : authCode.replaceFirst("^0+", "")).trim();
-	        if (numeroAut.isEmpty()) {
+	        
+	        
+	        String numeroAut ;
+	        try {
+		        int authNum = Integer.parseInt(authCode);
+		        numeroAut = String.format("%06d", authNum);
+	        } catch (NumberFormatException e) {
+	            throw new SegSocialException("authCode inválido: " + authCode);
+	        }
+	        
+	        if (numeroAut == null || numeroAut.isEmpty()) {
 	            throw new SegSocialException("authCode vacío o inválido");
 	        }
+
 	        String urlSelAut = buildBase(arq1)
 	                + "&SPM.ACC.AC_SELECCIONAR_AUTORIZADO_OAR=AC_SELECCIONAR_AUTORIZADO_OAR"
 	                + "&param1=" + numeroAut;
