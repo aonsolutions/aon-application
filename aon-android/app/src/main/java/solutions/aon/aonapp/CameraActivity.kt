@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -87,6 +88,9 @@ class CameraActivity : ComponentActivity() {
                         shape = CircleShape,
                         containerColor = Color.White,
                         modifier = Modifier
+                            // Aparta el disparador de la barra de gestos: con el borde a
+                            // borde de API 35+ el Box llega hasta el borde de la pantalla.
+                            .navigationBarsPadding()
                             .size(80.dp)
                             .aspectRatio(1f)
                             .align(Alignment.BottomCenter)
