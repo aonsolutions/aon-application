@@ -29,6 +29,7 @@ export const THEME = 'AONTHEME';
 export const AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
 export const AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
 export const AON_MOBILE_ANDROID_35 = 'css/theme/aon-mobile-android-35.css';
+export const AON_MOBILE_ANDROID_35_DARK = 'css/theme/aon-mobile-android-35-dark.css';
 export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';

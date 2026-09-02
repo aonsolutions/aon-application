@@ -119,7 +119,7 @@ export class AonMobileHeader extends AonElement {
 		let aonLogo = this.getElement(this.LOGO);
 		const href = window.location.href;       
 
-		aonLogo.src = 'assets/aon-logo.svg';
+		aonLogo.src = 'assets/aonsolutions-ai-black-logo.svg';
 		aonLogo.style.top = "21px";
 		aonLogo.style.width = "123px";
 		aonLogo.style.marginLeft = "21px";
@@ -137,12 +137,12 @@ export class AonMobileHeader extends AonElement {
 		onlyOne = onlyOne || LS.isOnlyOne();
 		let ionicData = { action: "statusBar", statusBar: true};
 		if(UA.isAndroidApp()) {
-			changeStatusBarColor(ionicData, "#0f172a", true);
+			changeStatusBarColor(ionicData, "var(--aonHeaderBackgroundColor)", true);
 		} else mobileAction(ionicData);
 
 		this.parent = false;
 		let div = this.getElement(this.WEB);
-		div.style.backgroundColor = '#0f172a';
+		div.style.backgroundColor = 'var(--aonHeaderBackgroundColor)';
 
 		this.getElement(this.LOGO).style.display = 'none';
 

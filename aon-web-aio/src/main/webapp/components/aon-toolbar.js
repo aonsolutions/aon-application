@@ -132,9 +132,7 @@ export class AonToolbar extends AonElement {
 
 			let option = this.createElement(TAG.SPAN);
 			option.id = this.TITLE_SECTION_OPTION;
-			option.style.color = 'gray';
-			option.style.fontSize = '14px';
-			option.style.height = '16px';
+			option.className = 'aonToolbarSubtitle';
 
 			option.innerHTML = this.option ? ' / ' + this.option : '';
 			titleSection.appendChild(option);
