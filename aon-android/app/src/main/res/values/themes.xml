@@ -2,8 +2,12 @@
 <resources>
     <!-- Tema personalizado para la Splash Screen -->
     <style name="Theme.AonApp.Splash" parent="Theme.SplashScreen">
-        <!-- Imagen de fondo para la Splash Screen (asegúrate de que la imagen 'splash' esté en la carpeta 'drawable') -->
-        <item name="windowSplashScreenBackground">@drawable/splash</item>
+        <!-- Fondo de la Splash Screen: debe ser un COLOR, no un drawable. -->
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <!-- Icono transparente: el splash del sistema queda en color plano. Su icono
+             siempre se recorta a un círculo, así que la imagen a pantalla completa
+             la pinta la app sobre el WebView (ver MainActivity). -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_empty</item>
         <!-- Duración de la animación (0 para quitar animaciones) -->
         <item name="windowSplashScreenAnimationDuration">0</item>
         <!-- El tema que se aplica después de la Splash Screen -->
