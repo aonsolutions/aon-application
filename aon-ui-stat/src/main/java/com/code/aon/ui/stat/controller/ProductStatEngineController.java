@@ -219,8 +219,10 @@ public class ProductStatEngineController implements Serializable {
 	public void getLatestEntries() throws ManagerBeanException {
 		String select = "select InvoiceDetail "
 			+ "from InvoiceDetail as InvoiceDetail "
-			+ "where InvoiceDetail.invoice.type = 0 AND InvoiceDetail.item.id = " +item.getId()
-			+ "order by InvoiceDetail.invoice.issueDate desc";
+			+ "where InvoiceDetail.invoice.type = 0"
+			+ " AND (InvoiceDetail.invoice.annulled=0 or InvoiceDetail.invoice.annulled is null)"
+			+ " AND InvoiceDetail.item.id = " +item.getId()
+			+ " order by InvoiceDetail.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		latestEntriesList = query.list();
@@ -229,8 +231,10 @@ public class ProductStatEngineController implements Serializable {
 	public void getLatestShipments() throws ManagerBeanException {
 		String select = "select InvoiceDetail "
 			+ "from InvoiceDetail as InvoiceDetail "
-			+ "where InvoiceDetail.invoice.type = 1 AND InvoiceDetail.item.id = " +item.getId()
-			+ "order by InvoiceDetail.invoice.issueDate desc";
+			+ "where InvoiceDetail.invoice.type = 1"
+			+ " AND (InvoiceDetail.invoice.annulled=0 or InvoiceDetail.invoice.annulled is null)"
+			+ " AND InvoiceDetail.item.id = " +item.getId()
+			+ " order by InvoiceDetail.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		latestShipmentsList = query.list();

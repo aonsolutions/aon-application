@@ -29,9 +29,6 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	String AMC = "AMC";	// Fichas de Amortizacion - Cabeceras
 	String AML = "AML";	// Fichas de Amortizacion - Lineas
 	
-	String MOC = "MOC";	// Módulos Fiscal - Cabeceras
-	String MOL = "MOL";	// Módulos Fiscal - Detalle
-	
 	String BAN = "BAN";	// Bancos de la Empresa
 	
 	String REP = "REP";	// Representantes de la Empresa

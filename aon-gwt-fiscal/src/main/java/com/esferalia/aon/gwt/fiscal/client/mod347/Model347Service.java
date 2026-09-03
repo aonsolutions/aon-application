@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -24,5 +25,6 @@ public interface Model347Service extends RemoteService {
 	Mod347 changeStatus(Occam occam, Mod347 mod347, FiscalStatus newStatus) throws AonCoreException;
 	String getInfo(Occam occam,Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Mod347 duplicate(Occam occam, Mod347 mod347) throws AonCoreException;
+	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	
 }

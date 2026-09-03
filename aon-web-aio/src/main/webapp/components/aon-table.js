@@ -5,7 +5,6 @@ import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
-import * as LS from "../services/localStorageService.js";
 
 
 export class AonTable extends AonElement {
@@ -57,18 +56,14 @@ export class AonTable extends AonElement {
     table.appendChild(thead);
     let tr = this.createElement(TAG.TR);
     tr.id = this.THEADER;
-    if(LS.isNewTheme()) {
-      tr.style.paddingLeft = '10px';
-      tr.style.paddingRight = '10px';
-    }
+    tr.style.paddingLeft = '10px';
+    tr.style.paddingRight = '10px';
     thead.appendChild(tr);
 
     let tbody = this.createElement("tbody");
     tbody.id = this.TBODY;
-    if(LS.isNewTheme()) {
-      tbody.style.paddingLeft = '10px';
-      tbody.style.paddingRight = '10px';
-    }
+    tbody.style.paddingLeft = '10px';
+    tbody.style.paddingRight = '10px';
     table.appendChild(tbody);
 
     if (this.hasAttribute("selectable")){
@@ -240,13 +235,11 @@ export class AonTable extends AonElement {
     // tr.id = Math.random().toString(36).substring(7);
     tr.className ="aonTableTr";
     tr.style.cursor = "pointer";
-    if(LS.isNewTheme()) {
-      tr.style.marginTop = '10px';
-      tr.style.marginBottom = '10px';
-      tr.style.border = '1px solid #ddd';
-      tr.style.borderRadius = '5px';
-    }  
-    
+    tr.style.marginTop = '10px';
+    tr.style.marginBottom = '10px';
+    tr.style.border = '1px solid #ddd';
+    tr.style.borderRadius = '5px';
+
     if(this.selectedColor){
       tr.addEventListener(EVENT.CLICK, () => this.addBackgroundTr(tr, "#d3e3fd"));
     }

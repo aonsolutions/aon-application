@@ -30,6 +30,9 @@
 	<ui:define name="mainHeader">
 		<aon:div id="#{app.standAloneAppId}" /> 
 		<ui:include src="/facelet/app/header.xhtml" />
+		<c:catch test="#{not empty app.theme}" >
+			<ui:include src="#{app.theme}.xhtml" />
+		</c:catch>
 	</ui:define>
 	
 	<ui:define name="mainContent">

@@ -6,8 +6,10 @@ import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL347;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -70,6 +72,11 @@ public class Mod347ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Mod347 duplicate(Occam occam, Mod347 mod347) {
 		return MODEL347.duplicate(occam, mod347);
+	}
+	
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
 	}
 
 }

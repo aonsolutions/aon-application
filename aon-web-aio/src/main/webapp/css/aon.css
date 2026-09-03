@@ -1,7 +1,7 @@
 @import url('calendar-agenda.css');
 
 :root {
-	--favicon: /assets/favicon-black.ico;
+	--favicon: /assets/aon-ai-favicon.svg;
 	--aonDarkColor: rgba(0, 0, 0, 0.87);
 	--aonBlue: #002469;
 	--aonClearBlue: #4F91FF;
@@ -86,7 +86,7 @@
 	--aonSuiteMenuNewButtonText: rgb(72, 70, 68);
 	--aonSuiteMenuNewButtonIcon: var(--aonSuiteMenuNewButtonText);
 	--aonSuiteMenuUploadButtonBorder: rgba(0, 0, 0, 0.1);
-	--aonSuiteMenuTitle: rgb(66, 66, 66);
+	--aonSuiteMenuTitle: var(--aonForegroundColor);
 	--aonSuiteMenuCardText: var(--aonBlue);
 	--aonSuiteMenuCardText2: var(--aonCardText);
 	--aonSideNavRowHoverColor: rgba(0, 36, 105, 0.1);
@@ -112,7 +112,18 @@
 	--aonMenuTopnav: true;
 	--aonMenuSidenav: true;
 	--aonConfigSwitchApps: false;
-	--aonFontFamily: "Noto Sans", sans-serif
+	--aonFontFamily: "Noto Sans", sans-serif;
+	
+	--aonHeaderLogoWidth: 155px;
+	--aonHeaderLogoHeight: 32px;
+	
+	--defaultWelcomeImg: /assets/aon-ai-black-logo.svg;
+
+	--aonBackgroundColor: #ffffff;
+	--aonBackgroundColor2: #f1f5f9;
+
+	--aonForegroundColor: #1e293b;
+	--aonForegroundColor2: #5f6368;
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -193,7 +204,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	/*height: 100%;*/
 	height: 100vh;
 	overflow: hidden;
-	color: rgb(66, 66, 66);
+	color: var(--aonForegroundColor);
 	text-rendering: optimizeLegibility;
 	font-family: var(--aonFontFamily) !important;
 	font-optical-sizing: auto;
@@ -201,20 +212,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	font-weight: 400 !important;
 	font-style: normal;
 	font-variation-settings: "wdth" 100;
-}
-
-.aonBodyBeta {
-	background-color: #f6f8fc !important;
-	padding: 0px !important;
-	margin: 0px !important;
-	font-family: var(--aonFontFamily);
-	font-optical-sizing: auto;
-	font-size: 14px !important;
-	font-weight: 400 !important;
-	font-style: normal;
-	font-variation-settings: "wdth" 100;
-	line-height: normal !important;
-	height: 100%;
 }
 
 .aonUl {
@@ -401,13 +398,13 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 }
 
 .aonMarketplaceTitle {
-	color: #5f6368;
+	color: var(--aonForegroundColor2);
 	font-weight: bold;
 	padding-left: 40px;
 }
 
 .aonAppTitle {
-	color: #5f6368;
+	color: var(--aonForegroundColor2);
 	font-weight: bold;
 	padding-left: 20px;
 	position: absolute;
@@ -616,7 +613,7 @@ h1 {
 }
 
 .sidenavHover:hover {
-	background-color: var(--aonLightGray2);
+	background-color: var(--aonBackgroundColor2);
 }
 
 .aonMenuLink {
@@ -760,7 +757,7 @@ h1 {
 	height: 4rem;
 	min-height: 4rem;
 	border-bottom: solid 0.05rem #d2d2d6;
-	padding: 0 2rem;
+	padding: 0 1rem;
 }
 
 .aonToolbarBeta {
@@ -773,6 +770,12 @@ h1 {
 
 .aonToolbarTitle {
 	text-transform: capitalize;
+}
+
+.aonToolbarSubtitle {
+	color: var(--aonForegroundColor2);
+	font-size: 14px;
+	height: 16px;	
 }
 
 .aonToolbarSection {
@@ -1078,7 +1081,7 @@ h1 {
 	margin-bottom: 10px;
 	font-weight: bold;
 	margin-left: 15px;
-	color: var(--aonSuiteMenuTitle);
+	color: var(--aonForegroundColor);
 }
 
 .aonSidenavTitle span {
@@ -1209,7 +1212,7 @@ h1 {
 
 .aonAppMenuSidenavListSelected {
 	font-weight: bold;
-	background-color: var(--aonLightGray);
+	background-color: var(--aonBackgroundColor2);
 }
 
 .aonAppMenuSidenavListSelected div {
@@ -1425,14 +1428,14 @@ h1 {
 	display: flex;
 	margin-bottom: 15px;
 	font-size: 14px;
-	color: var(--aonCardTitle);
+	color: var(--aonForegroundColor);
 	font-weight: 500;
 }
 
 .aonCardText {
 	font-size: 14px;
 	font-weight: 300;
-	color: var(--aonCardText);
+	color: var(--aonForegroundColor2);
 }
 
 .aonCardTitleSection {
@@ -1500,10 +1503,9 @@ h1 {
 }
 
 .aonDialogContent {
-	background-color: #fefefe;
+	background-color: var(--aonBackgroundColor);
 	margin: auto;
 	padding: 20px;
-	border: 1px solid #ddd;
 	width: 80%;
 }
 
@@ -2228,12 +2230,12 @@ label.rating:hover {
 	position: relative;
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url("../assets/aon-black-logo.svg");
 	background-position: 50%;
 	background-repeat: no-repeat;
 	cursor: pointer;
-	height: 2.5rem;
-	width: 10rem;
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+    background-image: url("../assets/aonsolutions-ai-black-logo.svg");
 }
 
 .aonHeaderButtons {
@@ -2246,11 +2248,25 @@ label.rating:hover {
 	/* min-width: 120px;
   display: none; */
 }
-
 .aonHeaderAppDiv {
 	display: flex;
 	align-items: center;
 	background-color: transparent;
+}
+
+.aonHeaderAppDiv * {
+	display: none !important;
+}
+
+.aonHeaderAppDiv {
+    background-image: url("../assets/aonsolutions-ai-black-logo.svg");
+	background-position: 50%;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+	padding: 0 0 0 68px;
+	position: relative;
 }
 
 .aonHeaderAppIcon {
@@ -2842,12 +2858,12 @@ label.rating:hover {
 background-image: url("../favicon.png");
 } */
 .aonLoginLogo {
-	width: 132px;
-	height: 32px;
 	cursor: pointer;
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url("../assets/aon-black-logo.svg");
+	width: var(--aonHeaderLogoWidth);
+	height: var(--aonHeaderLogoHeight);
+	background-image: url("../assets/aonsolutions-ai-black-logo.svg");
 }
 
 .aonTrademark:after {
@@ -4382,7 +4398,7 @@ background-image: url("../favicon.png");
 
 .aonInvoiceHomePendingRecordName {
 	font-weight: normal;
-	color: gray;
+	color: var(--aonForegroundColor2);
 	line-height: 21px;
 }
 
@@ -4409,7 +4425,7 @@ background-image: url("../favicon.png");
 
 .aonInvoiceHomePendingName {
 	font-weight: normal;
-	color: gray;
+	color: var(--aonForegroundColor2);
 	line-height: 21px;
 	flex-wrap: wrap;
 	flex-basis: 33.33%;
@@ -4452,7 +4468,7 @@ background-image: url("../favicon.png");
 
 .aonInvoiceHomePendingIssuedName {
 	font-weight: normal;
-	color: gray;
+	color: var(--aonForegroundColor2);
 	line-height: 21px;
 }
 
@@ -5085,8 +5101,29 @@ aon-superset iframe {
 	display: none;
 }
 
-#aonHeaderSearchDiv{
-	display: none;
+/* 
+	Header search, at top right. 
+*/
+#aonHeaderSearch {
+  position: absolute;
+  _top: 20;
+  right: 15;
+  z-index: 5;
+
+  transform: translateX(100%);
+  opacity: 0;
+
+  transition: transform .3s ease, opacity .2s ease;
+  /* pointer-events: none; evita clics cuando está oculto */
+}
+
+#aonHeaderSearch.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#aonHeaderSearch.open + * #aonHeaderCompany{
+	display: none !important;
 }
 
 #aonHeaderSearchDialogMenuDialogMenuContent{
@@ -5134,4 +5171,16 @@ aonSwitchFilter{
 
 .aonInvoiceRecordValue {
 	margin: 1rem;
+}
+
+.aonFloatOptionSpan {
+	position: fixed;
+	right: 20px;
+	bottom: 80px;
+}
+
+.aonMobileHomeTitle {
+	color: var(--aonForegroundColor2);
+	padding-left: 20px;
+	padding-top: 20px;
 }

@@ -88,11 +88,14 @@ public class ExpedientDAO {
 					.when(INVOICE.TYPE.eq((byte)3), "Fra.No.deducible").as("Tipo"), 
 				PRODUCT.NAME.as("Concept"), DSL.sum(INVOICE_DETAIL.TAXABLE_BASE).as("Base"), 
 				INVOICE_DETAIL.PROJECT.as("Expediente"), PROJECT.ALIAS, PROJECT.NAME)
-		.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+		.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 			.join(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.join(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
 		.where(PROJECT_PROPERTIES.getConditions(filter))
+		.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+		.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 		.groupBy(PROJECT.ID, DSL.year(INVOICE.ISSUE_DATE), INVOICE.TYPE, PRODUCT.NAME)
 		.orderBy(PROJECT.ID, DSL.year(INVOICE.ISSUE_DATE), INVOICE.TYPE, PRODUCT.NAME);
 	}
@@ -168,11 +171,14 @@ public class ExpedientDAO {
 				INVOICE.REFERENCE_CODE.as("Document"),
 				INVOICE.ISSUE_DATE.as("Date"), INVOICE_DETAIL.PROJECT.as("Expediente"), INVOICE_DETAIL.TAXABLE_BASE.as("Base"), PRODUCT.NAME.as("Concept"),
 				INVOICE.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(INVOICE.ISSUE_DATE).as("Year"))
-		.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+		.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 			.join(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.join(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
 		.where(PROJECT_PROPERTIES.getConditions(filter))
+		.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+		.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 		.orderBy(INVOICE.TYPE, INVOICE.ISSUE_DATE);
 	}
 	

@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -792,6 +794,12 @@ public class RegistryImpl implements IRegistry{
 	public List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getDomainSigAddInfo(ctx, registry));
+	}
+	
+	@Override
+	public Map<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(AONContext ctx, ArrayList<Integer> customerIds) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.getDomainSigAddInfo(ctx, customerIds));
 	}
 
 

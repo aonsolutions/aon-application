@@ -159,6 +159,7 @@ public class VatCollection {
 		stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
 		stmt.append(" WHERE it.domain = ?");
 		stmt.append("  AND it.tax_type = 1");
+		stmt.append("  AND (i.annulled = 0 or i.annulled is null)");	// NO ANULADAS
 		stmt.append("  AND i.vat_accrual_payment = 0");	// NO CRITERIO DE CAJA
 		if (params.getFromDate() != null) {
 			stmt.append(" AND i.tax_date >= ?");
@@ -531,6 +532,7 @@ public class VatCollection {
 		stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 		stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
 		stmt.append("  WHERE it.domain = ?");
+		stmt.append("  AND (i.annulled = 0 or i.annulled is null)");	// NO ANULADAS
 		stmt.append("  AND i.vat_accrual_payment = 0");
 		stmt.append("  AND it.tax_type = 1 ");
 		if (params.getFromDate() != null) {

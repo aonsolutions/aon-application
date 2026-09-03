@@ -55,7 +55,7 @@ public class OperationReportNew implements EntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 	}
 
-	private OperationReportModuleOptionsNew options;
+	private OperationReportModuleOptions options;
 	
 	private DockLayoutPanel dockLayoutPanel;
 	private TabLayoutPanel tabLayout;
@@ -78,7 +78,7 @@ public class OperationReportNew implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		OperationReportModuleOptionsNew opts = new OperationReportModuleOptionsNew();
+		OperationReportModuleOptions opts = new OperationReportModuleOptions();
 		opts.setParentWidget(root);
 		opts.setDomainName(getCurrentDomainName());
 		opts.setDomain(getCurrentDomain());
@@ -86,7 +86,7 @@ public class OperationReportNew implements EntryPoint {
 		this.onModuleLoad( opts );
 	}
 	
-	public void onModuleLoad( OperationReportModuleOptionsNew opts ) {
+	public void onModuleLoad( OperationReportModuleOptions opts ) {
 		AON.ensureInjected();
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
@@ -108,7 +108,7 @@ public class OperationReportNew implements EntryPoint {
 
 	}
 	
-	private void loadModule( OperationReportModuleOptionsNew opts ) {
+	private void loadModule( OperationReportModuleOptions opts ) {
 		this.options = opts;
 		dockLayoutPanel.addNorth(getFilterPanel(), 110);
 		SimpleLayoutPanel content = new SimpleLayoutPanel();

@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SalesType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -572,6 +573,34 @@ public class SalesDAO {
 	@Deprecated(forRemoval = true )
 	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
 		SalesDetailDAO.save(ctx, detail);
+	}
+	
+	protected static void restorePendingSales(AONContext ctx, Integer domain, Integer salesDetailId) {
+		if (salesDetailId == null) return;
+		Integer sales = ctx.getDslContext()
+			.select(SALES_DETAIL.SALES)
+			.from(SALES_DETAIL)
+			.where(SALES_DETAIL.ID.eq(salesDetailId).and(SALES_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(SALES_DETAIL.SALES);
+		if (sales == null) return;
+
+		int count = ctx.getDslContext().update(SALES_DETAIL)
+			.set(SALES_DETAIL.STATUS, SalesDetailStatus.PENDING.value())
+			.set(SALES_DETAIL.DELIVERED, 0.0)
+			.set(SALES_DETAIL.MODIFICATION_USER, ctx.getUser())
+			.set(SALES_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(SALES_DETAIL.ID.eq(salesDetailId).and(SALES_DETAIL.DOMAIN.eq(domain)))
+			.execute();
+		ctx.log().debug("UPDATE SALES_DETAIL (PENDIENTE): {0} ({1} filas)",salesDetailId,count);
+
+		count = ctx.getDslContext().update(SALES)
+			.set(SALES.STATUS, SalesStatus.PENDING.value())
+			.set(SALES.MODIFICATION_USER, ctx.getUser())
+			.set(SALES.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(SALES.ID.eq(sales).and(SALES.DOMAIN.eq(domain))
+				.and(SALES.STATUS.ne(SalesStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE SALES (PENDIENTE): {0} ({1} filas)",sales,count);
 	}
 	
 	// ----- DELETE

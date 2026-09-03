@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -51,7 +50,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	private DoubleBox fourthAssetAmount = new DoubleBox();
 	private AonTextBox bdns = new AonTextBox();
 	
-	Model3472014DeclaredPanel(Model347Callback cbk, Mod347 mod347,Mod347Declared declared, IModel347DeclaredCallback callback) {
+	Model3472014DeclaredPanel(Model347Callback cbk, Mod347 mod347, Mod347Declared declared, IModel347DeclaredCallback callback) {
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonWidthAll());
@@ -373,22 +372,7 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 		
 		AonTableButton button = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
-		button.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN, new AsyncCallback<String>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					cbk.showError(AON.MSG.errorMessage());
-				}
-
-				@Override
-				public void onSuccess(String result) {
-					cbk.showInfoPanel(result);
-				}
-		
-			}
-		));
-		
+		button.addClickHandler(event -> cbk.showInvoiceVatBreakdownInfo(button, mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN));		
 		tab5.setWidget(2, 5, button);
 		
 		panel.add(tab5);
@@ -597,5 +581,5 @@ public class Model3472014DeclaredPanel extends SimpleLayoutPanel implements Focu
 	public void setTabIndex(int index) {
 		tabIndex = index;
 	}
-	
+
 }

@@ -54,7 +54,7 @@ public class OperationReportExcelBookNew extends HttpServlet {
 				.setDomain(domainId)
 				.setUser(user);
 
-			OperationParamsNew params = JsonParser.parseOperationParamsNew(operationParams);			
+			OperationParamsNew params = JsonParser.parseOperationParams(operationParams);			
 			
 			// Obtener NIF y Nombre de la Empresa (para el nombre del fichero)
 			String companyDocument = "";
@@ -110,12 +110,12 @@ public class OperationReportExcelBookNew extends HttpServlet {
 			params.setTabType(0);
 			ExcelAction action = new ExcelAction(params);
 			action.initialize(sheetName1);
-			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			
 			// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 			params.setTabType(1);
 			action.createSheet(sheetName2);
-			ACCOUNTING.getOperationBreakdownNew(occam, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			
             // Formato del fichero Excel 2007
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());

@@ -117,7 +117,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -321,7 +320,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************** [INVOICE]
 	// **************************************************
 	@Override
-	public LinkedList<OldProduct> getInvoiceProducts(String domainName, int domain, String user, String query)
+	public LinkedList<Product> getInvoiceProducts(String domainName, int domain, String user, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
@@ -1097,8 +1096,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Map<TargetFull, List<RegistrySeller>> getTargetNotUserFull(TargetParams params) throws AonCoreException {
 		List<TargetFull> targetFullList = AON.getTargetNotUserFull(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
-		
-		Map<TargetFull, List<RegistrySeller>> resultMap = targetFullList.stream().collect(
+		return targetFullList.stream().collect(
 		    Collectors.toMap(
 		        Function.identity(),
 		        targetFull -> AON.getRegistrySellerStream(
@@ -1111,9 +1109,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		        LinkedHashMap::new
 		    )
 		);
-
-		
-		return resultMap;
 	}
 	
 	@Override
@@ -1793,6 +1788,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException {
 		List<DomainSigAddInfo> result = AON.getDomainSigAddInfo(domainName, domainId, user, customerId);
 		return result;
+	}
+	
+
+	@Override
+	public HashMap<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException {
+		return new HashMap<>( AON.getDomainSigAddInfo(domainName, domainId, user, customerIds) );
 	}
 	
 	@Override

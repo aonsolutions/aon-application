@@ -1,9 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -13,23 +11,18 @@ import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.SerfruitDeliveryPackagingJSON;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Options;
-import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
-import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.SerfruitDeliveryPackaging;
 import com.esferalia.aon.seres.DeliveryUpload;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +32,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
+@Deprecated
 @WebServlet(name = "AonApiDeliveryServlet", urlPatterns = {"/ms/api/delivery/*"})
 public class DeliveryServlet extends AonApiHttpServlet {
 		
@@ -46,38 +40,23 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		get(req, resp);
+		error(req, resp, new AonApiException("El método GET en '/ms/api/delivery' está deprecado. Utiliza '/ms/api/deliveries'."));
 	}
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		get(req, resp);
+		error(req, resp, new AonApiException("El método POST en '/ms/api/delivery' está deprecado. Utiliza '/ms/api/deliveries'."));
 	}
 	
 	@Override
 	public void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		// MANTENERLO PORQUE LO UTILIZA SERFRUIT! PARA UDAPA.
 		put(req, resp);
 	}
 	
 	@Override
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-		delete(req, resp);
-	}
-	
-	private void get(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getDeliveries(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
+		error(req, resp, new AonApiException("El método DELETE en '/ms/api/delivery' está deprecado. Utiliza '/ms/api/deliveries/:id'."));
 	}
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
@@ -95,27 +74,6 @@ public class DeliveryServlet extends AonApiHttpServlet {
 			e.printStackTrace();
 			error(req, resp, e);
 		}
-	}
-	
-	private void delete(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
-		try {
-			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, deleteDelivery(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
-	}
-	
-	private JSONArray getDeliveries(AonApiData api) {
-		return DeliveryJSON.toJSON(
-			AON.getDeliveryStream(api.getDomain(), api.getUser(), f -> deliveryFilter(api, f)));
 	}
 	
 	private JSONObject saveDelivery(AonApiData api) {
@@ -150,53 +108,6 @@ public class DeliveryServlet extends AonApiHttpServlet {
 		}
 
 		return DeliveryJSON.toJSON(delivery);
-	}
-	
-	private JSONObject deleteDelivery(AonApiData api) {
-		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
-		AON.deleteDelivery(api.getDomain(), api.getUser(), id);
-		return new JSONObject();
-	}
-	
-	private Filter deliveryFilter(AonApiData api, DeliveryProperties f) {
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-		
-		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
-		if(!AonStringUtils.isBlank(series)) {
-			filter = filter.and(f.getSeriesProperty().eq(series));
-		}
-		
-		Integer number = JsonUtils.getInteger(api.getData(), IJsonNames.NUMBER);
-		if(number != null) {
-			filter = filter.and(f.getNumberProperty().eq(number));
-		}
-		
-		DeliveryStatus status = DeliveryStatus.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.STATUS));
-		if(status != null) {
-			filter = filter.and(f.getStatusProperty().eq(status.value()));
-		}
-	 	
-		Date from = JsonUtils.getDate(api.getData(), IJsonNames.FROM);
-		if(from != null) {
-			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(from)));
-		}
-		
-		Date to = JsonUtils.getDate(api.getData(), IJsonNames.TO);
-		if(to != null) {
-			filter = filter.and(f.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(to)));
-		}		
-		
-		Integer customer = JsonUtils.getInteger(api.getData(), IJsonNames.CUSTOMER);
-		if(customer != null) {
-			filter = filter.and(f.getCustomerProperty().eq(customer));
-		}
-		
-		Integer carrierPacking = JsonUtils.getInteger(api.getData(), IJsonNames.CARRIER_PACKING);
-		if(carrierPacking != null) {
-			filter = filter.and(f.getCarrierPackingProperty().eq(carrierPacking));
-		}
-
-		return filter;
 	}
 	
 	// ENVIAR ALBARÁN A SERES...

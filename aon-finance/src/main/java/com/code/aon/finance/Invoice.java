@@ -41,6 +41,8 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryDocument;
@@ -518,5 +520,16 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		}
 		return totalQuantity;
 	}
-
+	
+	public static void addNotAnnulledExpression(IManagerBean invoiceBean, Criteria criteria) throws ManagerBeanException {
+		String annulledAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_ANNULLED);
+		addNotAnnulledExpression(annulledAlias, criteria);
+	}
+	
+	public static void addNotAnnulledExpression(String annulledAlias, Criteria criteria) throws ManagerBeanException {
+		Expression e1 = ExpressionUtilities.getNullExpression(annulledAlias);
+		Expression e2 = ExpressionUtilities.getEqualExpression(annulledAlias, Boolean.FALSE);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2));
+	}
+	
 }

@@ -1166,7 +1166,7 @@ export class AonNewMenu extends AonElement {
 		if (CONTENT_INDEX.app === app.app)
 			return !this.getDur().isConsole();
 		if (MenuApps.TOOLS.app === app.app)
-			return this.isBeta() && !LS.isNewTheme();
+			return false;
 		if (MenuApps.OFFICE.app === app.app)
 			return this.getDur().isOffice();
 		if (MenuApps.MARKETING.app === app.app)

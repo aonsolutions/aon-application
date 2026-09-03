@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
@@ -10,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
 import java.sql.Timestamp;
@@ -27,6 +27,7 @@ import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -106,6 +107,8 @@ public class CustomerDAO {
 		
         @Override public Property<Integer> getRaddInfoDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ID); }
         
+		@Override public Property<java.sql.Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<>(STATUS_DATE);}
+        
 		}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -152,13 +155,6 @@ public class CustomerDAO {
 			return customer;
 		}
 	}
-	
-	private static Field<Boolean> hasDomain = DSL.exists(
-		    DSL.selectOne()
-		       .from(RADDINFO)
-		       .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
-		       .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%"))
-		).as("has_domain");
 	
 	private static SelectOnConditionStep<Record> select(AONContext ctx) {
 		return ctx.getDslContext()
@@ -220,44 +216,49 @@ public class CustomerDAO {
 		 }).collect(Collectors.toList()).stream();
 	}
 	
-	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
-		return ctx.getDslContext()
+	/** Condicion reutilizable: el registro tiene al menos un AON_DOMAIN% en raddinfo. */
+	private static final Condition HAS_DOMAIN_CONDITION = DSL.exists(
+	        DSL.selectOne()
+	           .from(RADDINFO)
+	           .where(RADDINFO.REGISTRY.eq(REGISTRY.ID))
+	           .and(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%")));
+
+	// se mantiene en la proyeccion: CustomerFiller lo lee para setRelationship(...)
+	private static Field<Boolean> hasDomain = DSL.field(HAS_DOMAIN_CONDITION).as("has_domain");
+
+	private static SelectConditionStep<Record> sigSelect(AONContext ctx, CustomerFilter filter) {
+	    return ctx.getDslContext()
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
 	            .select(hasDomain)
-		        .from(CUSTOMER)
-		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME)
-				.offset(offset)
-				.limit(limit)				
-				.fetch()
-				.stream()
-				.filter(r -> r.getValue(hasDomain))
-				.map(new CustomerFiller());
+	        .from(CUSTOMER)
+	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
+	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 	}
-	
+
+	public static Stream<Customer> getSigStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+	    return sigSelect(ctx, filter)
+	            .and(HAS_DOMAIN_CONDITION)   // antes se filtraba en el stream, tras el limit
+	            .orderBy(REGISTRY.NAME)
+	            .offset(offset)
+	            .limit(limit)
+	            .fetch()
+	            .stream()
+	            .map(new CustomerFiller());
+	}
+
 	public static Stream<Customer> getSigNotLinkedStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
-		return ctx.getDslContext()
-	            .selectDistinct(CUSTOMER.fields())
-	            .select(REGISTRY.fields())
-	            .select(DOMAIN.fields())
-	            .select(hasDomain)
-		        .from(CUSTOMER)
-		        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-		        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
-		        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
-		        .where(CUSTOMER_PROPERTIES.getConditions(filter))
-				.orderBy(REGISTRY.NAME)
-				.offset(offset)
-				.limit(limit)				
-				.fetch()
-				.stream()
-				.filter(r -> !r.getValue(hasDomain))
-				.map(new CustomerFiller());
+	    return sigSelect(ctx, filter)
+	            .and(DSL.not(HAS_DOMAIN_CONDITION))
+	            .orderBy(REGISTRY.NAME)
+	            .offset(offset)
+	            .limit(limit)
+	            .fetch()
+	            .stream()
+	            .map(new CustomerFiller());
 	}
 	
 	public static List<Customer> getList(AONContext ctx, CustomerFilter filter) {
@@ -629,6 +630,19 @@ public class CustomerDAO {
 		
 		delete(ctx, id);
 	}
+	
+	/**
+	 * Fecha del ultimo cambio de estado: nota mas reciente de tipo
+	 * CUSTOMER_STATUS y, si el cliente nunca ha cambiado de estado, su creacion.
+	 * Replica en SQL lo que pinta la columna F. Estado del listado.
+	 */
+	private static final Field<java.sql.Date> STATUS_DATE = DSL.coalesce(
+			DSL.field(DSL.select(DSL.max(RNOTE.NOTE_DATE))
+					.from(RNOTE)
+					.where(RNOTE.REGISTRY.eq(CUSTOMER.REGISTRY))
+					.and(RNOTE.DOMAIN.eq(CUSTOMER.DOMAIN))
+					.and(RNOTE.NOTE_TYPE.eq(NoteType.CUSTOMER_STATUS.value()))),
+			CUSTOMER.CREATION_DATE.cast(SQLDataType.DATE));
 	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************

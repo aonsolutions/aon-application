@@ -4,6 +4,7 @@ import { API } from "../environments/environments.js";
 
 export const getDelivery = (data) => get(API.DELIVERIES + '/' + data.id, data);
 export const getDeliveries = (data) => get(API.DELIVERIES, data);
+export const deleteDelivery = (data) => remove(API.DELIVERIES + '/' + data.id, data);
 
 export const getWarehouses = (data) => get(API.WAREHOUSES, data);
 export const getWarehouse = (id) => get(API.WAREHOUSES + '/' + id, {id});

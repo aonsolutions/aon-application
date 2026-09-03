@@ -30,7 +30,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -627,60 +626,7 @@ public class JsonParser {
 		return params;
 	}
 	
-	public static OperationParams parseOperationParams(String operationParams) throws ParseException, java.text.ParseException {
-		OperationParams params = new OperationParams();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);
-		
-		Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
-		if (dom == null) {
-			throw new IllegalArgumentException("NULL DOMAIN!");
-		}
-		if (dom instanceof Long) {
-			Long domain = (Long) dom; 
-			params.setDomain(domain.intValue());
-		} else if (dom instanceof String) {
-			Integer domain = AonNumberUtils.toInteger((String) dom);
-			if (domain == null) {
-				throw new IllegalArgumentException("NULL DOMAIN!");
-			}
-			params.setDomain(domain);
-		}
-		
-		Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
-		if (activity != null) {
-			params.setActivity(activity.intValue());	
-		}
-		
-		String activityDescription = (String) jsonParams.get(IRequestParamsNames.ACTIVITY_DESCRIPTION);
-		if (activityDescription != null) {
-			params.setActivityDescription(activityDescription);	
-		}			
-
-		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-		if (AonStringUtils.isNotBlank(fromDate)) {
-			params.setFromDate( FORMATTER.parse(fromDate));
-		}
-		String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-		if (AonStringUtils.isNotBlank(toDate)) {
-			params.setToDate( FORMATTER.parse(toDate));			
-		}
-		Long expenses = (Long) jsonParams.get(IRequestParamsNames.EXPENSES);
-		params.setExpenses(expenses == null || expenses==1);
-		
-		Long irpf = (Long) jsonParams.get(IRequestParamsNames.IRPF);
-		if (irpf != null) {
-			params.setIrpf(irpf==1);
-		}
-		
-		Long unified = (Long) jsonParams.get(IRequestParamsNames.UNIFIED_BOOK);
-		if (unified != null) {
-			params.setUnifiedBook(unified==1);
-		}
-		return params;
-	}
-	
-	public static OperationParamsNew parseOperationParamsNew(String operationParams) throws ParseException, java.text.ParseException {
+	public static OperationParamsNew parseOperationParams(String operationParams) throws ParseException, java.text.ParseException {
 		OperationParamsNew params = new OperationParamsNew();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);

@@ -233,10 +233,16 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<Delivery> getStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
+		if(page == null || perPage == null)
+			return getStream(ctx, filter);
 		return select(ctx, filter)
 			.orderBy(DELIVERY.ID.desc())
-			.limit(perPage).offset(perPage * (page -1))
+			.limit(perPage).offset(offset(page, perPage))
 			.fetch().stream().map(new DeliveryFiller());
+	}
+
+	private static int offset(Integer page, Integer perPage) {
+		return perPage * (Math.max(page, 1) - 1);
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
@@ -453,6 +459,25 @@ public class DeliveryDAO {
 		ctx.getDslContext()
 			.delete(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter))
 			.execute();
+	}
+	
+	protected static void restorePendingDelivery(AONContext ctx, Integer domain, Integer deliveryDetailId) {
+		if (deliveryDetailId == null) return;
+		Integer delivery = ctx.getDslContext()
+			.select(DELIVERY_DETAIL.DELIVERY)
+			.from(DELIVERY_DETAIL)
+			.where(DELIVERY_DETAIL.ID.eq(deliveryDetailId).and(DELIVERY_DETAIL.DOMAIN.eq(domain)))
+			.fetchOne(DELIVERY_DETAIL.DELIVERY);
+		if (delivery == null) return;
+
+		int count = ctx.getDslContext().update(DELIVERY)
+			.set(DELIVERY.STATUS, DeliveryStatus.PENDING.value())
+			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
+			.set(DELIVERY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(DELIVERY.ID.eq(delivery).and(DELIVERY.DOMAIN.eq(domain))
+				.and(DELIVERY.STATUS.ne(DeliveryStatus.PENDING.value())))
+			.execute();
+		ctx.log().debug("UPDATE DELIVERY (PENDIENTE): {0} ({1} filas)",delivery,count);
 	}
 	
 	// -------------------- DELIVERY DETAIL

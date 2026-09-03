@@ -334,8 +334,9 @@ public class CommissionServlet extends HttpServlet{
 	}
 	
 	public static Filter invoiceCalculatedCommissionFilter(Domain domain, Map<String, String[]> filterMap, InvoiceDetailCommissionProperties f) {
-		Filter filter = f.getDomainProperty().eq(domain.getId());
-	
+		Filter filter = f.getDomainProperty().eq(domain.getId())
+			.and(f.getAnnulledProperty().eq( (byte ) 0).or(f.getAnnulledProperty().isNull()));
+		
 		if(filterMap.containsKey("from")){
 			String from = filterMap.get(MSG.FROM)[0];
 			Date d = new Date(Long.parseLong(from));

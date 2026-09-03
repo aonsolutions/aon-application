@@ -1,0 +1,257 @@
+:root{
+    --favicon: ../faviconColors.png;
+
+    --aonBlack: #0A0A0A;
+	--aonMidGray:#C9C9C7;
+	--aonDrakGray:#3A3A3A;
+	--aonOffWhite:#F3F3F1;
+	--aonPurple:oklch(52% .234 277);
+
+	--aonHeaderBackgroundColor: var(--aonBlack);
+    --aonBackgroundColor: var(--aonBlack);
+    --aonBodyBackgroundColor: var(--aonDrakGray);
+    --aonHeaderBackgroundColor: var(--aonBlack);
+    --aonBackgroundColor2: var(--aonBodyBackgroundColor);
+    --aonForegroundColor: var(--aonOffWhite);
+    --aonForegroundColor2: var(--aonMidGray);
+
+  	--aonCardColor: var(--aonBackgroundColor);
+
+    /* Barras del sistema. La app Android las inyecta en el elemento raiz como
+       --sat/--sar/--sab/--sal (ver MainActivity.publishInsets); fuera de la app
+       valen 0. --sat es la barra de estado y --sab la de navegacion: 0 si el
+       dispositivo no la tiene, ~24px con gestos y ~48px con los tres botones. */
+    --aonMobileStatusBar: var(--sat, 0px);
+    --aonMobileNavBar: var(--sab, 0px);
+
+    /* Alturas propias de la app, sin contar las barras del sistema. */
+    --aonMobileHeaderContent: 60px;
+    --aonMobileMenuContent: 60px;
+    --aonMobileMenuGap: 10px;
+    --aonMobileFloatOptionBottom: 5px;
+
+    /* La cabecera se pinta tambien debajo de la barra de estado, y el menu
+       flotante se sube por encima de la barra de navegacion. */
+    --aonMobileHeaderHeight: calc(var(--aonMobileHeaderContent) + var(--aonMobileStatusBar));
+    --aonMobileMenuBottom: calc(var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+    --aonMobileMenuHeight: calc(var(--aonMobileMenuGap) + var(--aonMobileMenuBottom));
+    --aonMobileBottomHeight: calc(var(--aonMobileMenuContent) + var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+    --aonMobileFloatOptionBottomHeight: calc(var(--aonMobileFloatOptionBottom) + var(--aonMobileMenuContent) + var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+
+    /* Arranque del plano de contenido de las apps (aon-application), que va fijo
+       al viewport y no dentro del rootPanel. Los 102px de base se midieron con
+       la cabecera de 80px de este tema (60 de contenido + unos 20 de barra de
+       estado), asi que lo que queda fijo son 82px. */
+    --aonMobileContentTop: calc(3rem + var(--aonMobileHeaderHeight) );
+}
+
+.rootPanel {
+    z-index: 3;   
+    background-color: var(--aonBackgroundColor2);
+}
+
+
+.aonMobileRootPanel {
+    top: var(--aonMobileHeaderHeight);
+    background-color: var(--aonBackgroundColor2);
+    border: none;
+}
+
+.aonMobileHeader {
+  height: var(--aonMobileHeaderHeight);
+}
+
+.aonMobileMenu {
+    height: var(--aonMobileMenuContent);
+    bottom: var(--aonMobileMenuBottom);
+}
+
+.aonFloatOptionSpan {
+    bottom: var(--aonMobileFloatOptionBottomHeight);
+}
+
+/* Estos dos van fijos al viewport, no dentro del rootPanel, asi que su top
+   tiene que bajar con la barra de estado igual que la cabecera. */
+.aonMobileApplicationContent,
+.aonMobileContent {
+    top: var(--aonMobileContentTop);
+}
+
+/* El contenido esta fijo a bottom:0, o sea que llega por debajo del menu y de
+   la barra de navegacion: el hueco al final lo da el padding. */
+.aonMobileContent {
+    padding-bottom: var(--aonMobileBottomHeight);
+}
+
+/* A borde a borde 100vh es la pantalla entera, barras del sistema incluidas.
+   El cajon lateral va desde donde empieza el contenido hasta el menu. */
+.aonMobileSidenav {
+    height: calc(100vh - var(--aonMobileContentTop) - var(--aonMobileBottomHeight));
+}
+
+.aonMobileHeaderCompany {
+    top: calc(25px + var(--aonMobileStatusBar));
+}
+
+.aonMobileHeaderButton{
+    top: calc(10px + var(--aonMobileStatusBar));
+}
+
+.aonMobileHeaderLogo {
+	padding-top: calc(20px + var(--aonMobileStatusBar));
+}
+
+.aonLoginForm {
+    margin-top: 600px;
+}
+
+.aonToolbar {
+  background-color: transparent;
+}
+
+#divCompanyLogoForm {
+    display:none;
+}
+
+.aonCardUploadToast {
+    width: 100%;
+    bottom: calc(60px + var(--aonMobileNavBar));
+    right: 0px;
+}
+
+#aonWarehouseMobileSidenavContentElaborationList{
+    display: grid !important;
+    grid-template-columns: repeat(2,1fr)  !important;
+    gap: 10px  !important;
+    list-style-type: none  !important;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList,
+#aonWarehouseMobileSidenavContentElaboration,
+#aonWarehouseMobileSideNavContentPackaging,
+#aonWarehouseMobileSideNavContentDelivery,
+#aonWarehouseMobileSideNavContentTags {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 15px;
+    background-color: transparent;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList:hover,
+#aonWarehouseMobileSidenavContentElaboration:hover,
+#aonWarehouseMobileSideNavContentPackaging:hover,
+#aonWarehouseMobileSideNavContentDelivery:hover,
+#aonWarehouseMobileSideNavContentTags:hover {
+    background-color: #e6e6e6;
+    transform: scale(1.05);
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemIcon,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemIcon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemSpanTags,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemSpanTags {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+    display: block;
+    max-width: 80px;
+    word-wrap: break-word;
+}
+
+#aonWarehouseMobileSidenavContentElaborationicon,
+#aonWarehouseMobileSidenavContentPackagingicon,
+#aonWarehouseMobileSidenavContentDeliveryicon,
+#aonWarehouseMobileSidenavContentTagsicon {
+    font-size: 50px;
+}
+
+#aonMenuItemSpanElaboration,
+#aonMenuItemSpanPackaging,
+#aonMenuItemSpanDelivery,
+#aonMenuItemSpanTags {
+    font-size: 14px;
+}
+
+#aonWarehouseMobileSidenavContentElaborationList{
+    margin-left: -30px;
+}
+
+#aonSidenavTitleElaboration{
+    margin-left: -170px !important;
+}
+
+#aonWarehouseMobileSidenavContentTags{
+    margin-bottom: 30px;
+}
+
+#aonWarehouseMobileSidenavContentPackagingicon{
+    margin-top: 5px;
+}
+
+/***************/
+.aonListGroupItem{
+    border-bottom: none;
+    background-color: transparent;
+}
+
+#aonMobileAppSelection{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);  
+    font-size: 10px;
+    padding: 0px;
+    margin-left: 16px;
+}
+
+.fixLi{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    margin-left: -10px;
+}
+
+.aonAppTitle{
+    text-align: center;
+    padding-left: 0px;
+    width: 60px;
+}
+
+[id^="aonMobileSelectionIcon"] {
+    display: block;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 13px !important;
+    align-content: center ;
+    text-align: center;
+    font-size: 30px;
+    padding: 15px;
+}
+
+#aonSideNavMobileTitletimecontrol{
+    width: auto;
+}
+
+.aonWidgetNominaMobile,
+.aonWidgetSolicitudesMobile {
+    background-color: var(--aonBackgroundColor);
+    color: var(--aonForegroundColor);
+}

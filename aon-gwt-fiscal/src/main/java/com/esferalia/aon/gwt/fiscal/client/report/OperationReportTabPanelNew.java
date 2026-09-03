@@ -27,7 +27,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 	
 	private FlowPanel rootPanel = new FlowPanel();
 	
-	public OperationReportTabPanelNew(OperationReportModuleOptionsNew options, OperationParamsNew params, JsOperationGridPanelNew grid) {
+	public OperationReportTabPanelNew(OperationReportModuleOptions options, OperationParamsNew params, JsOperationGridPanel grid) {
 		setStyleName(AON.CSS.aonScrollArea());
 		addStyleName("salary-scroll"); // Forzar scroll horizontal visible
 		
@@ -67,7 +67,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 		
 	}
 	
-	private void showEntry(OperationReportModuleOptionsNew options, Integer entryId) {
+	private void showEntry(OperationReportModuleOptions options, Integer entryId) {
 		
 		// Si no hay entryId, o es cero, no hacemos nada
 		if (entryId == null || entryId.intValue() == 0) {

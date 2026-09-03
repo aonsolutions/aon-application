@@ -9,7 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod349.Mod349DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod349.Mod349InfoDAO;
 
 public class MODEL349Impl implements IMODEL349 {
 
@@ -63,7 +64,7 @@ public class MODEL349Impl implements IMODEL349 {
 	}
 	@Override
 	public String getInfo(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
-		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
+		return Mod349InfoDAO.getInfo(ctx, mod349, detail, infoKey);
 	}
 	@Override
 	public Mod349 duplicate(AONContext ctx, Mod349 mod349) {

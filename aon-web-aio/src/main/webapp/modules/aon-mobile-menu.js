@@ -120,7 +120,7 @@ export class AonMobileMenu extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = id;
     div.className = 'aonMobileMenu';
-    if(this.isSab()) {
+    if(this.isIosSab()) {
       div.style.height = '4rem'; 
     }
     this.appendChild(div);

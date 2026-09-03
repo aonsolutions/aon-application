@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.GWT;
@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InvoiceProductBox extends ResizeComposite implements HasValue<String>
-	, HasDescription, Focusable, HasSelectionHandlers<OldProduct>, HasAllFocusHandlers
+	, HasDescription, Focusable, HasSelectionHandlers<Product>, HasAllFocusHandlers
 	,HasAllKeyHandlers, HasEnabled {
 	
 	protected static final String BEGIN_STRONG = "<strong>";
@@ -103,14 +103,14 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 	
 	private static class ProductSuggestion extends MultiWordSuggestion {
 		
-		private OldProduct product;
+		private Product product;
 		
-		private ProductSuggestion(OldProduct product, String replacementString, String displayString) {
+		private ProductSuggestion(Product product, String replacementString, String displayString) {
 			super( replacementString, displayString );
 			this.product = product;
 		}
 		
-		public OldProduct getProduct() {
+		public Product getProduct() {
 			return product;
 		}
 		
@@ -131,7 +131,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
 					commonService.getInvoiceProducts(domainName,domain,user,request.getQuery()
-							,new AsyncCallback<LinkedList<OldProduct>>() {
+							,new AsyncCallback<LinkedList<Product>>() {
 		
 								public void onFailure(Throwable caught) {
 									descriptionLabel.setText(AON.MSG.noData());
@@ -139,10 +139,10 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 									callback.onSuggestionsReady(request, new Response());
 								}
 		
-								public void onSuccess(LinkedList<OldProduct> result) {
+								public void onSuccess(LinkedList<Product> result) {
 									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 									if (result != null) {
-										for (final OldProduct product : result) {
+										for (final Product product : result) {
 											suggestions.add(new ProductSuggestion(
 													product
 											   ,product.getCode()
@@ -192,12 +192,12 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 		initWidget(rooPanel);
 	}
 	
-	public void set(OldProduct product) {
+	public void set(Product product) {
 		productTextBox.setText(product.getCode());
 		select(product);
 	}
 	
-	private void select(OldProduct product) {
+	private void select(Product product) {
 		if (product != null) {
 			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 			id = product.getId();
@@ -216,7 +216,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 		SelectionEvent.fire(InvoiceProductBox.this, product );
 	}
 	
-	public void setValue(OldProduct product, boolean fireEvents) {
+	public void setValue(Product product, boolean fireEvents) {
 		if (product != null && product.getId() != null) {
 			id = product.getId();
 			productTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
@@ -235,7 +235,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 		}
 	}
 	
-	public void setValue(OldProduct product) {
+	public void setValue(Product product) {
 		setValue(product,true);
 	}
 
@@ -331,7 +331,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<OldProduct> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Product> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
@@ -350,7 +350,7 @@ public class InvoiceProductBox extends ResizeComposite implements HasValue<Strin
 		return productTextBox.addKeyPressHandler(handler);
 	}
 	
-	private static String decorate(OldProduct product, String query) {
+	private static String decorate(Product product, String query) {
 		String text = product.getCode() + AonStringUtils.SPACE + product.getName();
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();

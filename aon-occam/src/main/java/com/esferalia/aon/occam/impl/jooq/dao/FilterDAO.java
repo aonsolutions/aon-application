@@ -645,6 +645,12 @@ public class FilterDAO implements Filter {
 		}
 		return select.where(getCondition());
 	}
-	
+
+	FilterDAO andCondition(Condition c) {
+		if (c != null) {
+			this.condition = (this.condition == null) ? c : this.condition.and(c);
+		}
+		return this;
+	}
 	
 }

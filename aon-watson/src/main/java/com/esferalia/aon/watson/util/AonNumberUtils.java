@@ -358,6 +358,48 @@ public class AonNumberUtils {
         return true;
     }
     
+    /**
+     * <p>Checks whether the <code>String</code> can be parsed as an <code>int</code>.</p>
+     *
+     * <p><code>null</code> and empty/blank <code>String</code> will return
+     * <code>false</code>, as will values out of the <code>int</code> range
+     * or with a decimal part.</p>
+     *
+     * @param value  the <code>String</code> to check
+     * @return <code>true</code> if the string is a valid <code>int</code>
+     */
+    public static boolean isInteger(String value) {
+        if (AonStringUtils.isBlank(value)) {
+            return false;
+        }
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * <p>Checks whether the number has no decimal part.</p>
+     *
+     * <p><code>null</code>, <code>NaN</code> and infinite values will return
+     * <code>false</code>.</p>
+     *
+     * @param number  the <code>Number</code> to check
+     * @return <code>true</code> if the number is a whole value
+     */
+    public static boolean isInteger(Number number) {
+        if (number == null) {
+            return false;
+        }
+        double value = number.doubleValue();
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            return false;
+        }
+        return Double.compare(value, Math.floor(value)) == 0;
+    }
+
     public static boolean isPar(Integer n) {
 		return n % 2 == 0;
 	}

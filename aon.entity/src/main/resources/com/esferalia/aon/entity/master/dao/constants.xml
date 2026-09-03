@@ -248,17 +248,6 @@
 		<hibernate names="id,domain,creditor.id,customer.id,finance.id,collect,collectId,finance.concept,finance.dueDate,finance.financeStatus" />
 	</bean>
 
-	<!-- ** AON FISCAL  **************************************************** -->
-	<bean class="com.code.aon.fiscal.VatTaxDetail">
-		<alias names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax_id,vatTax_period,vatTax_status,vatTax_type,vatTax_year,vatTax_securityLevel"/>
-		<hibernate names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax.id,vatTax.period,vatTax.status,vatTax.type,vatTax.year,vatTax.securityLevel"/>
-	</bean>
-	
-	<bean class="com.code.aon.fiscal.VatTaxDeclaration">
-		<alias names="administration,compensable,compensate,delayInterest,deposit,doneDeposits,doneRefunds,extraCharge,id,operationsVolume,payBack,percent,previousDeposit,previousPayBack,previousYearCompensateQuota,quota,registryBank_id,status,totalTaxDebt,vatTax_id,vatTax_complementary,vatTax_number,vatTax_period,vatTax_replacement,vatTax_securityLevel,vatTax_status,vatTax_taxRefundRegistry,vatTax_year,withoutActivity"/>
-		<hibernate names="administration,compensable,compensate,delayInterest,deposit,doneDeposits,doneRefunds,extraCharge,id,operationsVolume,payBack,percent,previousDeposit,previousPayBack,previousYearCompensateQuota,quota,registryBank.id,status,totalTaxDebt,vatTax.id,vatTax.complementary,vatTax.number,vatTax.period,vatTax.replacement,vatTax.securityLevel,vatTax.status,vatTax.taxRefundRegistry,vatTax.year,withoutActivity" />	
-	</bean>
-
 	<!-- ** AON GEOZONE  **************************************************** -->
 	<bean class="com.code.aon.geozone.GeoTree" sqlName="geotree">
 		<alias names="id,parent,parent_id,parent_name,child,child_id,child_name,child_system" />

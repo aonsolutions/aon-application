@@ -1117,6 +1117,153 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testPaymentExtrasIV() throws ExpressionException, SQLException, SalaryException {
+
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord pagaMarzo = addConcept(aonContext, "PAGA_MARZO", PaymentType.CRA_0004);
+
+		AgreementLevelCategoryRecord agreementLevelCategory = 
+		newAgreement(aonContext,
+		new Extra[] {
+			new Extra() {
+				{
+					this.expression = "P_0";
+					this.month = Month.DECEMBER;
+					this.start = "01/07";
+					this.end = "31/12";
+					this.issue = "15/12";
+					this.concept = pagaExtra.getId();
+				}
+			}, new Extra() {
+				{
+					this.expression = "P_0";
+					this.month = Month.JUNE;
+					this.start = "01/01";
+					this.end = "30/06";
+					this.issue = "30/06";
+					this.concept = pagaExtra.getId();
+				}
+			},
+//			new Extra() {
+//				{
+//					this.expression = "P_0";
+//					this.month = Month.MARCH;
+//					this.start = "01/01 -1";
+//					this.end = "31/12 -1";
+//					this.issue = "31/03";
+//					this.concept = pagaMarzo.getId();
+//				}
+//			},
+		}
+		);
+
+
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				Collections.emptyMap(), 
+				new String[] { 
+				"1000.00 * DIAS_TRABAJADOS/DIAS_MES",
+				"500.00 * DIAS_TRABAJADOS/DIAS_MES"
+				},
+				new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				agreementLevelCategory);
+		
+//		addPayment(
+//		aonContext, 
+//		contract, 
+//		contract.getStartDate(), 
+//		contract.getEndDate(), 
+//		pagaMarzo, 
+//		"PAGA EXTRA MARZO", 
+//		"1500.00", 
+//		"_P", 
+//		"_P", 
+//		PaymentType.CRA_0004,
+//		(byte) Month.MARCH.ordinal());
+
+		addPayment(
+		aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		contract.getEndDate(), 
+		pagaExtra, 
+		"PAGA EXTRA NAVIDAD", 
+		"P_0 + P_1", 
+		"_P", 
+		"PRORRATEAR(7,12)", 
+		PaymentType.CRA_0004,
+		(byte) Month.DECEMBER.ordinal());
+
+		addPayment(
+		aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		contract.getEndDate(), 
+		pagaExtra, 
+		"PAGA EXTRA VERANO", 
+		"P_0 + P_1", 
+		"_P", 
+		"PRORRATEAR(1,6)", 
+		PaymentType.CRA_0004,
+		(byte) Month.JUNE.ordinal());
+
+		Calendar calendar = Calendar.getInstance();
+		// Be care that the first day of the month has value 1.
+		calendar.set(DAY_OF_MONTH, 1);
+		calendar.set(MONTH, Calendar.JULY);
+		Date start = new Date(calendar.getTimeInMillis());
+
+		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
+		Date end = new Date(calendar.getTimeInMillis());
+
+		Date issue = new Date(calendar.getTimeInMillis());
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, issue, contract);
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				assertAnnualRemuneration(
+						CommonUtil.round(1500.00 * 14  , 3)
+								, irpfOutcome.getIrpfResult().getAnnualRemuneration());
+			}
+		});
+
+		ctx.getIrpf();
+		
+		for ( Date date  =  getFirstDayOfYear(getToday()); get(date, MONTH) < Calendar.DECEMBER  ; date = add(date, MONTH, 1) ) {
+			System.out.println("Calculating salary for " + date);
+			JooqSalaryBuilder<ISalary>  jooqSalaryBuilder =  new JooqSalaryBuilder<ISalary>(connection);
+			ctx = 
+			getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date), contract);
+			ctx.setListener(new Listener() {
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+					assertAnnualRemuneration(
+							CommonUtil.round(1500.00 * 14 , 3)
+									, irpfOutcome.getIrpfResult().getAnnualRemuneration()
+									, 0.05);
+				}
+			});
+			new SmartContractSalaryCalculator<ISalary>( jooqSalaryBuilder).calculate( ctx );
+			jooqSalaryBuilder.execute();
+		}
+		
+		
+	}
+
+	@Test
 	public void testLiquidExtras() throws ExpressionException, SQLException {
 
 		Consumer<IrpfResult> asserts = result -> {

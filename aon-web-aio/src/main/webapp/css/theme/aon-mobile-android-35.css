@@ -1,5 +1,36 @@
 :root{
     --favicon: ../faviconColors.png;
+
+    --aonHeaderBackgroundColor: #0f172a;
+    --aonBackgroundColor: #f0f0f0;
+    --aonBackgroundColor2: #fafafa;
+
+    /* Barras del sistema. La app Android las inyecta en el elemento raiz como
+       --sat/--sar/--sab/--sal (ver MainActivity.publishInsets); fuera de la app
+       valen 0. --sat es la barra de estado y --sab la de navegacion: 0 si el
+       dispositivo no la tiene, ~24px con gestos y ~48px con los tres botones. */
+    --aonMobileStatusBar: var(--sat, 0px);
+    --aonMobileNavBar: var(--sab, 0px);
+
+    /* Alturas propias de la app, sin contar las barras del sistema. */
+    --aonMobileHeaderContent: 60px;
+    --aonMobileMenuContent: 60px;
+    --aonMobileMenuGap: 10px;
+    --aonMobileFloatOptionBottom: 5px;
+
+    /* La cabecera se pinta tambien debajo de la barra de estado, y el menu
+       flotante se sube por encima de la barra de navegacion. */
+    --aonMobileHeaderHeight: calc(var(--aonMobileHeaderContent) + var(--aonMobileStatusBar));
+    --aonMobileMenuBottom: calc(var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+    --aonMobileMenuHeight: calc(var(--aonMobileMenuGap) + var(--aonMobileMenuBottom));
+    --aonMobileBottomHeight: calc(var(--aonMobileMenuContent) + var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+    --aonMobileFloatOptionBottomHeight: calc(var(--aonMobileFloatOptionBottom) + var(--aonMobileMenuContent) + var(--aonMobileMenuGap) + var(--aonMobileNavBar));
+
+    /* Arranque del plano de contenido de las apps (aon-application), que va fijo
+       al viewport y no dentro del rootPanel. Los 102px de base se midieron con
+       la cabecera de 80px de este tema (60 de contenido + unos 20 de barra de
+       estado), asi que lo que queda fijo son 82px. */
+    --aonMobileContentTop: calc(3rem + var(--aonMobileHeaderHeight) );
 }
 
 .rootPanel {
@@ -9,28 +40,53 @@
 
 
 .aonMobileRootPanel {
-  top: 80px;
-  bottom: 80px;
+    top: var(--aonMobileHeaderHeight);
+    background-color: var(--aonBackgroundColor2);
+    border: none;
 }
 
 .aonMobileHeader {
-  height: 80px;
+  height: var(--aonMobileHeaderHeight);
 }
 
 .aonMobileMenu {
-    height: 80px;
+    height: var(--aonMobileMenuContent);
+    bottom: var(--aonMobileMenuBottom);
+}
+
+.aonFloatOptionSpan {
+    bottom: var(--aonMobileFloatOptionBottomHeight);
+}
+
+/* Estos dos van fijos al viewport, no dentro del rootPanel, asi que su top
+   tiene que bajar con la barra de estado igual que la cabecera. */
+.aonMobileApplicationContent,
+.aonMobileContent {
+    top: var(--aonMobileContentTop);
+}
+
+/* El contenido esta fijo a bottom:0, o sea que llega por debajo del menu y de
+   la barra de navegacion: el hueco al final lo da el padding. */
+.aonMobileContent {
+    padding-bottom: var(--aonMobileBottomHeight);
+}
+
+/* A borde a borde 100vh es la pantalla entera, barras del sistema incluidas.
+   El cajon lateral va desde donde empieza el contenido hasta el menu. */
+.aonMobileSidenav {
+    height: calc(100vh - var(--aonMobileContentTop) - var(--aonMobileBottomHeight));
 }
 
 .aonMobileHeaderCompany {
-    top: 45px;
+    top: calc(25px + var(--aonMobileStatusBar));
 }
 
 .aonMobileHeaderButton{
-    top:30px;
+    top: calc(10px + var(--aonMobileStatusBar));
 }
 
 .aonMobileHeaderLogo {
-	padding-top: 40px;
+	padding-top: calc(20px + var(--aonMobileStatusBar));
 }
 
 .aonLoginForm {
@@ -47,7 +103,7 @@
 
 .aonCardUploadToast {
     width: 100%;
-    bottom: 60px;
+    bottom: calc(60px + var(--aonMobileNavBar));
     right: 0px;
 }
 
@@ -141,6 +197,7 @@
 /***************/
 .aonListGroupItem{
     border-bottom: none;
+    background-color: transparent;
 }
 
 #aonMobileAppSelection{
@@ -177,6 +234,13 @@
     padding: 15px;
 }
 
-#aonSideNavMobileTitletimecontrol{
+#aonSideNavMobileTitletimecontrol {
     width: auto;
+}
+
+
+.aonWidgetNominaMobile,
+.aonWidgetSolicitudesMobile {
+    background-color: var(--aonBackgroundColor);
+    color: var(--aonTextColor);
 }

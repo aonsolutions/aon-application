@@ -5,24 +5,17 @@ import java.util.Date;
 
 public class OperationParams implements Serializable {
 	
-	private static final long serialVersionUID = 2683060057390169937L;
-	
+	private static final long serialVersionUID = 4708586223785270098L;
+
 	private int domain;
-	
-	private boolean expenses;   // Compras y Gastos (true) / Ventas e Ingresos (false)
 	private Date fromDate;      // Desde Fecha
 	private Date toDate;        // Hasta Fecha
 	private Integer activity;   // Actividad (ID)
-	private String activityDescription;  // Actividad (Descripción)
-	private boolean irpf;       // Listado IRPF (true) / Listado IVA (false)
-	private boolean aeatBook;     // Libro Registro AEAT
-	private boolean unifiedBook;  // Libro AEAT Unificado (IVA e IRPF)
-
-	public OperationParams() {
-		super();
-		this.aeatBook = false;
-		this.unifiedBook = false;
-	}
+	private int bookType;       // 0-Libros de IVA, 1-Libros de IRPF, 2-Libros Unificados de IVA e IRPF
+	private int tabType;        // 0-Expedidas/Ventas e Ingresos, 1-Recibidas/Compras y Gastos
+	private double lastProratePercentage; // Porcentaje de prorrata del último modelo 303
+	private String lastProrateType;       // Tipo de prorrata del último modelo 303
+	private boolean distributeInvoice;    // Repartir factura, cuando factura de compra o gasto está imputada a todas las actividades y se debe repartir entre las actividades de la empresa (por ahora, solo cuando hay unicamente 2 actividades, una de ellas régimen exento de IVA y la otra no y se aplica la regla de prorrata) 
 
 	public int getDomain() {
 		return domain;
@@ -38,30 +31,13 @@ public class OperationParams implements Serializable {
 		this.activity = activity;
 		return this;
 	}
-	public String getActivityDescription() {
-		return activityDescription;
-	}
-	public OperationParams setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
-		return this;
-	}
-	public boolean isExpenses() {
-		return expenses;
-	}
-	public OperationParams setExpenses(boolean expenses) {
-		this.expenses = expenses;
-		return this;
-	}
-	public String getAccountPrefix() {
-		return isExpenses()?"6":"7";
-	}
-	public boolean isIrpf() {
-		return irpf;
-	}
-	public OperationParams setIrpf(boolean irpf) {
-		this.irpf = irpf;
-		return this;
-	}
+//	public String getActivityDescription() {
+//		return activityDescription;
+//	}
+//	public OperationParams setActivityDescription(String activityDescription) {
+//		this.activityDescription = activityDescription;
+//		return this;
+//	}
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -76,18 +52,39 @@ public class OperationParams implements Serializable {
 		this.toDate = toDate;
 		return this;
 	}
-	public boolean getAeatBook() {
-		return aeatBook;
+	public int getBookType() {
+		return bookType;
 	}
-	public OperationParams setAeatBook(boolean aeatBook) {
-		this.aeatBook = aeatBook;
+	public OperationParams setBookType(int bookType) {
+		this.bookType = bookType;
 		return this;
 	}
-	public boolean getUnifiedBook() {
-		return unifiedBook;
+	public int getTabType() {
+		return tabType;
 	}
-	public OperationParams setUnifiedBook(boolean unifiedBook) {
-		this.unifiedBook = unifiedBook;
+	public OperationParams setTabType(int tabType) {
+		this.tabType = tabType;
+		return this;
+	}
+	public double getLastProratePercentage() {
+		return lastProratePercentage;
+	}
+	public OperationParams setLastProratePercentage(double lastProratePercentage) {
+		this.lastProratePercentage = lastProratePercentage;
+		return this;
+	}
+	public String getLastProrateType() {
+		return lastProrateType;
+	}
+	public OperationParams setLastProrateType(String lastProrateType) {
+		this.lastProrateType = lastProrateType;
+		return this;
+	}
+	public boolean isDistributeInvoice() {
+		return distributeInvoice;
+	}
+	public OperationParams setDistributeInvoice(boolean distributeInvoice) {
+		this.distributeInvoice = distributeInvoice;
 		return this;
 	}
 	

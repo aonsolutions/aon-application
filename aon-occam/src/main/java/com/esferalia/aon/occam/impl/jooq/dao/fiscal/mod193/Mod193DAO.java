@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -527,6 +528,8 @@ public class Mod193DAO {
 				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_06.value()))
 				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_D_07.value())) )  // IRPF de Capital Mobiliario
 			.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
+			.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+			.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME, INVOICE_TAX.WITHHOLDING_TYPE, INVOICE_TAX.PERCENTAGE)
 			.fetch()
 			.stream()

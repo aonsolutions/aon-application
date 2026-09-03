@@ -29,9 +29,12 @@ import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1162,52 +1165,71 @@ public class RegistryOldDAO {
 					.setDate(r.getValue(RADDINFO.VALUE_DATE));
 		}
 	}
+	
+	public static List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
+	    return getDomainSigAddInfo(ctx, Arrays.asList(registry))
+	            .getOrDefault(registry, new ArrayList<DomainSigAddInfo>());
+	}
 
+	/**
+	 * Version en bloque: una sola consulta para N clientes.
+	 * Devuelve entrada para TODOS los registries pedidos; lista vacia si no
+	 * tienen raddinfo, para que el llamante no tenga que comprobar null.
+	 */
+	public static Map<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(AONContext ctx, List<Integer> registries) {
 
-	public static  List<DomainSigAddInfo> getDomainSigAddInfo(AONContext ctx, Integer registry) {
-		
-		// Campo calculado: extrae el número del atributo
-		Field<String> domainGroup = DSL.field(
-			    "CASE " +
-			    " WHEN {0} REGEXP 'AON_DOMAIN[0-9]+' THEN REGEXP_REPLACE({0}, 'AON_DOMAIN([0-9]+).*', '\\\\1') " +
-			    " ELSE '' END",
-			    String.class,
-			    RADDINFO.ATTRIBUTE
-			).as("domain_group");
+	    Map<Integer, List<DomainSigAddInfo>> result = new LinkedHashMap<>();
 
-		Result<Record6<Integer, String, String, String, String, String>> result = ctx.getDslContext()
-		    .select(
-		    	RADDINFO.REGISTRY,
-		        domainGroup,
-		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_ID"), RADDINFO.VALUE)).as("domain_id"),
-		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_SCHEMA"), RADDINFO.VALUE)).as("domain_schema"),
-		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_NAME"), RADDINFO.VALUE)).as("domain_name"),
-		        DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_TYPE"), RADDINFO.VALUE)).as("domain_type")
-		    )
-		    .from(RADDINFO)
-		    .where(RADDINFO.REGISTRY.eq(registry))
-		    .groupBy(RADDINFO.REGISTRY, domainGroup)
-		    .fetch();
-		
-		List<DomainSigAddInfo> sigCustomerDomains = new ArrayList<DomainSigAddInfo>();
-		
-		result.forEach(r -> {
-			if((AonStringUtils.isBlank(r.get("domain_id", String.class)) || AonStringUtils.equals("null", r.get("domain_id", String.class)))
-			   && (AonStringUtils.isBlank(r.get("domain_name", String.class)) || AonStringUtils.equals("null", r.get("domain_name", String.class))))
-				return;
-			
-			sigCustomerDomains.add(
-				new DomainSigAddInfo()
-					.setRegistry(r.getValue(RADDINFO.REGISTRY))
-					.setDomainGroup(r.get("domain_group", String.class))
-					.setDomainId(r.get("domain_id", String.class))
-					.setDomainName(r.get("domain_name", String.class))
-					.setDomainSchema(r.get("domain_schema", String.class))
-					.setDomainType(r.get("domain_type", String.class))
-			);
-		});
-		
-		return sigCustomerDomains;
+	    if (null == registries || registries.isEmpty())
+	        return result;
+
+	    registries.forEach(id -> result.put(id, new ArrayList<DomainSigAddInfo>()));
+
+	    Field<String> domainGroup = DSL.field(
+	            "CASE " +
+	            " WHEN {0} REGEXP 'AON_DOMAIN[0-9]+' THEN REGEXP_REPLACE({0}, 'AON_DOMAIN([0-9]+).*', '\\\\1') " +
+	            " ELSE '' END",
+	            String.class,
+	            RADDINFO.ATTRIBUTE
+	        ).as("domain_group");
+
+	    Result<Record6<Integer, String, String, String, String, String>> rows = ctx.getDslContext()
+	        .select(
+	            RADDINFO.REGISTRY,
+	            domainGroup,
+	            DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_ID"),     RADDINFO.VALUE)).as("domain_id"),
+	            DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_SCHEMA"), RADDINFO.VALUE)).as("domain_schema"),
+	            DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_NAME"),   RADDINFO.VALUE)).as("domain_name"),
+	            DSL.max(DSL.when(RADDINFO.ATTRIBUTE.like("AON_DOMAIN%_TYPE"),   RADDINFO.VALUE)).as("domain_type")
+	        )
+	        .from(RADDINFO)
+	        .where(RADDINFO.REGISTRY.in(registries))
+	        .groupBy(RADDINFO.REGISTRY, domainGroup)
+	        .orderBy(RADDINFO.REGISTRY, domainGroup)
+	        .fetch();
+
+	    rows.forEach(r -> {
+	        if (isNullish(r.get("domain_id", String.class)) && isNullish(r.get("domain_name", String.class)))
+	            return;
+
+	        Integer registry = r.getValue(RADDINFO.REGISTRY);
+
+	        result.computeIfAbsent(registry, k -> new ArrayList<DomainSigAddInfo>())
+	            .add(new DomainSigAddInfo()
+	                .setRegistry(registry)
+	                .setDomainGroup(r.get("domain_group", String.class))
+	                .setDomainId(r.get("domain_id", String.class))
+	                .setDomainName(r.get("domain_name", String.class))
+	                .setDomainSchema(r.get("domain_schema", String.class))
+	                .setDomainType(r.get("domain_type", String.class)));
+	    });
+
+	    return result;
+	}
+
+	/** El literal "null" viene de raddinfos guardados con un valor nulo en texto. */
+	private static boolean isNullish(String value) {
+	    return AonStringUtils.isBlank(value) || AonStringUtils.equals("null", value);
 	}
 
 }

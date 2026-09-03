@@ -48,6 +48,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
+import net.aonsolutions.aon.api.error.AonApiNotFoundException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 
@@ -187,7 +188,8 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
 		e.printStackTrace();
-		resp.setStatus(400);
+		resp.setStatus(e instanceof AonApiNotFoundException
+				? HttpServletResponse.SC_NOT_FOUND : HttpServletResponse.SC_BAD_REQUEST);
 		JSONObject json = new JSONObject();
 		String className =  e.getClass().getSimpleName();
 
@@ -388,10 +390,10 @@ public class AonApiHttpServlet extends HttpServlet{
 		}
 		try {
 			if(!checkCert(cert.getData(), cert.getPassword())) {
-				throw new AonApiException("El certificado o la contraseña no son correctos.");
+				throw new AonApiException("El certificado o la contraseï¿½a no son correctos.");
 			}
 		} catch (Exception e) {
-			throw new AonApiException("El certificado o la contraseña no son correctos.");			
+			throw new AonApiException("El certificado o la contraseï¿½a no son correctos.");			
 		}		
 		if(cert.isEmpty()) {
 			throw new AonApiException("El certificado no existe.");

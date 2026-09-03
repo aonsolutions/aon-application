@@ -134,9 +134,7 @@ export class AonApps extends AonElement {
 
 	buildTitle(title) {
 		let div = this.createElement(TAG.DIV);
-		div.style.color = 'gray';
-		div.style.paddingLeft = '20px';
-		div.style.paddingTop = '20px';
+		div.className = 'aonMobileHomeTitle';
 		div.innerHTML = title;
 		return div;
 	}

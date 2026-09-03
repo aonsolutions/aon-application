@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDi
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanelNew {
+public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanel {
 	
 	private void paintHeader() {
 		

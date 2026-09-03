@@ -4,6 +4,7 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.clickAndCheckCode
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.doubleClickAndCheckCode;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -496,18 +497,6 @@ class SistemaREDI {
 		return null;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public static HtmlPage getPageForPdfs(final String href, final WebClient webClient, final String affiliationNumber,
 			final String regime, final String ccc, final Date fecha, final int clicks)
 			throws SegSocialException, InterruptedException {
@@ -588,28 +577,39 @@ class SistemaREDI {
 	        }
 	        org.w3c.dom.Document arq1 = parseEmbeddedXml(first.getWebResponse().getContentAsString());
 
-	        // ---------- PASO 2: seleccionar autorizado (GET) ----------
-	        String numeroAut = resolveAuthNumber(arq1, authCode);
+	        // ---------- PASO 2: seleccionar el autorizado indicado por authCode ----------
+	        
+	        
+	        String numeroAut ;
+	        try {
+		        int authNum = Integer.parseInt(authCode);
+		        numeroAut = String.format("%06d", authNum);
+	        } catch (NumberFormatException e) {
+	            throw new SegSocialException("authCode inválido: " + authCode);
+	        }
+	        
+	        if (numeroAut == null || numeroAut.isEmpty()) {
+	            throw new SegSocialException("authCode vacío o inválido");
+	        }
+
 	        String urlSelAut = buildBase(arq1)
 	                + "&SPM.ACC.AC_SELECCIONAR_AUTORIZADO_OAR=AC_SELECCIONAR_AUTORIZADO_OAR"
 	                + "&param1=" + numeroAut;
 	        Page pg2 = webClient.getPage(new WebRequest(new URL(urlSelAut), HttpMethod.GET));
-	        org.w3c.dom.Document arq2 = parseEmbeddedXml(pg2.getWebResponse().getContentAsString());
+	        org.w3c.dom.Document arqSel = parseEmbeddedXml(pg2.getWebResponse().getContentAsString());
 
-	        // ---------- PASO 3: localizar el CCC (paginando si hace falta) ----------
-	        org.w3c.dom.Document arqAsig = arq2;
-	        String valorCccNaf = findCccNaf(arqAsig, regime, ccc);
-	        int guarda = 0;
-	        while (valorCccNaf == null && "S".equalsIgnoreCase(xmlText(arqAsig, "SIGUIENTE_ARCO")) && guarda++ < 50) {
-	            arqAsig = siguientePagina(webClient, arqAsig);
-	            valorCccNaf = findCccNaf(arqAsig, regime, ccc);
-	        }
+	        // ---------- PASO 3: buscar el CCC completo en el buscador de asignaciones ----------
+	        // (radios=3 -> CCC/NAF; criteriosBusquedaCccNaf = regime+ccc, 15 dígitos)
+	        org.w3c.dom.Document arqBusq = buscarCcc(webClient, arqSel, regime, ccc);
+
+	        String valorCccNaf = findCccNaf(arqBusq, regime, ccc);
 	        if (valorCccNaf == null) {
-	            throw new SegSocialException("No se encontró el CCC " + regime + ccc + " entre las asignaciones");
+	            throw new SegSocialException("No se encontró el CCC " + regime + ccc
+	                    + " en el autorizado " + numeroAut);
 	        }
 
 	        // ---------- PASO 3b: seleccionar la asignación (GET) ----------
-	        String urlSelAsig = buildBase(arqAsig)
+	        String urlSelAsig = buildBase(arqBusq)
 	                + "&SPM.ACC.AC_SELECCIONAR_ASIGNACION_OAR=AC_SELECCIONAR_ASIGNACION_OAR"
 	                + "&param1=" + valorCccNaf;
 	        Page pg3 = webClient.getPage(new WebRequest(new URL(urlSelAsig), HttpMethod.GET));
@@ -629,21 +629,12 @@ class SistemaREDI {
 	            throw new SegSocialException(err4.trim());
 	        }
 
-	     // ---------- PASO 5: imprimir/generar el documento (ENVIO_12 = IMPRIMIR) ----------
-	        
-	        
+	        // ---------- PASO 5: imprimir/generar el documento (ENVIO_12 = IMPRIMIR) ----------
 	        List<NameValuePair> p5 = new ArrayList<>();
 	        addHiddens(p5, arq4);
 	        p5.add(new NameValuePair("SPM.ACC.IMPRIMIR", "IMPRIMIR"));
 	        Page pg5 = webClient.getPage(buildPost(arq4, p5));
 
-	        Page xsl5 = webClient.getPage(
-	        	    "https://w2.seg-social.es/CertificadoCorrientePago/templates/aecp/"
-	        	    + "CU_SolicitudCertificadoInformeDeudaRED/AECPPaSolicitudRED_Imprimir_ES.xsl");
-	        	Toolkit.buildFile(xsl5.getWebResponse().getContentAsString().getBytes(),
-	        	    System.getProperty("user.home") + "/Desktop/obligation_paso5.xsl");
-	        
-	        
 	        // Si IMPRIMIR ya devolviera el PDF directo (por si acaso), lo tomamos
 	        String ctype = pg5.getWebResponse().getContentType();
 	        if (ctype != null && ctype.toLowerCase().contains("pdf")) {
@@ -672,6 +663,61 @@ class SistemaREDI {
 	        throw new SegSocialException(e.getMessage());
 	    }
 	}
+
+	// ---------------------------------------------------------------------------
+	// Helpers de getObligationAwarenessCertificate
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Rellena y envía el buscador de la pantalla "Selección asignaciones RED".
+	 * Equivale a: marcar el radio CCC/NAF, teclear el CCC completo (regime+ccc,
+	 * 15 dígitos) y pulsar "Buscar" (SPM.ACC.AC_BUSCAR_OAR = AC_BUSCAR_OAR).
+	 * Devuelve el XML de la lista ya filtrada.
+	 */
+	private static org.w3c.dom.Document buscarCcc(WebClient webClient, org.w3c.dom.Document arqSel,
+	        String regime, String ccc) throws Exception {
+
+	    String criterio = (regime + ccc).replaceAll("\\D", ""); // 011111119118888
+
+	    List<NameValuePair> params = new ArrayList<>();
+	    addHiddens(params, arqSel);
+	    params.add(new NameValuePair("radios", "3"));                       // 1=CCC, 2=NAF, 3=CCC/NAF
+	    params.add(new NameValuePair("criteriosBusquedaCccNaf", criterio)); // maxlength=15
+	    params.add(new NameValuePair("SPM.ACC.AC_BUSCAR_OAR", "AC_BUSCAR_OAR"));
+
+	    Page pg = webClient.getPage(buildPost(arqSel, params));
+	    return parseEmbeddedXml(pg.getWebResponse().getContentAsString());
+	}
+
+	/**
+	 * Busca el CCC (regime+ccc) entre las asignaciones devueltas y retorna el
+	 * valorCccNaf (14 díg, sin el cero del régimen) que espera param1 en
+	 * AC_SELECCIONAR_ASIGNACION_OAR. Compara contra valorCccNafFormateado (15 díg),
+	 * que tiene el mismo formato que regime+ccc.
+	 */
+	private static String findCccNaf(org.w3c.dom.Document arq, String regime, String ccc) {
+	    String objetivo = (regime + ccc).replaceAll("\\D", ""); // 011111119118888
+
+	    org.w3c.dom.NodeList filas = arq.getElementsByTagName("cccNafAsignado");
+	    for (int i = 0; i < filas.getLength(); i++) {
+	        org.w3c.dom.Element fila = (org.w3c.dom.Element) filas.item(i);
+	        String valor      = childText(fila, "valorCccNaf");                                 // 14 díg -> param1
+	        String formateado = childText(fila, "valorCccNafFormateado").replaceAll("\\D", ""); // 15 díg
+
+	        if (formateado.equals(objetivo)) {
+	            return valor;
+	        }
+	    }
+	    return null;
+	}
+
+	/** Texto del primer hijo con ese tag dentro de un elemento (vacío si no existe). */
+	private static String childText(org.w3c.dom.Element parent, String tag) {
+	    org.w3c.dom.NodeList n = parent.getElementsByTagName(tag);
+	    return n.getLength() > 0 ? n.item(0).getTextContent().trim() : "";
+	}
+
+	
 	
 	private static String buildBase(org.w3c.dom.Document arq) {
 	    String ticket    = xmlText(arq, "SPM.TICKET");
@@ -701,40 +747,6 @@ class SistemaREDI {
 	    params.add(new NameValuePair("SPM.ISPOPUP", "0"));
 	    params.add(new NameValuePair("ARQ.SPM.IDIOMA", xmlText(arq, "SPM.LANGUAGE")));
 	    params.add(new NameValuePair("SPM.HAYJS", "0"));
-	}
-
-	private static String resolveAuthNumber(org.w3c.dom.Document arq, String authCode) throws SegSocialException {
-	    org.w3c.dom.NodeList nums = arq.getElementsByTagName("numero");
-	    if (nums.getLength() == 0) throw new SegSocialException("No hay autorizaciones disponibles");
-	    if (authCode != null && !authCode.isBlank()) {
-	        for (int i = 0; i < nums.getLength(); i++) {
-	            String n = nums.item(i).getTextContent().trim();
-	            if (n.equals(authCode.trim())) return n;
-	        }
-	    }
-	    return nums.item(0).getTextContent().trim();
-	}
-
-	private static String findCccNaf(org.w3c.dom.Document arq, String regime, String ccc) {
-	    String objetivo = (regime + ccc).replaceAll("\\D", "");
-	    String soloCcc  = ccc.replaceAll("\\D", "");
-	    org.w3c.dom.NodeList nodos = arq.getElementsByTagName("valorCccNaf");
-	    for (int i = 0; i < nodos.getLength(); i++) {
-	        String v = nodos.item(i).getTextContent().trim();
-	        if (v.equals(objetivo) || v.endsWith(soloCcc)) return v;
-	    }
-	    for (int i = 0; i < nodos.getLength(); i++) {
-	        String v = nodos.item(i).getTextContent().trim();
-	        if (v.contains(soloCcc)) return v;
-	    }
-	    return null;
-	}
-
-	private static org.w3c.dom.Document siguientePagina(WebClient webClient, org.w3c.dom.Document arq) throws Exception {
-	    String urlSig = buildBase(arq)
-	            + "&SPM.ACC.AC_SIGUIENTE_ASIGNACION_OAR=AC_SIGUIENTE_ASIGNACION_OAR";
-	    Page pg = webClient.getPage(new WebRequest(new URL(urlSig), HttpMethod.GET));
-	    return parseEmbeddedXml(pg.getWebResponse().getContentAsString());
 	}
 
 	private static org.w3c.dom.Document parseEmbeddedXml(String html) throws Exception {

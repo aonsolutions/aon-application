@@ -41,15 +41,6 @@
       <scope>compile</scope>
     </dependency>
     
-    
-    <!-- BORRAR CUANDO SE ELIMINE LA CLASE "Modules" 2018  -->
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.17.1.0</version>
-    </dependency>
-    
-    
     <!-- BORRAR CUANDO SE BORRE EL LISTADO DE FACTURAS EXCEL -->
     <dependency>
       <groupId>org.apache.poi</groupId>

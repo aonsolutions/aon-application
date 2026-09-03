@@ -72,7 +72,6 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductBooking;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -278,7 +277,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************** [INVOICE]
 	// **************************************************
 	@Override
-	public void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<OldProduct>> callback) {
+	public void getInvoiceProducts(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<Product>> callback) {
 		AON.start();
 		serviceAsync.getInvoiceProducts(domainName, domain, user, query, new AsyncCallbackWrapper<>(callback));
 	}
@@ -1481,6 +1480,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerId, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds, AsyncCallback<HashMap<Integer, List<DomainSigAddInfo>>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerIds, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

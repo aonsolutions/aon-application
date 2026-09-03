@@ -1946,6 +1946,12 @@ public class AON {
 		}
 	}
 	
+	public static Map<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String login, ArrayList<Integer> customerIds) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getDomainSigAddInfo(ctx, customerIds);
+		}
+	}
+	
 	public static void insertRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
 		CloseableAONContext ctx = null;
 		try {
@@ -2073,13 +2079,13 @@ public class AON {
 		return getFinance().getInvoiceHeaders(ctx, filter, offset, limit);
 	}
 	
-	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, boolean includeAnnulled, int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getInvoiceHeaders(ctx, params, offset, limit);
+			return getInvoiceHeaders(ctx, params, includeAnnulled, offset, limit);
 		}
 	}
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
-		return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, boolean includeAnnulled, int offset, int limit) {
+		return getFinance().getInvoiceHeaders(ctx, params, includeAnnulled, offset, limit);
 	}
 
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
@@ -2258,54 +2264,16 @@ public class AON {
 		}
 	}
 
-	public static InvoiceDetail getLastInvoiceDetail(String domainName,
-			Integer domainId, String user, OldItem item, Integer workplaceId,
-			Integer warehouseId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetail(ctx, item, workplaceId,
-					warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static InvoiceDetail getLastInvoiceDetailUntilDate(String domainName,
-			Integer domainId, String user, OldItem item, Integer workplaceId,
+			Integer domainId, String user, Integer itemId, Integer workplaceId,
 			Integer warehouseId, Date date) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailUntilDate(ctx, item,
-					workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(
-			String domainName, Integer domainId, String user, OldItem item,
-			String months, Integer workplaceId, Integer warehouseId) {
-		Calendar calendar = Calendar.getInstance();
-		Integer m = Integer.parseInt(months);
-		calendar.add(Calendar.MONTH, -m);
-
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailList(ctx, item,
-					calendar.getTime(), workplaceId, warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user)) {
+			return getFinance().getLastInvoiceDetailUntilDate(ctx, itemId, workplaceId, warehouseId, date);
 		}
 	}
 
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(
-			String domainName, Integer domainId, String user, OldItem item,
+			String domainName, Integer domainId, String user, Integer itemId,
 			String months, Integer workplaceId, Integer warehouseId,
 			Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -2313,42 +2281,17 @@ public class AON {
 		Integer m = Integer.parseInt(months);
 		calendar.add(Calendar.MONTH, -m);
 
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getLastInvoiceDetailListUntilDate(ctx, item,
-					calendar.getTime(), workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static LinkedList<InvoiceDetail> getInvoiceDetailList(
-			String domainName, Integer domainId, String user, OldItem item,
-			Integer workplaceId, Integer warehouseId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getInvoiceDetailList(ctx, item, workplaceId,
-					warehouseId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user)) {
+			return getFinance().getLastInvoiceDetailListUntilDate(ctx, itemId, calendar.getTime(), workplaceId, warehouseId, date);
 		}
 	}
 
 	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(
-			String domainName, Integer domainId, String user, OldItem item,
+			String domainName, Integer domainId, String user, Integer itemId,
 			Integer workplaceId, Integer warehouseId, Date date) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFinance().getInvoiceDetailListUntilDate(ctx, item,
-					workplaceId, warehouseId, date);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user)) {
+			return getFinance().getInvoiceDetailListUntilDate(ctx, itemId, workplaceId, warehouseId, date);
 		}
 	}
 
@@ -7523,7 +7466,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<OldProduct> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
+	public static Stream<Product> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, loggedUser);
