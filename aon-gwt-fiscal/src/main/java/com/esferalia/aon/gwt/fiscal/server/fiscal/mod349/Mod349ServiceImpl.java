@@ -2,18 +2,20 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod349;
 
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Service;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Mod349 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod349", "/aon_gwt_mod200/ms/Mod349" })
 public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implements Model349Service {
@@ -78,5 +80,10 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public Mod349 duplicate(Occam occam, Mod349 mod349) {
 		return MODEL349.duplicate(occam, mod349);
 	}
-
+	
+	@Override
+	public Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException {
+		return AON.getInvoice(occam, invoiceId);
+	}
+	
 }

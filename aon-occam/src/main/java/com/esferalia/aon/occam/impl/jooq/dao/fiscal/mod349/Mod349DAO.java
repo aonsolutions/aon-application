@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod349;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -13,7 +13,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -36,7 +35,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
@@ -44,16 +42,19 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod349Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod349Formatter.Mod349DetailInfo;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod349.Mod349InfoDAO.Mod349DetailInfo;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -730,7 +731,7 @@ public class Mod349DAO {
 	}
 	
 	// Devuelve cierto si el modelo tiene facturas vinculadas en Alcatraz
-	private static boolean hasAlcatrazInvoices(AONContext ctx, Integer fsModel) {
+	protected static boolean hasAlcatrazInvoices(AONContext ctx, Integer fsModel) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
@@ -744,7 +745,7 @@ public class Mod349DAO {
 	}
 	
 	// Devuelve cierto si la factura está vinculada en alcatraz al modelo 349 que se le pasa
-	private static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, Integer fsModel) {
+	protected static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, Integer fsModel) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
@@ -758,7 +759,7 @@ public class Mod349DAO {
 	}
 	
 	// Devuelve cierto si la factura está vinculada en alcatraz a algún modelo 349 de periodo menor o igual al que se le pasa 
-	public static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, byte period) {
+	protected static boolean isInvoiceDeclared(AONContext ctx, Integer invoiceId, byte period) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
@@ -867,6 +868,7 @@ public class Mod349DAO {
 				,INVOICE.INVESTMENT
 				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE.VAT_ACCRUAL_PAYMENT
+				,INVOICE_TAX.VAT_DEDUCTION_TYPE
 				,ENTERPRISE_ACTIVITY.ID
 				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ENTERPRISE_ACTIVITY.VAT_REGIME
@@ -916,12 +918,13 @@ public class Mod349DAO {
 							.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)							
 							.setBase(rec.getValue(sumBase).doubleValue())
 							.setRectificateInvoiceTaxDate(rec.getValue(rectificationInvoice.TAX_DATE))
+							.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 						; 
 				})
 				;
 	}
 	
-	private static Stream<Mod349DetailInfo> getDeclaredModels(AONContext ctx, final Mod349 mod349, final Mod349Key key, final Country country, final String document) {
+	protected static Stream<Mod349DetailInfo> getDeclaredModels(AONContext ctx, final Mod349 mod349, final Mod349Key key, final Country country, final String document) {
 		
 		// Leer primero los registros que no llevan rectificaciones
 		Stream<Mod349DetailInfo> s1 = ctx.getDslContext()
@@ -1030,76 +1033,7 @@ public class Mod349DAO {
 		   else return Mod349Key.I;  // Gastos (Adquisiciones intracomunitarias de servicios)
 	}
 	
-	
-	// --------------- INVOICES INFO --------------- 
-	
-	public static String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
-		
-		String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
-		
-		// Informacion Desglose de facturas
-		if (infoKey == FiscalModelKeyInfo.INVOICE) {
-			return MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod349, detail));			
-		}
-		
-		// Informacion Desglose del calculo por diferencias
-		if (infoKey == FiscalModelKeyInfo.DIFF_INVOICE) {
-			return MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod349, detail));
-		}
-		
-		return null;
-	}
-	
-	private static String getInvoicesInfo(AONContext ctx, Mod349 mod349, Mod349Detail detail) {
-		
-		String title = "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
-				+ FiscalModelUtils.getModelName(mod349) 
-				+ " DEL " + mod349.getPeriod().getDescription()
-				+ " DE " + mod349.getYear();
-		
-		// Se comprueba si el modelo tiene facturas vinculadas en Alcatraz, para mostrar la información en base a esas facturas vinculadas
-		// si no tiene facturas vinculadas en Alcatraz, se asume que es un modelo anterior a la puesta en marcha de Alcatraz en este modelo
-		// y por lo tanto la información saldrá como salía antes
-		boolean hasAlcatraz = hasAlcatrazInvoices(ctx, mod349.getFsModel());
-		
-		return VATFormatter.formatInvoices(title
-				,getSubtitle(detail)
-				//,getVatBreakdownInfo(ctx, mod349, detail, false)
-				,getVatBreakdownInfo(ctx, mod349, detail, hasAlcatraz )  // Si el modelo tiene facturas vinculadas en Alcatraz, entonces se lee todo el año  
-				 .filter( p -> hasAlcatraz ? isInvoiceDeclared(ctx, p.getInvoice(), mod349.getFsModel()) : true) 
-				 .collect(Collectors.toCollection(LinkedList::new)));
-		
-	}
-	
-	private static String getDiffInvoicesInfo(AONContext ctx, final Mod349 mod349, final Mod349Detail detail) {
-
-		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
-				+ FiscalModelUtils.getModelName(mod349) 
-				+ " DEL " + mod349.getPeriod().getDescription()
-				+ " DE " + mod349.getYear();
-		
-		// Se comprueba si el modelo tiene facturas vinculadas en Alcatraz, para mostrar la información en base a esas facturas vinculadas
-		boolean hasAlcatraz = hasAlcatrazInvoices(ctx, mod349.getFsModel());
-		
-		return Mod349Formatter.formatDiffInvoicesMod349(title
-				,getSubtitle(detail)
-				,mod349.getPeriod()			
-				,getDeclaredModels(ctx, mod349, detail.getType(), detail.getCountry(), detail.getDocument()).collect(Collectors.toCollection(LinkedList::new))			 	
-				,getVatBreakdownInfo(ctx, mod349, detail, true)
-				 .filter( p -> hasAlcatraz ? (!p.isInsidePeriod() && isInvoiceDeclared(ctx, p.getInvoice(), mod349.getPeriod().value()) ) || // Si la factura no es del periodo debe estar vinculada en algun modelo 349 del mismo periodo o anterior
-					                         (p.isInsidePeriod() && isInvoiceDeclared(ctx, p.getInvoice(), mod349.getFsModel())) // Si la factura es del periodo, debe estar vinculada al modelo del que se saca la info
-					                       : true)
-				 .collect(Collectors.toCollection(LinkedList::new)));
-		
-	}
-	
-	private static String getSubtitle(final Mod349Detail detail ) {
-		return "Clave "+detail.getType().getValue()+
-				" - " + detail.getCountry().getIso2() + " " + detail.getDocument() +
-				" - " + detail.getName();
-	}
-	
-	private static Stream<VatContext> getVatBreakdownInfo(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
+	protected static Stream<VatContext> getVatBreakdownInfo(final AONContext ctx, final Mod349 mod349, final Mod349Detail detail, final boolean isDiffEnabled) {
 		
 		// Facturas a localizar segun la clave de la linea del modelo que se le pasa (se hace la operacion inversa que cuando se crea el modelo)
 		final InvoiceType invoiceType1;
