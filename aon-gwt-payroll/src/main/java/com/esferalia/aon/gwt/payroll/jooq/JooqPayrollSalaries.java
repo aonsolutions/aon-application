@@ -339,6 +339,7 @@ public class JooqPayrollSalaries {
 				.and(REGISTRY.DOCUMENT.eq(document))
 				.and(salaryTypeCondition)
 				.and(datesCondition)
+				.groupBy(SALARY.ID)
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
