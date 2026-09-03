@@ -115,15 +115,21 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         buttonPanel.getElement().getStyle().setProperty("margin-top", "1rem");
         
         AonCustomButton closeButton = new AonCustomButton(AON.CSS.aonIconClose(), "Cerrar");
-        closeButton.addDomHandler(e -> searchMenuPopup.hide(), ClickEvent.getType()); 
+        closeButton.addDomHandler(e -> closeFilterPopup(), ClickEvent.getType());
         buttonPanel.add(closeButton);
-        
+
         AonCustomButton clearButton = new AonCustomButton(AON.CSS.aonIconClear(), "Limpiar");
         clearButton.addDomHandler(e -> fireClearFilter(), ClickEvent.getType()); 
         buttonPanel.add(clearButton);
         popupContent.add(buttonPanel);
 		
         searchMenuPopup.setWidget(popupContent);
+
+        // El popup es autoHide: al pulsar fuera se cierra sin pasar por
+        // closeFilterPopup(), asi que el evento se lanza tambien aqui.
+        searchMenuPopup.addCloseHandler(event -> {
+            if (event.isAutoClosed()) fireOnSearch();
+        });
     }
 
 	public void addFilterWidget(Widget widget) {
@@ -286,6 +292,18 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	
 	public void setPopupHeight(String height) {
         if(AonStringUtils.isNotBlank(height)) popupContent.setHeight(height);
+	}
+	
+	/**
+	 * Cierra el panel de filtros y notifica que hay que buscar.
+	 *
+	 * Los filtros no lanzan busqueda al cambiar: se acumulan y se aplican al
+	 * cerrar, para no repetir una busqueda por cada ajuste. En pantallas donde
+	 * cada busqueda es costosa esa diferencia es notable.
+	 */
+	public void closeFilterPopup() {
+		searchMenuPopup.hide();   // hide() programatico: isAutoClosed() sera false
+		fireOnSearch();
 	}
 	
 	private void fireOnSearch() {
