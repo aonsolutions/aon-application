@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDi
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanel {
+public class JsOperationGridTabRecGasPanel extends JsOperationGridPanel {
 	
 	private void paintHeader() {
 		
@@ -48,7 +48,7 @@ public class JsOperationGridTabRecGasPanelNew extends JsOperationGridPanel {
 		
 	}
 	
-	public void addRow(JsOperationBreakdownNew br) {
+	public void addRow(JsOperationBreakdown br) {
 		
 		if (!isSomething()) {
 			setSomething(true);

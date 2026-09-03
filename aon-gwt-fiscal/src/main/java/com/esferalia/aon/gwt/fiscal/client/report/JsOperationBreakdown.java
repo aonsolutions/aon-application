@@ -5,9 +5,9 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class JsOperationBreakdownNew extends JavaScriptObject {
+public class JsOperationBreakdown extends JavaScriptObject {
 	
-	protected JsOperationBreakdownNew() {
+	protected JsOperationBreakdown() {
 	}
 	
 	public final native int getEntryId() /*-{

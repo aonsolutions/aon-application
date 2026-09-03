@@ -21,13 +21,13 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
-class OperationReportTabPanelNew extends ScrollPanel{
+class OperationReportTabPanel extends ScrollPanel{
 		
 	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/AccountingOperationReportStreamNew");
 	
 	private FlowPanel rootPanel = new FlowPanel();
 	
-	public OperationReportTabPanelNew(OperationReportModuleOptions options, OperationParamsNew params, JsOperationGridPanel grid) {
+	public OperationReportTabPanel(OperationReportModuleOptions options, OperationParamsNew params, JsOperationGridPanel grid) {
 		setStyleName(AON.CSS.aonScrollArea());
 		addStyleName("salary-scroll"); // Forzar scroll horizontal visible
 		
@@ -49,7 +49,7 @@ class OperationReportTabPanelNew extends ScrollPanel{
 		xhr.setOnReadyStateChange(xhrt -> {
 			if (xhr.getReadyState() == XMLHttpRequest.DONE) {
 				JavaScriptObject arrayObject = JsonUtils.safeEval(xhr.getResponseText());
-				JsArray<JsOperationBreakdownNew> array = arrayObject.cast();
+				JsArray<JsOperationBreakdown> array = arrayObject.cast();
 				for (int i = 0; i < array.length(); i++) {
 					grid.addRow(array.get(i));			
 				}

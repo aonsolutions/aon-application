@@ -36,7 +36,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Operation Report Excel Book New", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelBookNew" })
-public class OperationReportExcelBookNew extends HttpServlet {
+public class OperationReportExcelBook extends HttpServlet {
 	
 	private static final long serialVersionUID = 4002617139388558939L;
 

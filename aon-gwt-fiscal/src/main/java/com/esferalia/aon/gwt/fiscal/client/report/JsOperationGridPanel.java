@@ -15,7 +15,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public abstract class JsOperationGridPanel extends FlowPanel implements HasSelectionHandlers<JsOperationBreakdownNew> {
+public abstract class JsOperationGridPanel extends FlowPanel implements HasSelectionHandlers<JsOperationBreakdown> {
 	
 	private OperationParamsNew params;
 	private final AonDisplayGrid grid;
@@ -35,11 +35,11 @@ public abstract class JsOperationGridPanel extends FlowPanel implements HasSelec
 		add(grid);
 	}
 	
-	abstract void addRow(JsOperationBreakdownNew jsOperationBreakdown);
+	abstract void addRow(JsOperationBreakdown jsOperationBreakdown);
 	abstract void addFooterRow();
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<JsOperationBreakdownNew> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<JsOperationBreakdown> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	

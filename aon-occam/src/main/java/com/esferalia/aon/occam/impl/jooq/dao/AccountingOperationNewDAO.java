@@ -587,6 +587,8 @@ public class AccountingOperationNewDAO {
 		// Condicion completa
 		Condition condition = INVOICE_DETAIL.DOMAIN.equal(ctx.getDomainId())
 							.and(INVOICE_DETAIL.PREPAYMENT.equal((byte) 0)) // Lineas que no son suplidos
+							.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+							.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 							.and(condition1.or(condition2));
 		
 		if (params.getActivity() != null) {
@@ -635,6 +637,8 @@ public class AccountingOperationNewDAO {
 		// Condiciones completas 
 		Condition condition = FINANCE.DOMAIN.equal(ctx.getDomainId())
 								.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal(TRUE_BYTE))
+								.and(INVOICE.NUMBER.ge(0))   // No facturas proforma (factura proforma es la que su numero de factura es menor que cero)
+								.and(InvoiceDAO.NOT_ANNULLED) // No facturas anuladas
 								.and(condition1.or(condition2));	
 		
 		if (params.getActivity() != null) {

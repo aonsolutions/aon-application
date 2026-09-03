@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDi
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.user.client.ui.Label;
 
-public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanel {
+public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
 	
 	private void paintHeader() {
 		
@@ -47,7 +47,7 @@ public class JsOperationGridTabExpIngPanelNew extends JsOperationGridPanel {
 		row.addCell(new Label("N\u00FAmero Diario"), AON.CSS.aonWidth40());
 	}
 	
-	public void addRow(JsOperationBreakdownNew br) {
+	public void addRow(JsOperationBreakdown br) {
 		
 		if (!isSomething()) {
 			setSomething(true);

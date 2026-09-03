@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class OperationReportNew implements EntryPoint {
+public class OperationReport implements EntryPoint {
 	
 	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
 	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 
@@ -350,13 +350,13 @@ public class OperationReportNew implements EntryPoint {
 	private void refreshTab0(OperationParamsNew params) {
 		tab0Content.clear();
 		params.setTabType(TAB_0);
-		tab0Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabExpIngPanelNew()));
+		tab0Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabExpIngPanel()));
 	}
 	
 	private void refreshTab1(OperationParamsNew params) {
 		tab1Content.clear();
 		params.setTabType(TAB_1);
-		tab1Content.setWidget(new OperationReportTabPanelNew(options, params, new JsOperationGridTabRecGasPanelNew()));
+		tab1Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabRecGasPanel()));
 	}
 
 	private void paintTextTab() {
@@ -373,7 +373,7 @@ public class OperationReportNew implements EntryPoint {
 	}
 
 	public static void run() {
-		GWT.runAsync(OperationReportNew.class, new RunAsyncCallback() {
+		GWT.runAsync(OperationReport.class, new RunAsyncCallback() {
 			
 			@Override
 			public void onFailure(Throwable reason) {
@@ -382,7 +382,7 @@ public class OperationReportNew implements EntryPoint {
 			
 			@Override
 			public void onSuccess() {
-				OperationReportNew operationReport = new OperationReportNew();
+				OperationReport operationReport = new OperationReport();
 				operationReport.onModuleLoad();
 			}
 		});
