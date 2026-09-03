@@ -50,8 +50,8 @@ import com.esferalia.aon.jooq.tables.InvoiceTax;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdownNew;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -72,7 +72,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
-public class AccountingOperationNewDAO {
+public class AccountingOperationDAO {
 	
 	private static final byte TRUE_BYTE = 1;
 	private static InvoiceTax retInvoiceTax = INVOICE_TAX.as("retInvoiceTax"); // Para la cuota de retención IRPF
@@ -241,14 +241,14 @@ public class AccountingOperationNewDAO {
 		CONCEPT_DESCRIPTION_MAP.put("GY8", "Dotaciones del ejercicio para amortización del inmovilizado material");
 	}
 	
-	private AccountingOperationNewDAO() {
+	private AccountingOperationDAO() {
 		
 	}
 	
-	public static Stream<OperationBreakdownNew> getOperationBreakdownNew(final AONContext ctx, OperationParamsNew params) {
+	public static Stream<OperationBreakdown> getOperationBreakdown(final AONContext ctx, OperationParams params) {
 		
 		// Ordenar los datos por: Fecha IVA, Serie, Número Factura, Número Diario
-		Comparator<OperationBreakdownNew> comparator = Comparator.comparing(OperationBreakdownNew::getTaxDate).thenComparing(OperationBreakdownNew::getInvoiceSeries).thenComparing(OperationBreakdownNew::getInvoiceNumber).thenComparing(OperationBreakdownNew::getEntryJournal);
+		Comparator<OperationBreakdown> comparator = Comparator.comparing(OperationBreakdown::getTaxDate).thenComparing(OperationBreakdown::getInvoiceSeries).thenComparing(OperationBreakdown::getInvoiceNumber).thenComparing(OperationBreakdown::getEntryJournal);
 		
 		// Obtener los datos, según el tipo de libro solicitado
 		if (params.getBookType() == 0) {
@@ -265,7 +265,7 @@ public class AccountingOperationNewDAO {
 	}
 
 	// Facturas
-	private static Stream<OperationBreakdownNew> getOperationBreakdownFac(AONContext ctx, OperationParamsNew params) {
+	private static Stream<OperationBreakdown> getOperationBreakdownFac(AONContext ctx, OperationParams params) {
 		
 		// Obtener porcentaje y tipo de prorrata del último modelo 303
 		getLastProrate(ctx, params);
@@ -277,14 +277,14 @@ public class AccountingOperationNewDAO {
 		}
 		
 		// Obtener facturas
-		Stream<OperationBreakdownNew> invoices = getSelectFac(ctx, params)
+		Stream<OperationBreakdown> invoices = getSelectFac(ctx, params)
 				.where(getWhereFac(ctx, params))
 				.fetch()
 				.stream()
 				.map(rec -> new OperationBreakdownFacFiller().apply(rec, params));
 		
 		// Obtener ajuste de la prorrata (del modelo 303), si procede
-		Stream<OperationBreakdownNew> prorate = getProrateAdjustment(ctx, params);
+		Stream<OperationBreakdown> prorate = getProrateAdjustment(ctx, params);
 		
 		// Devolver resultado (facturas + ajuste de la prorrata)
 		return Stream.concat(invoices, prorate);
@@ -293,7 +293,7 @@ public class AccountingOperationNewDAO {
 	
 	// Se comprueba si se deben repartir las facturas, en aquellas facturas imputadas a todas las actividades
 	// Por ahora solo si existen unicamente dos actividades, una de ellas con Régimen Exento de IVA y la otra no
-	private static void mustDistributeInvoice(AONContext ctx, OperationParamsNew params) {
+	private static void mustDistributeInvoice(AONContext ctx, OperationParams params) {
 		
 		params.setDistributeInvoice(false);
 
@@ -326,7 +326,7 @@ public class AccountingOperationNewDAO {
 	}
 
 	// Obtener ajuste de la prorrata del modelo 303 del ultimo periodo, si estamos obteniendo los datos hasta final del ejercicio, solo libro de IVA y Libro Unificado y solo en compras y gastos
-	private static Stream<OperationBreakdownNew> getProrateAdjustment(AONContext ctx, OperationParamsNew params) {
+	private static Stream<OperationBreakdown> getProrateAdjustment(AONContext ctx, OperationParams params) {
 		
 		if (params.getBookType() != 1 && params.getTabType() == 1 && params.getToDate().equals(AonDateUtils.getYearLastDay(params.getToDate()))) {
 
@@ -356,7 +356,7 @@ public class AccountingOperationNewDAO {
 				String activityCode = AonStringUtils.isBlank(rec.getValue(IAE.EPIGRAPH)) ? "" : "A";
 				String activityType = getActivityType(rec.getValue(IAE.SECTION), rec.getValue(IAE.EPIGRAPH));
 				
-				OperationBreakdownNew prorateAdjustment = new OperationBreakdownNew()
+				OperationBreakdown prorateAdjustment = new OperationBreakdown()
 						.setActivityCode(activityCode) 					// Actividad: Código
 						.setActivityType(activityType) 					// Actividad: Tipo
 						.setActivityIAE(rec.getValue(IAE.EPIGRAPH))     // Actividad: Grupo o Epígrafe del IAE
@@ -405,7 +405,7 @@ public class AccountingOperationNewDAO {
 	}
 
 	// Obtener porcentaje y tipo de prorrata del último modelo 303
-	private static void getLastProrate(AONContext ctx, OperationParamsNew params) {
+	private static void getLastProrate(AONContext ctx, OperationParams params) {
 		
 		params.setLastProratePercentage(0.0);
 		params.setLastProrateType("");
@@ -459,7 +459,7 @@ public class AccountingOperationNewDAO {
 	}
 
 	// Cobros y Pagos de Facturas RECC
-	private static Stream<OperationBreakdownNew> getOperationBreakdownRecc(AONContext ctx, OperationParamsNew params) {
+	private static Stream<OperationBreakdown> getOperationBreakdownRecc(AONContext ctx, OperationParams params) {
 		return getSelectRecc(ctx)
 			.where(getWhereRecc(ctx, params))
 			.fetch()
@@ -468,7 +468,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Asientos (que no son facturas)
-	private static Stream<OperationBreakdownNew> getOperationBreakdownAst(AONContext ctx, OperationParamsNew params) {
+	private static Stream<OperationBreakdown> getOperationBreakdownAst(AONContext ctx, OperationParams params) {
 		return getSelectAst(ctx).where(getWhereAst(ctx, params))
 				.fetch()
 				.stream()
@@ -476,7 +476,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Facturas 
-	private static SelectOnConditionStep<Record> getSelectFac(AONContext ctx, OperationParamsNew params) {
+	private static SelectOnConditionStep<Record> getSelectFac(AONContext ctx, OperationParams params) {
 
 		// SE HACE UN LEFT JOIN CON INVOIVE_TAX, PARA QUE SALGAN LAS FACTURAS DE GASTOS NO DEDUCIBLES EN IVA, PUES 
 		// ACTUALMENTE NO CREAN REGISTRO EN INVOICE_TAX Y SI SE HACE UN INNER JOIN NO SALDRIAN
@@ -542,7 +542,7 @@ public class AccountingOperationNewDAO {
 	}
 
 	// Facturas 
-	private static Condition getWhereFac(AONContext ctx, OperationParamsNew params) {
+	private static Condition getWhereFac(AONContext ctx, OperationParams params) {
 
 		// Todas las facturas del periodo indicado
 		// Libro de IVA y Unificado: Facturas según Fecha de IVA de la factura
@@ -617,7 +617,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Cobros y Pagos de Facturas RECC 
-	private static Condition getWhereRecc(AONContext ctx, OperationParamsNew params) {
+	private static Condition getWhereRecc(AONContext ctx, OperationParams params) {
 		
 		int prevYear = AonDateUtils.getYear(params.getFromDate())-1;
 		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(prevYear));
@@ -654,7 +654,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Asientos (que no son facturas)
-	private static Condition getWhereAst(AONContext ctx, OperationParamsNew params) {
+	private static Condition getWhereAst(AONContext ctx, OperationParams params) {
 
 		Condition condition = ACCOUNT_ENTRY.DOMAIN.eq(ctx.getDomainId())
 						.and(ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())));
@@ -675,7 +675,7 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Facturas
-	private static class OperationBreakdownFacFiller implements BiFunction<Record,OperationParamsNew,OperationBreakdownNew> {
+	private static class OperationBreakdownFacFiller implements BiFunction<Record,OperationParams,OperationBreakdown> {
 
 		private boolean isSales;
 		private boolean isIntracommunity;
@@ -687,7 +687,7 @@ public class AccountingOperationNewDAO {
 		private boolean isSalesExempt;		
 
 		@Override
-		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
+		public OperationBreakdown apply(Record rec, OperationParams params) {
    
 			isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
 			InvoiceTransactionType invoiceTransactionType = InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION));
@@ -805,7 +805,7 @@ public class AccountingOperationNewDAO {
 			// Fecha para el ejercicio y periodo de autoliquidación: Si Libro de IRPF, se coge la fecha del asiento, si no, la fecha de IVA de la factura
 			Date taxDate = params.getBookType() == 1 ? rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE) : rec.getValue(INVOICE.TAX_DATE);
 			
-			return new OperationBreakdownNew()
+			return new OperationBreakdown()
 				.setActivityCode(activityCode) 									// Actividad: Código
 				.setActivityType(activityType) 									// Actividad: Tipo
 				.setActivityIAE(activityIAE) 									// Actividad: Grupo o Epígrafe del IAE
@@ -870,7 +870,7 @@ public class AccountingOperationNewDAO {
 			return quota;
 		}
 		
-		private double getDeductibleQuota(Record rec, OperationParamsNew params) {
+		private double getDeductibleQuota(Record rec, OperationParams params) {
 			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			if (AonMathUtils.isZero(dedQuota)) {
 				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT));
@@ -898,7 +898,7 @@ public class AccountingOperationNewDAO {
 			return dedQuota;
 		}
 		
-		private Pair<Double, String> getProrateData(Record rec, OperationParamsNew params) {			
+		private Pair<Double, String> getProrateData(Record rec, OperationParams params) {			
 			double proratePer = 0.0;
 			String prorateTyp = ""; 
 			if (rec.getValue(proratePercentageField) == null) {
@@ -926,7 +926,7 @@ public class AccountingOperationNewDAO {
 			return Pair.of(proratePer, prorateTyp);			
 		}
 
-		private double getAmountDistributed(Record rec, OperationParamsNew params, double amount) {
+		private double getAmountDistributed(Record rec, OperationParams params, double amount) {
 			double dedQuota = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA));
 			if (AonMathUtils.isZero(dedQuota)) {
 				double percent = AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT));
@@ -1047,10 +1047,10 @@ public class AccountingOperationNewDAO {
 	}
 	
 	// Cobros y Pagos de Facturas RECC
-	private static class OperationBreakdownReccFiller implements BiFunction<Record,OperationParamsNew,OperationBreakdownNew> {
+	private static class OperationBreakdownReccFiller implements BiFunction<Record,OperationParams,OperationBreakdown> {
 
 		@Override
-		public OperationBreakdownNew apply(Record rec, OperationParamsNew params) {
+		public OperationBreakdown apply(Record rec, OperationParams params) {
 			
 			boolean isSales = InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.SALES;
 			
@@ -1091,7 +1091,7 @@ public class AccountingOperationNewDAO {
 				}
 			}
 			
-			return new OperationBreakdownNew()
+			return new OperationBreakdown()
 				.setActivityCode(activityCode) 									// Actividad: Código
 				.setActivityType(activityType) 									// Actividad: Tipo
 				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 					// Actividad: Grupo o Epígrafe del IAE
@@ -1136,10 +1136,10 @@ public class AccountingOperationNewDAO {
 	}	
 	
 	// Asientos
-	private static class OperationBreakdownAstFiller implements Function<Record,OperationBreakdownNew> {
+	private static class OperationBreakdownAstFiller implements Function<Record,OperationBreakdown> {
 
 		@Override
-		public OperationBreakdownNew apply(Record rec) {
+		public OperationBreakdown apply(Record rec) {
 			
 			boolean isIncomes = rec.getValue(ACCOUNT.CODE).startsWith("7");
 			
@@ -1181,7 +1181,7 @@ public class AccountingOperationNewDAO {
 			// TIPO DE FACTURA PARA LOS GASTOS PONEMOS F6 SINO DA ERROR LA VALIDACION EN EL UNIFICADO DICIENDO QUE SF SE USA PARA EL AJUSTE DE PRORRATA DE IVA
 			String invoiceType = isIncomes ? "SF" : "F6";
 			
-			return new OperationBreakdownNew()
+			return new OperationBreakdown()
 				.setActivityCode(activityCode) 								// Actividad: Código
 				.setActivityType(activityType) 								// Actividad: Tipo
 				.setActivityIAE(rec.getValue(IAE.EPIGRAPH)) 				// Actividad: Grupo o Epígrafe del IAE

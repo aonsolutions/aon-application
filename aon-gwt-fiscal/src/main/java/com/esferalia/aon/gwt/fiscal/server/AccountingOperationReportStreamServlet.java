@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -37,7 +37,7 @@ public class AccountingOperationReportStreamServlet extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			OperationParamsNew params = JsonParser.parseOperationParams(operationParams);
+			OperationParams params = JsonParser.parseOperationParams(operationParams);
 			
 			resp.setContentType(MimeType.HTML.getName());
 			PrintWriter wr = resp.getWriter();

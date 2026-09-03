@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -626,8 +626,8 @@ public class JsonParser {
 		return params;
 	}
 	
-	public static OperationParamsNew parseOperationParams(String operationParams) throws ParseException, java.text.ParseException {
-		OperationParamsNew params = new OperationParamsNew();
+	public static OperationParams parseOperationParams(String operationParams) throws ParseException, java.text.ParseException {
+		OperationParams params = new OperationParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);
 		

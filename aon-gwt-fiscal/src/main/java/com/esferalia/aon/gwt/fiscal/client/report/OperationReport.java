@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParamsNew;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -45,7 +45,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class OperationReport implements EntryPoint {
 	
-	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBookNew";
+	private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
 	private static final int TAB_0 = 0; // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos 
 	private static final int TAB_1 = 1; // Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
 
@@ -102,7 +102,7 @@ public class OperationReport implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert( AON.MSG.loadError("Operation Report New"));
+				Window.alert( AON.MSG.loadError("Operation Report"));
 			}
 		});
 
@@ -311,7 +311,7 @@ public class OperationReport implements EntryPoint {
 		fillDates(); // Esto llama a onSearch
 	}
 	
-	private void submitForm(String action, OperationParamsNew params) {
+	private void submitForm(String action, OperationParams params) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		operationParamsHidden.setValue(JsonParams.convert(params));				
 		domainIdHidden.setValue(String.valueOf(options.getDomain()));
@@ -320,8 +320,8 @@ public class OperationReport implements EntryPoint {
 		diskForm.submit();
 	}
 
-	private OperationParamsNew getWidgetParams(boolean draft) {
-		OperationParamsNew params = new OperationParamsNew()
+	private OperationParams getWidgetParams(boolean draft) {
+		OperationParams params = new OperationParams()
 			.setDomain(options.getDomain())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
@@ -347,13 +347,13 @@ public class OperationReport implements EntryPoint {
 		}
 	}
 
-	private void refreshTab0(OperationParamsNew params) {
+	private void refreshTab0(OperationParams params) {
 		tab0Content.clear();
 		params.setTabType(TAB_0);
 		tab0Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabExpIngPanel()));
 	}
 	
-	private void refreshTab1(OperationParamsNew params) {
+	private void refreshTab1(OperationParams params) {
 		tab1Content.clear();
 		params.setTabType(TAB_1);
 		tab1Content.setWidget(new OperationReportTabPanel(options, params, new JsOperationGridTabRecGasPanel()));
@@ -377,7 +377,7 @@ public class OperationReport implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable reason) {
-				Window.alert(AON.MSG.loadError("OperationReport New"));
+				Window.alert(AON.MSG.loadError("OperationReport"));
 			}
 			
 			@Override
