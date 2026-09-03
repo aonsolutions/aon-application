@@ -1,5 +1,8 @@
 :root{
     --favicon: ../faviconColors.png;
+    --aonHeaderBackgroundColor: #0f172a;
+    --aonBackgroundColor: #f0f0f0;
+    --aonBackgroundColor2: #fafafa;
 }
 
 .rootPanel {
