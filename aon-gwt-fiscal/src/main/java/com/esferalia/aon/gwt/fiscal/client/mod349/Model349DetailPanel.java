@@ -4,18 +4,31 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349.Model349Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349Detail.IModel349DetailCallback;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -158,44 +171,15 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.CSS.aonNowrap());
 		
-		AonTableButton button = new AonTableButton(FiscalModelKeyInfo.INVOICE.getLabel(), AON.CSS.aonIconData());
+		AonTableButton button = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
-		button.addClickHandler(event -> 
-			Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(),
-				   mod349, detail, FiscalModelKeyInfo.INVOICE, new AsyncCallback<String>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callbackM349.showError(AON.MSG.errorMessage());
-					}
-
-					@Override
-					public void onSuccess(String result) {
-						callbackM349.showInfoPanel(result);
-					}
-			
-				}
-			));
+		button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, mod349, detail, callbackM349));
 		buttonContainer.add(button);
 		
 		AonTableButton buttonDiff = new AonTableButton(FiscalModelKeyInfo.DIFF_INVOICE.getLabel(), AON.CSS.aonIconDiff());
 		buttonDiff.setTabIndex(-2); // NO FOCUS
 		buttonDiff.setVisible(isDiffEnabled && !detail.isRectification());
-		buttonDiff.addClickHandler(event -> 
-			Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(), mod349, detail, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callbackM349.showError(AON.MSG.errorMessage());
-					}
-
-					@Override
-					public void onSuccess(String result) {
-						callbackM349.showInfoPanel(result);
-					}
-			
-				}
-			));
+		buttonDiff.addClickHandler(event -> showDiffInfo(buttonDiff, mod349, detail, callbackM349));
 		buttonContainer.add(buttonDiff);			
 		
 		// Los botones solo se muestran si acumulado o declarado son distintos de cero
@@ -262,7 +246,112 @@ public class Model349DetailPanel extends SimpleLayoutPanel implements Focusable 
 		scroll.setWidget(panel);
 		setWidget(scroll);
 	}
+	
+	public void showInvoiceVatBreakdownInfo(AonTableButton button, Mod349 mod349, Mod349Detail detail, Model349Callback callbackM349) {
+		
+		button.setEnabled(false);
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(), 
+				mod349, detail, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN, new AsyncCallback<String>() {
 
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						callbackM349.showError(AON.MSG.errorMessage());
+						button.setEnabled(true);
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						popup.hide();
+						JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel();
+						grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem(), callbackM349));
+						grid.setTitle(getTittle(mod349, "FACTURAS QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO"));
+						grid.setSubTitle(getSubtitle(detail));
+						JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+						JsArray<JsVatContext> array = arrayObject.cast();
+						grid.render(array);
+						callbackM349.showInfoPanelWidget(grid);
+						button.setEnabled(true);
+					}
+				});
+		
+	}
+	
+	private void showDiffInfo(AonTableButton button, Mod349 mod349, Mod349Detail detail, Model349Callback callbackM349) {
+		
+		button.setEnabled(false);
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model349.SERVICE.getInfo(callbackM349.getOptions().getOccam(), 
+				mod349, detail, FiscalModelKeyInfo.DIFF_INVOICE, new AsyncCallback<String>() {
+			
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						callbackM349.showError(AON.MSG.errorMessage());
+						button.setEnabled(true);
+					}
+		
+					@Override
+					public void onSuccess(String result) {
+						popup.hide();
+						FlowPanel gridContainer = new FlowPanel();
+						JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
+						grid.setTitle(getTittle(mod349, "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO"));
+						grid.setSubTitle(getSubtitle(detail));
+						grid.addContent(result);
+						gridContainer.add(grid);
+						callbackM349.showInfoPanelWidget(gridContainer);
+						button.setEnabled(true);
+					}
+				});
+		
+	}
+	
+	private static String getTittle(final Mod349 mod349, String title) {
+		return title  
+				+ " " + FiscalModelUtils.getModelName(mod349) 
+				+ " DEL " + mod349.getPeriod().getDescription()
+				+ " DE " + mod349.getYear();
+	}
+	
+	private static String getSubtitle(final Mod349Detail detail ) {
+		return "Clave "+detail.getType().getValue()+
+				" - " + detail.getCountry().getIso2() + " " + detail.getDocument() +
+				" - " + detail.getName();
+	}
+	
+	private void showInvoice(JsVatContext vt, Model349Callback callbackM349) {
+		int invoiceId = vt.getInvoice();
+		Model349.SERVICE.getInvoice(callbackM349.getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				callbackM349.showError(caught.getMessage());
+			}
+		});
+	}
 
 	@Override
 	public int getTabIndex() {
