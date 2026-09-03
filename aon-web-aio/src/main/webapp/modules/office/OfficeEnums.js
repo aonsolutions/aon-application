@@ -148,59 +148,67 @@ const getButtonsStatus = () => {
     return div;
 }
 
-const CustomerFilter = [
-    {
-        type: CONSTANT.SELECT,
-        id: "scope",
-        name: "scope",
-        title: MSG.SCOPE,
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type:CONSTANT.SELECT,
-        id: "projectType",
-        name: "projectType",
-        title: "Tipo de expediente",
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type:CONSTANT.SELECT,
-        id: "rrelationship",
-        name: "rrelationship",
-        title: "Vinculo",
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type: CONSTANT.SELECT,
-        id: "type",
-        name: "type",
-        title: MSG.TYPE,
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: "statusDateRange",
-        element: getDateRange("statusDateRange", "F. Estado", "statusDateFrom", "statusDateTo")
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: "blockDateRange",
-        element: getDateRange("blockDateRange", "F. Bloqueo", "blockDateFrom", "blockDateTo")
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: CONSTANT.HTML_ELEMENT,
-        element: getButtonsStatus()
-    }
-];
+/**
+ * Los HTML_ELEMENT se instancian al evaluar el array, asi que un array
+ * constante reutiliza el mismo nodo en cada buildOptionsFilter y sus
+ * componentes se reconstruyen encima al reinsertarse. Como funcion, cada
+ * llamada devuelve nodos limpios.
+ */
+function getCustomerFilter() {
+    return [
+        {
+            type: CONSTANT.SELECT,
+            id: "scope",
+            name: "scope",
+            title: MSG.SCOPE,
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "projectType",
+            name: "projectType",
+            title: "Tipo de expediente",
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "rrelationship",
+            name: "rrelationship",
+            title: "Vinculo",
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "type",
+            name: "type",
+            title: MSG.TYPE,
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: "statusDateRange",
+            element: getDateRange("statusDateRange", "F. Estado", "statusDateFrom", "statusDateTo")
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: "blockDateRange",
+            element: getDateRange("blockDateRange", "F. Bloqueo", "blockDateFrom", "blockDateTo")
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: CONSTANT.HTML_ELEMENT,
+            element: getButtonsStatus()
+        }
+    ];
+}
 
 /**
  * Pareja desde/hasta en horizontal. El div va como HTML_ELEMENT porque
@@ -240,7 +248,7 @@ export const OfficeEnums = {
     OfficeViews,
     OfficeOptions,
     OfficeSidenav,
-    CustomerFilter,
-    ServiceOptions
+    ServiceOptions,
+    getCustomerFilter 
 }
 

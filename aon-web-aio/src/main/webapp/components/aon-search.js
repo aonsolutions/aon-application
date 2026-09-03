@@ -350,6 +350,7 @@ export class AonSearch extends AonElement {
 	buildOptionsFilter(inputs){
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
+		this.formComponents = [];
 
 		let input = this.getElement(this.SEARCH_INPUT);
 		inputs.forEach((attributes) => {
