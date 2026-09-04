@@ -229,14 +229,26 @@ public class OperationReportExcelBook extends HttpServlet {
 		    	addHorizontalMergedRegion("* * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *", workbook.getNumberOfSheets() == 1 ? 38 : 44, draftHeaderCellStyle);
 		    }
 		    
-		    row = sheet.createRow(rowCount++);
+		    if (!params.isDraft())		    	
+		    	row = sheet.createRow(rowCount++);
 		    row2 = sheet.createRow(rowCount++);
 			cellCount = 0;
 						
-			if (workbook.getNumberOfSheets() == 1)
-				headerRowExpIng(); // Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos
-			else
-				headerRowRecGas(); // Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
+			if (workbook.getNumberOfSheets() == 1) {
+				// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos
+				if (params.isDraft()) {
+					headerRowExpIngDraft(); 
+				} else {
+					headerRowExpIng(); 
+				}
+			} else {
+				// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos
+				if (params.isDraft()) {
+					headerRowRecGasDraft(); 
+				} else {
+					headerRowRecGas(); 
+				}
+			}
 		    		    
 		    sheet.setRandomAccessWindowSize(1);
 		    
@@ -347,6 +359,96 @@ public class OperationReportExcelBook extends HttpServlet {
 	    	addHeaderCell("Situación");
 	    	addHeaderCell("Referencia Catastral");
 	    	addVerticalMergedRegion("Referencia Externa");
+		}
+		
+		// Facturas Expedidas / Ventas e Ingresos / Expedidas e Ingresos (Borrador)
+		protected void headerRowExpIngDraft() {
+			addHeaderCell("Autoliquidación Ejercicio");
+			addHeaderCell("Autoliquidación Periodo");
+			addHeaderCell("Actividad Código");
+			addHeaderCell("Actividad Tipo");
+			addHeaderCell("Actividad Grupo o Epígrafe del IAE");
+		    addHeaderCell("Tipo de Factura");
+    		addHeaderCell("Concepto de Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+   			addHeaderCell("Descripción del Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+   			addHeaderCell("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addHeaderCell("Ingreso Computable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Fecha Expedición");
+		    addHeaderCell("Fecha Operación");
+	    	addHeaderCell("Identificación de la Factura Serie");
+	    	addHeaderCell("Identificación de la Factura Número");
+	    	addHeaderCell("Identificación de la Factura Número-Final");
+		    addHeaderCell("NIF Destinatario Tipo");
+		    addHeaderCell("NIF Destinatario Código País");
+		    addHeaderCell("NIF Destinatario Identificación");
+	    	addHeaderCell("Nombre Destinatario");
+		    addHeaderCell("Clave de Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Calificación de la Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Operación Exenta", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Total Factura");
+		    addHeaderCell("Base Imponible");
+		    addHeaderCell("Tipo de IVA");
+	    	addHeaderCell("Cuota IVA Repercutida");
+		    addHeaderCell("Tipo de Recargo Eq.");		    
+		    addHeaderCell("Cuota Recargo Eq.");		    
+		    addHeaderCell("Cobro (RECC o IRPF) Fecha");
+		    addHeaderCell("Cobro (RECC o IRPF) Importe");
+		    addHeaderCell("Cobro (RECC o IRPF) Medio Utilizado");
+		    addHeaderCell("Cobro (RECC o IRPF) Identificación Medio Utilizado");		    
+	    	addHeaderCell("Tipo Retención del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Importe Retenido del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Registro Acuerdo Facturación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Inmueble Situación");
+	    	addHeaderCell("Inmueble Referencia Catastral");
+	    	addHeaderCell("Referencia Externa");
+		}
+		
+		// Facturas Recibidas / Compras y Gastos / Recibidas y Gastos (Borrador)
+		protected void headerRowRecGasDraft() {
+			addHeaderCell("Autoliquidación Ejercicio");
+			addHeaderCell("Autoliquidación Periodo");
+			addHeaderCell("Actividad Código");
+			addHeaderCell("Actividad Tipo");
+			addHeaderCell("Actividad Grupo o Epígrafe del IAE");
+		    addHeaderCell("Tipo de Factura");
+    		addHeaderCell("Concepto de Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+   			addHeaderCell("Descripción del Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+   			addHeaderCell("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addHeaderCell("Gasto Deducible", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Fecha Expedición");
+		    addHeaderCell("Fecha Operación");
+	    	addHeaderCell("Identificación Factura del Expedidor (Serie-Número)");
+	    	addHeaderCell("Identificación Factura del Expedidor Número-Final");
+	    	addHeaderCell("Fecha Recepción", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Número Recepción");
+	    	addHeaderCell("Número Recepción Final");
+		    addHeaderCell("NIF Expedidor Tipo");
+		    addHeaderCell("NIF Expedidor Código País");
+		    addHeaderCell("NIF Expedidor Identificación");
+	    	addHeaderCell("Nombre Expedidor");
+		    addHeaderCell("Clave de Operación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Bien de Inversión", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Inversión del Sujeto Pasivo", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+		    addHeaderCell("Deducible en Periodo Posterior", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Periodo Deducción Ejercicio", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);                        
+	    	addHeaderCell("Periodo Deducción Periodo", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);                          
+		    addHeaderCell("Total Factura");
+		    addHeaderCell("Base Imponible");
+		    addHeaderCell("Tipo de IVA");
+	    	addHeaderCell("Cuota IVA Soportado");
+	    	addHeaderCell("Cuota Deducible");
+		    addHeaderCell("Tipo de Recargo Eq.");		    
+		    addHeaderCell("Cuota Recargo Eq.");		    
+		    addHeaderCell("Pago (RECC o IRPF) Fecha");
+		    addHeaderCell("Pago (RECC o IRPF) Importe");
+		    addHeaderCell("Pago (RECC o IRPF) Medio Utilizado");
+		    addHeaderCell("Pago (RECC o IRPF) Identificación Medio Utilizado");		    
+	    	addHeaderCell("Tipo Retención del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Importe Retenido del IRPF", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Registro Acuerdo Facturación", params.getBookType() == 1 ? headerCellStyleDisabled : headerCellStyle);
+	    	addHeaderCell("Inmueble Situación");
+	    	addHeaderCell("Inmueble Referencia Catastral");
+	    	addHeaderCell("Referencia Externa");
 		}
 		
 		public void accept(OperationBreakdown op) {
