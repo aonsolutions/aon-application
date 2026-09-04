@@ -236,6 +236,24 @@ public class CustomerApi {
 	    }
 	}
 	
+	public void saveCustomerDomainStatus(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
+	    UrlBuilder urlBuilder = new UrlBuilder();
+	    urlBuilder.setProtocol(Window.Location.getProtocol());
+	    urlBuilder.setHost(host);
+	    urlBuilder.setPath(endPoint);
+
+	    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+	    requestBuilder.setHeader("session_id", sessionId);
+
+	    try {
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+	            @Override protected Void parse(Response response) { return null; }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+	}
+	
 	private String cleanQuotes(String text) {
 	    return AonStringUtils.isNotBlank(text) ? text.replaceAll("\"", "").trim() : "";
 	}

@@ -134,12 +134,14 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.DomainSigAddInfo;
+import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryExpirationUtils;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
@@ -149,6 +151,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySource;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
+import com.esferalia.aon.occam.api.model.registry.SigIntegrityRules;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -2351,19 +2354,22 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		
 		Company domainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getId()));
-		RegistryMedia domainCompanyWeb = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
-		RegistryMedia domainCompanyEmail = AON.getRegistryMedia(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
+		Stream<RegistryMedia> domainCompanyWeb = AON.getRegistryMediaStream(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.WEB.value())));
+		Stream<RegistryMedia> domainCompanyEmail = AON.getRegistryMediaStream(new Domain().setName(domainName).setId(domainId), new User().setLogin(user), f -> f.getRegistryProperty().eq(domainCompany.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
 		
-		if(AonStringUtils.isNotBlank(domainCompanyWeb.getValue())) {
-			String host = extractHost(domainCompanyWeb.getValue());
-			hosts.add(host);
-		}
+		domainCompanyWeb.forEach(dcw -> {
+			if(AonStringUtils.isNotBlank(dcw.getValue())) {
+				String host = extractHost(dcw.getValue());
+				hosts.add(host);
+			}
+		});
 		
-		if(AonStringUtils.isNotBlank(domainCompanyEmail.getValue())) {
-			String host = extractDomainFromEmail(domainCompanyEmail.getValue());
-			hosts.add(host);
-		}
-		
+		domainCompanyEmail.forEach(dce -> {
+			if(AonStringUtils.isNotBlank(dce.getValue())) {
+				String host = extractDomainFromEmail(dce.getValue());
+				hosts.add(host);
+			}
+		});
 		/*
 		if(null != domain.getParentId()) {
 			Company parentDomainCompany = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domain.getParentId()));
@@ -2456,6 +2462,53 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException {
 		return AON.saveDomainStatus(domainName, domain, user, newStatus, newExpDate);
+	}
+	
+	/**
+	 * Alinea la fecha de expiracion del cliente con la del dominio vinculado.
+	 *
+	 * NO cambia el estado del cliente: el estado manda y es el dominio el que se
+	 * adapta. Solo la fecha puede viajar del dominio al cliente, y unicamente
+	 * cuando el cliente esta BLOCKED sin fecha propia.
+	 *
+	 * Al no haber cambio de estado no se avisa a los agentes comerciales: en una
+	 * alineacion masiva eso serian cientos de correos.
+	 */
+	@Override
+	public void alignSigCustomerDate(String domainName, Integer domainId, String user,
+	        Integer customerId, Date expirationDate) throws AonCoreException {
+
+	    Customer customer = AON.getCustomer(domainName, domainId, user,
+	            f -> f.getIdProperty().eq(customerId));
+
+	    if (null == customer || null == customer.getId())
+	        throw new AonCoreException("Cliente no encontrado: " + customerId);
+
+	    Date normalized = RegistryExpirationUtils.normalizeExpirationDate(
+	            customer.getStatus(), expirationDate);
+
+	    if (SigIntegrityRules.sameDay(normalized, customer.getExpirationDate()))
+	        return;
+
+	    String previous = null == customer.getExpirationDate()
+	            ? "sin fecha" : AonDateUtils.simpleFormat(customer.getExpirationDate());
+
+	    customer.setExpirationDate(normalized);
+	    AON.saveCustomer(domainName, domainId, user, customer);
+
+	    String comments = "Alineaci\u00f3n de estados SIG. Cambio de fecha de expiracion en estado "
+	            + customer.getStatus().getDescription()
+	            + ".\nAnterior: " + previous
+	            + "\nNueva: " + (null == normalized ? "sin fecha" : AonDateUtils.simpleFormat(normalized));
+
+	    AON.saveRegistryNote(domainName, domainId, user, new RegistryNote()
+	            .setDomain(domainId)
+	            .setRegistry(customerId)
+	            .setNoteDate(new Date())
+	            .setNoteType(NoteType.CUSTOMER_STATUS)
+	            .setConfidential(true)
+	            .setDescription(customer.getStatus().getDescription())
+	            .setComments(comments));
 	}
 	
 }

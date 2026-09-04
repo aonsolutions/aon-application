@@ -600,4 +600,7 @@ public interface CommonServiceAsync {
 	// *********************** [DOMAIN STATUS]
 	void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
 	
+	// *********************** [CUSTOMER SIG ALIGN DATE]
+	void alignSigCustomerDate(String domainName, Integer domainId, String user, Integer customerId, Date expirationDate, AsyncCallback<Void> callback);
+	
 }
