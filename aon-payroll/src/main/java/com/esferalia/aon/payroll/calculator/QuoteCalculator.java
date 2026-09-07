@@ -536,6 +536,10 @@ public abstract class QuoteCalculator {
 				AonStringUtils.equals(PREST_IT, name))
 				return quotesImpl;
 
+			if (quote == 0 &&
+					AonStringUtils.equals(MATERNITY.getName(), name))
+					return quotesImpl;
+
 			if (payment.getType() == PaymentType.CRA_0057 
 					|| payment.getType() == PaymentType.CRA_0058
 					|| AonStringUtils.equals(PPE, name)
