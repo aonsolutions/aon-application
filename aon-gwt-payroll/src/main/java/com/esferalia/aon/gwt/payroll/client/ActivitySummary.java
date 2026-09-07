@@ -77,6 +77,8 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private String domainName;
 	
+	private boolean isOffice = false;
+	
 	private static enum ENTERPRISES_COLS {
 		  DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, ALT("Ini. Contrato"						,"7rem" 			,"text-align: center;")
@@ -130,6 +132,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		super("Resumen Actividad");
 		
 		this.domainName = Wnd.getCurrentDomainNameURL();
+		this.isOffice = Wnd.isOffice();
 		
 		addButtonsToolbar();
 		
@@ -249,6 +252,9 @@ public class ActivitySummary extends AonCustomDockLayout {
 			@Override
 			public void onSuccess(Domain domainDB) {
 				domain = domainDB;
+				
+//				Window.alert("isOffice() : " + Wnd.isOffice() + ", this.isOffice : " + isOffice);
+				Wnd.removeIsOffice();
 				
 				//onSearch();
 				period.getListBox().setSelectedIndex(0);
@@ -536,7 +542,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 				.setItOT(itType.getSelectedOptions().contains("IT Otros"))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				.setOffice(this.isOffice)
 				;
+		
+//		Window.alert("getActivitySummaryParams() isOffice : " + params.isOffice() + ", this.isOffice : " + this.isOffice + ", childDomain : " + params.getChildomain());
 	}
 	
 	private void openChildsDialog(String enterpriseName, ActivitySummaryObject enterpriseSummary) {
@@ -557,6 +566,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 				.setItOT(itType.getSelectedOptions().contains("IT Otros"))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
+				.setOffice(this.isOffice)
 				;
 		
 		getList(params, activitySummaries -> {
