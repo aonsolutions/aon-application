@@ -3,7 +3,7 @@
 :root{
 	--aonBlack: #0A0A0A;
 	--aonMidGray:#C9C9C7;
-	--aonDrakGray:#3A3A3A;
+	--aonDarkGray:#3A3A3A;
 	--aonOffWhite:#F3F3F1;
 	--aonPurple:oklch(52% .234 277);
 	
@@ -18,7 +18,7 @@
 	--aonTopMenuAvailable: var(--aonOffWhite);
 
 	--aonBackgroundColor: var(--aonBlack);
-	--aonBodyBackgroundColor: var(--aonDrakGray);
+	--aonBodyBackgroundColor: var(--aonDarkGray);
 	--aonHeaderBackgroundColor: var(--aonBlack);
 	
 	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
@@ -57,7 +57,7 @@ aon-toolbar > header.aonToolbar,
 {
 	box-shadow: var(--aonShadowCard) ;
 	border-radius: var(--aonRadiusCard);
-}
+} 
 
 .aonSeparator,
 .aonTable thead{
@@ -77,6 +77,20 @@ aon-toolbar > header.aonToolbar,
 	height: 100%;
 }
 
+.menu-option {
+	background: none;
+	border-radius: var(--aonRadius);
+	box-shadow: var(--aonShadowCard) !important;
+	background-color: var(--aonBodyBackgroundColor) !important;
+}
+
+.menu-option:hover {
+	color: var(--aonHoverColor) !important;
+}
+.menu-option:hover .material-icons {
+	background-color: var(--aonHoverColor) !important;
+}
+
 .aonCard.rightPanelcardDiv,
 .rightPanelLangCard .aonCard,
 #aonOfficePanel .aonContentBeta,
@@ -91,7 +105,7 @@ aon-toolbar > header.aonToolbar,
 
 .suiteMenuContent .suiteMenuCardCard .aonCard{
 	border-radius:  none;	
-	background-color: transparent;
+	background-color: transparent !important;
 }
 
 .aonLiSpan,
@@ -275,12 +289,14 @@ i[id$="ToolbarHeaderTitleSectionMenuIcon"]{
 	background-color: var(--aonButtonColor);	
 }
 
+
 aon-search,
 aonButtonColor,
 aon-input input,
 aon-select input,
 aon-new-input input,
 aon-new-select input,
+.aonInputGroup input,
 .aonSearchInput,
 #aonLoginUserInput, 
 #aonLoginPasswordInput{
@@ -291,10 +307,24 @@ aon-new-select input,
 aon-input input,
 aon-select input,
 aon-new-input input,
-aon-new-select input {
+aon-new-select input,
+#aonLoginUserInput, 
+#aonLoginPasswordInput,
+.aonInputGroup input,
+.aonInputBoxLabel > input{
 	border-color: transparent;
 }
 
+*[readonly="true"] input, 
+*[disabled="true"] input, 
+*[disabled="disabled"] input{
+	background-color: var(--aonDarkGray) !important;
+}
+
+
+.aonInputBoxLabelInputError {
+	border-color: var(--aonError) !important;
+}
 	
 .aonMagicButton{
 	color: var(--aonBackgroundColor);
@@ -306,9 +336,6 @@ aon-new-select input {
 	background-color: var(--aonButtonColor);
 }
 
-#aonLoginUserInput {
-	background-color: var(--aonDarkGray);
-}
 
 
 #aonOfficePanelToolbarHeaderToolSectionSearchSpan{
@@ -333,3 +360,5 @@ aon-search > span {
 aon-search > span:focus {
 	border-color: var(--BorderHoverColor);	
 }
+
+
