@@ -18,7 +18,11 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0000;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
+import static com.esferalia.aon.watson.server.AonDateUtils.addDays;
+import static com.esferalia.aon.watson.server.AonDateUtils.addMonths;
+import static com.esferalia.aon.watson.server.AonDateUtils.addYears;
 import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.MONTH;
@@ -237,6 +241,28 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static class NOTICEContractPayment extends DelegateContractPayment{
+		
+		private double quote;
+		
+		private NOTICEContractPayment(IContractPayment contractPayment, double quote) {
+			super(contractPayment);
+			this.quote = quote;
+		}
+		
+		@Override
+		public PaymentType getType() {
+			return PaymentType.CRA_0054;
+		}
+
+		@Override
+		public String getQuoteExpression() {
+			return Double.toString(quote);
+		
+		}
+	}
+
+
 	private static class IMPROVEMENTContractPayment extends DelegateContractPayment{
 		
 		private IMPROVEMENTContractPayment(IContractPayment contractPayment) {
@@ -499,6 +525,22 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			if ( AonStringUtils.equals(IMPROVEMENT, payment.getName())) {
 				return delegate.quote(new IMPROVEMENTContractPayment(payment), start, end, amount);
+			}
+
+			if ( AonStringUtils.equals(ContextVariable.NOTICE, payment.getName())) {
+				Date noticeStart = addYears(getMonthFirstDay(end), -1);
+				Date noticeEnd = addDays(getMonthFirstDay(end), -1);
+				noticeStart = noticeStart.before(start) ? start : noticeStart;
+				noticeEnd = noticeStart.after(noticeEnd) ? end : noticeEnd;
+				
+				List<ITimedResult<Double>>  quotes = new ArrayList<>();
+				long noticeDays = new Period(noticeStart, noticeEnd).getDays(); 
+				for ( Date date = getMonthFirstDay(noticeStart); date.before(noticeEnd); date = addMonths(date, 1)) {
+					Period period = new Period(Period.max(noticeStart, date), Period.min(getMonthLastDay(date), end));
+					double prorratedQuote = amount / noticeDays * period.getDays();
+					quotes.addAll(delegate.quote(new NOTICEContractPayment(payment, prorratedQuote), period.getStart(), period.getEnd(), prorratedQuote));
+				}
+				return quotes;
 			}
 
 			if ( isFixBaseCgcMinPayment(payment) ){

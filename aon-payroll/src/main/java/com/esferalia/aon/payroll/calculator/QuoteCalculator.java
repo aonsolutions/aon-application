@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -912,6 +913,20 @@ public abstract class QuoteCalculator {
 
 		}
 
+		public CompositeGeneralQuote(ExpressionContext context) {
+			this.calculators = new LinkedList<GeneralQuote>();
+		}
+
+		public CompositeGeneralQuote(ExpressionContext context,
+				GeneralQuote... calculators) {
+			this.calculators = (Arrays.asList(calculators));
+		}
+		
+		protected CompositeGeneralQuote addCalculator(GeneralQuote calculator) {
+			this.calculators.add(calculator);
+			return this;
+		}
+
 		@Override
 		public Double getCgcBase() throws AonException {
 			double cgcBase = 0.00;
@@ -1084,8 +1099,18 @@ public abstract class QuoteCalculator {
 
 					@Override
 					public QuoteCalculator visitSettle(SalaryType salaryType) {
-						return 	new GeneralQuote(expressionContext, startDate,
-								endDate);
+						Date settleEndDate = ( ctx instanceof SQLContractSettleCalculatorContext settleCtx) ? settleCtx.getSettleEnd() : endDate;
+						GeneralQuote unlimitedQuote = new UnlimitedQuote(expressionContext, startDate, settleEndDate);
+						CompositeGeneralQuote compositeGeneralQuote =  new CompositeGeneralQuote(expressionContext);
+						compositeGeneralQuote.addCalculator(unlimitedQuote);
+
+						if ( settleEndDate.before(endDate) ) {
+							Date noHolidaysStartDate = AonDateUtils.addDays(settleEndDate, 1);
+							GeneralQuote noHolidaysQuote = new GeneralQuote(expressionContext, noHolidaysStartDate, endDate);
+							compositeGeneralQuote.addCalculator(noHolidaysQuote);
+						}
+						
+						return compositeGeneralQuote;
 					}
 
 					@Override

@@ -112,6 +112,11 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		this.issueEndDate = issueDate;
 	}
 
+	public Date getSettleEnd() {
+		return super.getEnd();
+	}
+
+
 	@Override
 	public SalaryType getSalaryType() {
 		return SalaryType.SETTLE;
