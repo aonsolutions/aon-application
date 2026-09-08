@@ -44,6 +44,21 @@ public class Wnd {
 	/*-{
 		return $wnd.getCurrentDomainNameURL();
 	}-*/;
+	
+	private static native String getIsOfficeRaw()
+	/*-{
+	    var v = $wnd.localStorage.getItem("isOffice");
+	    return v == null ? null : String(v);
+	}-*/;
+
+	public static boolean isOffice() {
+	    return "true".equalsIgnoreCase(getIsOfficeRaw());
+	}
+	
+	public static native int removeIsOffice()
+	/*-{
+		return $wnd.localStorage.removeItem("isOffice");
+	}-*/;
 
 	/**
 	 * Get value of CSS variable. 
