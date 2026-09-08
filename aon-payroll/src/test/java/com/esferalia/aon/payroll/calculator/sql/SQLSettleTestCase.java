@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMPENSATION_CAUSE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_COMPLETE;
@@ -563,13 +564,13 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 
 		// @formatter:on
-		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		Date contractStart = add(getToday(), Calendar.YEAR, -2);
 		ContractRecord contract = newContract(aonContext, 
 				contractStart,
 				new HashMap<String, String>() {
 					{
 						put(MONTH_DAYS.getName(), format("%d", 30));
-						//put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+						put(ContextVariable.CGC_BASE_MIN.getName(), "1500.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");	
 					}
 				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
@@ -614,7 +615,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		assertEquals( br * 4 , settle.getTotalPayment(), DELTA);
 		
-		
+		List<SalaryData> cgcBases = settle.getSalaryDatas().stream().filter(d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).toList();
+		cgcBases.forEach(d -> System.out.println(d.getName() + " = " + d.getExpression() + " = " + d.getStartDate() + " .. " + d.getEndDate() ));
+		assertEquals(12, cgcBases.size());
 	}
 
 	@Test
@@ -4054,9 +4057,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				SalaryType.SETTLE);
 		
 		// CANTIDADES FALTA PREAVISO
+		PaymentConceptRecord notice = addConcept(aonContext, "PREAVISO", PaymentType.CRA_0054);
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
 				startDate, 
+				notice,
 				PaymentType.CRA_0054, 
 				"/*read-only*/DIAS_PREAVISO * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )/**/",
 				"_P" ,
