@@ -36,6 +36,7 @@ jobs:
       - name: Build icon gallery
         run: |
           cd  aon-web-aio
+          npm install
           npm run build:icons
           npm run build:icon-gallery
       - name: Upload docs directory
