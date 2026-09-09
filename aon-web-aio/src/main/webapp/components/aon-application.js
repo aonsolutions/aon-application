@@ -129,7 +129,7 @@ export class AonApplication extends AonElement {
     let leftSidenav = this.createDiv(this.SIDENAV, this.getSidenavClassName());
     div.appendChild(leftSidenav);
     leftSidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : this.getSidenavWidth();
-    if(this.isMobile()  && this.isSab()) {
+    if(this.isMobile()  && this.isIosSab()) {
       leftSidenav.style.height = 'calc(100vh - 172px)';
     }
 
@@ -139,7 +139,7 @@ export class AonApplication extends AonElement {
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
         : CSS.AON_CONTENT_BETA;
-    if(this.isMobile() && this.isSab()){
+    if(this.isMobile() && this.isIosSab()){
       content.style.bottom = '69px';
     }
 
@@ -352,7 +352,6 @@ export class AonApplication extends AonElement {
     div.style.height = '59px';
     div.style.padding = '10px';
     div.style.paddingLeft = '20px';
-    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
 
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
@@ -1203,9 +1202,7 @@ export class AonApplication extends AonElement {
     if(!aonIconButton){
       let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
       span.id = this.id + "FloatSpan";
-      span.style.position = "fixed";
-      span.style.right = "20px";
-      span.style.bottom = "80px";
+      span.className = "aonFloatOptionSpan";
       
       aonIconButton = new AonIconButton();
       aonIconButton.icon = action.icon;

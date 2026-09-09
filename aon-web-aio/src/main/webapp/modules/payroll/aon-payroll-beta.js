@@ -58,7 +58,10 @@ export class AonPayrollBeta extends AonElement {
 					id: "resumenActividad",
 					icon: "speaker_notes",
 					name: "Resumen Actividad",
-					fn: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT),
+					fn: () => {
+						localStorage.setItem("isOffice", "false");
+						GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT);
+					},
 				});
 				
 				utilitiesOptions.push({

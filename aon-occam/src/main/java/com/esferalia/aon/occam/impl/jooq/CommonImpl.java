@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -292,6 +293,11 @@ public class CommonImpl implements ICommon {
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainDAO.getDomainList(ctx, filter));
+	}
+	
+	@Override
+	public List<Domain> getDomainsByIds(CloseableAONContext ctx, Collection<Integer> domainIds) {
+		return ctx.getDslContext().transactionResult(configuration -> DomainDAO.getDomainsByIds(ctx, domainIds));
 	}
 
 	@Override

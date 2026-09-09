@@ -15,6 +15,7 @@
 	--aonButtonColor: var(--aonPurple);
 
 	--aonForegroundColor:var(--aonOffWhite);
+	--aonForegroundColor2:var(--aonMidGray);
 	--aonTopMenuAvailable: var(--aonOffWhite);
 
 	--aonBackgroundColor: var(--aonBlack);
@@ -22,6 +23,8 @@
 	--aonHeaderBackgroundColor: var(--aonBlack);
 	
 	--aonBackgroundColor2:var(--aonBodyBackgroundColor);
+
+	--aonCardColor: var(--aonBackgroundColor);
 
 	--aonRadius: 1rem; /*16px*/
 	--aonShadow: 0 20px 60px -20px;

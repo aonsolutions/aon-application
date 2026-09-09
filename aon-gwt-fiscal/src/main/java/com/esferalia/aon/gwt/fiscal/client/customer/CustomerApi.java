@@ -3,15 +3,14 @@ package com.esferalia.aon.gwt.fiscal.client.customer;
 import java.util.HashMap;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AonHttpCallback;
 import com.esferalia.aon.gwt.common.client.json.ActivitySummaryJSON;
 import com.esferalia.aon.gwt.common.client.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.activity.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.model.customer.CustomerSyncLog;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.UrlBuilder;
@@ -42,36 +41,29 @@ public class CustomerApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		        	if (response.getStatusCode() == 200) {
-		            	String responseBody = response.getText();
-		                JSONValue json = JSONParser.parseStrict(responseBody);
-		            	
-		                if(null == json.isObject().get("customer")) {
-		                	callback.onSuccess(null);
-		                } else {
-			                
-			            	String customer = json.isObject().get("customer").isString().stringValue();
-			            	String schema = json.isObject().get("schema").isString().stringValue();
-			            	String domainName = json.isObject().get("domainName").isString().stringValue();
-			            	String domainId = json.isObject().get("domainId").isString().stringValue();
-		        			
-		        			String result = "Customer: " + customer + ", Schema: " + schema + ", DomainName: " + domainName + ", DomainId: " + domainId;
-		        			callback.onSuccess(result);
-		                }
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		    
-		} catch (Exception exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<String>(callback) {
+	            @Override
+	            protected String parse(Response response) {
+	            	String responseBody = response.getText();
+	                JSONValue json = JSONParser.parseStrict(responseBody);
+	            	
+	                if(null == json.isObject().get("customer")) {
+	                	return null;
+	                } else {
+		                
+		            	String customer = json.isObject().get("customer").isString().stringValue();
+		            	String schema = json.isObject().get("schema").isString().stringValue();
+		            	String domainName = json.isObject().get("domainName").isString().stringValue();
+		            	String domainId = json.isObject().get("domainId").isString().stringValue();
+	        			
+	        			String result = "Customer: " + customer + ", Schema: " + schema + ", DomainName: " + domainName + ", DomainId: " + domainId;
+	        			return result;
+	                }
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void syncSupportAgentCustomer(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -86,21 +78,12 @@ public class CustomerApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void getCustomerActivitySummary(String host, String endPoint, HashMap<String, String> headers, AsyncCallback<List<ActivitySummaryObject>> callback) {
@@ -117,23 +100,15 @@ public class CustomerApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String activitySumnary = response.getText();
-		            	List<ActivitySummaryObject> activitySummaryResult = ActivitySummaryJSON.parseActivitySummaryArr(JSONParser.parseStrict(activitySumnary).isArray());
-		            	callback.onSuccess(activitySummaryResult);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<List<ActivitySummaryObject>>(callback) {
+	            @Override
+	            protected List<ActivitySummaryObject> parse(Response response) {
+	            	return ActivitySummaryJSON.parseActivitySummaryArr(JSONParser.parseStrict(response.getText()).isArray());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void getCustomerActivitySummary(String host, String endPoint, HashMap<String, String> headers, JSONObject body, AsyncCallback<List<ActivitySummaryObject>> callback) {
@@ -150,23 +125,16 @@ public class CustomerApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	String activitySumnary = response.getText();
-		            	List<ActivitySummaryObject> activitySummaryResult = ActivitySummaryJSON.parseActivitySummaryArr(JSONParser.parseStrict(activitySumnary).isArray());
-		            	callback.onSuccess(activitySummaryResult);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<List<ActivitySummaryObject>>(callback) {
+	            @Override
+	            protected List<ActivitySummaryObject> parse(Response response) {
+	            	return ActivitySummaryJSON.parseActivitySummaryArr(JSONParser.parseStrict(response.getText()).isArray());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+		
 	}
 	
 	public void syncAonCustomerDomain(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
@@ -181,21 +149,12 @@ public class CustomerApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	callback.onSuccess(null);
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
+			requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+		        @Override protected Void parse(Response response) { return null; }
 		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void getAonCustomerDomain(String host, String endPoint, AsyncCallback<Domain> callback) {
@@ -210,25 +169,15 @@ public class CustomerApi {
 		requestBuilder.setHeader("session_id", sessionId);
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(null, new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		            if (response.getStatusCode() == 200) {
-		            	
-		            	String responseBody = response.getText();
-		                JSONValue json = JSONParser.parseStrict(responseBody);
-		                
-		                callback.onSuccess(DomainCompanyJSON.parseDomainJSON(json));
-		            }
-		        }
-
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		} catch (RequestException exception) {
-			callback.onFailure(exception);
-		}
+	        requestBuilder.sendRequest(null, new AonHttpCallback<Domain>(callback) {
+	            @Override
+	            protected Domain parse(Response response) {
+	            	return DomainCompanyJSON.parseDomainJSON(JSONParser.parseStrict(response.getText()));
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	public void syncCustomerDomain(String host, String endPoint, HashMap<String, String> headers, JSONObject body, AsyncCallback<CustomerSyncLog> callback) {
@@ -245,38 +194,64 @@ public class CustomerApi {
 		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
 		
 		try {
-		    // Send the request
-		    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-		        public void onResponseReceived(Request request, Response response) {
-		        	if (response.getStatusCode() == 200) {
-		            	String responseBody = response.getText();
-		                JSONObject json = JSONParser.parseStrict(responseBody).isObject();
-		                
-		                CustomerSyncLog log = new CustomerSyncLog()
-		                		.setCustomerId(cleanQuotes(json.get("customerId").toString()))
-		                		.setCustomerName(cleanQuotes(json.get("customerName").toString()))
-		                		.setCustomerDocument(cleanQuotes(json.get("customerDocument").toString()))
-		                		.setEnterpriseId(cleanQuotes(json.get("enterpriseId").toString()))
-		                		.setEnterpriseName(cleanQuotes(json.get("enterpriseName").toString()))
-		                		.setEnterpriseDocument(cleanQuotes(json.get("enterpriseDocument").toString()))
-		                		.setMessageType(cleanQuotes(json.get("messageType").toString()))
-		                		.setMessage(cleanQuotes(json.get("message").toString()))
-		                		;
-		                
-//		                Window.alert(json.get("customerId").toString() + "\n" + json.get("customerName").toString() + "\n" + json.get("customerDocument").toString() + "\n" + json.get("enterpriseId").toString() + "\n" +  json.get("enterpriseName").toString() + "\n" + json.get("enterpriseDocument").toString() + "\n" + json.get("messageType").toString() + "\n" + json.get("message").toString());
-		                
-		                callback.onSuccess(log);
-		            }
-		        }
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<CustomerSyncLog>(callback) {
+	            @Override
+	            protected CustomerSyncLog parse(Response response) {
+	            	JSONObject json = JSONParser.parseStrict(response.getText()).isObject();
+	                
+	            	return new CustomerSyncLog()
+	                		.setCustomerId(cleanQuotes(json.get("customerId").toString()))
+	                		.setCustomerName(cleanQuotes(json.get("customerName").toString()))
+	                		.setCustomerDocument(cleanQuotes(json.get("customerDocument").toString()))
+	                		.setEnterpriseId(cleanQuotes(json.get("enterpriseId").toString()))
+	                		.setEnterpriseName(cleanQuotes(json.get("enterpriseName").toString()))
+	                		.setEnterpriseDocument(cleanQuotes(json.get("enterpriseDocument").toString()))
+	                		.setMessageType(cleanQuotes(json.get("messageType").toString()))
+	                		.setMessage(cleanQuotes(json.get("message").toString()));
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+	}
+	
+	public void getSigIntegrity(String host, String endPoint, JSONObject body, AsyncCallback<List<SigIntegrityRow>> callback) {
+	    UrlBuilder urlBuilder = new UrlBuilder();
+	    urlBuilder.setProtocol(Window.Location.getProtocol());
+	    urlBuilder.setHost(host);
+	    urlBuilder.setPath(endPoint);
 
-				public void onError(Request request, Throwable exception) {
-					callback.onFailure(exception);
-		        }
-		    });
-		    
-		} catch (Exception exception) {
-			callback.onFailure(exception);
-		}
+	    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+	    requestBuilder.setHeader("session_id", sessionId);
+
+	    try {
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<List<SigIntegrityRow>>(callback) {
+	            @Override
+	            protected List<SigIntegrityRow> parse(Response response) {
+	                return SigIntegrityRow.parseArray(response.getText());
+	            }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
+	}
+	
+	public void saveCustomerDomainStatus(String host, String endPoint, JSONObject body, AsyncCallback<Void> callback) {
+	    UrlBuilder urlBuilder = new UrlBuilder();
+	    urlBuilder.setProtocol(Window.Location.getProtocol());
+	    urlBuilder.setHost(host);
+	    urlBuilder.setPath(endPoint);
+
+	    RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.PUT, urlBuilder.buildString());
+	    requestBuilder.setHeader("session_id", sessionId);
+
+	    try {
+	        requestBuilder.sendRequest(body.toString(), new AonHttpCallback<Void>(callback) {
+	            @Override protected Void parse(Response response) { return null; }
+	        });
+	    } catch (RequestException exception) {
+	        callback.onFailure(exception);
+	    }
 	}
 	
 	private String cleanQuotes(String text) {

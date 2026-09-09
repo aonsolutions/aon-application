@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/aonicon_background"/>
-    <foreground android:drawable="@mipmap/aonicon_foreground"/>
+    <foreground android:drawable="@drawable/aonicon_foreground"/>
+    <monochrome android:drawable="@drawable/aonicon_foreground"/>
 </adaptive-icon>

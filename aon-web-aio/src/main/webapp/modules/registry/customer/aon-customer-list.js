@@ -186,6 +186,7 @@ export class AonCustomerList extends AonRegistryList {
 		let timeOut = null;
 
 		let btnSearch = this.getApplication().addSearchOption(true);
+		this.btnSearch = btnSearch;
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
 			clearTimeout(timeOut);
@@ -235,7 +236,7 @@ export class AonCustomerList extends AonRegistryList {
 		searchInput.placeholder = "Buscar por nombre, documento o alias";
 		searchInput.focus();
 
-		btnSearch.buildOptionsFilter(OfficeEnums.CustomerFilter);//INPUTS
+		btnSearch.buildOptionsFilter(OfficeEnums.getCustomerFilter());//INPUTS
 		this.setSearchValues();	
     }
 

@@ -221,11 +221,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: MSG.ENVIRONMENT_CALC_VARIABLES,
 		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES),
 		        filter: () => this.getDur().isConsole()
-			},{
-		        description: MSG.WORKER_CALC_VARIABLES,
-		        title: MSG.WORKER_CALC_VARIABLES,
-		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
-		    }],
+			}],
 			filter: () => this.isDomainManagementAvailable()
 		},{
 		    title: MSG.UTILITIES,
@@ -254,6 +250,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: MSG.HOLIDAYS,
 		        action: () => this.rootPanel(new JSF.AonJsfHolidays),
 		        filter: () => this.isNotDomainManagementAvailable()
+		    },
+		    {
+		        description: MSG.WORKER_CALC_VARIABLES,
+		        title: MSG.WORKER_CALC_VARIABLES,
+		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
 		    }],
 		    filter: () => !this.isDomainManagementAvailable()
 		},{

@@ -1,9 +1,21 @@
 :root{
     --favicon: ../faviconColors.png;
 
-    --aonHeaderBackgroundColor: #0f172a;
-    --aonBackgroundColor: #f0f0f0;
-    --aonBackgroundColor2: #fafafa;
+    --aonBlack: #0A0A0A;
+	--aonMidGray:#C9C9C7;
+	--aonDrakGray:#3A3A3A;
+	--aonOffWhite:#F3F3F1;
+	--aonPurple:oklch(52% .234 277);
+
+	--aonHeaderBackgroundColor: var(--aonBlack);
+    --aonBackgroundColor: var(--aonBlack);
+    --aonBodyBackgroundColor: var(--aonDrakGray);
+    --aonHeaderBackgroundColor: var(--aonBlack);
+    --aonBackgroundColor2: var(--aonBodyBackgroundColor);
+    --aonForegroundColor: var(--aonOffWhite);
+    --aonForegroundColor2: var(--aonMidGray);
+
+  	--aonCardColor: var(--aonBackgroundColor);
 
     /* Barras del sistema. La app Android las inyecta en el elemento raiz como
        --sat/--sar/--sab/--sal (ver MainActivity.publishInsets); fuera de la app
@@ -34,8 +46,8 @@
 }
 
 .rootPanel {
-  z-index: 3;   
-  background-color: #fafafa;
+    z-index: 3;   
+    background-color: var(--aonBackgroundColor2);
 }
 
 
@@ -234,13 +246,12 @@
     padding: 15px;
 }
 
-#aonSideNavMobileTitletimecontrol {
+#aonSideNavMobileTitletimecontrol{
     width: auto;
 }
-
 
 .aonWidgetNominaMobile,
 .aonWidgetSolicitudesMobile {
     background-color: var(--aonBackgroundColor);
-    color: var(--aonTextColor);
+    color: var(--aonForegroundColor);
 }

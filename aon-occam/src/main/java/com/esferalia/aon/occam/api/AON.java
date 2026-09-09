@@ -1946,6 +1946,12 @@ public class AON {
 		}
 	}
 	
+	public static Map<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String login, ArrayList<Integer> customerIds) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getDomainSigAddInfo(ctx, customerIds);
+		}
+	}
+	
 	public static void insertRegistryAddInfo(String domainName, Integer domainId, String login, RegistryAddInfo raddinfo) {
 		CloseableAONContext ctx = null;
 		try {

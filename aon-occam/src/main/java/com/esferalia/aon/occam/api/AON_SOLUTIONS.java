@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -506,6 +507,15 @@ public class AON_SOLUTIONS {
 			return null;
 		}
 		return null;
+	}
+	
+	/** Todos los dominios de un schema en una sola conexion. */
+	public static List<Domain> getDomainsBySchema(String schema, Collection<Integer> domainIds) {
+	    try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+	        return getCommon().getDomainsByIds(ctx, domainIds);
+	    } catch (Exception e) {
+	        return new ArrayList<Domain>();
+	    }
 	}
 	
 	public static Domain getDomainByAonCustomer(Integer aonCustomer) { 

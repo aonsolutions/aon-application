@@ -513,6 +513,7 @@ public interface CommonService extends RemoteService {
 	List<DomainCompany> getAviableSyncDomains(CustomersDomainSyncParams paramsDomains) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig) throws AonCoreException;
 	List<DomainSigAddInfo> getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId) throws AonCoreException;
+	HashMap<Integer, List<DomainSigAddInfo>> getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds) throws AonCoreException;
 	
 	LinkedList<Fee> getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry) throws AonCoreException;
 	
@@ -600,7 +601,10 @@ public interface CommonService extends RemoteService {
 	// *********************** [DOMAIN STATUS]
 	Domain saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate) throws AonCoreException;
 		
-	
+	// *********************** [SCOPES]
 	void reassignScope(String domainName, Integer domainId, String user, int originScope, int finalScope, boolean deleteOrigin) throws AonCoreException;
 	ArrayList<Scope> getUsedScopesInDomain(String domainName, int domain, String user) throws AonCoreException;
+	
+	// *********************** [CUSTOMER SIG ALIGN DATE]
+	void alignSigCustomerDate(String domainName, Integer domainId, String user, Integer customerId, Date expirationDate) throws AonCoreException;
 }
