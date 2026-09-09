@@ -37,6 +37,7 @@ jobs:
         run: |
           cd  aon-web-aio
           npm install
+          pip install fonttools brotli
           npm run build:icons
           npm run build:icon-gallery
       - name: Upload docs directory
