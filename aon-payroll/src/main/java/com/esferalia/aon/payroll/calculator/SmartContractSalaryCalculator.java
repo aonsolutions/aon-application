@@ -528,9 +528,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 
 			if ( AonStringUtils.equals(ContextVariable.NOTICE, payment.getName())) {
+				
+				end = getStart(ContextVariable.NO_HOLIDAYS).map(d -> AonDateUtils.add(d, Calendar.DAY_OF_MONTH, -1)).orElse(end);
+				
 				Date noticeStart = addYears(getMonthFirstDay(end), -1);
 				Date noticeEnd = addDays(getMonthFirstDay(end), -1);
 				noticeStart = noticeStart.before(start) ? start : noticeStart;
+				
 				noticeEnd = noticeStart.after(noticeEnd) ? end : noticeEnd;
 				
 				List<ITimedResult<Double>>  quotes = new ArrayList<>();
@@ -542,6 +546,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				}
 				return quotes;
 			}
+			
+			if( type == PaymentType.CRA_0006 ) {
+				Date holidaysStart = getStart(ContextVariable.NO_HOLIDAYS).filter( d -> d.after(start)).orElse(start);
+				return delegate.quote(payment, holidaysStart, end, amount);
+			}
+			
+			
 
 			if ( isFixBaseCgcMinPayment(payment) ){
 				if ( delegate instanceof GeneralQuote generalQuote ) {
@@ -641,6 +652,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			final Date ctxEndDate = SmartContractSalaryCalculator.this.ctx.getEndDate();
 			this.generalQuote = new GeneralQuote(expressionContext, ctxStartDate, ctxEndDate);
 			return this.generalQuote;
+		}
+		
+		protected Optional<Date> getStart(ContextVariable variable) {
+			return expressionContext.getPeriods(variable).stream()
+			.map(Period::getStart).sorted()
+			.findFirst();
 		}
 
 	}
