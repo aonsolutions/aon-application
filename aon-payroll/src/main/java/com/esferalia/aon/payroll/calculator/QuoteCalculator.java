@@ -1099,16 +1099,23 @@ public abstract class QuoteCalculator {
 
 					@Override
 					public QuoteCalculator visitSettle(SalaryType salaryType) {
-						Date settleEndDate = ( ctx instanceof SQLContractSettleCalculatorContext settleCtx) ? settleCtx.getSettleEnd() : endDate;
-						GeneralQuote unlimitedQuote = new UnlimitedQuote(expressionContext, startDate, settleEndDate);
 						CompositeGeneralQuote compositeGeneralQuote =  new CompositeGeneralQuote(expressionContext);
-						compositeGeneralQuote.addCalculator(unlimitedQuote);
 
-						if ( settleEndDate.before(endDate) ) {
-							Date noHolidaysStartDate = AonDateUtils.addDays(settleEndDate, 1);
-							GeneralQuote noHolidaysQuote = new GeneralQuote(expressionContext, noHolidaysStartDate, endDate);
-							compositeGeneralQuote.addCalculator(noHolidaysQuote);
-						}
+						List<Period> noHolidays = expressionContext.getPeriods(ContextVariable.NO_HOLIDAYS);
+						Collections.sort(noHolidays);
+
+						noHolidays.stream().findFirst().ifPresentOrElse(
+								(noHolidaysStart) -> {
+									
+									if ( startDate.before(noHolidaysStart.getStart()) ) {
+										Date settleEndDate = AonDateUtils.addDays(noHolidaysStart.getStart(), -1);
+										compositeGeneralQuote.addCalculator(new UnlimitedQuote(expressionContext, startDate, settleEndDate));
+									}
+									
+									compositeGeneralQuote.addCalculator(new GeneralQuote(expressionContext, noHolidaysStart.getStart(), endDate));
+								}, 
+								() -> compositeGeneralQuote.addCalculator(new UnlimitedQuote(expressionContext, startDate, endDate))
+						);
 						
 						return compositeGeneralQuote;
 					}

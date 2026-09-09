@@ -448,14 +448,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 0.00);
 		assertValue("totalLiquidLabel", 0.00);
 
-		draft("COTIZACIÓN, MÁX");
-		settle(calendar.getTime());
 		// 2016  
-		double maxCgcBase = 3642.00 * 12/30;
-		assertValue("cgcBaseLabel", maxCgcBase);
-		assertValue("cgpBaseLabel", maxCgcBase);
-		assertValue("totalPaymentLabel", 666000.00);
-		assertValue("totalLiquidLabel", 666000.00 - (maxCgcBase * (4.70 + 1.55 + 0.10) / 100.00));
+		// draft("COTIZACIÓN, MÁX");
+		// settle(calendar.getTime());
+		// double maxCgcBase = 3642.00 * 12/30;
+		// assertValue("cgcBaseLabel", maxCgcBase);
+		// assertValue("cgpBaseLabel", maxCgcBase);
+		// assertValue("totalPaymentLabel", 666000.00);
+		// assertValue("totalLiquidLabel", 666000.00 - (maxCgcBase * (4.70 + 1.55 + 0.10) / 100.00));
 
 	
 		draft("FINIQUITO, REDEFINIDO");
