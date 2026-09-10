@@ -89,6 +89,7 @@
         .aon-group .aon-dataScroller, 
         .aon-group th, 
         .aon-group-title,
+        .aon-portlet-title,
         .aon-group .aon-editDataTable-footer,
 		div[id$="messageList"], 
 		div[id$="GraphContainer"], 
@@ -137,7 +138,10 @@
 		
 		.aon-editDataTable th .aon-input-required,
 		
-		.aon-group-title
+		.aon-group-body,
+		.aon-group-title,
+		.aon-message-big
+		
 		{
           	color: var(--aonForegroundColor) !important;
         }
@@ -194,14 +198,22 @@
 		.aon-finding-toolbar-item .material-symbols-outlined{
 			color: var(--aonForegroundColor) !important;
 		}
+/**/
+		.aon_toolbar_button.aon_icon_all_inbox,
+		.rich-modalpanel .aon-popupWindow-close,
 		.aon-editDataTable .aon-icon-reset,
 		.aon-dataTable .aon-icon-rowSelector, 
 		.aon-editDataTable .aon-table-row-link, 
+		.aon-finding-toolbar-item.aon-icon-delete,
 		.aon-finding-toolbar-item.aon-icon-excel,
+		input.aon-finding-toolbar-item.aon-icon-filter,
+		input.aon-finding-toolbar-item.aon-icon-filter-off,
 		input.aon-finding-toolbar-item.aon-icon-reset,
 		input.aon-finding-toolbar-item.aon-icon-cancel,
 		input.aon-finding-toolbar-item.aon-icon-rubber, 
-		input.aon-finding-toolbar-item.aon-icon-search{
+		input.aon-finding-toolbar-item.aon-icon-search,
+		.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon)::before, 
+		.rich-menu-list-bg .rich-menu-item:has([class*="aon-icon"])::before {
 			mask-position: center;	
 			mask-repeat: no-repeat;
 			color: var(--aonForegroundColor);		
@@ -209,6 +221,11 @@
 			background-color: var(--aonForegroundColor);
 		}
 		
+		.aon_toolbar_button.aon_icon_all_inbox:hover,
+		.aon-finding-toolbar-item.aon-icon-delete:hover,
+		.rich-modalpanel .aon-popupWindow-close:hover,
+		.aon-finding-toolbar-item.aon-icon-filter:hover,
+		.aon-finding-toolbar-item.aon-icon-filter-off:hover,
 		.aon-finding-toolbar-item.aon-icon-new:hover, 
 		.aon-finding-toolbar-item.aon-icon-csv:hover, 
 		.aon-finding-toolbar-item.aon-icon-pdf:hover, 
@@ -224,6 +241,7 @@
 		.aon-finding-toolbar-item.aon-icon-delete:hover, 
 		.aon-finding-toolbar-item.aon-icon-invoice:hover, 
 		.aon-finding-toolbar-item.aon-icon-webmail2:hover, 
+		.aon-finding-toolbar-item.aon-icon-excel:hover,
 		.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover, 
 		.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover, 
 		.aon-finding-toolbar-item.rich-fileupload-ico-add:hover, 
@@ -266,6 +284,10 @@
 		input.aon-finding-toolbar-item.aon-icon-cancel {
 			mask-image: url(aonResource/9.23-SNAPSHOT/icons/arrow-left.svg);
 		}
+		
+		.rich-modalpanel .aon-popupWindow-close {
+			mask-image: url(aonResource/9.23-SNAPSHOT/images/aon-cancel.svg);
+		}
 	
 		.aon-dataTable .aon-icon-rowSelector, 
 		.aon-editDataTable .aon-table-row-link {
@@ -274,6 +296,22 @@
 		
 		.aon-editDataTable .aon-icon-reset {
 			mask-image: url(aonResource/9.23-SNAPSHOT/icons/plus.svg);
+		}
+
+		.aon-finding-toolbar-item.aon-icon-filter {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/filter.svg);
+		}
+
+		.aon-finding-toolbar-item.aon-icon-filter-off {
+			mask-image: url(aonResource/9.23-SNAPSHOT/icons/filter-off.svg);
+		}
+
+		.aon_toolbar_button.aon_icon_all_inbox {
+			mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAtOTYwIDk2MCA5NjAiIHdpZHRoPSIyNHB4IiBmaWxsPSIjMDAwIj48cGF0aCBkPSJNMzI0LjYyLTMyMGg0MzAuNzZxOS4yNCAwIDE2LjkzLTcuNjkgNy42OS03LjY5IDcuNjktMTYuOTN2LTExMC43Nkg2NjEuMDhxLTEzLjMxIDM3Ljc2LTQ2Ljg1IDU4Ljg4LTMzLjU0IDIxLjEyLTc0LjIzIDIxLjEyLTQwLjQ2IDAtNzQtMjEuMTJ0LTQ3LjA4LTU4Ljg4SDMwMHYxMTAuNzZxMCA5LjI0IDcuNjkgMTYuOTMgNy42OSA3LjY5IDE2LjkzIDcuNjlaTTU0MC00MTUuMzhxMzYuMzEgMCA2My4xNS0yMi43NFE2MzAtNDYwLjg1IDYzMC00OTUuMzhoMTUwdi0yODBxMC05LjI0LTcuNjktMTYuOTMtNy42OS03LjY5LTE2LjkzLTcuNjlIMzI0LjYycS05LjI0IDAtMTYuOTMgNy42OS03LjY5IDcuNjktNy42OSAxNi45M3YyODBoMTUwcTAgMzQuNTMgMjYuOTYgNTcuMjYgMjYuOTYgMjIuNzQgNjMuMDQgMjIuNzRaTTMyNC42Mi0yODBxLTI3LjYyIDAtNDYuMTItMTguNVEyNjAtMzE3IDI2MC0zNDQuNjJ2LTQzMC43NnEwLTI3LjYyIDE4LjUtNDYuMTJRMjk3LTg0MCAzMjQuNjItODQwaDQzMC43NnEyNy42MiAwIDQ2LjEyIDE4LjVRODIwLTgwMyA4MjAtNzc1LjM4djQzMC43NnEwIDI3LjYyLTE4LjUgNDYuMTJRNzgzLTI4MCA3NTUuMzgtMjgwSDMyNC42MlptLTEyMCAxMjBxLTI3LjYyIDAtNDYuMTItMTguNVExNDAtMTk3IDE0MC0yMjQuNjF2LTQ3MC43N2g0MHY0NzAuNzdxMCA5LjIzIDcuNjkgMTYuOTIgNy42OSA3LjY5IDE2LjkzIDcuNjloNDcwLjc2djQwSDIwNC42MlptMTIwLTE2MEgzMDAgNzgwIDMyNC42MloiLz48L3N2Zz4=');
+		}		
+
+		.aon-finding-toolbar-item.aon-icon-delete {
+		  mask-image: url(aonResource/9.23-SNAPSHOT/icons/trash-2.svg);
 		}
 
 		.aon-search-lookup-button, 
@@ -285,6 +323,44 @@
 		a, a:hover, a:visited {
 			color: var(--aonHoverColor) !important;
 		}
+		
+		/* Modals */
+		.aon-popupWindow-title,
+		.rich-modalpanel .rich-mpnl-body,
+		.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon),
+		.rich-menu-list-bg .rich-menu-item:has(*[class*='aon-icon']),
+		.rich-menu-list-bg .rich-menu-item:has([class*="aon-icon"]) a, 
+		.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon) a{
+			color: var(--aonForegroundColor) !important;
+		}
+
+		.rich-modalpanel .rich-mpnl-content {
+			padding: 2rem !important;
+			border-color: transparent !important;
+			box-shadow: var(--aonShadowCard) !important;
+			border-radius: var(--aonRadius) !important;
+			background-color: var(--aonBodyBackgroundColor) !important;
+		}
+
+		.rich-menu-list-border,
+		.aon-popupWindow-title,
+		.aon-menuItem-styleClass,
+		.rich-modalpanel .rich-mp-content-table{
+			border-color: transparent !important;
+			background-color: var(--aonBodyBackgroundColor) !important;
+		}
+		
+		.rich-menu-list-bg .rich-menu-item:has(.rich-menu-item-icon):hover::before, 
+		.rich-menu-list-bg .rich-menu-item:has([class*="aon-icon"]):hover::before, 
+		.aon-dropDownMenu a.aon-finding-toolbar-item[class*="aon-icon-"]:hover::before {
+  			background-color: initial ;
+  			color: var(--aonHoverColor) ;
+		}
+
+		.aon-icon-big-info {
+		  	background-image: url('data:image/svg+xml;utf-8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 16V12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8H12.01" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+		}
+		
 		
 	</style>
 		

@@ -510,6 +510,7 @@ public interface CommonServiceAsync {
 	void getAviableSyncDomains(CustomersDomainSyncParams paramsDomains, AsyncCallback<List<DomainCompany>> asyncCallback) throws AonCoreException;
 	void syncCustomer(String domainName, Integer domainId, String user, Integer customerId, DomainCompany domainCompany, boolean isSig, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getDomainSigAddInfo(String domainName, Integer domainId, String user, Integer customerId, AsyncCallback<List<DomainSigAddInfo>> asyncCallback) throws AonCoreException;
+	void getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds, AsyncCallback<HashMap<Integer, List<DomainSigAddInfo>>> callback) throws AonCoreException;
 	
 	void getCustomerFeesRelatedRegistry(String domainName, int domain, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> asyncCallback) throws AonCoreException;
 	
@@ -598,5 +599,8 @@ public interface CommonServiceAsync {
 	
 	// *********************** [DOMAIN STATUS]
 	void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
+	
+	// *********************** [CUSTOMER SIG ALIGN DATE]
+	void alignSigCustomerDate(String domainName, Integer domainId, String user, Integer customerId, Date expirationDate, AsyncCallback<Void> callback);
 	
 }

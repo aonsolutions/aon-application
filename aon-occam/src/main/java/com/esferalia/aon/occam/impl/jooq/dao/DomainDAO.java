@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -149,6 +150,19 @@ public class DomainDAO {
 	public static LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
 			.fetchInto(DOMAIN).stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static List<Domain> getDomainsByIds(AONContext ctx, Collection<Integer> ids) {
+	    if (null == ids || ids.isEmpty())
+	        return new LinkedList<Domain>();
+
+	    return ctx.getDslContext()
+	        .select()
+	        .from(DOMAIN)
+	        .leftOuterJoin(PARENT).on(DOMAIN.PARENT.eq(PARENT.ID))
+	        .leftOuterJoin(PAYER).on(DOMAIN.ID.eq(PAYER.DOMAIN).and(PAYER.NAME.eq(AON_DOMAIN_PAYER.getValue())))
+	        .where(DOMAIN.ID.in(ids))
+	        .fetch().stream().map(new DomainFiller()).collect(Collectors.toList());
 	}
 	
 	public static LinkedList<Domain> getActiveChildDomains(AONContext ctx) {

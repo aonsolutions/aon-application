@@ -576,6 +576,61 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testMaternityIT1Day() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"03\"");
+						put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "/*read-only*/DIAS_PATERNIDAD * 0.00/**/", "DIAS_COTIZADOS * (isdef COEFICIENTE_PATERNIDAD ? COEFICIENTE_PATERNIDAD : 1.00) * BASE_REGULADORA");
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startITDate = startDate;
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
+				startITDate, 100.00);
+
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getName() + " = " + p.getAmount() +  ", " + p.getQuote() + ", " + p.getDescription()));
+
+		assertEquals(1750.00, salary.getTotalPayment());
+		assertEquals(1750.00, salary.getCommonBase());
+
+	}
+
+	@Test
 	public void testPregnancyRiskIT() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -8583,7 +8638,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 	// ------------------------------------------------------------------------
 	
 
-	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
+	public static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
 		PaymentConceptRecord lackIT = addConcept(aonContext, LACK_PERIOD.getName(),PaymentType.CRA_0000);
 		PaymentConceptRecord directIT = addConcept(aonContext, DIRECT_PAY.getName(),PaymentType.CRA_0000);

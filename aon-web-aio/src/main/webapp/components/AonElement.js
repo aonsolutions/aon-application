@@ -102,6 +102,17 @@ export class AonElement extends HTMLElement{
     const sab = getComputedStyle(document.documentElement).getPropertyValue("--sab");
     return sab.split(" ").join("") !== '0px';
   }
+
+  /**
+   * Los retoques en pixeles que cuelgan de isSab() estan medidos para la barra
+   * de inicio de iOS (34px fijos). En la app de Android --sab tambien trae
+   * valor (de 0 a 48px segun el movil y el tipo de navegacion), pero ese hueco
+   * lo reparte ya el tema con las variables --aonMobile*, asi que alli no deben
+   * aplicarse o se suman dos veces.
+   */
+  isIosSab() {
+    return this.isSab() && !this.isAndroidApp();
+  }
   
   getRootPanel() {
     return this.getElement(this.ROOT_PANEL);

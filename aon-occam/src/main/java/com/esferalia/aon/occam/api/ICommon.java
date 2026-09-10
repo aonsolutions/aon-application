@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -145,6 +146,7 @@ public interface ICommon {
 	public Domain getCompanyDomain(AONContext ctx, String document);
 	public Domain getDomain(AONContext ctx, DomainFilter filter);
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter);
+	public List<Domain> getDomainsByIds(CloseableAONContext ctx, Collection<Integer> domainIds);
 	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages);

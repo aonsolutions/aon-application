@@ -89,7 +89,7 @@ public enum ContextVariable implements IResourceable {
 	DROP_NOT_JUSTIFIED("AUSENCIA_NO_JUSTIFICADA", VariableType.DOUBLE, false),
 
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
-	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
+	NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
 
 	COMPENSATION_CAUSE("CAUSA_INDEMNIZACION", VariableType.INTEGER, false),
 	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
@@ -489,6 +489,7 @@ public enum ContextVariable implements IResourceable {
 	
 	public static final String PPE = "PPE";
 	public static final String GEROA = "GEROA";
+	public static final String NOTICE = "PREAVISO";
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
 	public static final String BASE_SALARY = "SALARIO_BASE";
