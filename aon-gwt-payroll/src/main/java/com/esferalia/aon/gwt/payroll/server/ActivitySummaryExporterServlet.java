@@ -70,6 +70,9 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		String _itMaternity = request.getParameter("itMaternity");
 		String _itOther = request.getParameter("itOther");
 		
+		String _isOffice = request.getParameter("isOffice");
+		boolean isOffice = Boolean.parseBoolean(_isOffice);
+		
 		try (Connection connection = AonServletUtils.getConnection(_domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(_domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(_domainName); 
@@ -89,6 +92,7 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 					.setItOD(Boolean.parseBoolean(_itOccupationalDisease))
 					.setItMP(Boolean.parseBoolean(_itMaternity))
 					.setItOT(Boolean.parseBoolean(_itOther))
+					.setOffice(isOffice)
 					;
 			
 			List<ActivitySummaryObject> list = JooqActivitySummary.getActivitySummary(connection, domainId, parentDomainId, userId, params);
