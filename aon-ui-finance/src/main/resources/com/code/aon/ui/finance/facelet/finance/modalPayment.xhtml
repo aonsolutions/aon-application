@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showFinancePaymentWindow">
 		<aon:if test="#{finance.showFinancePaymentWindow}">
-			<rich:modalPanel id="financePaymentModalPanel" minHeight="240"
+			<rich:modalPanel id="financePaymentModalPanel" minHeight="280"
 				minWidth="580" rendered="#{finance.showFinancePaymentWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -66,9 +66,7 @@
 											value="#{finance.paymentDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"
-											jointPoint="bottom-right"
-											direction="top-right"
-											verticalOffset="-110" />
+										/>
 
 										<aon:outputLabel for="Finance_paymentAmount"
 											value="#{bundle.aon_amount}" />

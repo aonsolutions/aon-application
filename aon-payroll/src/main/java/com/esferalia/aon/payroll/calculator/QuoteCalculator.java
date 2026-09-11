@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -536,6 +537,10 @@ public abstract class QuoteCalculator {
 				AonStringUtils.equals(PREST_IT, name))
 				return quotesImpl;
 
+			if (quote == 0 &&
+					AonStringUtils.equals(MATERNITY.getName(), name))
+					return quotesImpl;
+
 			if (payment.getType() == PaymentType.CRA_0057 
 					|| payment.getType() == PaymentType.CRA_0058
 					|| AonStringUtils.equals(PPE, name)
@@ -908,6 +913,20 @@ public abstract class QuoteCalculator {
 
 		}
 
+		public CompositeGeneralQuote(ExpressionContext context) {
+			this.calculators = new LinkedList<GeneralQuote>();
+		}
+
+		public CompositeGeneralQuote(ExpressionContext context,
+				GeneralQuote... calculators) {
+			this.calculators = (Arrays.asList(calculators));
+		}
+		
+		protected CompositeGeneralQuote addCalculator(GeneralQuote calculator) {
+			this.calculators.add(calculator);
+			return this;
+		}
+
 		@Override
 		public Double getCgcBase() throws AonException {
 			double cgcBase = 0.00;
@@ -1080,8 +1099,25 @@ public abstract class QuoteCalculator {
 
 					@Override
 					public QuoteCalculator visitSettle(SalaryType salaryType) {
-						return 	new GeneralQuote(expressionContext, startDate,
-								endDate);
+						CompositeGeneralQuote compositeGeneralQuote =  new CompositeGeneralQuote(expressionContext);
+
+						List<Period> noHolidays = expressionContext.getPeriods(ContextVariable.NO_HOLIDAYS);
+						Collections.sort(noHolidays);
+
+						noHolidays.stream().findFirst().ifPresentOrElse(
+								(noHolidaysStart) -> {
+									
+									if ( startDate.before(noHolidaysStart.getStart()) ) {
+										Date settleEndDate = AonDateUtils.addDays(noHolidaysStart.getStart(), -1);
+										compositeGeneralQuote.addCalculator(new UnlimitedQuote(expressionContext, startDate, settleEndDate));
+									}
+									
+									compositeGeneralQuote.addCalculator(new GeneralQuote(expressionContext, noHolidaysStart.getStart(), endDate));
+								}, 
+								() -> compositeGeneralQuote.addCalculator(new UnlimitedQuote(expressionContext, startDate, endDate))
+						);
+						
+						return compositeGeneralQuote;
 					}
 
 					@Override

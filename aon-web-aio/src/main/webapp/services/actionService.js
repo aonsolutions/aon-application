@@ -60,8 +60,50 @@ export const openFileApp = (file) => {
     }
 }
 
+const VAR_COLOR = /^var\(\s*(--[\w-]+)\s*(?:,\s*(.+))?\)$/;
+const HEX_COLOR = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+
+const toHex = (value) => Number(value).toString(16).padStart(2, '0');
+
+// Color.parseColor does not understand the #rgb shorthand
+const expandHex = (hex) => hex.length === 4
+    ? '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3]
+    : hex;
+
+/**
+ * The native apps parse the status bar color with Color.parseColor, which only
+ * understands literal colors. A CSS variable such as var(--aonHeaderBackgroundColor)
+ * has to be resolved to a #rrggbb value before sending it to them.
+ */
+export const resolveColor = (color, fallback) => {
+    fallback = fallback || '#000000';
+    let value = (color || '').toString().trim();
+    if(HEX_COLOR.test(value)) return expandHex(value);
+
+    let variable = VAR_COLOR.exec(value);
+    for(let i = 0; variable && i < 10; i++) {
+        let computed = getComputedStyle(document.documentElement).getPropertyValue(variable[1]).trim();
+        value = computed || (variable[2] || '').trim();
+        if(!value) return fallback;
+        if(HEX_COLOR.test(value)) return expandHex(value);
+        variable = VAR_COLOR.exec(value);
+    }
+    if(variable) return fallback;
+
+    // color keyword or rgb()/hsl() notation: let the browser normalize it
+    if(!window.CSS || !window.CSS.supports('color', value)) return fallback;
+    let probe = document.createElement('span');
+    probe.style.display = 'none';
+    probe.style.color = value;
+    document.body.appendChild(probe);
+    let rgb = getComputedStyle(probe).color.match(/\d+(?:\.\d+)?/g);
+    probe.remove();
+
+    return rgb && rgb.length >= 3 ? '#' + toHex(rgb[0]) + toHex(rgb[1]) + toHex(rgb[2]) : fallback;
+}
+
 export const changeStatusBarColor = (ionicData, color, dark) => {
-    let data = {action: 'changeStatusBarColor', color, dark};
+    let data = {action: 'changeStatusBarColor', color: resolveColor(color), dark};
     if(UA.isAndroidApp()) {
         window.Android.changeStatusBarColor(JSON.stringify(data));
     } else if (UA.isIosApp()) {
