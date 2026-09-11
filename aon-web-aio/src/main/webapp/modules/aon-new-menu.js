@@ -45,6 +45,7 @@ import { AonParent } from "./aon-parent.js";
 
 import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
+import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
@@ -1508,9 +1509,6 @@ export class AonNewMenu extends AonElement {
 
 	getSupersetDashboard() {
 		return new Promise((resolve, reject) => {
-			reject("Superset dashboard disabled");
-		});
-/*		return new Promise((resolve, reject) => {
 			getApplicationParameters({ params: ['SUPERSET_DASHBOARD'] })
 				.then(appParams => {
 					if (appParams?.length > 0) {
@@ -1528,7 +1526,7 @@ export class AonNewMenu extends AonElement {
 				});
 			;
 		});
-*/	}
+	}
 
 	getApplicationsOptions() {
 
