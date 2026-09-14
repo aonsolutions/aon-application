@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
@@ -83,7 +84,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -157,11 +157,11 @@ public class CustomerFee  implements EntryPoint {
 		, CUS("Cliente"								,"12rem"  			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STS("Estado"								,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, LIN("#"									,"2rem" 			,"max-width: 2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"12rem" 			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, QUA("Cant."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"-moz-available" 	,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, QUA("Cant."								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IMP("Importe"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -192,11 +192,11 @@ public class CustomerFee  implements EntryPoint {
 	private static enum CUSTOMER_COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"max-width: 2rem; ") 
 		, LIN("#"									,"2rem" 			,"max-width: 2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"12rem" 			,"max-width: 12rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, QUA("Cant."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"-moz-available" 	,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, QUA("Cant."								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"max-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IMP("Importe"								,"4rem" 			,"max-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"max-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"max-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -618,311 +618,241 @@ public class CustomerFee  implements EntryPoint {
 	// ------- PRODUCT ---------
 
 	private void createConceptSuggestBox() {
-		conceptSuggestBox = new AonCustomSuggestBox("Concepto");
+		conceptSuggestBox = new AonCustomSuggestBox("Concepto", new AonCustomSuggestOracle());
 		conceptSuggestBox.setAutoSelectEnabled(false);
-		conceptSuggestBox.setPlaceHolder("Producto: busque por c\u00f3digo o descripci\u00f3n");
-		
-		conceptSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		conceptSuggestBox.setLimit(50);
+		conceptSuggestBox.setPlaceHolder("Producto: busque por c\u00f3digo o descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		conceptSuggestBox.addSelectionHandler(e -> {
 			conceptSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		conceptSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String productQuery = conceptSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				conceptSuggestBox.setValue("");
-				productQuery = null;
-				getProductsSuggestion(productQuery);
-			} else if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
-				getProductsSuggestion(productQuery);
-		});
+
+		conceptSuggestBox.addRemoteSuggestionsHandler(3, this::getProductsSuggestion);
 	}
 	
 	private void getProductsSuggestion(String productQuery) {
 		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productQuery, new AsyncCallback<Map<String, OldItem>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
 				productSuggestions = productSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(productSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
+
+				conceptSuggestBox.setSuggestions(productSuggestions.keySet());
 				conceptSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	private void createProductCategorySuggestBox() {
-		productCategorySuggestBox = new AonCustomSuggestBox("Categoria");
+		productCategorySuggestBox = new AonCustomSuggestBox("Categoria", new AonCustomSuggestOracle());
 		productCategorySuggestBox.setAutoSelectEnabled(false);
-		productCategorySuggestBox.setPlaceHolder("Categoria: busque por descripci\u00f3n");
-		
-		productCategorySuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		productCategorySuggestBox.setLimit(50);
+		productCategorySuggestBox.setPlaceHolder("Categoria: busque por descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		productCategorySuggestBox.addSelectionHandler(e -> {
 			productCategorySuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		productCategorySuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String productCategoryQuery = productCategorySuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				productCategorySuggestBox.setValue("");
-				productCategoryQuery = null;
-				getProductCategoriesSuggestion(productCategoryQuery);
-			} else if(AonStringUtils.isNotBlank(productCategoryQuery) && productCategoryQuery.length() > 3)
-				getProductCategoriesSuggestion(productCategoryQuery);
-		});
+
+		productCategorySuggestBox.addRemoteSuggestionsHandler(3, this::getProductCategoriesSuggestion);
 	}
-	
+
 	private void getProductCategoriesSuggestion(String productCategoryQuery) {
 		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, Integer> productCategorySuggestionsDB) {
 				productCategorySuggestions = productCategorySuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productCategorySuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(productCategorySuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(productCategorySuggestions.keySet());
+
+				productCategorySuggestBox.setSuggestions(productCategorySuggestions.keySet());
 				productCategorySuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	private void createProductTagSuggestBox() {
-		productTagSuggestBox = new AonCustomSuggestBox("Etiqueta");
+		productTagSuggestBox = new AonCustomSuggestBox("Etiqueta", new AonCustomSuggestOracle());
 		productTagSuggestBox.setAutoSelectEnabled(false);
-		productTagSuggestBox.setPlaceHolder("Etiqueta: busque por descripci\u00f3n");
-		
-		productTagSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		productTagSuggestBox.setLimit(50);
+		productTagSuggestBox.setPlaceHolder("Etiqueta: busque por descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		productTagSuggestBox.addSelectionHandler(e -> {
 			productTagSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		productTagSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String productTagQuery = productTagSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				productTagSuggestBox.setValue("");
-				productTagQuery = null;
-				getProductTagsSuggestion(productTagQuery);
-			} else if(AonStringUtils.isNotBlank(productTagQuery) && productTagQuery.length() > 3)
-				getProductTagsSuggestion(productTagQuery);
-		});
+
+		productTagSuggestBox.addRemoteSuggestionsHandler(3, this::getProductTagsSuggestion);
 	}
-	
+
 	private void getProductTagsSuggestion(String productTagQuery) {
 		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productTagQuery, new AsyncCallback<Map<String, Integer>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, Integer> productTagSuggestionsDB) {
 				productTagSuggestions = productTagSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productTagSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(productTagSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(productTagSuggestions.keySet());
+
+				productTagSuggestBox.setSuggestions(productTagSuggestions.keySet());
 				productTagSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	// ------- SELLER ---------
 	
 	private void createSellerSuggestBox() {
-		sellerSuggestBox = new AonCustomSuggestBox("Comercial");
+		sellerSuggestBox = new AonCustomSuggestBox("Comercial", new AonCustomSuggestOracle());
 		sellerSuggestBox.setAutoSelectEnabled(false);
-		sellerSuggestBox.setPlaceHolder("Comercial: busque descripci\u00f3n");
-		
-		sellerSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		sellerSuggestBox.setLimit(50);
+		sellerSuggestBox.setPlaceHolder("Comercial: busque descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		sellerSuggestBox.addSelectionHandler(e -> {
 			sellerSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		sellerSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String sellerQuery = sellerSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				sellerSuggestBox.setValue("");
-				sellerQuery = null;
-				getSellerSuggestion(sellerQuery);
-			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
-				getSellerSuggestion(sellerQuery);
-		});
+
+		sellerSuggestBox.addRemoteSuggestionsHandler(3, this::getSellerSuggestion);
 	}
-	
+
 	private void getSellerSuggestion(String sellerQuery) {
 		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
 				sellerSuggestions = sellerSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(sellerSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
+
+				sellerSuggestBox.setSuggestions(sellerSuggestions.keySet());
 				sellerSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	// ------- WORKPLACE ---------
 	
 	private void createWorkplaceSuggestBox() {
-		workplaceSuggestBox = new AonCustomSuggestBox("C. Trabajo");
+		workplaceSuggestBox = new AonCustomSuggestBox("C. Trabajo", new AonCustomSuggestOracle());
 		workplaceSuggestBox.setAutoSelectEnabled(false);
-		workplaceSuggestBox.setPlaceHolder("C. Trabajo: busque descripci\u00f3n");
-		
-		workplaceSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		workplaceSuggestBox.setLimit(50);
+		workplaceSuggestBox.setPlaceHolder("C. Trabajo: busque descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		workplaceSuggestBox.addSelectionHandler(e -> {
 			workplaceSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		workplaceSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String pworkplaceQuery = workplaceSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				workplaceSuggestBox.setValue("");
-				pworkplaceQuery = null;
-				getWorkplaceSuggestion(pworkplaceQuery);
-			} else if(AonStringUtils.isNotBlank(pworkplaceQuery) && pworkplaceQuery.length() > 3)
-				getWorkplaceSuggestion(pworkplaceQuery);
-		});
+
+		workplaceSuggestBox.addRemoteSuggestionsHandler(3, this::getWorkplaceSuggestion);
 	}
-	
+
 	private void getWorkplaceSuggestion(String workplaceQuery) {
 		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
 				workplaceSuggestions = workplaceSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(workplaceSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
+
+				workplaceSuggestBox.setSuggestions(workplaceSuggestions.keySet());
 				workplaceSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	// ------- INVOICING GROUP ---------
 	
 	private void createInvoicingGroupSuggestBox() {
-		invoicingGroupSuggestBox = new AonCustomSuggestBox("G. Facturaci\u00f3n");
+		invoicingGroupSuggestBox = new AonCustomSuggestBox("G. Facturaci\u00f3n", new AonCustomSuggestOracle());
 		invoicingGroupSuggestBox.setAutoSelectEnabled(false);
-		invoicingGroupSuggestBox.setPlaceHolder("G. Facturaci\u00f3n: busque descripci\u00f3n");
-		
-		invoicingGroupSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		invoicingGroupSuggestBox.setLimit(50);
+		invoicingGroupSuggestBox.setPlaceHolder("G. Facturaci\u00f3n: busque descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		invoicingGroupSuggestBox.addSelectionHandler(e -> {
 			invoicingGroupSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		invoicingGroupSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String invoicingGroupQuery = invoicingGroupSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				invoicingGroupSuggestBox.setValue("");
-				invoicingGroupQuery = null;
-				getInvoicingGroupQuerySuggestion(invoicingGroupQuery);
-			} else if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 3)
-				getInvoicingGroupQuerySuggestion(invoicingGroupQuery);
-		});
+
+		invoicingGroupSuggestBox.addRemoteSuggestionsHandler(3, this::getInvoicingGroupQuerySuggestion);
 	}
-	
+
 	private void getInvoicingGroupQuerySuggestion(String invoicingGroupQuery) {
 		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
 				invoicingGroupSuggestions = invoicingGroupSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) invoicingGroupSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(invoicingGroupSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(invoicingGroupSuggestions.keySet());
+
+				invoicingGroupSuggestBox.setSuggestions(invoicingGroupSuggestions.keySet());
 				invoicingGroupSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
 	// ------- PROJECT ---------
 	
 	private void createProjectSuggestBox() {
-		projectSuggestBox = new AonCustomSuggestBox("Proyecto");
+		projectSuggestBox = new AonCustomSuggestBox("Proyecto", new AonCustomSuggestOracle());
 		projectSuggestBox.setAutoSelectEnabled(false);
-		projectSuggestBox.setPlaceHolder("Proyecto: busque descripci\u00f3n");
-		
-		projectSuggestBox.getSuggestBox().addSelectionHandler(e -> {
+		projectSuggestBox.setLimit(50);
+		projectSuggestBox.setPlaceHolder("Proyecto: busque descripci\u00f3n (Ctrl + espacio para sugerencias)");
+
+		projectSuggestBox.addSelectionHandler(e -> {
 			projectSuggestBox.hideSuggestionList();
 			onSearch();
 		});
-		
-		projectSuggestBox.getSuggestBox().addKeyUpHandler(e -> {
-			String projectQuery = projectSuggestBox.getValue();
-			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				projectSuggestBox.setValue("");
-				projectQuery = null;
-				getProjectQuerySuggestion(projectQuery);
-			} else if(AonStringUtils.isNotBlank(projectQuery) && projectQuery.length() > 3)
-				getProjectQuerySuggestion(projectQuery);
-		});
+
+		projectSuggestBox.addRemoteSuggestionsHandler(3, this::getProjectQuerySuggestion);
 	}
-	
+
 	private void getProjectQuerySuggestion(String projectQuery) {
 		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, searchDomain, projectQuery, new AsyncCallback<Map<String, Project>>() {
-			
+
 			@Override
 			public void onSuccess(Map<String, Project> projectSuggestionsDB) {
 				projectSuggestions = projectSuggestionsDB;
-				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) projectSuggestBox.getSuggestBox().getSuggestOracle();
-				orclSb.clear();
-				orclSb.addAll(projectSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(projectSuggestions.keySet());
+
+				projectSuggestBox.setSuggestions(projectSuggestions.keySet());
 				projectSuggestBox.showSuggestionList();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				// TODO Auto-generated method stub
 			}
-			
+
 		});
 	}
 	
@@ -968,7 +898,6 @@ public class CustomerFee  implements EntryPoint {
 		tableContainer.clear();
 		tab = new AonCustomTable();
 		tableScrollPanel = new ScrollPanel(tab);
-		tableScrollPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		tableScrollPanel.addScrollHandler(e -> {
 			// ------------------------------------ Ignore scroll up.
