@@ -136,7 +136,10 @@ export class AonPayrollMenu extends AonSuiteMenu {
 				id: "gwt-activity-summary",
 		        description: MSG.ACTIVITY_SUMMARY,
 		        title: MSG.ACTIVITY_SUMMARY,
-		        action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT),
+		        action: () => {
+					localStorage.setItem("isOffice", this.getDur().isOffice() ? "true" : "false");
+					GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT);
+				},
 		    },{
 				id: "gwt-contract-media",
 		        description: MSG.SALARY_STAFF_REPORT,
