@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,8 +29,13 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceData;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDataName;
+import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationOperation;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
@@ -39,6 +45,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceCommunicationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.sign.TbaiSigner;
@@ -46,22 +54,28 @@ import net.aonsolutions.aon.sign.exception.AonSignerException;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 import ticketbai.anulacion.AnulaTicketBai;
+import ticketbai.emision.Factura;
 import ticketbai.emision.TicketBai;
 import ticketbai.respuesta.Salida;
 import ticketbai.respuesta.TicketBaiResponse;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
 public class TBAI {
+
+	/** Estado de la respuesta cuando el fichero ha sido recibido; el 01 es rechazo. */
+	private static final String ESTADO_RECIBIDO = "00";
 	
 	private TBAI() {
 		
 	}
 	
+	@Deprecated
 	public static void accept(AONContext ctx, InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception {
 		TbaiMain tbai = new TbaiMain();
 		tbai.createEmisionTBAI(ctx, company, invoice, icc);
 	}
-	
+
+	@Deprecated
 	public static void modify(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception {
 		byte[] data = generateModifyXMl(icc, company, invoice);
 		byte[] xml = TbaiSigner.getInstance().sign(icc, data);
@@ -70,16 +84,19 @@ public class TBAI {
 		TicketBaiResponse tbaiResponse = (TicketBaiResponse) XMLUtils.unmarshal(response, TicketBaiResponse.class);
 	}
 	
+	@Deprecated
 	public static byte[] generateAcceptXMl(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice, TbaiBlockchain blockchain) throws Exception{
 		TicketBai tbai = Invoice2tbai.build(company, invoice, icc, blockchain);
 		return XMLUtils.marshal(tbai, TicketBai.class);
 	}
 	
+	@Deprecated
 	public static byte[] generateModifyXMl(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice) throws Exception{
 		SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, icc, null, null, false);
 		return XMLUtils.marshal(tbai, SubsanacionModificacionTicketBAI.class);
 	}
-	
+
+	@Deprecated
 	protected static void save(Company company, Invoice invoice, byte[] request, byte[] response, InvoiceCommunicationConfiguration icc) throws ParserConfigurationException, SAXException, IOException, JAXBException {
 		DataRequest datRequest = saveRequest(company.getDomain(), request);
 		String sign = TbaiSign.getSign(request);
@@ -88,7 +105,8 @@ public class TBAI {
 			.setNumber(Integer.toString(invoice.getNumber())).setSerie(invoice.getSeries())
 			.setSignature(sign.substring(0, 100));
 	}
-	
+
+	@Deprecated
 	private static DataRequest saveRequest(Domain domain, byte[] request) {
 		DataRequest dataRequest = new DataRequest()
 				.setDomain(domain.getId())
@@ -120,6 +138,7 @@ public class TBAI {
 		Invoice invoice;
 		TicketBai acceptRequest;
 		TbaiBlockchain blockchain;
+		SubsanacionModificacionTicketBAI modifyRequest;
 		AnulaTicketBai cancelRequest;
 		
 		public TbaiContext(Invoice invoice, AnulaTicketBai request) {
@@ -132,6 +151,11 @@ public class TBAI {
 			this.acceptRequest = request;
 		}
 		
+		public TbaiContext(Invoice invoice, SubsanacionModificacionTicketBAI request) {
+			this.invoice = invoice;
+			this.modifyRequest = request;
+		}
+		
 		public Invoice getInvoice() {
 			return invoice;
 		}
@@ -142,6 +166,16 @@ public class TBAI {
 		
 		public TicketBai getAcceptRequest() {
 			return acceptRequest;
+		}
+		
+		public SubsanacionModificacionTicketBAI getModifyRequest() {
+			return modifyRequest;
+		}
+		
+		/** Factura del fichero que se comunica, sea de alta o de zuzendu. */
+		public Factura getFactura() {
+			if(acceptRequest != null) return acceptRequest.getFactura();
+			return modifyRequest != null ? modifyRequest.getFactura() : null;
 		}
 
 		public TbaiBlockchain getBlockchain() {
@@ -190,11 +224,11 @@ public class TBAI {
 			TbaiBlockchain blockchain = getBlockchain(ctx, context.invoiceStream().findFirst().map(Invoice::getId).orElse(null));
 			List<TbaiContext> list = new LinkedList<>();
 			for(Invoice invoice : context.invoiceStream().toList()) {
-//				InvoiceDAO.accept(ctx, invoice);
 				TbaiContext accept = new TbaiContext(invoice, Invoice2tbai.build(context.getCompany(), invoice, context.getConfig(), blockchain));
-				list.add(accept);
-//				TbaiValidation.validateEmision(accept.getAcceptRequest());
+				TbaiValidation.validateEmision(accept.getAcceptRequest());
 				blockchain = getBlockchain(accept.getAcceptRequest(), invoice);
+				accept.setBlockchain(blockchain);
+				list.add(accept);
 			}
 		
 			for(TbaiContext tc : list) {
@@ -212,20 +246,171 @@ public class TBAI {
 	}
 	
 	private static InvoiceCommunicatorContext saveAccept(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, byte[] requestBytes, byte[] responseBytes) throws JAXBException {
-		// SAVE INVOICE DATA 
-		// SAVE BLOCKCHAIN DATA tc.getBlockchain()
- 		
 		InvoiceBatch invoiceBatch = InvoiceCommunicationDAO.saveAccept(ctx, context.getDomain(), InvoiceCommunicationType.TBAI, requestBytes, responseBytes);
 		TicketBaiResponse response = (TicketBaiResponse) XMLUtils.unmarshal(responseBytes, TicketBaiResponse.class);
-
-		Salida salida = response.getSalida();
-	    String estado = salida != null ? salida.getEstado() : null;
-	    boolean ok = "00".equals(estado) || "01".equals(estado);
+		saveTbaiInfo(ctx, context, tc, invoiceBatch.getDataResponse(), response.getSalida().getIdentificadorTBAI());
 		InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, tc.invoice.getId(), 
-				ok ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+				isRecibido(response) ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
 		return context;
 	}
-
+	
+	private static void saveTbaiInfo(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, Integer dataResponseId, String tbaiId) {
+		saveTbaiId(ctx, tc, dataResponseId, tbaiId);
+		saveTbaiBlockchain(ctx, tc, dataResponseId);
+		String tbaiUrl = buildTbaiUrl(ctx, context, tc, tbaiId);
+		saveTbaiUrl(ctx, tc, dataResponseId, tbaiUrl);
+	}
+	
+	private static void saveTbaiId(AONContext ctx, TbaiContext tc, Integer dataResponseId, String tbaiId) {
+		InvoiceDataDAO.save(ctx, new InvoiceData()
+				.setDomain(tc.getInvoice().getDomain())
+				.setInvoice(tc.getInvoice().getId())
+				.setName(InvoiceDataName.TBAI_ID)
+				.setValue(tbaiId));
+		DataResponseDetail drd1 = new DataResponseDetail()
+				.setDomain(tc.getInvoice().getDomain())
+				.setDataResponse(dataResponseId)
+				.setDataVariable("tbaiId")
+				.setDataValue(tbaiId);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd1);
+	}
+	
+	private static void saveTbaiBlockchain(AONContext ctx, TbaiContext tc, Integer dataResponseId) {
+		String blockchain = tc.getBlockchain().toJSON().toString();
+		
+		InvoiceDataDAO.save(ctx, new InvoiceData()
+				.setDomain(tc.getInvoice().getDomain())
+				.setInvoice(tc.getInvoice().getId())
+				.setName(InvoiceDataName.TBAI_BLOCKCHAIN)
+				.setValue(blockchain));
+		
+		DataResponseDetail drd2 = new DataResponseDetail()
+				.setDomain(tc.getInvoice().getDomain())
+				.setDataResponse(dataResponseId)
+				.setDataVariable("blockchain")
+				.setDataValue(blockchain);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd2);
+	}
+	
+	private static void saveTbaiUrl(AONContext ctx, TbaiContext tc, Integer dataResponseId, String url) {
+		InvoiceDataDAO.save(ctx, new InvoiceData()
+				.setDomain(tc.getInvoice().getDomain())
+				.setInvoice(tc.getInvoice().getId())
+				.setName(InvoiceDataName.TBAI_URL)
+				.setValue(url));
+		
+		DataResponseDetail drd3 = new DataResponseDetail()
+				.setDomain(tc.getInvoice().getDomain())
+				.setDataResponse(dataResponseId)
+				.setDataVariable("tbaiUrl")
+				.setDataValue(url);
+		DataResponseDAO.insertDataResponseDetail(ctx, drd3);
+	}
+	
+	private static String buildTbaiUrl(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, String tbaiId) {
+		String qrUrl = TbaiUri.getUrlQr(context.getConfig()) + "?id=" + tbaiId + "&s="
+				+ (tc.getInvoice().getSeries() != null ? tc.getInvoice().getSeries() : "") + "&nf=" + tc.getInvoice().getNumber() + "&i="
+				+ tc.getFactura().getDatosFactura().getImporteTotalFactura();
+				
+		try {
+			String crc = CRC8.calculate(qrUrl);
+			qrUrl = qrUrl + "&cr=" + crc;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return qrUrl;
+	}
+	
+	// **************************************************************
+	// ************************************************ [MODIFY] ****
+	// **************************************************************
+	
+	/**
+	 * Comunica la subsanacion o la modificacion (zuzendu) de las facturas del
+	 * contexto. El fichero de zuzendu repite el fichero de alta con los datos
+	 * corregidos, mantiene su huella -el encadenamiento no cambia- e identifica la
+	 * factura que se corrige con la firma de ese alta.
+	 *
+	 * El fichero no se firma -su esquema, a diferencia de los de alta y anulacion,
+	 * no incluye el bloque Signature-: el remitente se identifica con el
+	 * certificado del envio.
+	 */
+	public static InvoiceCommunicatorContext modify(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		try {
+			List<TbaiContext> list = new LinkedList<>();
+			for(Invoice invoice : context.invoiceStream().toList()) {
+				TicketBai acceptRequest = getAcceptRequest(ctx, invoice);
+				TbaiBlockchain blockchain = getInvoiceBlockchain(ctx, invoice);
+				TbaiContext modify = new TbaiContext(invoice, Invoice2tbai.buildZuzendu(context.getCompany(), invoice, context.getConfig(), 
+						acceptRequest, blockchain, isSubsanar(ctx, invoice)));
+				TbaiValidation.validateZuzendu(modify.getModifyRequest());
+				modify.setBlockchain(blockchain);
+				list.add(modify);
+			}
+		
+			for(TbaiContext tc : list) {
+				byte[] requestBytes = XMLUtils.marshal(tc.getModifyRequest(), SubsanacionModificacionTicketBAI.class);
+				String uri = TbaiUri.getUrlZuzendu(context.getConfig());
+				byte[] responseBytes = XMLUtils.send(context.getConfig().getCertificate(), uri, requestBytes);
+				saveModify(ctx, context, tc, requestBytes, responseBytes);
+			}
+		
+			return context;
+		} catch (JAXBException | IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
+			throw new InvoiceCommunicationException(e);
+		}
+	}
+	
+	/**
+	 * Fichero de alta comunicado previamente, del que el zuzendu mantiene la
+	 * huella.
+	 */
+	private static TicketBai getAcceptRequest(AONContext ctx, Invoice invoice) throws InvoiceCommunicationException, JAXBException {
+		byte[] requestBytes = InvoiceCommunicationDAO.getLastRequest(ctx, invoice.getId(), InvoiceCommunicationType.TBAI, InvoiceCommunicationOperation.REGISTER)
+				.orElseThrow(() -> new InvoiceCommunicationException(InvoiceCommunicationError.AON_0038));
+		return (TicketBai) XMLUtils.unmarshal(requestBytes, TicketBai.class);
+	}
+	
+	/**
+	 * Encadenamiento del alta de la factura, cuya firma identifica en el zuzendu a
+	 * la factura que se corrige.
+	 */
+	private static TbaiBlockchain getInvoiceBlockchain(AONContext ctx, Invoice invoice) {
+		return TbaiBlockchain.fromJSON(InvoiceDataDAO.getValue(ctx, invoice.getDomain(), invoice.getId(), InvoiceDataName.TBAI_BLOCKCHAIN)
+				.orElse(null));
+	}
+	
+	/**
+	 * El fichero de subsanacion corrige un alta rechazada; si el alta se registro,
+	 * la accion es la de modificacion.
+	 */
+	private static boolean isSubsanar(AONContext ctx, Invoice invoice) {
+		return InvoiceInfoDAO.get(ctx, invoice.getId(), InvoiceCommunicationType.TBAI)
+				.map(InvoiceInfo::isWrong)
+				.orElse(false);
+	}
+	
+	private static InvoiceCommunicatorContext saveModify(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, byte[] requestBytes, byte[] responseBytes) throws JAXBException {
+		InvoiceBatch invoiceBatch = InvoiceCommunicationDAO.saveModify(ctx, context.getDomain(), InvoiceCommunicationType.TBAI, requestBytes, responseBytes);
+		TicketBaiResponse response = (TicketBaiResponse) XMLUtils.unmarshal(responseBytes, TicketBaiResponse.class);
+		boolean recibido = isRecibido(response);
+		if(recibido) saveTbaiModifyInfo(ctx, context, tc, invoiceBatch.getDataResponse(), response.getSalida().getIdentificadorTBAI());
+		InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, tc.getInvoice().getId(), 
+				recibido ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
+		return context;
+	}
+	
+	/**
+	 * El zuzendu genera un identificador TBAI nuevo y, con el, una nueva URL de
+	 * verificacion. El encadenamiento no cambia, por lo que se mantiene el que se
+	 * guardo con el alta.
+	 */
+	private static void saveTbaiModifyInfo(AONContext ctx, InvoiceCommunicatorContext context, TbaiContext tc, Integer dataResponseId, String tbaiId) {
+		saveTbaiId(ctx, tc, dataResponseId, tbaiId);
+		String tbaiUrl = buildTbaiUrl(ctx, context, tc, tbaiId);
+		saveTbaiUrl(ctx, tc, dataResponseId, tbaiUrl);
+	}
+	
 	// **************************************************************
 	// ************************************************ [CANCEL] ****
 	// **************************************************************
@@ -258,10 +443,7 @@ public class TBAI {
 		InvoiceBatch invoiceBatch = InvoiceCommunicationDAO.saveCancel(ctx, context.getDomain(), InvoiceCommunicationType.TBAI, requestBytes, responseBytes);
 		TicketBaiResponse response = (TicketBaiResponse) XMLUtils.unmarshal(responseBytes, TicketBaiResponse.class);
 
-		Salida salida = response.getSalida();
-	    String estado = salida != null ? salida.getEstado() : null;
-	    boolean anulada = "00".equals(estado) || "01".equals(estado);
-		saveCancelInvoice(ctx, context, invoiceBatch, invoice, anulada);
+		saveCancelInvoice(ctx, context, invoiceBatch, invoice, isRecibido(response));
 		return context;
 	}
 	
@@ -270,6 +452,16 @@ public class TBAI {
 			InvoiceCommunicationDAO.saveInvoice(ctx, context.getDomain(), invoiceBatch, invoice.getId(), InvoiceCommunicationStatus.CANCELLED);
 			InvoiceDAO.annul(ctx, invoice.getId());
 		} else InvoiceCommunicationDAO.saveInvoiceBatchdetail(ctx, invoiceBatch, invoice.getId(), InvoiceCommunicationStatus.WRONG);
+	}
+	
+	/**
+	 * Determina si el servicio ha recibido el fichero. Un fichero recibido puede
+	 * llevar avisos, que no suponen rechazo, mientras que el estado 01 es el rechazo
+	 * del fichero y deja la factura sin comunicar.
+	 */
+	private static boolean isRecibido(TicketBaiResponse response) {
+		Salida salida = response != null ? response.getSalida() : null;
+		return salida != null && ESTADO_RECIBIDO.equals(salida.getEstado());
 	}
 	
 }

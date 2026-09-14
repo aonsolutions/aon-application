@@ -313,8 +313,13 @@ public class InvoiceCommunicator {
 						@Override public void visitEMAIL() throws InvoiceCommunicationException 	{ throwEMAIL(); }
 						@Override public void visitCLOSING() throws InvoiceCommunicationException 	{ throwCLOSING(); } 
 						@Override public void visitSII() throws InvoiceCommunicationException 		{ throwSII(); }
-						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ throwTBAI(); }
-						@Override public void visitLROE() throws InvoiceCommunicationException 		{ throwLROE(); }
+						@Override public void visitTBAI() throws InvoiceCommunicationException 		{ 
+							TBAI.accept(ctx, cc);
+						}
+						@Override public void visitLROE() throws InvoiceCommunicationException 		{ 
+//							LROE.accept(ctx, cc);
+							throwLROE();
+						}
 						@Override public void visitFACTURAE() throws InvoiceCommunicationException	{ throwFACTURAE(); }	
 						
 						@Override

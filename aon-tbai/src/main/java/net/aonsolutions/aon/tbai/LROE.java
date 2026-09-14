@@ -40,6 +40,7 @@ import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_2;
 import net.aonsolutions.aon.tbai.utils.XMLUtils;
 
+
 public class LROE {
 	
 	/** Longitud maxima del numero de factura en los registros de facturas recibidas. */
@@ -47,6 +48,57 @@ public class LROE {
 	
 	private LROE() {
 		
+	}
+	
+	// **************************************************************
+	// ************************************************ [CANCEL] ****
+	// **************************************************************
+	
+	public static InvoiceCommunicatorContext accept(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		/*
+		 * PERSONA FISICA - Facturas Emitidas con Software Garante desde AON LROE140_1_1
+		 * PERSONA FISICA - Facturas Emitidas sin Software Garante LROE140_1_2
+		 * PERSONA FISICA - Facturas Recibidas LROE140_2_1
+		 * PERSONA JURIDICA -  Facturas Emitidas con Software Garante desde AON LROE240_1_1
+		 * PERSONA JURIDICA - Facturas Emitidas sin Software Garante LROE240_1_2
+		 * PERSONA JURIDICA - Facturas Recibidas LROE240_2
+		 */
+				
+		return isPersonaFisica(context)
+			? accept140(ctx, context)
+			: accept240(ctx, context);
+	}
+	
+	public static InvoiceCommunicatorContext accept140(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		return isFacturasRecibidas(context)
+			? accept140_2_1(ctx, context)
+			: accept140_1_1(ctx, context);
+	}
+	
+	public static InvoiceCommunicatorContext accept240(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		return isFacturasRecibidas(context)
+			? accept240_2(ctx, context)
+			: accept240_1_1(ctx, context);
+	}
+	
+	public static InvoiceCommunicatorContext accept140_1_1(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		// TODO LROE140_1_1.accept(ctx, context);
+		return context;
+	}
+	
+	public static InvoiceCommunicatorContext accept140_2_1(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		// TODO LROE140_2_1.accept(ctx, context);
+		return context;
+	}
+	
+	public static InvoiceCommunicatorContext accept240_1_1(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		// TODO LROE240_1_1.accept(ctx, context);
+		return context;
+	}
+	
+	public static InvoiceCommunicatorContext accept240_2(AONContext ctx, InvoiceCommunicatorContext context) throws InvoiceCommunicationException {
+		// TODO LROE240_2.accept(ctx, context);
+		return context; 
 	}
 	
 	

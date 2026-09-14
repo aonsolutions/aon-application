@@ -2,9 +2,15 @@ package net.aonsolutions.aon.sii.aeat;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -22,8 +28,11 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatData;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -84,6 +93,20 @@ import net.aonsolutions.aon.sii.IDType;
 
 public class FacturasEmitidas extends SIIBuilt {
 
+	private static final String ID_VERSION_SII = "1.1";
+	private static final String FORMATO_FECHA = "dd-MM-yyyy";
+
+	/** Rectificativa por diferencias, que es como emite las rectificativas la aplicacion. */
+	private static final String RECTIFICATIVA_POR_DIFERENCIAS = "I";
+
+	/** Importe a partir del cual la factura es macrodato para el SII. */
+	private static final double IMPORTE_MACRODATO = 100000000.0;
+
+	private static final int MAX_DESCRIPCION_OPERACION = 500;
+
+	private static final String DESCRIPCION_ENTREGA_BIENES = "Entrega de bienes";
+	private static final String DESCRIPCION_PRESTACION_SERVICIOS = "Prestacion de servicios";
+
 	public static FacturasEmitidas getInstance() {
 		return new FacturasEmitidas();
 	}
@@ -131,6 +154,485 @@ public class FacturasEmitidas extends SIIBuilt {
 		}
 		return b;
 	}
+
+	// ------------------- ALTA DE FACTURAS EMITIDAS
+
+	/**
+	 * Suministro del libro registro de facturas expedidas con las facturas
+	 * emitidas del contexto.
+	 *
+	 * Solo se suministran las facturas emitidas; las recibidas pertenecen al
+	 * libro registro de facturas recibidas (FacturasRecibidas).
+	 *
+	 * @param context contexto de comunicacion con el SII
+	 * @return SuministroLRFacturasEmitidas
+	 */
+	public SuministroLRFacturasEmitidas suministroFacturasEmitidas(InvoiceCommunicatorContext context) {
+		return suministroFacturasEmitidas(context, ClaveTipoComunicacionType.A_0);
+	}
+
+	/**
+	 * Suministro del libro registro de facturas expedidas con las facturas
+	 * emitidas del contexto.
+	 *
+	 * El tipo de comunicacion distingue el alta de un registro nuevo (A0) de la
+	 * modificacion de uno ya suministrado (A1); el resto del mensaje es igual.
+	 *
+	 * @param context contexto de comunicacion con el SII
+	 * @param tipoComunicacion alta (A0) o modificacion (A1)
+	 * @return SuministroLRFacturasEmitidas
+	 */
+	public SuministroLRFacturasEmitidas suministroFacturasEmitidas(InvoiceCommunicatorContext context, ClaveTipoComunicacionType tipoComunicacion) {
+		SuministroLRFacturasEmitidas suministro = new SuministroLRFacturasEmitidas();
+		suministro.setCabecera(cabecera(context.getCompany(), tipoComunicacion));
+		context.invoiceStream()
+			.filter(Invoice::isSales)
+			.forEach(invoice -> suministro.getRegistroLRFacturasEmitidas().add(buildFacturaEmitida(context.getCompany(), invoice)));
+		return suministro;
+	}
+
+	/**
+	 * Construye el registro de alta de una factura emitida.
+	 *
+	 * El desglose se calcula con el desglose de impuestos de la propia factura
+	 * (Invoice.refreshTaxBreakdown), de modo que el registro se construye sin
+	 * acceder a la base de datos.
+	 *
+	 * @param company empresa titular del libro registro
+	 * @param invoice factura que se suministra
+	 * @return LRfacturasEmitidasType
+	 */
+	public LRfacturasEmitidasType buildFacturaEmitida(Company company, Invoice invoice) {
+		invoice.refreshTaxBreakdown();
+
+		LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
+		factura.setPeriodoLiquidacion(periodoLiquidacion(invoice.getTaxDate(), false));
+		factura.setIDFactura(idFacturaEmitida(company, invoice));
+		factura.setFacturaExpedida(facturaExpedida(invoice));
+		return factura;
+	}
+
+	/**
+	 * Identificacion de la factura ante la AEAT. La fecha de expedicion es la
+	 * fiscal si existe, la misma que informa la baja (FacturasEmitidasBaja),
+	 * porque es la que localiza el registro.
+	 */
+	private IDFacturaExpedidaType idFacturaEmitida(Company company, Invoice invoice) {
+		IDEmisorFactura emisor = new IDEmisorFactura();
+		emisor.setNIF(company.getDocument());
+
+		IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
+		idFactura.setIDEmisorFactura(emisor);
+		idFactura.setNumSerieFacturaEmisor(invoice.getReferenceCode());
+		Date expDate = invoice.getExpDate() != null ? invoice.getExpDate() : invoice.getIssueDate();
+		idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(expDate, FORMATO_FECHA));
+		return idFactura;
+	}
+
+	/**
+	 * Datos de la factura expedida. La referencia externa es el id de la factura,
+	 * que es con el que se identifica la factura en la respuesta de la AEAT, igual
+	 * que en la baja.
+	 */
+	private FacturaExpedidaType facturaExpedida(Invoice invoice) {
+		FacturaExpedidaType factura = new FacturaExpedidaType();
+		tipoFactura(invoice, factura);
+		factura.setClaveRegimenEspecialOTrascendencia(claveRegimenEspecialOTrascendencia(invoice));
+		double importeTotal = importeTotal(invoice);
+		factura.setImporteTotal(importe(importeTotal));
+		factura.setMacrodato(importeTotal >= IMPORTE_MACRODATO ? MacrodatoType.S : MacrodatoType.N);
+		factura.setDescripcionOperacion(descripcionOperacion(invoice));
+		factura.setRefExterna(invoice.getId() == null ? null : invoice.getId().toString());
+		factura.setEmitidaPorTercerosODestinatario(invoice.isIssuedByThirdPartyOrRecipient()
+			? EmitidaPorTercerosType.S
+			: EmitidaPorTercerosType.N);
+		factura.setVariosDestinatarios(VariosDestinatariosType.N);
+		if (!invoice.isSimplified()) factura.setContraparte(getContraparte(invoice));
+		factura.setTipoDesglose(tipoDesglose(invoice));
+		return factura;
+	}
+
+	/**
+	 * Tipo de factura: simplificada (F2) cuando no hay destinatario identificado,
+	 * rectificativa (R1, o R5 si la rectificada es simplificada) cuando la factura
+	 * rectifica a otra, y completa (F1) en el resto.
+	 *
+	 * Las rectificativas se envian por diferencias (I), que es como las emite la
+	 * aplicacion, e informan la factura rectificada.
+	 */
+	private void tipoFactura(Invoice invoice, FacturaExpedidaType factura) {
+		boolean simplificada = invoice.isSimplified();
+		if (!invoice.isRectifier()) {
+			factura.setTipoFactura(simplificada ? ClaveTipoFacturaType.F_2 : ClaveTipoFacturaType.F_1);
+			return;
+		}
+		factura.setTipoFactura(simplificada ? ClaveTipoFacturaType.R_5 : ClaveTipoFacturaType.R_1);
+		factura.setTipoRectificativa(RECTIFICATIVA_POR_DIFERENCIAS);
+		factura.setCupon(CuponType.N);
+		facturasRectificadas(invoice).ifPresent(factura::setFacturasRectificadas);
+	}
+
+	/**
+	 * Factura rectificada, identificada por su numero de serie y su fecha de
+	 * expedicion. Cada rectificativa rectifica una sola factura.
+	 */
+	private Optional<FacturasRectificadas> facturasRectificadas(Invoice invoice) {
+		if (AonStringUtils.isBlank(invoice.getRectificationInvoiceReference())) return Optional.empty();
+		if (invoice.getRectificationInvoiceDate() == null) return Optional.empty();
+
+		IDFacturaARType rectificada = new IDFacturaARType();
+		rectificada.setNumSerieFacturaEmisor(invoice.getRectificationInvoiceReference());
+		rectificada.setFechaExpedicionFacturaEmisor(AonDateUtils.format(invoice.getRectificationInvoiceDate(), FORMATO_FECHA));
+
+		FacturasRectificadas facturasRectificadas = new FacturasRectificadas();
+		facturasRectificadas.getIDFacturaRectificada().add(rectificada);
+		return Optional.of(facturasRectificadas);
+	}
+
+	/**
+	 * Clave de regimen especial o trascendencia: ventanilla unica (17) en los
+	 * regimenes especiales de la Union y de importacion, exportacion (02) en las
+	 * operaciones extracomunitarias y con Canarias, Ceuta y Melilla, criterio de
+	 * caja (07) cuando la factura lo aplica y regimen general (01) en el resto.
+	 */
+	private String claveRegimenEspecialOTrascendencia(Invoice invoice) {
+		if (invoice.isSalesOSS()) return ClaveRegimenEspecialOTrascendenciaEmitidasType._17.getName();
+		if (invoice.isExtracommunity() || invoice.isCanCeuMel()) return ClaveRegimenEspecialOTrascendenciaEmitidasType._02.getName();
+		if (invoice.isVatAccrualPayment()) return ClaveRegimenEspecialOTrascendenciaEmitidasType._07.getName();
+		return ClaveRegimenEspecialOTrascendenciaEmitidasType._01.getName();
+	}
+
+	/**
+	 * Descripcion de la operacion, con las descripciones de las lineas de la
+	 * factura. Si la factura no las trae se describe la operacion por su
+	 * naturaleza. Se recorta a los 500 caracteres que admite el SII.
+	 */
+	private String descripcionOperacion(Invoice invoice) {
+		String descripcion = invoice.detailStream()
+			.map(InvoiceDetail::getDescription)
+			.filter(d -> !AonStringUtils.isBlank(d))
+			.map(d -> d.replaceAll("[\\r\\n<>]", " ").trim())
+			.collect(Collectors.joining(" - "));
+		if (AonStringUtils.isBlank(descripcion)) {
+			descripcion = invoice.isService() ? DESCRIPCION_PRESTACION_SERVICIOS : DESCRIPCION_ENTREGA_BIENES;
+		}
+		return AonStringUtils.left(descripcion, MAX_DESCRIPCION_OPERACION);
+	}
+
+	/**
+	 * Importe total de la factura: la suma de lo no sujeto, lo exento y las bases
+	 * no exentas con su cuota y su recargo de equivalencia. Se calcula con el
+	 * mismo desglose que se suministra para que los dos importes cuadren.
+	 */
+	private double importeTotal(Invoice invoice) {
+		double noExenta = vats(invoice)
+			.filter(ib -> isNoExenta(invoice, ib))
+			.mapToDouble(ib -> ib.getBase() + cuota(invoice, ib) + cuotaRecargo(invoice, ib))
+			.sum();
+		return AonMathUtils.round(baseNoSujeta(invoice) + baseExenta(invoice) + noExenta);
+	}
+
+	// ------------------- DESGLOSE
+
+	/**
+	 * Desglose de la factura. El SII exige desglosar por tipo de operacion
+	 * (entrega de bienes o prestacion de servicios) cuando el destinatario no esta
+	 * establecido en el territorio de aplicacion del impuesto o cuando la
+	 * operacion es una prestacion de servicios; en el resto de los casos basta el
+	 * desglose de la factura.
+	 */
+	private TipoDesglose tipoDesglose(Invoice invoice) {
+		TipoDesglose tipoDesglose = new TipoDesglose();
+		if (isDesglosePorTipoDeOperacion(invoice)) {
+			tipoDesglose.setDesgloseTipoOperacion(desgloseTipoOperacion(invoice));
+		} else {
+			tipoDesglose.setDesgloseFactura(desgloseFactura(invoice));
+		}
+		return tipoDesglose;
+	}
+
+	/**
+	 * Las facturas simplificadas no llevan destinatario, asi que siempre van con
+	 * el desglose de la factura.
+	 */
+	private boolean isDesglosePorTipoDeOperacion(Invoice invoice) {
+		return !invoice.isSimplified()
+			&& (invoice.isService() || invoice.isIntracommunity() || invoice.isExtracommunity() || isNoEstablecido(invoice));
+	}
+
+	/** El destinatario no esta establecido: no tiene NIF espanol o no esta censado. */
+	private boolean isNoEstablecido(Invoice invoice) {
+		return !Country.ES.equals(invoice.getRegistryDocumentCountry())
+			|| DocumentType.NOT_CENSUSED.equals(invoice.getRegistryDocumentType());
+	}
+
+	private TipoConDesgloseType desgloseTipoOperacion(Invoice invoice) {
+		TipoConDesgloseType desglose = new TipoConDesgloseType();
+		if (invoice.isService()) desglose.setPrestacionServicios(prestacionServicios(invoice));
+		else desglose.setEntrega(desgloseFactura(invoice));
+		return desglose;
+	}
+
+	/**
+	 * Desglose de la factura (tambien el de la entrega de bienes cuando se
+	 * desglosa por tipo de operacion).
+	 */
+	private TipoSinDesgloseType desgloseFactura(Invoice invoice) {
+		TipoSinDesgloseType desglose = new TipoSinDesgloseType();
+		noSujeta(invoice).ifPresent(desglose::setNoSujeta);
+
+		SujetaType sujeta = new SujetaType();
+		exenta(invoice).ifPresent(sujeta::setExenta);
+		noExenta(invoice).ifPresent(sujeta::setNoExenta);
+		if (sujeta.getExenta() != null || sujeta.getNoExenta() != null) desglose.setSujeta(sujeta);
+		return desglose;
+	}
+
+	/** Desglose de la prestacion de servicios, que no admite recargo de equivalencia. */
+	private TipoSinDesglosePrestacionType prestacionServicios(Invoice invoice) {
+		TipoSinDesglosePrestacionType desglose = new TipoSinDesglosePrestacionType();
+		noSujeta(invoice).ifPresent(desglose::setNoSujeta);
+
+		SujetaPrestacionType sujeta = new SujetaPrestacionType();
+		exentaPrestacion(invoice).ifPresent(sujeta::setExenta);
+		noExentaPrestacion(invoice).ifPresent(sujeta::setNoExenta);
+		if (sujeta.getExenta() != null || sujeta.getNoExenta() != null) desglose.setSujeta(sujeta);
+		return desglose;
+	}
+
+	/**
+	 * Importe no sujeto: los suplidos y las operaciones no sujetas. En los
+	 * regimenes de ventanilla unica la base va como no sujeta por reglas de
+	 * localizacion, y sin la cuota del pais miembro.
+	 */
+	private Optional<NoSujetaType> noSujeta(Invoice invoice) {
+		double base = baseNoSujeta(invoice);
+		if (AonMathUtils.isZero(base)) return Optional.empty();
+
+		NoSujetaType noSujeta = new NoSujetaType();
+		if (invoice.isVatUnion()) noSujeta.setImporteTAIReglasLocalizacion(importe(base));
+		else noSujeta.setImportePorArticulos714Otros(importe(base));
+		return Optional.of(noSujeta);
+	}
+
+	private Optional<SujetaType.Exenta> exenta(Invoice invoice) {
+		List<DetalleExentaType> detalles = detalleExenta(invoice);
+		if (detalles.isEmpty()) return Optional.empty();
+
+		SujetaType.Exenta exenta = new SujetaType.Exenta();
+		exenta.getDetalleExenta().addAll(detalles);
+		return Optional.of(exenta);
+	}
+
+	private Optional<SujetaPrestacionType.Exenta> exentaPrestacion(Invoice invoice) {
+		List<DetalleExentaType> detalles = detalleExenta(invoice);
+		if (detalles.isEmpty()) return Optional.empty();
+
+		SujetaPrestacionType.Exenta exenta = new SujetaPrestacionType.Exenta();
+		exenta.getDetalleExenta().addAll(detalles);
+		return Optional.of(exenta);
+	}
+
+	/** Un detalle por causa de exencion con la suma de las bases exentas. */
+	private List<DetalleExentaType> detalleExenta(Invoice invoice) {
+		Map<CausaExencionType, Double> bases = new EnumMap<>(CausaExencionType.class);
+		vats(invoice)
+			.filter(ib -> isExenta(invoice, ib))
+			.forEach(ib -> bases.merge(causaExencion(invoice, ib), ib.getBase(), Double::sum));
+
+		return bases.entrySet().stream()
+			.map(e -> {
+				DetalleExentaType detalle = new DetalleExentaType();
+				detalle.setCausaExencion(e.getKey());
+				detalle.setBaseImponible(importe(e.getValue()));
+				return detalle;
+			})
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Causa de exencion del desglose de la factura; si no viene informada se
+	 * deduce de la naturaleza de la operacion: exenciones interiores (E1),
+	 * exportaciones y Canarias, Ceuta y Melilla (E2) y entregas intracomunitarias
+	 * (E5).
+	 */
+	private CausaExencionType causaExencion(Invoice invoice, InvoiceBreakdown ib) {
+		if (ib.getVatExemptionCause() != null) return CausaExencionType.fromValue(ib.getVatExemptionCause().name());
+		if (invoice.isIntracommunity()) return CausaExencionType.E_5;
+		if (invoice.isExtracommunity() || invoice.isCanCeuMel()) return CausaExencionType.E_2;
+		return CausaExencionType.E_1;
+	}
+
+	private Optional<SujetaType.NoExenta> noExenta(Invoice invoice) {
+		List<InvoiceBreakdown> vats = vatsNoExentos(invoice);
+		if (vats.isEmpty()) return Optional.empty();
+
+		SujetaType.NoExenta.DesgloseIVA desgloseIVA = new SujetaType.NoExenta.DesgloseIVA();
+		vats.forEach(ib -> {
+			DetalleIVAEmitidaType detalle = new DetalleIVAEmitidaType();
+			detalle.setBaseImponible(importe(ib.getBase()));
+			detalle.setTipoImpositivo(importe(tipoImpositivo(invoice, ib)));
+			detalle.setCuotaRepercutida(importe(cuota(invoice, ib)));
+			if (isRecargoEquivalencia(invoice, ib)) {
+				detalle.setTipoRecargoEquivalencia(importe(ib.getSurcharge()));
+				detalle.setCuotaRecargoEquivalencia(importe(ib.getSurchargeQuota()));
+			}
+			desgloseIVA.getDetalleIVA().add(detalle);
+		});
+
+		SujetaType.NoExenta noExenta = new SujetaType.NoExenta();
+		noExenta.setTipoNoExenta(tipoNoExenta(invoice));
+		noExenta.setDesgloseIVA(desgloseIVA);
+		return Optional.of(noExenta);
+	}
+
+	private Optional<SujetaPrestacionType.NoExenta> noExentaPrestacion(Invoice invoice) {
+		List<InvoiceBreakdown> vats = vatsNoExentos(invoice);
+		if (vats.isEmpty()) return Optional.empty();
+
+		SujetaPrestacionType.NoExenta.DesgloseIVA desgloseIVA = new SujetaPrestacionType.NoExenta.DesgloseIVA();
+		vats.forEach(ib -> {
+			DetalleIVAEmitidaPrestacionType detalle = new DetalleIVAEmitidaPrestacionType();
+			detalle.setBaseImponible(importe(ib.getBase()));
+			detalle.setTipoImpositivo(importe(tipoImpositivo(invoice, ib)));
+			detalle.setCuotaRepercutida(importe(cuota(invoice, ib)));
+			desgloseIVA.getDetalleIVA().add(detalle);
+		});
+
+		SujetaPrestacionType.NoExenta noExenta = new SujetaPrestacionType.NoExenta();
+		noExenta.setTipoNoExenta(tipoNoExenta(invoice));
+		noExenta.setDesgloseIVA(desgloseIVA);
+		return Optional.of(noExenta);
+	}
+
+	/**
+	 * En la inversion del sujeto pasivo la operacion es sujeta y no exenta, pero
+	 * el impuesto lo liquida el destinatario (S2).
+	 */
+	private TipoOperacionSujetaNoExentaType tipoNoExenta(Invoice invoice) {
+		return invoice.isIsp()
+			? TipoOperacionSujetaNoExentaType.S_2
+			: TipoOperacionSujetaNoExentaType.S_1;
+	}
+
+	// ------------------- CLASIFICACION DEL DESGLOSE
+
+	/** Lineas de IVA del desglose de impuestos de la factura. */
+	private Stream<InvoiceBreakdown> vats(Invoice invoice) {
+		return invoice.getVats().stream().filter(InvoiceBreakdown::isVat);
+	}
+
+	/**
+	 * Bases no exentas agrupadas por tipo impositivo y recargo, porque el SII no
+	 * admite dos detalles con el mismo tipo.
+	 */
+	private List<InvoiceBreakdown> vatsNoExentos(Invoice invoice) {
+		Map<String, InvoiceBreakdown> vats = new LinkedHashMap<>();
+		vats(invoice)
+			.filter(ib -> isNoExenta(invoice, ib))
+			.forEach(ib -> {
+				String key = ib.getPercentage() + "/" + ib.getSurcharge();
+				InvoiceBreakdown agrupado = vats.get(key);
+				if (agrupado == null) vats.put(key, copy(ib));
+				else agrupado.add(ib);
+			});
+		return new LinkedList<>(vats.values());
+	}
+
+	private InvoiceBreakdown copy(InvoiceBreakdown ib) {
+		return new InvoiceBreakdown()
+			.setTaxType(ib.getTaxType())
+			.setBase(ib.getBase())
+			.setPercentage(ib.getPercentage())
+			.setQuota(ib.getQuota())
+			.setSurcharge(ib.getSurcharge())
+			.setSurchargeQuota(ib.getSurchargeQuota())
+			.setVatDeductionType(ib.getVatDeductionType())
+			.setVatExemptionCause(ib.getVatExemptionCause())
+			.setPrepayment(ib.isPrepayment());
+	}
+
+	/**
+	 * No sujeto: los suplidos, las lineas marcadas como no sujetas y, en los
+	 * regimenes de ventanilla unica, toda la factura.
+	 */
+	private boolean isNoSujeta(Invoice invoice, InvoiceBreakdown ib) {
+		return ib.isPrepayment()
+			|| VatDeductionType.safeNoSujeto(ib.getVatDeductionType())
+			|| invoice.isVatUnion();
+	}
+
+	/**
+	 * Sujeto y exento: las lineas sin tipo impositivo de una operacion exenta (por
+	 * la actividad, intracomunitaria, extracomunitaria o con Canarias, Ceuta y
+	 * Melilla) o marcadas como exentas. En la inversion del sujeto pasivo no hay
+	 * exencion: la operacion es sujeta y no exenta.
+	 */
+	private boolean isExenta(Invoice invoice, InvoiceBreakdown ib) {
+		return !invoice.isIsp()
+			&& !isNoSujeta(invoice, ib)
+			&& AonMathUtils.isZero(ib.getPercentage())
+			&& (isExentaLaOperacion(invoice) || VatDeductionType.safeSujetoExento(ib.getVatDeductionType()));
+	}
+
+	private boolean isNoExenta(Invoice invoice, InvoiceBreakdown ib) {
+		return !isNoSujeta(invoice, ib) && !isExenta(invoice, ib);
+	}
+
+	private boolean isExentaLaOperacion(Invoice invoice) {
+		return invoice.isExempt()
+			|| invoice.isIntracommunity()
+			|| invoice.isExtracommunity()
+			|| invoice.isCanCeuMel();
+	}
+
+	private double baseNoSujeta(Invoice invoice) {
+		return vats(invoice).filter(ib -> isNoSujeta(invoice, ib)).mapToDouble(InvoiceBreakdown::getBase).sum();
+	}
+
+	private double baseExenta(Invoice invoice) {
+		return vats(invoice).filter(ib -> isExenta(invoice, ib)).mapToDouble(InvoiceBreakdown::getBase).sum();
+	}
+
+	/** En la inversion del sujeto pasivo no se repercute cuota. */
+	private double tipoImpositivo(Invoice invoice, InvoiceBreakdown ib) {
+		return invoice.isIsp() ? 0.0 : ib.getPercentage();
+	}
+
+	private double cuota(Invoice invoice, InvoiceBreakdown ib) {
+		return invoice.isIsp() ? 0.0 : ib.getQuota();
+	}
+
+	private double cuotaRecargo(Invoice invoice, InvoiceBreakdown ib) {
+		return isRecargoEquivalencia(invoice, ib) ? ib.getSurchargeQuota() : 0.0;
+	}
+
+	private boolean isRecargoEquivalencia(Invoice invoice, InvoiceBreakdown ib) {
+		return !invoice.isIsp()
+			&& AonMathUtils.isNotZero(ib.getSurcharge())
+			&& AonMathUtils.isNotZero(ib.getSurchargeQuota());
+	}
+
+	private String importe(double value) {
+		return Double.toString(AonMathUtils.round(value));
+	}
+
+	/**
+	 * Cabecera del suministro con el titular del libro registro.
+	 */
+	private CabeceraSii cabecera(Company company, ClaveTipoComunicacionType tipoComunicacion) {
+		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
+		titular.setNIF(company.getDocument());
+		titular.setNombreRazon(company.getName());
+
+		CabeceraSii cabecera = new CabeceraSii();
+		cabecera.setIDVersionSii(ID_VERSION_SII);
+		cabecera.setTipoComunicacion(tipoComunicacion);
+		cabecera.setTitular(titular);
+		return cabecera;
+	}
+
+	// ------------------- ALTA DE FACTURAS EMITIDAS (LEGACY)
 
 	/**
 	 * Libro de registro de Facturas expedidas.
@@ -629,17 +1131,9 @@ public class FacturasEmitidas extends SIIBuilt {
 	 * @return CabeceraSii
 	 */
 	private CabeceraSii cabecera(Company company, Boolean mod, String terceros){
-		CabeceraSii cabecera = new CabeceraSii();
-		cabecera.setIDVersionSii("1.1");
-		cabecera.setTipoComunicacion(mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
-		PersonaFisicaJuridicaESType titular = new PersonaFisicaJuridicaESType();
-		titular.setNIF(company.getDocument());
-		titular.setNombreRazon(company.getName());
+		CabeceraSii cabecera = cabecera(company, mod ? ClaveTipoComunicacionType.A_1 : ClaveTipoComunicacionType.A_0);
 		if(terceros != null && !terceros.equals("false"))
-			titular.setNIFRepresentante(terceros);
-		cabecera.setTitular(titular);
-		
-		
+			cabecera.getTitular().setNIFRepresentante(terceros);
 		return cabecera;
 	}
 	

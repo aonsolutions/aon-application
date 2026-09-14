@@ -753,6 +753,10 @@ public class InvoiceCommunicationDAO {
 		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.ANNULMENT, request, response);
 	}
 	
+	public static InvoiceBatch saveModify(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
+		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.MODIFICATION, request, response);
+	}
+	
 	public static InvoiceBatch save(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, InvoiceCommunicationOperation operation, byte[] request, byte[] response) {
 		DataRequest dataRequest = saveRequest(ctx, domain, communicationType, request);
 		DataResponse dataResponse = saveResponse(ctx, domain, communicationType, dataRequest, response);		
@@ -762,6 +766,32 @@ public class InvoiceCommunicationDAO {
 	public static void saveInvoice(AONContext ctx, Domain domain, InvoiceBatch batch, Integer invoiceId, InvoiceCommunicationStatus status) {
 		saveInvoiceInfo(ctx, domain.getId(), invoiceId, batch.getType(), status);	
 		saveInvoiceBatchdetail(ctx, batch, invoiceId, status);
+	}
+	
+	/**
+	 * Fichero enviado en la ultima comunicacion de la factura del tipo y de la
+	 * operacion indicados, o vacio si la factura no se ha comunicado asi todavia.
+	 */
+	public static Optional<byte[]> getLastRequest(AONContext ctx, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationOperation operation) {
+		Byte attachSource = DataAttachSource.safeByteOf(communicationType);
+		if (invoiceId == null || communicationType == null || operation == null || attachSource == null) {
+			return Optional.empty();
+		}
+		
+		return ctx.getDslContext().select(DATA_ATTACH.DATA)
+			.from(INVOICE_BATCH_DETAIL)
+			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
+			.join(DATA_RESPONSE).on(DATA_RESPONSE.ID.eq(INVOICE_BATCH.DATA_RESPONSE))
+			.join(DATA_ATTACH).on(DATA_ATTACH.SOURCE_ID.eq(DATA_RESPONSE.DATA_REQUEST)
+				.and(DATA_ATTACH.SOURCE.eq(attachSource))
+				.and(DATA_ATTACH.TYPE.eq(DataAttachType.REQUEST.value()))
+			)
+			.where(INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId))
+			.and(INVOICE_BATCH.TYPE.eq(communicationType.value()))
+			.and(INVOICE_BATCH.OPERATION.eq(operation.value()))
+			.orderBy(INVOICE_BATCH.DATE.desc())
+			.limit(1)
+			.fetchOptional(DATA_ATTACH.DATA);
 	}
 	
 	public static DataRequest saveRequest(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request) {

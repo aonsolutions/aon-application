@@ -110,6 +110,28 @@ public class SIIAeatPost extends SIIPost{
 	   	return array;
 	}
 
+	/**
+	 * Suministra al SII el libro registro de facturas expedidas.
+	 *
+	 * El mensaje se envia al entorno de pruebas o al de produccion segun la
+	 * configuracion de comunicacion (SIIUri).
+	 *
+	 * @param context contexto de comunicacion con el SII
+	 * @param request suministro que se envia
+	 * @return RespuestaLRFEmitidasType
+	 * @throws InvoiceCommunicationException si falla el envio
+	 */
+	public RespuestaLRFEmitidasType suministroFacturasEmitidas(InvoiceCommunicatorContext context, SuministroLRFacturasEmitidas request) throws InvoiceCommunicationException {
+		try {
+			String uri = SIIUri.getInstance().getURI(context.getConfig(), SIIType.FACTURAS_EMITIDAS);
+			String sumStr = marshal(SuministroLRFacturasEmitidas.class, request);
+			String response = post(uri, sumStr);
+			return (RespuestaLRFEmitidasType) unmarshal(RespuestaLRFEmitidasType.class, response);
+		} catch (JAXBException | SOAPException | IOException e) {
+			throw new InvoiceCommunicationException(InvoiceCommunicationError.AON_9000, e);
+		}
+	}
+
 	public RespuestaLRBajaFEmitidasType bajaFacturasEmitidas(InvoiceCommunicatorContext context, BajaLRFacturasEmitidas request) throws InvoiceCommunicationException {
 		try {
 			String uri = SIIUri.getInstance().getURI(context.getConfig(), SIIType.FACTURAS_EMITIDAS);

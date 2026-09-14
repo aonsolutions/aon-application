@@ -773,6 +773,43 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	// TODO EMITIDAS POR TERCEROS | EMITIDAS POR DESTINATARIO | EMITIDAS POR SOFTWARE EXTERNO
+	
+	/**
+	 * Indica si la factura ha sido emitida por un tercero o por el destinatario (no por el emisor)
+	 * @return true si la factura ha sido emitida por un tercero o por el destinatario, false en caso contrario
+	 */
+	public boolean isIssuedByThirdPartyOrRecipient() {
+		return isIssuedByThirdParty() || isIssuedByRecipient();
+	}
+	
+	/**
+	 * Indica si la factura ha sido emitida por un tercero (no por el emisor ni por el destinatario)
+	 * @return true si la factura ha sido emitida por un tercero, false en caso contrario
+	 */
+	public boolean isIssuedByThirdParty() {
+		return false;
+	}
+
+	
+	/**
+	 * Indica si la factura ha sido emitida por el destinatario (no por el emisor ni por un tercero)
+	 * @return true si la factura ha sido emitida por el destinatario, false en caso contrario
+	 */
+	public boolean isIssuedByRecipient() {
+		return false;
+	}
+	
+
+	/**
+	 * Indica si la factura ha sido emitida por un software externo (no por el emisor ni por el destinatario ni por un tercero)
+	 * @return true si la factura ha sido emitida por un software externo, false en caso contrario
+	 */
+	public boolean isIssuedByExternalSoftware() {
+		return false;
+	}
+
+	
 	// ----------- VAT REGIMES
 	public boolean isExempt() {
 		return optActivity().filter(a -> a.getVatRegime() == VATRegime.EXEMPT).isPresent()
