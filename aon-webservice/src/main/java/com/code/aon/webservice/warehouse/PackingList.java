@@ -253,7 +253,9 @@ public class PackingList extends PdfUtils{
 	}
 
 	private static PdfPCell getSubHeaderBoeInfo() {
-		String boeInfo = "DOCUMENTO DE CONTROL orden FOM/2861/13-12 2012(BOE nº 5 de 5/01/2013)";
+		String boeInfo = "DOCUMENTO ELECTRONICO DE CONTROL ADMINISTRATIVO Orden FOM/2861/2012 ( Ley 9/2025, D.T. 8.ª)";
+		
+//		String boeInfo = "DOCUMENTO DE CONTROL orden FOM/2861/13-12 2012(BOE nº 5 de 5/01/2013)";
 		Paragraph title = new Paragraph(boeInfo, getBoeInfoFont());
 		title.setAlignment(Element.ALIGN_CENTER);
 		title.add(getSeparator());
