@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.PdfUtils;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.server.warehouse.XMLUtils;
@@ -92,7 +93,7 @@ public class PackingList extends PdfUtils{
 			Paragraph order = new Paragraph(" ");
 			order.add(getSeparator());
 			document.add(order);
-			if(!"reception".equals(printType)){
+			if(!"reception".equals(printType)) {
 				String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") != null ?
 						json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") : "";
 				com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params = XMLUtils.readXml(json.getJSONObject(MSG.CARRIER_PACKING).getString("params"));
@@ -105,7 +106,11 @@ public class PackingList extends PdfUtils{
 				document.add(new Paragraph(" "));
 			}
 			Integer cpId = json.getJSONObject(MSG.CARRIER_PACKING).getInt(MSG.ID);
-			BarcodeQRCode qrcode = new BarcodeQRCode("https://" + domain.getName() + "/qr?cp=" + cpId, 100, 100, null);
+			String qrCodeUrl = json.getString("qr") != null 
+					? json.getString("qr") 
+					: "https://" + domain.getName() + "/qr?cp=" + cpId;
+			String shortUrl = AON.getShortURL("laburr", qrCodeUrl, null);
+			BarcodeQRCode qrcode = new BarcodeQRCode(shortUrl, 100, 100, null);
 			PdfPTable table = new PdfPTable(2);
 			PdfPCell firma = new PdfPCell(new Phrase("Firma Transportista", getFont1()));
 			firma.setBorder(PdfPCell.NO_BORDER);
@@ -222,8 +227,6 @@ public class PackingList extends PdfUtils{
 		PdfPCell c9 = new PdfPCell(new Phrase("1",getFont2()));
 		c9.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c9);
-		
-		
 		
 		return header3;
 	}	
