@@ -83,7 +83,8 @@ public class HtmlAjaxCommandButtonSymbolRenderer extends Renderer {
 		// Write the symbol inside an <i> tag, with the class "aon-symbol"
 		ResponseWriter writer = context.getResponseWriter();
 		writer.startElement("i", component);
-		writer.writeAttribute("class", "material-symbols-outlined", null);
+		String symbolCommandButtonClass = HtmlAjaxCommandButton.getSymbolCommandButtonClass(context, component);
+		writer.writeAttribute("class", symbolCommandButtonClass, null);
 		writer.writeText(symbol.get() , null);
 		writer.endElement("i");
 	}
@@ -121,7 +122,9 @@ public class HtmlAjaxCommandButtonSymbolRenderer extends Renderer {
 	
 	private Map<String,String> getIconClassSymbolMap(FacesContext context, javax.faces.component.UIComponent component) {
 		try {
-			return (Map<String,String>) context.getApplication().evaluateExpressionGet(context, "#{classSymbolMap}", Map.class);
+			// An unresolvable variable is coerced to null rather than raising, so guard the result.
+			Map<String,String> iconClassSymbolMap = (Map<String,String>) context.getApplication().evaluateExpressionGet(context, "#{iconClassSymbolMap}", Map.class);
+			return iconClassSymbolMap != null ? iconClassSymbolMap : Collections.emptyMap();
 		} catch ( Exception e ) {
 			return Collections.emptyMap();
 		}

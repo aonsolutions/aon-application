@@ -19,13 +19,6 @@
 	</ui:define>
 
 	<ui:define name="mainHeader">
-		<c:set var="classSymbolMap" value="#{
-			{
-		    'aon-icon-reset': 'add',
-			'aon-icon-search': 'document_search'
-		}
-		}" scope="application" />
-		<c:set var="commandButtonSymbol" value="#{true}" scope="page" />	
 		<aon:div id="#{app.standAloneAppId}" /> 
 		<ui:include src="/facelet/app/header.xhtml" />
 		<c:catch test="#{not empty app.theme}" >
