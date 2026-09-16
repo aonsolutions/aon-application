@@ -32,6 +32,7 @@ public final class IJsonNames {
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
 	public static final String ACTIVITY_NAME = "activityName";
 	public static final String ACTUAL_QUANTITY = "actualQuantity";
+	public static final String ADDITIONAL_TARE = "additionalTare";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
 	public static final String ADDRESS3 = "address3";
@@ -325,6 +326,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[G] 
 	public static final String GENDER = "gender";
 	public static final String GLOBAL = "global";
+	public static final String GROSS = "gross";
 	public static final String GROUPED_BY = "groupedBy";
 	// ---------------------------------------------------------------------------------------------	[H]
 	public static final String HAS_BEFORE_PERIOD_AMOUNTS = "hasBeforePeriodAmounts";
@@ -468,6 +470,7 @@ public final class IJsonNames {
 	public static final String NATIONALITY = "nationality";
 	public static final String NATURE = "nature";
 	public static final String NEARBY_NUMBERS = "nearbyNumbers";
+	public static final String NET = "net";
 	public static final String NIF = "nif";
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
@@ -488,6 +491,7 @@ public final class IJsonNames {
 	public static final String NUMBER_OF_USERS = "numberOfUsers";
 	public static final String NUMBER_PLATE = "numberPlate";
 	// ---------------------------------------------------------------------------------------------	[O] 
+	public static final String OBSERVATION = "observation";
 	public static final String OFFER = "offer";
 	public static final String OFFER_DETAIL = "offerDetail";
 	public static final String OFFER_STATUS_APPROVED = "offerStatusApproved";
@@ -600,6 +604,7 @@ public final class IJsonNames {
 	
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
+	public static final String QR = "qr";
 	public static final String QUANTITY = "quantity";
 	public static final String QUERY = "query";
 	public static final String QUESTION = "question";
@@ -615,6 +620,8 @@ public final class IJsonNames {
 	public static final String REAL_QUANTITY = "realQuantity";
 	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
+	public static final String RECEPTION_END_DATE = "receptionEndDate";
+	public static final String RECEPTION_START_DATE = "receptionStartDate";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATAS = "recordDatas";
 	public static final String RECORD_DATE = "recordDate";
@@ -772,6 +779,7 @@ public final class IJsonNames {
 	public static final String SS_NUMBER = "ssNumber";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TABLE = "table";
+	public static final String TARE = "tare";
 	public static final String TARIFF = "tariff";
 	public static final String TAS = "tas";
 	public static final String TASK = "task";

@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEV
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
-import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Catalogue.CATALOGUE;
 import static com.esferalia.aon.jooq.tables.CatalogueCategory.CATALOGUE_CATEGORY;
 import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
@@ -76,7 +75,6 @@ import com.esferalia.aon.jooq.tables.RdocTag;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
-import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueFilter;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueItemFilter;
@@ -131,7 +129,6 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
-import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CatalogueCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.CatalogueItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.CatalogueProperties;
@@ -482,43 +479,6 @@ public class PropertiesDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DESCRIPTION);}
 		@Override public Property<String> getUrlProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.URL);}
 		@Override public Property<Integer> getRattachProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.RATTACH);}
-	}
-	
-	public static class CarrierPackingPropertiesDAO implements CarrierPackingProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, CarrierPackingFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(CarrierPackingFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) {
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DOMAIN);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.STATUS);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NUMBER);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.TYPE);}
-		@Override public Property<Timestamp> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.ISSUE_DATE);}
-		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CARRIER);}
-		@Override public Property<Timestamp> getDeliveryDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DELIVERY_DATE);}
-		@Override public Property<String> getCarrierReferenceProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CARRIER_REFERENCE);}
-		@Override public Property<String> getNumberPlateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NUMBER_PLATE);}
-		@Override public Property<String> getDriverNameProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DRIVER_NAME);}
-		@Override public Property<String> getDriverDocumentProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DRIVER_DOCUMENT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_DATE);}
-		@Override public Property<Double> getGrossWeightProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.GROSS);}
-		@Override public Property<Double> getTareProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.TARE);}
-		@Override public Property<Double> getNetProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NET);}
-		@Override public Property<Timestamp> getReceptionStartDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_START_DATE);}
-		@Override public Property<Timestamp> getReceptionEndDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_END_DATE);}
 	}
 	
 	/**
