@@ -122,6 +122,7 @@ public class PackingListDownload extends HttpServlet{
 				array.put(purchaseJSON);
 			});
 		} else  if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
+			json.put("qr", req.getRequestURL().toString());
 			json.put("type", carrierPacking.getType().getName());
 			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
 			.forEach(delivery -> {
