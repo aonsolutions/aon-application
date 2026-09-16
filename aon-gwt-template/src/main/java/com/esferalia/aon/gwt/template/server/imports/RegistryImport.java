@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -179,7 +180,16 @@ public class RegistryImport extends Import {
 			}
 			return ;
 		}
-	
+
+		if(IConstants.TIPO_DE_VIA.equalsIgnoreCase(title)
+				|| IConstants.TIPO_DE_VIA2.equalsIgnoreCase(title)) {
+			StreetType st = StreetType.safeValueOf(o.toString());
+			if(st != null) {
+				reg.getRegistry().getMainAddress().setStreet_type(st.getAeatCode());
+			}		
+			return;
+		}
+		
 		if(IConstants.DOMICILIO.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION2.equalsIgnoreCase(title)) {
