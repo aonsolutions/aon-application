@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.jooq.Record;
 import org.jooq.Field;
 import org.jooq.TableLike;
 import org.jooq.impl.DSL;
@@ -111,6 +113,29 @@ public class AccountValidation {
 			}
 	};
 	
+	/**
+	 * Una cuenta del dominio padre no puede repetir el codigo de una cuenta de sus dominios
+	 * hijo con herencia: el hijo la veria dos veces.
+	 */
+	public static final BiConsumer<Account,AONContext> DUPLICATED_CODE_IN_CHILD = (account,ctx) -> {
+		Record child = ctx.getDslContext()
+			.select(DOMAIN.DESCRIPTION)
+			.from(ACCOUNT)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ACCOUNT.DOMAIN))
+			.where(ACCOUNT.CODE.eq(account.getCode()))
+			.and(DOMAIN.PARENT.eq(account.getDomain()))
+			.and(DOMAIN.ENABLEHEREDITY.eq((byte) 1))
+			.and(account.getId() == null ? DSL.trueCondition() : ACCOUNT.ID.ne(account.getId()))
+			.fetchAny()
+		;
+		if (child != null) {
+			throw new AonCoreException(AonError.ACCOUNT_DUPLICATED_CODE_IN_CHILD.format(
+				account.getCode()
+				,AonStringUtils.trimToEmpty(child.getValue( DOMAIN.DESCRIPTION ))));
+		}
+	};
+	
+	
 	public static void validate(AONContext ctx, Account account)
 			throws AonCoreException {
 		EMPTY_DOMAIN
@@ -120,6 +145,7 @@ public class AccountValidation {
 			.andThen(NUMERIC_CODE)
 			.andThen(LOW_LEVEL_EXISTS)
 			.andThen(DUPLICATED_CODE)
+			.andThen(DUPLICATED_CODE_IN_CHILD)
 			.accept(account, ctx);
 
 	}
@@ -133,9 +159,8 @@ public class AccountValidation {
 		try {NUMERIC_CODE.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
 		try {LOW_LEVEL_EXISTS.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
 		try {DUPLICATED_CODE.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
+		try {DUPLICATED_CODE_IN_CHILD.accept(account, ctx);} catch (AonCoreException e) {messages.add( e.getMessage());}
 		return messages;
-		
-
 	}
 
 	/**
