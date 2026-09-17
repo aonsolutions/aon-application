@@ -280,6 +280,12 @@ public class WarehouseImpl implements IWarehouse {
 
 
 	@Override
+	public CarrierPacking saveCarrierPacking(AONContext ctx, CarrierPacking carrierPacking) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			CarrierPackingDAO.save(ctx, carrierPacking));
+	}
+	
+	@Override
 	public Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking) {
 		return ctx.getDslContext().transactionResult(configuration ->
 			WarehouseDAO.insertCarrierPacking(ctx, carrierPacking));

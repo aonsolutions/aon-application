@@ -104,21 +104,21 @@ public class PackingList extends PdfUtils{
 				document.add(getObservations(observation, type, params));		
 				document.add(new Paragraph(" "));
 				document.add(new Paragraph(" "));
-			}
-			Integer cpId = json.getJSONObject(MSG.CARRIER_PACKING).getInt(MSG.ID);
-			String qrCodeUrl = json.getString("qr") != null 
-					? json.getString("qr") 
-					: "https://" + domain.getName() + "/qr?cp=" + cpId;
-			String shortUrl = AON.getShortURL("laburr", qrCodeUrl, null);
-			BarcodeQRCode qrcode = new BarcodeQRCode(shortUrl, 100, 100, null);
+			}			
+
 			PdfPTable table = new PdfPTable(2);
 			PdfPCell firma = new PdfPCell(new Phrase("Firma Transportista", getFont1()));
 			firma.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(firma);
-			
-			PdfPCell qr = new PdfPCell(qrcode.getImage());
-			qr.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(qr);
+
+//			if(json.optString("qr") != null) {
+//				String qrCodeUrl = json.getString("qr");
+//				BarcodeQRCode qrcode = new BarcodeQRCode(qrCodeUrl, 100, 100, null);
+//				PdfPCell qr = new PdfPCell(qrcode.getImage());
+//				qr.setBorder(PdfPCell.NO_BORDER);
+//				table.addCell(qr);
+//			}
+
 			table.setWidthPercentage(100);
 			document.add(table);
 			//document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
@@ -145,6 +145,7 @@ public class PackingList extends PdfUtils{
         header.addCell(getHeaderLogo(image));
 		header.addCell(getHeaderCompany(json));
 		header.addCell(getHeaderPackingList(json.getJSONObject("carrier_packing")));
+	
 		return header;
 	}
 	

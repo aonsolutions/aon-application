@@ -75,6 +75,8 @@ public interface IConstants {
 	String TIPO_DE_OPERACION2 = "TIPO DE OPERACIÓN";
 	String TIPO_DE_VIA = "TIPO DE VIA";
 	String TIPO_DE_VIA2 = "TIPO DE VÍA";
+	String TIPO_VIA = "TIPO VIA";
+	String TIPO_VIA2 = "TIPO VÍA";
 	String TIPO_FACTURA = "TIPO FACTURA";
 	String HABER = "HABER";
 	String IBAN = "IBAN";	

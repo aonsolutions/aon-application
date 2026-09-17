@@ -3,7 +3,9 @@ package com.code.aon.webservice.warehouse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.servlet.ServletException;
@@ -22,16 +24,23 @@ import com.code.aon.webservice.warehouse.jooq.DBIncome;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.Carrier;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "packinglistProjection", urlPatterns = {"/aon_gwt_aio/ms/download_packing_list/*"})
 public class PackingListDownload extends HttpServlet{
@@ -46,177 +55,210 @@ public class PackingListDownload extends HttpServlet{
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
 		Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));	
+		Occam occam = new Occam()
+			.setDomain(domain.getId())
+			.setDomainName(domain.getName())
+			.setUser(login);
 		String carrierPackingIdStr = parameters.get("id");
 		Integer carrierPackingId = Integer.parseInt(carrierPackingIdStr);
 		
 		// GENERATE JSON //
 		
 		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, carrierPackingId);
-		JSONObject json = new JSONObject();
-		JSONObject cpJSON = ToJSON.carrierPackingToJSON(carrierPacking);
-		RAddress addr = AON.getRAddres(domain.getName(), domain.getId(), login, carrierPacking.getCarrier());
-		cpJSON.put("address", ToJSON.raddressToJSON(addr));
-		cpJSON.put("document", AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() != null ?
-				AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() : "");
-		json.put("carrier_packing", cpJSON);
-		Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
-		JSONObject addressJSON = ToJSON.raddressToJSON(
-			AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
-		addressJSON.put("document", company.getDocument() != null ? 
-				company.getDocument() : "");
-		json.put("address", addressJSON);
-		JSONArray array = new JSONArray();
-		if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
-			&& !CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){
-			json.put("type", carrierPacking.getType().getName());
-			AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
-					f -> f.getCarrierPackingProperty().eq(carrierPackingId)
-					.and(f.getDomainProperty().eq(domain.getId())))
-			.forEach(purchase ->{
-				JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
-				boolean shippingAlternativeAddressDefined = purchase
-						.getShippingAlternativeAddress() != null
-						|| purchase.getShippingAlternativeAddress2() != null
-						|| purchase.getShippingAlternativeZip() != null
-						|| purchase.getShippingAlternativeCity() != null
-						|| purchase.getShippingAlternativePhone() != null
-						|| purchase.getShippingAlternativeRecipient() != null;	
 
-				JSONObject addressJSON2 = new JSONObject();
-				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
-
-				if(shippingAlternativeAddressDefined) {
-					addressJSON2 = new JSONObject()
-					.put("name", purchase.getShippingAlternativeRecipient())
-					.put("address", purchase.getShippingAlternativeAddress() + " " +purchase.getShippingAlternativeAddress2())
-					.put("zip", purchase.getShippingAlternativeZip())
-					.put("city", purchase.getShippingAlternativeCity())
-					.put("province", " ")
-					.put("country", " ");
-				} else addressJSON2 = ToJSON.raddressToJSON(ra);
-				
-				addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ? 
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				purchaseJSON.put("address",addressJSON2);
-				JSONArray details = new JSONArray();
-				AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
-						f -> f.getPurchaseProperty().eq(purchase.getId())
-						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
-				.forEach(detail -> {
-					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
-					Optional<OldItem> item = getItem(domain, login, detail.getItem(), detail.getProductId());
-
-					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-						f2.getRegistryProperty().eq(purchase.getSupplier())
-						.and(f2.getItemProperty().eq(detail.getItem()))).getCode();
-					detailJSON.put("code", code);
-					
-					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
-					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
-					details.put(detailJSON);	
-				});
-				
-				purchaseJSON.put("details", details);
-				array.put(purchaseJSON);
-			});
-		} else  if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
-			json.put("qr", req.getRequestURL().toString());
-			json.put("type", carrierPacking.getType().getName());
-			AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
-			.forEach(delivery -> {
-				JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
-				boolean shippingAlternativeAddressDefined = delivery
-						.getShippingAlternativeAddress() != null
-						|| delivery.getShippingAlternativeAddress2() != null
-						|| delivery.getShippingAlternativeZip() != null
-						|| delivery.getShippingAlternativeCity() != null
-						|| delivery.getShippingAlternativePhone() != null
-						|| delivery.getShippingAlternativeRecipient() != null;	
-				
-				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress().getId()));
-				JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
-
-				if(shippingAlternativeAddressDefined) {
-					addressJSON3 = new JSONObject()
-					.put("name", delivery.getShippingAlternativeRecipient())
-					.put("address", delivery.getShippingAlternativeAddress() + " " +delivery.getShippingAlternativeAddress2())
-					.put("zip", delivery.getShippingAlternativeZip())
-					.put("city", delivery.getShippingAlternativeCity())
-					.put("province", " ")
-					.put("country", " ");
-				} else addressJSON3 = ToJSON.raddressToJSON(ra);
-				
-				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				deliveryJSON.put("address", addressJSON3);
-			
-				JSONArray details = new JSONArray();
-				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
-				.forEach(detail -> {
-					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
-					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
-					
-					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-						f2.getRegistryProperty().eq(delivery.getCustomer().getId())
-						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
-					detailJSON.put("code", code);
-					
-					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
-					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
-					details.put(detailJSON);	
-				});
-				
-				deliveryJSON.put("details", details);
-				array.put(deliveryJSON);
-			});
-		} else if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
-				&& CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){ // TODO RECEPTION
-			json.put("type", "reception");
-			AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getCarrierPackingProperty().eq(carrierPackingId))
-			.forEach(income -> {
-				JSONObject incomeJSON = DBIncome.incomeToJSON(income);
-				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(income.getAddress()));
-				JSONObject addressJSON3 = ToJSON.raddressToJSON(ra);
-				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
-						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-				incomeJSON.put("address", addressJSON3);
-
-				JSONArray details = new JSONArray();
-				AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
-				.forEach(detail -> {
-					JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
-					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
-					
-					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-						f2.getRegistryProperty().eq(income.getSupplier())
-						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
-					detailJSON.put("code", code);
-					
-					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
-					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
-					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
-					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
-					details.put(detailJSON);	
-				});
-				
-				incomeJSON.put("details", details);
-				array.put(incomeJSON);
-			});
-		}
-		json.put("orders", array);
-		// --------------- //
-		
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
-					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
-					.and(f.getDomainProperty().eq(domain.getId())),
-				AttachType.REGISTRY);
+				f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+				.and(f.getDomainProperty().eq(domain.getId())),
+			AttachType.REGISTRY);
 		
-		File file = PackingList.createPdf(domain, json, attach.getData());
-		
+		File file;
+		if(carrierPacking.getType().isWaybill()) {
+			if(AonStringUtils.isBlank(carrierPacking.getQr())) {
+				Date date = carrierPacking.getDeliveryDate() != null ? carrierPacking.getDeliveryDate() : new Date();
+				String shortUrl = AON.getShortURL("laburr", req.getRequestURL().toString(), AonDateUtils.addMonths(date, 1));
+				carrierPacking.setQr(shortUrl);
+				AON.saveCarrierPacking(occam, carrierPacking);
+			}
+
+			CompanyFull company = AON.getCompanyFull(occam);
+			Carrier carrier = AON.getCarrier(domain, login, carrierPacking.getCarrier(), new Options().setFull(true));
+			List<Delivery> deliveries = AON.getDeliveryStream(domain, login, f-> f.getCarrierPackingProperty().eq(carrierPackingId), new Options().setFull(true)).toList();
+			
+			PackingListContext context = new PackingListContext();
+			context.setCarrierPacking(carrierPacking);
+			context.setCompany(company);
+			context.setCarrier(carrier);
+			context.setDeliveries(deliveries);
+			
+			file = Deca.createPdf(domain, context, attach.getData());
+		} else {
+			JSONObject json = new JSONObject();
+			JSONObject cpJSON = ToJSON.carrierPackingToJSON(carrierPacking);
+			RAddress addr = AON.getRAddres(domain.getName(), domain.getId(), login, carrierPacking.getCarrier());
+			cpJSON.put("address", ToJSON.raddressToJSON(addr));
+			cpJSON.put("document", AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() != null ?
+					AON.getCarrier(domain.getName(), domain.getId(), login, carrierPacking.getCarrier()).getDocument() : "");
+			json.put("carrier_packing", cpJSON);
+			Company company = AON.getCompanyForDomain(domain.getName(), domain.getId(), login);
+
+			JSONObject addressJSON = ToJSON.raddressToJSON(
+				AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
+			addressJSON.put("document", company.getDocument() != null ? 
+					company.getDocument() : "");
+			json.put("address", addressJSON);
+			JSONArray array = new JSONArray();
+			if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
+				&& !CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){
+				json.put("type", carrierPacking.getType().getName());
+				AON.getPurchaseStream(domain.getName(), domain.getId(), login, 
+						f -> f.getCarrierPackingProperty().eq(carrierPackingId)
+						.and(f.getDomainProperty().eq(domain.getId())))
+				.forEach(purchase ->{
+					JSONObject purchaseJSON = ToJSON.purchaseToJSON(purchase);
+					boolean shippingAlternativeAddressDefined = purchase
+							.getShippingAlternativeAddress() != null
+							|| purchase.getShippingAlternativeAddress2() != null
+							|| purchase.getShippingAlternativeZip() != null
+							|| purchase.getShippingAlternativeCity() != null
+							|| purchase.getShippingAlternativePhone() != null
+							|| purchase.getShippingAlternativeRecipient() != null;	
+
+					JSONObject addressJSON2 = new JSONObject();
+					RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(purchase.getAddress()));
+
+					if(shippingAlternativeAddressDefined) {
+						addressJSON2 = new JSONObject()
+						.put("name", purchase.getShippingAlternativeRecipient())
+						.put("address", purchase.getShippingAlternativeAddress() + " " +purchase.getShippingAlternativeAddress2())
+						.put("zip", purchase.getShippingAlternativeZip())
+						.put("city", purchase.getShippingAlternativeCity())
+						.put("province", " ")
+						.put("country", " ");
+					} else addressJSON2 = ToJSON.raddressToJSON(ra);
+					
+					addressJSON2.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ? 
+							AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+					purchaseJSON.put("address",addressJSON2);
+					JSONArray details = new JSONArray();
+					AON.getPurchaseDetailStream(domain.getName(), domain.getId(), login,
+							f -> f.getPurchaseProperty().eq(purchase.getId())
+							.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
+					.forEach(detail -> {
+						JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
+						Optional<OldItem> item = getItem(domain, login, detail.getItem(), detail.getProductId());
+
+						String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+							f2.getRegistryProperty().eq(purchase.getSupplier())
+							.and(f2.getItemProperty().eq(detail.getItem()))).getCode();
+						detailJSON.put("code", code);
+						
+						detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+						detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+						detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+						detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
+						details.put(detailJSON);	
+					});
+					
+					purchaseJSON.put("details", details);
+					array.put(purchaseJSON);
+				});
+			} else  if(CarrierPackingType.WAYBILL.equals(carrierPacking.getType())){
+				if(AonStringUtils.isBlank(carrierPacking.getQr())) {
+					Date date = carrierPacking.getDeliveryDate() != null ? carrierPacking.getDeliveryDate() : new Date();
+					String shortUrl = AON.getShortURL("laburr", req.getRequestURL().toString(), AonDateUtils.addMonths(date, 1));
+					carrierPacking.setQr(shortUrl);
+					AON.saveCarrierPacking(occam, carrierPacking);
+				}
+
+				json.put("qr", carrierPacking.getQr());
+				json.put("type", carrierPacking.getType().getName());
+				AON.getDeliveryStream(domain.getName(), domain.getId(), login, f-> f.getCarrierPackingProperty().eq(carrierPackingId))
+				.forEach(delivery -> {
+					JSONObject deliveryJSON = ToJSON.deliveryToJSON(delivery);
+					boolean shippingAlternativeAddressDefined = delivery
+							.getShippingAlternativeAddress() != null
+							|| delivery.getShippingAlternativeAddress2() != null
+							|| delivery.getShippingAlternativeZip() != null
+							|| delivery.getShippingAlternativeCity() != null
+							|| delivery.getShippingAlternativePhone() != null
+							|| delivery.getShippingAlternativeRecipient() != null;	
+					
+					RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(delivery.getAddress().getId()));
+					JSONObject addressJSON3= ToJSON.raddressToJSON(ra);
+
+					if(shippingAlternativeAddressDefined) {
+						addressJSON3 = new JSONObject()
+						.put("name", delivery.getShippingAlternativeRecipient())
+						.put("address", delivery.getShippingAlternativeAddress() + " " +delivery.getShippingAlternativeAddress2())
+						.put("zip", delivery.getShippingAlternativeZip())
+						.put("city", delivery.getShippingAlternativeCity())
+						.put("province", " ")
+						.put("country", " ");
+					} else addressJSON3 = ToJSON.raddressToJSON(ra);
+					
+					addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
+							AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+					deliveryJSON.put("address", addressJSON3);
+				
+					JSONArray details = new JSONArray();
+					AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
+					.forEach(detail -> {
+						JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
+						Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
+						
+						String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+							f2.getRegistryProperty().eq(delivery.getCustomer().getId())
+							.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
+						detailJSON.put("code", code);
+						
+						detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+						detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+						detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+						detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
+						details.put(detailJSON);	
+					});
+					
+					deliveryJSON.put("details", details);
+					array.put(deliveryJSON);
+				});
+			} else if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
+					&& CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){ // TODO RECEPTION
+				json.put("type", "reception");
+				AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getCarrierPackingProperty().eq(carrierPackingId))
+				.forEach(income -> {
+					JSONObject incomeJSON = DBIncome.incomeToJSON(income);
+					RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(income.getAddress()));
+					JSONObject addressJSON3 = ToJSON.raddressToJSON(ra);
+					addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
+							AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
+					incomeJSON.put("address", addressJSON3);
+
+					JSONArray details = new JSONArray();
+					AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
+					.forEach(detail -> {
+						JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
+						Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
+						
+						String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
+							f2.getRegistryProperty().eq(income.getSupplier())
+							.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
+						detailJSON.put("code", code);
+						
+						detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
+						detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
+						detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
+						detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
+						details.put(detailJSON);	
+					});
+					
+					incomeJSON.put("details", details);
+					array.put(incomeJSON);
+				});
+			}
+			json.put("orders", array);
+			file = PackingList.createPdf(domain, json, attach.getData());
+		}
+				
         Utils.addCorsHeader(resp);
         resp.setContentType(MimeType.PDF.getName());
 		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + ".pdf\";");
