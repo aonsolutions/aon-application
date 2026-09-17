@@ -182,7 +182,9 @@ public class RegistryImport extends Import {
 		}
 
 		if(IConstants.TIPO_DE_VIA.equalsIgnoreCase(title)
-				|| IConstants.TIPO_DE_VIA2.equalsIgnoreCase(title)) {
+				|| IConstants.TIPO_DE_VIA2.equalsIgnoreCase(title)
+				|| IConstants.TIPO_VIA.equalsIgnoreCase(title)
+				|| IConstants.TIPO_VIA2.equalsIgnoreCase(title)) {
 			StreetType st = StreetType.safeValueOf(o.toString());
 			if(st != null) {
 				reg.getRegistry().getMainAddress().setStreet_type(st.getAeatCode());
