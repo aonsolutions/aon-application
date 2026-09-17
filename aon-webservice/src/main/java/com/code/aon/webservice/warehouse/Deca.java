@@ -239,10 +239,12 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell ca = new PdfPCell(new Phrase(company.getRegistry().getName(), getFont1()));
 		ca.setBorder(PdfPCell.NO_BORDER);
+		ca.setPaddingLeft(5);
 		table.addCell(ca);
 		
 		PdfPCell cX = new PdfPCell(new Phrase("NIF: " + company.getRegistry().getDocument(), getFont2()));
 		cX.setBorder(PdfPCell.NO_BORDER);
+		cX.setPaddingLeft(5);
 		table.addCell(cX);
 		
 		String streetType = company.getMainAddress().getStreetType() != null ? company.getMainAddress().getStreetType().getDescription() + " " : "";
@@ -254,6 +256,7 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell cb = new PdfPCell(new Phrase(fullAddress, getFont2()));
 		cb.setBorder(PdfPCell.NO_BORDER);
+		cb.setPaddingLeft(5);
 		table.addCell(cb);
 		
 		String zip = company.getMainAddress().getZip() != null ? company.getMainAddress().getZip() + " " : "";
@@ -263,6 +266,7 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell cc = new PdfPCell(new Phrase(zip + city + province + country, getFont2()));
 		cc.setBorder(PdfPCell.NO_BORDER);
+		cc.setPaddingLeft(5);
 		table.addCell(cc);
 		return table;
 	}
@@ -276,10 +280,12 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell ca = new PdfPCell(new Phrase(carrier.getName(), getFont1()));
 		ca.setBorder(PdfPCell.NO_BORDER);
+		ca.setPaddingLeft(5);
 		table.addCell(ca);
 		
 		PdfPCell cX = new PdfPCell(new Phrase("NIF: " + carrier.getDocument(), getFont2()));
 		cX.setBorder(PdfPCell.NO_BORDER);
+		cX.setPaddingLeft(5);
 		table.addCell(cX);
 		
 		String streetType = carrier.getMainAddress().getStreet_type() != null ? carrier.getMainAddress().getStreet_type() + " " : "";
@@ -292,6 +298,7 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell cb = new PdfPCell(new Phrase(fullAddress, getFont2()));
 		cb.setBorder(PdfPCell.NO_BORDER);
+		cb.setPaddingLeft(5);
 		table.addCell(cb);
 		
 		String zip = carrier.getMainAddress().getZip() != null ? carrier.getMainAddress().getZip() + " " : "";
@@ -301,15 +308,30 @@ public class Deca extends PdfUtils{
 		
 		PdfPCell cc = new PdfPCell(new Phrase(zip + city + /*province +*/ country, getFont2()));
 		cc.setBorder(PdfPCell.NO_BORDER);
+		cc.setPaddingLeft(5);
 		table.addCell(cc);
 		
-		PdfPCell driver = new PdfPCell(new Phrase("Conductor: " + carrierPacking.getDriverName() + " - " + carrierPacking.getDriverDocument(), getFont1()));
-		driver.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(driver);
 		
-		PdfPCell numberPlate = new PdfPCell(new Phrase("Matricula: " + carrierPacking.getNumberPlate(), getFont1()));
+		PdfPTable table2 = new PdfPTable(2);
+		PdfPCell driver = new PdfPCell(new Phrase("Conductor:", getFont1()));
+		driver.setBorder(PdfPCell.NO_BORDER);
+		table2.addCell(driver);
+		
+		PdfPCell driver2 = new PdfPCell(new Phrase(carrierPacking.getDriverName() + " - " + carrierPacking.getDriverDocument(), getFont2()));
+		driver2.setBorder(PdfPCell.NO_BORDER);
+		table2.addCell(driver2);
+
+		PdfPCell numberPlate = new PdfPCell(new Phrase("Matrícula:", getFont1()));
 		numberPlate.setBorder(PdfPCell.NO_BORDER);
-		table.addCell(numberPlate);
+		table2.addCell(numberPlate);
+		
+		PdfPCell numberPlate2 = new PdfPCell(new Phrase(carrierPacking.getNumberPlate(), getFont2()));
+		numberPlate2.setBorder(PdfPCell.NO_BORDER);
+		table2.addCell(numberPlate2);
+		
+		PdfPCell table2Cell = new PdfPCell(table2);
+		table2Cell.setBorder(PdfPCell.NO_BORDER);
+		table.addCell(table2Cell);
 		
 		return table;
 	}
@@ -341,31 +363,29 @@ public class Deca extends PdfUtils{
 		c5.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c5);
 			
-		PdfPCell c2 = new PdfPCell(new Phrase("Fecha:",getFont1()));
+		PdfPCell c2 = new PdfPCell(new Phrase("Fecha Carga:",getFont1()));
 		c2.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c2);
 				
 		PdfPCell c3 = new PdfPCell(new Phrase(AonDateUtils.simpleFormat(carrierPacking.getIssueDate()), getFont2()));
 		c3.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c3);
-			
-		PdfPCell c6 = new PdfPCell(new Phrase("Su Referencia:",getFont1()));
-		c6.setBorder(PdfPCell.NO_BORDER);
-		header3.addCell(c6);
-			
-		PdfPCell c7 = new PdfPCell(new Phrase(carrierPacking.getCarrierReference(), getFont2()));
-		c7.setBorder(PdfPCell.NO_BORDER);
-		header3.addCell(c7);
 		
-		
-		PdfPCell c10 = new PdfPCell(new Phrase("Entrega: ", getFont1()));
+		PdfPCell c10 = new PdfPCell(new Phrase("Fecha Entrega: ", getFont1()));
 		c10.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c10);
 		
 		PdfPCell c11 = new PdfPCell(new Phrase(AonDateUtils.simpleFormat(carrierPacking.getDeliveryDate()), getFont2()));
 		c11.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c11);
-		
+			
+		PdfPCell c6 = new PdfPCell(new Phrase("Su Referencia:", getFont1()));
+		c6.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c6);
+			
+		PdfPCell c7 = new PdfPCell(new Phrase(carrierPacking.getCarrierReference(), getFont2()));
+		c7.setBorder(PdfPCell.NO_BORDER);
+		header3.addCell(c7);		
 		
 		PdfPCell c8 = new PdfPCell(new Phrase("Hoja:",getFont1()));
 		c8.setBorder(PdfPCell.NO_BORDER);
@@ -543,7 +563,7 @@ public class Deca extends PdfUtils{
 
 		table.addCell(getDottedSeparator());
 		
-		PdfPCell cell1 = new PdfPCell(new Phrase("Articulo",getFont1()));
+		PdfPCell cell1 = new PdfPCell(new Phrase("Artículo",getFont1()));
 		cell1.setBorder(PdfPCell.NO_BORDER);
 		PdfPCell cell2 = new PdfPCell(new Phrase("Formato",getFont1()));
 		cell2.setBorder(PdfPCell.NO_BORDER);
@@ -569,9 +589,6 @@ public class Deca extends PdfUtils{
 
 		delivery.getDetails().stream().forEach(detail -> {
  			StringBuilder description = new StringBuilder();
-			description.append("S/Ref:");
-			description.append(detail.getItem().getProduct().getCode());
-			description.append(" - ");
 			description.append(detail.getDescription());
 			
 			PdfPCell c1 = new PdfPCell(new Phrase(description.toString(),getFont2()));
