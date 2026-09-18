@@ -333,7 +333,18 @@ public class WarehouseServlet extends HttpServlet{
 	
 	private JSONObject updateCarrierPacking(Domain domain, String login, Integer id, JSONObject json) {
 		CarrierPacking carrierPacking = AON.getCarrierPacking(domain.getName(), domain.getId(), login, id);
+		CarrierPackingType oldType = carrierPacking.getType();
 		carrierPacking = getCarrierPacking(domain, login, json, carrierPacking);
+		
+		if(!oldType.equals(carrierPacking.getType())){
+			String observation = carrierPacking.getObservation() != null ? carrierPacking.getObservation() : "";
+			if(carrierPacking.getType().equals(CarrierPackingType.SHIPMENT_REQUEST)){
+				carrierPacking.setComments(observation + params(domain, login, "AON_PL_SC%"));
+			} else {
+				carrierPacking.setComments(params(domain, login, "AON_PL_HR%"));	
+			}
+		}
+		
 		AON.updateCarrierPacking(domain.getName(), domain.getId(), login, carrierPacking);
 		return ToJSON.carrierPackingToJSON(carrierPacking);
 	}

@@ -205,9 +205,6 @@ public class DeliveryDAO {
 		if(delivery.getId() != null) {
 			delivery.setPackaging(DeliveryPackagingDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())));
 		}
-		if(delivery.getAddress().getId() != null) {
-			delivery.setAddress(RegistryAddressDAO.get(ctx, f -> f.getIdProperty().eq(delivery.getAddress().getId())));
-		}
 		return delivery; 
 	}
 	
@@ -261,7 +258,28 @@ public class DeliveryDAO {
 		map.forEach((object, details) -> details.stream()
 			.filter(detail -> !detail.isEmpty())
 			.forEach(object::addDetail));
+		fillAddresses(ctx, map.keySet());
 		return map.keySet().stream(); 
+	}
+	
+	private static void fillAddresses(AONContext ctx, Collection<Delivery> deliveries){
+		Integer[] ids = deliveries.stream()
+			.map(Delivery::getAddress)
+			.filter(address -> address != null && address.getId() != null)
+			.map(RegistryAddress::getId)
+			.distinct()
+			.toArray(Integer[]::new);
+		if(ids.length == 0)
+			return;
+		Map<Integer, RegistryAddress> addresses = RegistryAddressDAO
+			.getStream(ctx, f -> f.getIdProperty().in(ids))
+			.collect(Collectors.toMap(RegistryAddress::getId, Function.identity(), (a, b) -> a));
+		deliveries.stream()
+			.filter(delivery -> delivery.getAddress() != null && delivery.getAddress().getId() != null)
+			.forEach(delivery -> {
+				RegistryAddress address = addresses.get(delivery.getAddress().getId());
+				if(address != null) delivery.setAddress(address);
+			});
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
