@@ -880,21 +880,21 @@ public class Contrata {
 								.contains("Obligatorio indicar si el contrato tiene")) {
 					htmlPage = htmlPage.getElementById("volver").click();
 					
-//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_402.html");
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502.html");
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 					if (null != cto.getDateFinContract()) {
-						((HtmlSelect) form.querySelector("select[name=preg120dias]"))
+						((HtmlSelect) form.querySelector("select[name=preg90dias]"))
 								.setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
 					} else
-						((HtmlSelect) form.querySelector("select[name=preg120dias]")).setSelectedAttribute("N", true);
+						((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute("N", true);
 
 					setOccupation(cto, form);
 
 					webClient.waitForBackgroundJavaScript(5000);
 					
-//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_402_2.html");
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502_2.html");
 					
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 				}

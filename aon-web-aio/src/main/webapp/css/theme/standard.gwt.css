@@ -33,7 +33,7 @@ body,
 #rootPanel > div {
     margin: 0px;
     border-radius: 0px;
-	background-color: transparent !important;	
+	/*background-color: transparent !important;	*/
 }
 
 .aon_toolbar,
