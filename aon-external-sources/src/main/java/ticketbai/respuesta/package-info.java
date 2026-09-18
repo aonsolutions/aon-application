@@ -5,5 +5,5 @@
 // Generated on: 2025.12.03 at 10:04:07 a. m. CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "urn:ticketbai:respuesta")
+@javax.xml.bind.annotation.XmlSchema(namespace = "urn:ticketbai:emision")
 package ticketbai.respuesta;

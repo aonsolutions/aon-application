@@ -163,6 +163,7 @@
 						<aon:commandLink id="Invoice_rectificationInvoiceAdd"
 							immediate="true" styleClass="aon-icon-new"
 							style="margin-left: 5px; padding-left: 20px;"
+							rendered="#{!invoiceController.annulled}"
 							title="Añadir Factura Rectificada"
 							reRender="showAddRectificationInvoiceWindow">
 							<f:setPropertyActionListener

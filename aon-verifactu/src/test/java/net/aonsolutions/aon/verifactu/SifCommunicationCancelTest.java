@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.verifactu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -199,11 +200,33 @@ class SifCommunicationCancelTest extends AbstractVerifactuTest {
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			SIF.cancel(getEnvironment().getCtx(), icc);
+			assertAnnulledInvoice( invoice );
+			assertCanceledInvoiceInfo( invoice );
 			assertCanceledDataResponse( icc, invoice );
 			return invoice;
 		});
 	}
 		
+	private void assertAnnulledInvoice(Invoice i) {
+		Invoice inv = InvoiceDAO.getInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(inv); // la factura NO se borra
+		assertEquals(i.getId(), inv.getId());
+		assertTrue(inv.isAnnulled()); // queda anulada
+		Invoice full = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(full);
+		assertFalse(full.hasFinances()); // la anulacion borra los vencimientos
+	}
+
+	private void assertCanceledInvoiceInfo(Invoice i) {
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.SIF);
+		assertNotNull(invoiceInfoOpt);
+		assertTrue(invoiceInfoOpt.isPresent());
+		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertSame(InvoiceCommunicationStatus.CANCELLED, invoiceInfo.getStatus());
+	}
+	
 	private InvoiceCommunicationTracking assertInvoiceBatch(Invoice i) {
 		Optional<InvoiceCommunicationTracking> oTracking = InvoiceCommunicationTrackingDAO.getSifRegister(getEnvironment().getCtx(), i.getDomain(), i.getId());
 		assertNotNull(oTracking);

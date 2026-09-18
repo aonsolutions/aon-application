@@ -3,7 +3,11 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class EnterpriseData implements Serializable {
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class EnterpriseData implements Serializable, HasAudit {
+	
+	private static final String ICC_PREFIX = "ICC_";
 
 	private static final long serialVersionUID = 3926586279837688509L;
 	
@@ -15,7 +19,12 @@ public class EnterpriseData implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	
-	private boolean isRemoved;
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;	
+    
+	private boolean deleted;
 	private boolean updated;
 	
 	public Integer getId() {
@@ -50,7 +59,15 @@ public class EnterpriseData implements Serializable {
 		return this;
 	}
 
-	public String getExpression() {
+	public EnterpriseDataNames getDataName() {
+		return EnterpriseDataNames.safeValueOf(getName()).orElse(null);
+	}
+	public EnterpriseData setDataName( EnterpriseDataNames name) {
+		setName(name == null ? null : name.name());
+		return this;
+	}
+ 
+ 	public String getExpression() {
 		return expression;
 	}
 	public EnterpriseData setExpression(String expression) {
@@ -74,13 +91,16 @@ public class EnterpriseData implements Serializable {
 		return this;
 	}
 	
-	public boolean isRemoved() {
-		return isRemoved;
+	public boolean isDeleted() {
+		return deleted;
 	}
-	public EnterpriseData setIsRemoved(boolean isRemoved) {
-		this.isRemoved = isRemoved;
+	public EnterpriseData setDeleted(boolean deleted) {
+		this.deleted = deleted;
 		return this;
 	}
+
+	@Deprecated public boolean isRemoved() {return isDeleted();}
+	@Deprecated public EnterpriseData setIsRemoved(boolean isRemoved) {return setDeleted(isRemoved);}
 	
 	public boolean isUpdated() {
 		return updated;
@@ -90,4 +110,60 @@ public class EnterpriseData implements Serializable {
 		return this;
 	}
 
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public EnterpriseData setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public EnterpriseData setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public EnterpriseData setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public EnterpriseData setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+
+	public boolean isCommunicationData() {
+		return AonStringUtils.startsWith(getName(), ICC_PREFIX);
+	}
+
+	public boolean isUnique() {
+		return isCommunicationData();
+	}
+
+	public boolean allowsOverlap() {
+		return !isCommunicationData();
+	}
+
+	public boolean allowsNullStartDate() {
+		return !isCommunicationData();
+	}
 }

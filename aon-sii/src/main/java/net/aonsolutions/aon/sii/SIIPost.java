@@ -172,14 +172,24 @@ public class SIIPost {
 		       "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 			       "<soapenv:Header /><soapenv:Body>%s</soapenv:Body></soapenv:Envelope>";
 		String output = String.format(soapEnvelope, sw.toString());
-		return output;
+		return SIINamespace.toAdministration(output, getSiiConfiguration().getAdministration());
 	}
 	
 	protected Object unmarshal(Class clazz, String response) throws JAXBException {
-		response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + response;
+		response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
+				+ SIINamespace.toAeat(response, getSiiConfiguration().getAdministration());
 		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
 		JAXBElement o = (JAXBElement) unmar.unmarshal(new StringReader(response));
 		return o.getValue();
+	}
+	
+	/**
+	 * El XML se genera siempre con el modelo de la AEAT, asi que hay que traducirlo
+	 * al namespace de la administracion antes de archivarlo para que el historico
+	 * coincida con lo que se ha enviado.
+	 */
+	protected byte[] archive(byte[] xml) {
+		return SIINamespace.toAdministration(xml, getSiiConfiguration().getAdministration());
 	}
 	
 	protected JSONObject json(Integer id, String name, String referenceCode){

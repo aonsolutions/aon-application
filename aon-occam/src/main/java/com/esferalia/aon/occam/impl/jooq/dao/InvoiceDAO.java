@@ -942,11 +942,17 @@ public class InvoiceDAO {
 		return invoice; 
 	}
 	
-	public static Invoice cancel(AONContext ctx, Integer invoiceId) {
+	public static Invoice annul(AONContext ctx, Integer invoiceId) {
+		return annul(ctx, null, invoiceId);
+	}
+	public static Invoice annul(AONContext ctx, AonConfiguration config, Integer invoiceId) {
 		ctx.checkWrite();
+		if (invoiceId == null) 
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
 		Invoice invoice = getFullInvoice(ctx, invoiceId);
-		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
-		InvoiceValidation.validateInvoiceCancellation(ctx, config, invoice);
+		if (invoice == null || invoice.getId() ==null) 
+			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+		InvoiceValidation.validateInvoiceAnnulment(ctx, config, invoice);
 		int i = ctx.getDslContext()
 			.update(INVOICE)
 			.set(INVOICE.ANNULLED, (byte) 1)
@@ -954,15 +960,16 @@ public class InvoiceDAO {
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
-		ctx.log().debug("CANCEL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		ctx.log().debug("ANNUL INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
 		
-		afterCancelInvoice(ctx, invoice);
+		afterAnnulInvoice(ctx, invoice);
 		return invoice;
 	}
 	
-	private static void afterCancelInvoice(AONContext ctx, Invoice invoice) {
+	private static void afterAnnulInvoice(AONContext ctx, Invoice invoice) {
 		FinanceDAO.deleteInvoiceFinances(ctx, invoice.getId());
-
+		revertDUALink(ctx, invoice);
+		
 		getSourceDetailStream(ctx, invoice).filter(detail -> detail.getSource() != null).forEach(detail -> {
 			detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 
@@ -1034,14 +1041,11 @@ public class InvoiceDAO {
 			.execute();
 	}
 
-	public static Invoice delete(AONContext ctx, Integer id, boolean preserveRawdoc) {
-		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, preserveRawdoc);
-	}
 	public static Invoice delete(AONContext ctx, Integer id) {
-		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id, false);
+		return delete(ctx, ConfigurationDAO.getConfiguration(ctx),id);
 	}
 	
-	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id, boolean preserveRawdoc) {
+	private static Invoice delete(AONContext ctx, AonConfiguration config, Integer id) {
 		ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
@@ -1113,12 +1117,77 @@ public class InvoiceDAO {
 //				);
 		
 		deleteDetails(ctx, config, invoice);
+		revertDUALink(ctx, invoice);
 		
+//		byte[] attachData = null;
+//		if (preserveRawdoc) {
+//			attachData = invoice.getDoc()
+//				.filter(d -> d.getExternalStorage() == ExternalStorage.AON)
+//				.flatMap( d -> AttachmentDAO.getInvoiceAttachStream(ctx, f -> f.getIdProperty().eq(d.getAonId()), true).findFirst())
+//				.map( Attach::getData)
+//				.orElse(null);
+//		}
+
+		int count = ctx.getDslContext()
+			.delete(INVOICE_ATTACH)
+			.where(INVOICE_ATTACH.INVOICE.equal(id))
+			.execute();
+		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
+		
+		FinanceDAO.deleteInvoiceFinances(ctx,id);
+		InvoiceDocDAO.delete(ctx, id);
+		InvoiceFiscalDAO.delete(ctx, id);
+		
+		InvoiceAddressDAO.delete(ctx, id);
+		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		InvoiceInfoDAO.deleteByInvoice(ctx, id );
+		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
+		
+		count = ctx.getDslContext()
+			.delete(INVOICE)
+			.where(INVOICE.ID.equal(id))
+			.execute();
+		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
+
+		// ONLY IF IS COMMUNICATION.
+		if (invoice.isSales() && invoice.getNumber() > 0) {
+			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
+			if((icc.hasCommunication())) {
+				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
+			}
+		}
+		
+//		if (preserveRawdoc) {
+//			invoice.setId(null);
+//			invoice.detailStream()
+//				.map(d -> d.setId(null))
+//				.flatMap(d -> d.taxStream())
+//				.forEach(t -> t.setId(null));
+//			Rawdoc rawdoc = new Rawdoc()
+//				.setData( attachData )
+//				.setDomain(invoice.getDomain())
+//				.setJson(InvoiceJSON.toJSON(invoice).toString())
+//				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
+//				.setNature(RawdocNature.INVOICE)
+//				.setStatus(RawdocStatus.TRASH)
+//				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
+//			;
+//			RawdocDAO.save(ctx, rawdoc);
+//		}
+		
+		ctx.getDslContext().delete(AMORTIZATION_INVOICE)
+			.where(AMORTIZATION_INVOICE.INVOICE.eq(id))
+			.execute();
+		
+		return invoice;
+	}
+
+	private static void revertDUALink(AONContext ctx, Invoice invoice) {
 		if ( invoice.isDUAAllowed() ) {
 			Integer importInvoice = ctx.getDslContext()
 				.select(INVOICE_DUA.INVOICE_IMPORT)
 				.from(INVOICE_DUA)
-				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
+				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
 				.and(INVOICE_DUA.DOMAIN.eq(invoice.getDomain()))
 				.fetch()
 				.stream()
@@ -1150,77 +1219,15 @@ public class InvoiceDAO {
 								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
 								.where(INVOICE_TAX.ID.equal( taxId ))
 								.execute();
-						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",id,count);	
+						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",invoice.getId(),count);	
 					});
 				int count = ctx.getDslContext()
 						.delete(INVOICE_DUA)
-						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
+						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(invoice.getId()))
 						.execute();
-				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",id,count);
+				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",invoice.getId(),count);
 			}
 		}
-		
-		byte[] attachData = null;
-		if (preserveRawdoc) {
-			attachData = invoice.getDoc()
-				.filter(d -> d.getExternalStorage() == ExternalStorage.AON)
-				.flatMap( d -> AttachmentDAO.getInvoiceAttachStream(ctx, f -> f.getIdProperty().eq(d.getAonId()), true).findFirst())
-				.map( Attach::getData)
-				.orElse(null);
-		}
-
-		int count = ctx.getDslContext()
-			.delete(INVOICE_ATTACH)
-			.where(INVOICE_ATTACH.INVOICE.equal(id))
-			.execute();
-		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
-		
-		FinanceDAO.deleteInvoiceFinances(ctx,id);
-		InvoiceDocDAO.delete(ctx, id);
-		InvoiceFiscalDAO.delete(ctx, id);
-		
-		InvoiceAddressDAO.delete(ctx, id);
-		InvoiceBatchDetailDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
-		InvoiceInfoDAO.deleteByInvoice(ctx, id );
-		InvoiceDataDAO.delete(ctx, f-> f.getInvoiceProperty().eq(id));
-		
-		count = ctx.getDslContext()
-			.delete(INVOICE)
-			.where(INVOICE.ID.equal(id))
-			.execute();
-		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
-
-		// ONLY IF IS COMMUNICATION.
-		if (invoice.isSales() && invoice.getNumber() > 0) {
-			InvoiceCommunicationConfiguration icc = InvoiceCommunicationDAO.get(ctx, ctx.getDomainId(), false);
-			if((icc.hasCommunication())) {
-				InvoiceTrackingDAO.insert(ctx, invoice, InvoiceTrackingStatus.DELETED);
-			}
-		}
-		
-		if (preserveRawdoc) {
-			invoice.setId(null);
-			invoice.detailStream()
-				.map(d -> d.setId(null))
-				.flatMap(d -> d.taxStream())
-				.forEach(t -> t.setId(null));
-			Rawdoc rawdoc = new Rawdoc()
-				.setData( attachData )
-				.setDomain(invoice.getDomain())
-				.setJson(InvoiceJSON.toJSON(invoice).toString())
-				.setMimeType(invoice.getDoc().map(d -> d.getMimeType()).orElse(null))
-				.setNature(RawdocNature.INVOICE)
-				.setStatus(RawdocStatus.TRASH)
-				.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
-			;
-			RawdocDAO.save(ctx, rawdoc);
-		}
-		
-		ctx.getDslContext().delete(AMORTIZATION_INVOICE)
-			.where(AMORTIZATION_INVOICE.INVOICE.eq(id))
-			.execute();
-		
-		return invoice;
 	}
 
 	public static void rectify(AONContext ctx, Integer rectifierInvoice, Integer rectifiedInvoice)  {
@@ -2164,5 +2171,6 @@ public class InvoiceDAO {
 				.execute();
 		return getFullInvoice(ctx, invoiceId);
 	}
+	
 }
 

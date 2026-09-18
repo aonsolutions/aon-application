@@ -42,6 +42,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 
+	private Boolean defaultAnnulled;
 	private String defaultType;
 	private String defaultStatus;
 	private Date defaultDateFrom;
@@ -68,6 +69,13 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	
 	public void setDefaultDateTo(Date defaultDateTo) {
 		this.defaultDateTo = defaultDateTo;
+	}
+	
+	public Boolean getDefaultAnnulled() {
+		return defaultAnnulled;
+	}
+	public void setDefaultAnnulled(Boolean defaultAnnulled) {
+		this.defaultAnnulled = defaultAnnulled;
 	}
 	
 	public String getDefaultType() {
@@ -209,6 +217,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		setCustomerEInvoice(null);
+		setDefaultAnnulled(null);
 	}
 	
 	@Override
@@ -216,7 +225,11 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		super.completeCriteria( criteria );
 		
 		String annulledAlias = getFieldName(IEntityAlias.INVOICE_ANNULLED);
-		Invoice.addNotAnnulledExpression(annulledAlias, criteria);
+		if (getDefaultAnnulled() != null) {
+			criteria.addEqualExpression(annulledAlias, getDefaultAnnulled());
+		} else {
+			Invoice.addNotAnnulledExpression(annulledAlias, criteria);
+		}
 		
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 

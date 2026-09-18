@@ -191,7 +191,8 @@ public class SiiMain extends DockLayoutPanel {
 	
 	private AonMenu getMenu() {
 		AonMenu aonMenu = new AonMenu();
-		aonMenu.addItem(chapter1);
+		if(!getModel().getAdministration().isAraba() && !getModel().getAdministration().isGipuzkoa()) 
+			aonMenu.addItem(chapter1);
 		aonMenu.addItem(chapter2);
 //		aonMenu.addItem(chapter3);
 //		aonMenu.addItem(chapter4);
@@ -468,10 +469,11 @@ public class SiiMain extends DockLayoutPanel {
 	}
 	
 	public void initializeFilter() {
+		boolean sales = !getModel().getAdministration().isAraba() && !getModel().getAdministration().isGipuzkoa();
 		this.filterParams = new InvoiceCommunicationParams()
 			.setDomain(getOptions().getDomain())
 			.setCommunicationType(InvoiceCommunicationType.SII)
-			.setType(InvoiceType.SALES);
+			.setType( sales ? InvoiceType.SALES : InvoiceType.PURCHASE, InvoiceType.EXPENSES);
 	}
 	
 	private void siiInfo(Integer invoice, String reference) {

@@ -75,9 +75,6 @@ public class VerifactuContext  {
 		getInvoiceCommunicatorContext().setDataResponse(dataResponse);
 		return this;
 	}
-	public boolean isPreserveRawdocOnDeletion() {
-		return getInvoiceCommunicatorContext().isPreserveRawdocOnDeletion();
-	}
 	
 	public Stream<Invoice> invoiceStream() {
 		return getInvoiceCommunicatorContext().invoiceStream();

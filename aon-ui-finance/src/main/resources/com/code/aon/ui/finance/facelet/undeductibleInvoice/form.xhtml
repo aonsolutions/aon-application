@@ -11,7 +11,11 @@
 
 	<ui:define name="content">
 		<aon:form id="undeductibleInvoiceForm">
-			<aon:div id="menuExt"> 
+			<aon:div id="menuExt">
+			 
+				<aon:methodParam name="removeActionListener" value="#{undeductibleInvoice.annul}" type="actionListener"/>
+				<aon:methodParam name="removeAction" value="" />
+				
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
@@ -22,6 +26,11 @@
 					<ui:param name="skipRemoveButton" value="#{!undeductibleInvoice.removable or !undeductibleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="undeductibleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!undeductibleInvoice.nevv and undeductibleInvoiceDetail.to == null}" />
+					
+					<ui:param name="removeValue" value="#{bundle.aon_annul}" />
+					<ui:param name="removeConfirmTitle" value="#{bundle.aon_confirm_title}" />
+					<ui:param name="removeConfirmMessage" value="#{bundle.aon_annul_invoice_confirm}" />
+					
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:if test="#{undeductibleInvoice.hasInvoiceDoc()}">
 							<aon:outputLink id="undeductibleInvoice-downloadPdf"
@@ -46,7 +55,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{undeductibleInvoice.onGenerateFinances}"
-							rendered="#{undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.allPending)}"
+							rendered="#{!undeductibleInvoice.annulled and (undeductibleInvoice.toInvoiceTotalPrice != 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.allPending))}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.backActionListener}"
@@ -56,7 +65,7 @@
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
 							value="#{bundle.finance_rectify}"
-							rendered="#{!undeductibleInvoice.rectifier and !undeductibleInvoice.accountSource and undeductibleInvoiceDetail.model.rowCount > 0}"
+							rendered="#{!undeductibleInvoice.annulled and (!undeductibleInvoice.rectifier and !undeductibleInvoice.accountSource and undeductibleInvoiceDetail.model.rowCount > 0)}"
 							iconClass="aon-icon-version"
 							actionListener="#{undeductibleInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">
@@ -67,7 +76,7 @@
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
 								actionListener="#{undeductibleInvoice.onRecordInvoice}"
-								rendered="#{!undeductibleInvoice.recorded and undeductibleInvoiceDetail.model.rowCount > 0}"
+								rendered="#{!undeductibleInvoice.annulled and !undeductibleInvoice.recorded and undeductibleInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
 								reRender="undeductibleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -106,6 +115,7 @@
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
 								iconClass="aon-icon-activity"
+								rendered="#{!undeductibleInvoice.annulled}"
 								reRender="showActivityWindow">
 								<f:setPropertyActionListener target="#{undeductibleInvoice.showActivityWindow}" 
 									value="#{true}" />							
@@ -113,6 +123,7 @@
 						</aon:if>
 						<aon:menuItem id="projects"
 							value="#{bundle.aon_project}"
+							rendered="#{!undeductibleInvoice.annulled}"
 							iconClass="aon-icon-statistics"
 							reRender="showProjectWindow">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.showProjectWindow}" 

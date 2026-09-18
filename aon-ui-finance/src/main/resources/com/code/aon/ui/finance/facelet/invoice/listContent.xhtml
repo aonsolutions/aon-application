@@ -45,6 +45,24 @@
 				</aon:div>
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:define name="columns">
+					
+						<aon:column alias="Invoice.annulled"
+							styleClass="aon-editDataTable-textColumn aon-width-30">
+							<f:facet name="header">
+								<aon:outputText 
+									title="#{bundle.aon_annulled}"
+									value="A" />
+							</f:facet>
+							
+							<aon:outputText title="#{bundle.aon_annulled}"
+								styleClass="aon-editDataTable-button aon-icon-exclude aon-nowrap aon-margin-left"
+								value="&#160;"
+								rendered="#{to.annulled}" />
+							<aon:outputText  styleClass="aon-text-center" 
+								value="-" rendered="#{!to.annulled}" />
+							
+						</aon:column>
+						
 						<aon:column alias="Invoice.issueDate"
 							styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">

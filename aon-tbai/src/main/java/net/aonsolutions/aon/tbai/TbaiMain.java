@@ -70,7 +70,6 @@ import net.aonsolutions.aon.tbai.lroe.LROEInformation;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
-import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.emision.TicketBai;
 import ticketbai.zuzendu_alta.SubsanacionModificacionTicketBAI;
 
@@ -250,55 +249,6 @@ public class TbaiMain {
 			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
-	public void createAnulacionTBAI(Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
-		try (CloseableAONContext ctx =  AONContext.getAONContext(company.getDomain(), "")) {
-			createAnulacionTBAI(ctx, company, invoice, icc);
-		}
-	}
-
-	public void createAnulacionTBAI(AONContext ctx, Company company, Invoice invoice, InvoiceCommunicationConfiguration icc) throws Exception {
-		TbaiData tbaiData = TbaiData.getInstance(ctx, icc); 
-		final AnulaTicketBai tbai = Invoice2tbai.buildBaja(company, invoice, icc);
-
-		final JAXBContext jaxbContext = JAXBContext.newInstance(AnulaTicketBai.class);
-		final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		jaxbMarshaller.marshal(tbai, bos);
-		byte[] data = bos.toByteArray();
-
-		byte[] xml = TbaiSigner.getInstance().sign(icc, data);
-		DataRequest request = tbaiData.saveRequest(ctx, company.getDomain(), xml);
-		if (!icc.isBizkaia()) {
-			String uri = TbaiUri.getUrlAnulacion(icc);
-			TbaiResponse response = sendXML(uri, icc, xml, true);
-			tbaiData.saveResponseAnulacion(ctx, company.getDomain(), invoice, response, request);
-			HandleTbaiResponse(response);
-		} else if (icc.isBizkaia()) { 
-			LROEResponse lroeResponse = null;
-			LROEInfo info = null;	
-			if(isPersonaFisica(company.getDocument())) {
-				Person person = AonDocumentUtil.isAssetCommunity(company.getDocument()) 
-						|| AonDocumentUtil.isCivilSociety(company.getDocument())
-						|| AonDocumentUtil.isOwnerCommunity(company.getDocument())
-			    	? new Person().copy(company) 
-			    	: AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
-			    if(person.getId() == null) person = new Person().copy(company);
-				LROE140_1_1 lroe140 = new LROE140_1_1();
-				info = lroe140.buildInfo(OperacionEnum.AN_0, lroe140.getEjercicio(icc, invoice));
-				lroeResponse = lroe140.anulacion(icc, person, invoice, xml);
-			} else if (AonDocumentUtil.isValidCIF(company.getDocument())) {
-				LROE240_1_1 lroe240 = new LROE240_1_1();
-				info = lroe240.buildInfo(OperacionEnum.AN_0, lroe240.getEjercicio(icc, invoice));
-				lroeResponse = lroe240.anulacion(company, icc, invoice, xml);
-			}
-			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
-			HandleLroeResponse(lroeResponse);
-		}
-	}
-
 	public TbaiResponse sendXML(String uri, InvoiceCommunicationConfiguration icc, byte[] xml, boolean withSign) throws StatusCodeException {
 		URL url;
 		try {

@@ -12,6 +12,7 @@
 		<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
 		<aon:methodParam name="cancelActionListener" default="#{controller.onBackActionListener}" type="actionListener" />
 		<aon:methodParam name="cancelAction" default="#{controller.backAction}" />
+		<aon:valueParam name="removeValue" default="#{bundle.aon_remove}" />
 		<aon:valueParam name="removeConfirmTitle" default="#{bundle.aon_confirm_title}" />
 		<aon:valueParam name="removeConfirmMessage" default="#{bundle.aon_remove_confirm}" />
 		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />

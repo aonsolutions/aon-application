@@ -1,14 +1,18 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -52,6 +56,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_altamodifpeticion_v1_0_3.LROEPF140IngresosConFacturaSinSGAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_2_ingresos_confacturasinsg_anulacionpeticion_v1_0_0.LROEPF140IngresosConFacturaSinSGAnulacionPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.LroeValidation;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 
@@ -263,43 +268,35 @@ public class LROE140_1_2 extends LROE140 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+	public static LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
 		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
-	private LROEPF140IngresosConFacturaSinSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info) {	
+	public static LROEPF140IngresosConFacturaSinSGAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
 		LROEPF140IngresosConFacturaSinSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaSinSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(context, info));
+
 		AnulacionesIngresosSinSGType anulaciones = new AnulacionesIngresosSinSGType();
+
+		for(Invoice invoice : context.invoiceStream().toList()) {
+			AnulacionIngresoSinSGType anulacion = new AnulacionIngresoSinSGType();
+			IDFacturaType factura = new IDFacturaType();
+			factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+			factura.setSerieFactura(invoice.getSeries());
+			factura.setNumFactura(Integer.toString(invoice.getNumber()));
+			anulacion.setIDIngreso(factura);
+			anulaciones.getIngreso().add(anulacion);			
+		}
 		
-		AnulacionIngresoSinSGType anulacion = new AnulacionIngresoSinSGType();
-		IDFacturaType factura = new IDFacturaType();
-		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		factura.setSerieFactura(invoice.getSeries());
-		factura.setNumFactura(Integer.toString(invoice.getNumber()));
-		anulacion.setIDIngreso(factura);
-		anulaciones.getIngreso().add(anulacion);
 		lroe.setIngresos(anulaciones);
+		LroeValidation.validateAnulacionSinSG(lroe);
 		return lroe;
 	}
 	
-	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice)  {
-		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoice));
-			final LROEPF140IngresosConFacturaSinSGAnulacionPeticion p140 = buildBaja(person, invoice, info); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaSinSGAnulacionPeticion.class );
-			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
-
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p140, bos );
-			byte[] xml = bos.toByteArray();
-			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
-		} catch (Exception e) {
-			return error(e);
-		}
+	public static byte[] sendCancel(InvoiceCommunicatorContext context, byte[] requestXml) throws InvoiceCommunicationException, JAXBException, IOException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		byte[] requestXmlGzip = toGzip(requestXml);
+		return post(context.getConfig(), buildJSON(context, info), requestXmlGzip);
 	}
 }

@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommunicationServiceAsync {
@@ -99,9 +98,9 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 	
 	@Override
-	public void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+	public void cancel(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
-		ssa.cancel(domainName, domainId, user, type, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+		ssa.cancel(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 	

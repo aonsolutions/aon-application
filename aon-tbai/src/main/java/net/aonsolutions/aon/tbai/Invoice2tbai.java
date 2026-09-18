@@ -205,6 +205,8 @@ public class Invoice2tbai {
 		software.setEntidadDesarrolladora(entidad);
 		if(icc.isAraba() && icc.isTbaiTest())
 			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
+		else if(icc.isGipuzkoa() && icc.isTbaiTest())
+			software.setLicenciaTBAI(DEVICE_NUMBER_GIPUZKOA_TEST);
 		else software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);

@@ -35,7 +35,9 @@
 						<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
 							<ui:param name="controller" value="#{attachmentController}" />
 							<ui:param name="sortColumns" value="#{true}" />
-							<ui:param name="removeButtonRendered" value="#{(to.type != 'INVOICE') or !invoiceController.to.signed}" />
+							<ui:param name="skipResetButton" value="#{invoiceController.annulled}" />
+							<ui:param name="removeButtonRendered" value="#{!invoiceController.annulled and ((to.type != 'INVOICE') or !invoiceController.to.signed)}" />
+							
 							<ui:define name="beginFormListContent" >
 								<aon:outputText value="&#160;"
 									rendered="#{invoiceController.to.signed and (to.type == 'INVOICE')}"

@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfigurati
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -92,6 +93,7 @@ public interface IFinance {
 	Invoice getLastSaleInvoice(AONContext ctx, String serie);
 	Invoice getInvoice(AONContext ctx, Integer id);
 	void deleteInvoice(AONContext ctx, Integer invoiceId);
+	Invoice annulInvoice(AONContext ctx, Integer invoiceId);
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice validateInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
@@ -324,6 +326,7 @@ public interface IFinance {
 	// 	************** INVOICE CONSOLE ****************
 	// 	***********************************************
 	List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);
+	InvoiceConsoleAnalysis invoiceConsoleAnalysis(AONContext ctx, InvoiceConsoleParams params);
 	
 	// 	****************************************
 	// 	************************ INVOICE DOC ***

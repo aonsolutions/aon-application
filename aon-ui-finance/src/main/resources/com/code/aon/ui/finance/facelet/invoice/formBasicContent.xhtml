@@ -80,6 +80,11 @@
 						actionListener="#{invoiceController.onViewAccountEntry}" 
 						action="accountEntry_form" />
 				</aon:if>
+				
+				<aon:outputText value="#{bundle.aon_invoice_annulled}"
+					style="color:red; border: 1px solid red; padding: 2px 5px; font-weight: bold; margin-left: 10px;"
+					rendered="#{invoiceController.to.annulled}" />
+				
 			</aon:div>
 		</aon:panelGrid>
 	</aon:div>

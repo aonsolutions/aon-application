@@ -12,6 +12,10 @@
 	<ui:define name="content">
 		<aon:form id="purchaseInvoiceForm">
 			<aon:div id="menuExt">
+			 
+				<aon:methodParam name="removeActionListener" value="#{purchaseInvoice.annul}" type="actionListener"/>
+				<aon:methodParam name="removeAction" value="" />
+				
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
@@ -22,11 +26,16 @@
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!purchaseInvoice.nevv and purchaseInvoiceDetail.to == null}" />
+
+					<ui:param name="removeValue" value="#{bundle.aon_annul}" />
+					<ui:param name="removeConfirmTitle" value="#{bundle.aon_confirm_title}" />
+					<ui:param name="removeConfirmMessage" value="#{bundle.aon_annul_invoice_confirm}" />
+					
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{purchaseInvoice.onSendInvoiceByEmail}"
-								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
+								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null and !purchaseInvoice.annulled}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 								reRender="showNewMessageWindow">
 							</aon:commandButton>
@@ -87,7 +96,7 @@
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
 							actionListener="#{purchaseInvoice.onGenerateFinances}"
-							rendered="#{purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.allPending)}"
+							rendered="#{!purchaseInvoice.annulled and (purchaseInvoice.toInvoiceTotalPrice != 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.allPending))}"
 							iconClass="aon-icon-tree"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
@@ -97,7 +106,7 @@
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
 							value="#{bundle.finance_rectify}"
-							rendered="#{!purchaseInvoice.rectifier and !purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0}"
+							rendered="#{!purchaseInvoice.annulled and (!purchaseInvoice.rectifier and !purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0)}"
 							iconClass="aon-icon-version"
 							actionListener="#{purchaseInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">
@@ -108,7 +117,7 @@
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
 								actionListener="#{purchaseInvoice.onRecordInvoice}"
-								rendered="#{!purchaseInvoice.recorded and purchaseInvoiceDetail.model.rowCount > 0}"
+								rendered="#{!purchaseInvoice.annulled and !purchaseInvoice.recorded and purchaseInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
 								reRender="purchaseInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -147,7 +156,7 @@
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
 								iconClass="aon-icon-activity"
-								rendered="#{!purchaseInvoice.readOnly or purchaseInvoice.to.investAsset == null or purchaseInvoice.to.investAsset.id == null}"
+								rendered="#{!purchaseInvoice.annulled and (!purchaseInvoice.readOnly or purchaseInvoice.to.investAsset == null or purchaseInvoice.to.investAsset.id == null)}"
 								reRender="showActivityWindow">
 								<f:setPropertyActionListener target="#{purchaseInvoice.showActivityWindow}" 
 									value="#{true}" />							
@@ -168,6 +177,7 @@
 						<aon:menuItem id="projects"
 							value="#{bundle.aon_project}"
 							iconClass="aon-icon-statistics"
+							rendered="#{!purchaseInvoice.annulled}"
 							reRender="showProjectWindow">
 							<f:setPropertyActionListener target="#{purchaseInvoice.showProjectWindow}" 
 								value="#{true}" />							
@@ -270,6 +280,7 @@
 									immediate="true" styleClass="aon-icon-new"
 									style="margin-left: 5px; padding-left: 20px;"
 									title="Añadir Factura Rectificada"
+									rendered="#{!purchaseInvoice.annulled}"
 									reRender="showAddRectificationInvoiceWindow">
 									<f:setPropertyActionListener
 										target="#{purchaseInvoice.showAddRectificationInvoiceWindow}"

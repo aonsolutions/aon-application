@@ -96,21 +96,7 @@ public class Finance extends Methods{
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
-	}
-	
-	public void sendSiiErrorPeriodo(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
-		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName();
-		impl.base(str, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				get(getUrl() + "ms/siiErrorPeriodo/" + result, callback);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-	}
-	
+	}	
 	
 	// ---------- SERIES
 	

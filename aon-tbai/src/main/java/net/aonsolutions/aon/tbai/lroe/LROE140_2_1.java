@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +25,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -60,14 +63,13 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.CabeceraGastosConsultaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FechaDesdeHastaType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposconsulta.FiltroConsultaGastosConFacturaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_1_1_ingresos_confacturaconsg_consultarespuesta_v1_0_1.LROEPF140IngresosConFacturaConSGConsultaRespuesta;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_altamodifpeticion_v1_0_2.LROEPF140GastosConFacturaAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultapeticion_v1_0_0.LROEPF140GastosConFacturaConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultarespuesta_v1_0_0.LROEPF140GastosConFacturaConsultaRespuesta;
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeData;
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.LroeValidation;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 public class LROE140_2_1 extends LROE140 {
@@ -305,32 +307,8 @@ public class LROE140_2_1 extends LROE140 {
 			return error(e);
 		}
 	}
-	
-	private LROEPF140GastosConFacturaAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info) {	
-		LROEPF140GastosConFacturaAnulacionPeticion lroe = new LROEPF140GastosConFacturaAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
-		
-		AnulacionesGastosConFacturaType anulaciones = new AnulacionesGastosConFacturaType();
-		AnulacionGastoConFacturaType anulacion = new AnulacionGastoConFacturaType();
 
-		IDFacturaConEmisorType factura = new IDFacturaConEmisorType();
-
-		factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
-		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-//		factura.setSerieFactura(invoice.getSeries());
-		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
-		if(invoice.isRectifier()) {
-			factura.setSerieFactura(reference.substring(0, 1));
-			factura.setNumFactura(reference.substring(1));
-		} else factura.setNumFactura(reference);
-		anulacion.setIDGasto(factura);
-		
-		anulaciones.getGasto().add(anulacion);
-		lroe.setGastos(anulaciones);
-		return lroe;
-	}
-
-	private DocumentoType buildEmisorAnulacion(Invoice invoice) {
+	private static DocumentoType buildEmisorAnulacion(Invoice invoice) {
 		DocumentoType emisor = new DocumentoType();
 		
 		if (invoice.getRegistryDocumentCountry().equals(Country.ES)) {
@@ -359,30 +337,42 @@ public class LROE140_2_1 extends LROE140 {
 		return emisor;
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	public static LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
-	public LROEResponse anulacion(Person person, InvoiceCommunicationConfiguration icc, Invoice invoice) throws StatusCodeException {
-		try {
-			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.AN_0);
-			info.setEjercicio(getEjercicio(icc, invoice));
+	public static LROEPF140GastosConFacturaAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		LROEPF140GastosConFacturaAnulacionPeticion lroe = new LROEPF140GastosConFacturaAnulacionPeticion();
+		lroe.setCabecera(buildCabecera(context, info));
 
-			final LROEPF140GastosConFacturaAnulacionPeticion p240 = buildBaja(person, invoice, info); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAnulacionPeticion.class );
-			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
+		AnulacionesGastosConFacturaType anulaciones = new AnulacionesGastosConFacturaType();
 
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		for(Invoice invoice : context.invoiceStream().toList()) {
+			AnulacionGastoConFacturaType anulacion = new AnulacionGastoConFacturaType();
+			IDFacturaConEmisorType factura = new IDFacturaConEmisorType();
+			factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
+			factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+//			factura.setSerieFactura(invoice.getSeries());
+			String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+			if(invoice.isRectifier()) {
+				factura.setSerieFactura(reference.substring(0, 1));
+				factura.setNumFactura(reference.substring(1));
+			} else factura.setNumFactura(reference);
+			anulacion.setIDGasto(factura);
 			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p240, bos );
-			byte[] xml = bos.toByteArray();
-			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(person, info), data).setDataRequest(dataRequest);
-		} catch (Exception e) {
-			return error(e);
+			anulaciones.getGasto().add(anulacion);		
 		}
+		
+		lroe.setGastos(anulaciones);
+		LroeValidation.validateAnulacionGastos(lroe);
+		return lroe;
+	}
+	
+	public static byte[] sendCancel(InvoiceCommunicatorContext context, byte[] requestXml) throws InvoiceCommunicationException, JAXBException, IOException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		byte[] requestXmlGzip = toGzip(requestXml);
+		return post(context.getConfig(), buildJSON(context, info), requestXmlGzip);
 	}
 
 	private LROEPF140GastosConFacturaConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {
@@ -429,8 +419,7 @@ public class LROE140_2_1 extends LROE140 {
 	
 	public boolean consulta(InvoiceCommunicationConfiguration icc, Person person, Invoice invoice) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.C_00);
-			info.setEjercicio(getEjercicio(icc, invoice));
+			LROEInfo info = buildInfo(OperacionEnum.C_00, getEjercicio(icc, invoice));
 			invoice.setEpigraph(invoice.getActivity().getIae().getFullEpigraph());
 			LROEPF140GastosConFacturaConsultaPeticion lroe = buildConsulta(person, invoice, info);
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaConsultaPeticion.class );

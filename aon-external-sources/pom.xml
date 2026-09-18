@@ -81,39 +81,6 @@
 								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroPagosRecibidas.wsdl</wsdlUrl>
 								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
 
-								ALAVA/ARABA WSDL URLS VERSION 1.1
-
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroBienesInversion.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroCobrosEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroOpTrascendTribu.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroPagosRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://sii.araba.eus/documentos/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
-
-								GUIPUZCOA/GIPUZKOA WSDL URLS VERSION 1.1
-
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroFactEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroFactRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroBienesInversion.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroCobrosEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroOpTrascendTribu.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroPagosRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
-
-								VIZCAYA/BIZKAIA WSDL URLS VERSION 1.1
-
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroBienesInversion.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroCobrosEmitidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroOpTrascendTribu.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroPagosRecibidas.wsdl</wsdlUrl>
-								<wsdlUrl>https://www.bizkaia.eus/ogasuna/sii/documentos/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
-
 							</wsdlUrls>
 							<sourceDestDir>src/main/java</sourceDestDir>
 						</configuration>
