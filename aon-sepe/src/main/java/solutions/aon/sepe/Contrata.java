@@ -867,9 +867,11 @@ public class Contrata {
 
 			webClient.waitForBackgroundJavaScript(5000);
 
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe.html");
 
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
 
 			// For contract 502 check if duration equals or less than 90 days
 			try {
@@ -878,19 +880,22 @@ public class Contrata {
 								.contains("Obligatorio indicar si el contrato tiene")) {
 					htmlPage = htmlPage.getElementById("volver").click();
 					
-//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502.html");
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_402.html");
 
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 					if (null != cto.getDateFinContract()) {
-						((HtmlSelect) form.querySelector("select[name=preg90dias]"))
+						((HtmlSelect) form.querySelector("select[name=preg120dias]"))
 								.setSelectedAttribute(cto.getPrevisible() ? "S" : "N", true);
 					} else
-						((HtmlSelect) form.querySelector("select[name=preg90dias]")).setSelectedAttribute("N", true);
+						((HtmlSelect) form.querySelector("select[name=preg120dias]")).setSelectedAttribute("N", true);
 
 					setOccupation(cto, form);
 
 					webClient.waitForBackgroundJavaScript(5000);
+					
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_402_2.html");
+					
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {
@@ -938,7 +943,7 @@ public class Contrata {
 			} catch (Exception e) {
 			}
 
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_3.html");
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);

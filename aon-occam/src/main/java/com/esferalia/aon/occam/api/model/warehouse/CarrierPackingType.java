@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum CarrierPackingType {
 
 	SHIPMENT_REQUEST("Solicitud de Carga"),
@@ -27,6 +29,14 @@ public enum CarrierPackingType {
 		if (i == null) return null;
 		if (i < 0 || i >= CarrierPackingType.values().length) return null;
 		return CarrierPackingType.values()[i];
+	}
+	public static CarrierPackingType safeValueOf( String i ) {
+		if (AonStringUtils.isBlank(i)) return null;
+		for (CarrierPackingType value : values()) {
+			if (i.equalsIgnoreCase(value.name()))
+				return value;
+		}
+		return null;
 	}
 	
 	public boolean isShipmentRequest() {

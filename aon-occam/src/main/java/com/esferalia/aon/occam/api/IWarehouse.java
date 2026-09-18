@@ -164,6 +164,7 @@ public interface IWarehouse {
 	
 	Stream<String> getCarrierPackingSeries(AONContext ctx);
 	Stream<CarrierPacking> getCarrierPackingStream(AONContext ctx, CarrierPackingFilter filter);
+	CarrierPacking saveCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
 	Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking);
 	CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter);
 	void deleteCarrierPacking(AONContext ctx, CarrierPackingFilter filter);

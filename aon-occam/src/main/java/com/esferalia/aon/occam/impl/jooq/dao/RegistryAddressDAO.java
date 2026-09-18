@@ -34,7 +34,7 @@ public class RegistryAddressDAO {
 	private RegistryAddressDAO() {
 		
 	}
-	private static final Byte MAIN_ADDRESS = 0;
+	public static final Byte MAIN_ADDRESS = 0;
 	private static final Byte DELEGATION_ADDRESS = 1;
 	
 	public static final String ADDRESS_REGISTRY_LABEL = "Registry";

@@ -4771,16 +4771,16 @@ public class AON {
 	
 	// ------------------ CARRIER 
 
-	public static Carrier getCarrier(Domain domain, User user, Integer id) {
-		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id));
+	public static Carrier getCarrier(Domain domain, User user, Integer id, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(id), options);
 	}
 	
-	public static Carrier getCarrier(Domain domain, String login, Integer id) {
-		return getCarrier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id));
+	public static Carrier getCarrier(Domain domain, String login, Integer id, Options...options) {
+		return getCarrier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), options);
 	}
 	
-	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id) {
-		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
+	public static Carrier getCarrier(String domainName, Integer domainId, String login, Integer id, Options...options) {
+		return getCarrier(domainName, domainId, login, f -> f.getIdProperty().eq(id), options);
 	}
 	
 	public static Carrier getCarrier(Domain domain, User user, CarrierFilter filter, Options...options) {
@@ -4879,6 +4879,14 @@ public class AON {
 		return getCarrierPacking(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
+	
+	public static CarrierPacking saveCarrierPacking(Occam occam, CarrierPacking carrierPacking) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getWarehouse().saveCarrierPacking(ctx, carrierPacking);
+		}
+	}
+	
+	@Deprecated(forRemoval = true )
 	public static Integer insertCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4888,7 +4896,8 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
+
+	@Deprecated(forRemoval = true )
 	public static CarrierPacking updateCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking, CarrierPackingFilter filter) {
 		CloseableAONContext ctx = null;
 		try {
@@ -4898,7 +4907,8 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
+
+	@Deprecated(forRemoval = true )
 	public static CarrierPacking updateCarrierPacking(String domainName, Integer domainId, String login, CarrierPacking carrierPacking) {
 		return updateCarrierPacking(domainName, domainId, login, carrierPacking, f -> f.getIdProperty().eq(carrierPacking.getId()));
 	}

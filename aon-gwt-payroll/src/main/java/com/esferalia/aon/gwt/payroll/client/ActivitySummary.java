@@ -348,6 +348,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		        + "&itOccupationalDisease=" + itType.getSelectedOptions().contains("IT AT/EP")
 		        + "&itMaternity=" + itType.getSelectedOptions().contains("IT M/P")
 		        + "&itOther=" + itType.getSelectedOptions().contains("IT Otros")
+		        + "&isOffice=" + this.isOffice
 	            ;
 			Window.open(fileDownloadURL, "_blank", null);
 		});
@@ -365,7 +366,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		tab = new AonCustomTable();
 		tableScrollPanel = new ScrollPanel(tab);
 		
-		paintHeader(tab, domain.isParent());
+		paintHeader(tab, isEnterpriseView());
 		
 		centerPanel.setWidget(tableScrollPanel);
 		searchData();
@@ -385,9 +386,9 @@ public class ActivitySummary extends AonCustomDockLayout {
 			boolean something = false;
 			for(ActivitySummaryObject activitySummary : activitySummaries) {
 				something = true;
-				paintRow(tab, activitySummary, domain.isParent());
+				paintRow(tab, activitySummary, isEnterpriseView());
 			}
-			paintFooter(tab, activitySummaries, domain.isParent());
+			paintFooter(tab, activitySummaries, isEnterpriseView());
 			
 			if (!something) {
 				FlowPanel line = new FlowPanel();
@@ -415,7 +416,7 @@ public class ActivitySummary extends AonCustomDockLayout {
 		
 		HTMLPanel row = tab.createRow();
 		
-		if(domain.isParent())
+		if(isParent)
 			row.addDomHandler(e -> openChildsDialog(activitySummary.getFullname(), activitySummary), ClickEvent.getType());
 		
 		Label name = new Label(activitySummary.getFullname());
@@ -501,7 +502,12 @@ public class ActivitySummary extends AonCustomDockLayout {
 	
 	private String getAltas(List<ActivitySummaryObject> activitySummaries) {
 		if(null != start.getValue() && null != end.getValue()) {
-			long altas = activitySummaries.stream().filter(activitySummary -> ge(activitySummary.getStartDate(), start.getValue()) && le(activitySummary.getStartDate(), end.getValue())).count();
+			long altas = activitySummaries.stream()
+			        .filter(a -> null != a.getStartDate()
+			                  && ge(a.getStartDate(), start.getValue())
+			                  && le(a.getStartDate(), end.getValue()))
+			        .count();
+			
 			return Long.toString(altas);
 		}
 		
@@ -591,6 +597,10 @@ public class ActivitySummary extends AonCustomDockLayout {
 			dialog.add( centerPanel );
 			dialog.showLoaded();
 		});
+	}
+	
+	private boolean isEnterpriseView() {
+	    return isOffice || (null != domain && domain.isParent());
 	}
 
 	private void getList(ActivitySummaryParams params, Consumer<List<ActivitySummaryObject>> success) {
