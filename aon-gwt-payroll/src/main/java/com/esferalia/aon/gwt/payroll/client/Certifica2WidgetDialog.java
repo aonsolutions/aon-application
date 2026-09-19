@@ -113,9 +113,9 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 	
 	private static enum COLUMNS {
-		  MON("Mes"									,"10rem"  			,"")
-		, YEA("A\u00f1o"							,"10rem"  			,"")
-		, DAY("D\u00edas"							,"10rem"  			,"")
+		  MON("Mes"									,"5rem"  			,"")
+		, YEA("A\u00f1o"							,"5rem"  			,"")
+		, DAY("D\u00edas"							,"5rem"  			,"")
 		, CGC("C.G.C."								,"10rem"  			,"text-align: right;")
 		, UNE("Desempleo"							,"10rem"  			,"text-align: right;")
 		;
