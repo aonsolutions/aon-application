@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <unzip src="/var/tmp/aon-application/gwt-maven-plugin/gwt-maven-plugin-HEAD-SNAPSHOT.jar" dest="/var/tmp/aon-application/gwt-maven-plugin/target/classes">
+      <patternset>
+        <exclude name="META-INF/MANIFEST.MF" />
+        <exclude name="META-INF/maven/net.ltgt.gwt.maven/gwt-maven-plugin/pom.xml" />
+        <exclude name="META-INF/maven/net.ltgt.gwt.maven/gwt-maven-plugin/pom.properties" />
+      </patternset>
+    </unzip>
+  </target>
+</project>

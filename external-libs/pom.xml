@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.code.aon.vendor</groupId>
+  <artifactId>external-libs</artifactId>
+  <version>9.23-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Vendored External Libraries</name>
+  <description>
+    Third-party artifacts that used to be served by the external_free remote repository
+    (https://aonsolutions.github.io/aon-application/maven/2/external_free). That repository is
+    gone, so each child module checks in the jar and the pom it published and installs them
+    into the local repository during the "initialize" phase.
+
+    Every vendored artifact lives here, including the "jakarta-*" javax-to-jakarta repackages
+    that used to sit at the top of the tree; they moved into this directory unchanged, keeping
+    their directory names and coordinates (com.code.aon.vendor:jakarta-*).
+
+    Every directory here is a module listed below; nothing in this tree is inert.
+
+    Nothing here is rebuilt from source. The binaries are byte-for-byte what the repository
+    served: bcprov-jdk14-jakarta and izenpesigner-applet are signed jars, and gwt-dev-jakarta,
+    gwt-user-jakarta, jta and jimi carry no manifest at all, so repackaging them would change
+    what the application loads at runtime.
+  </description>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
+  <modules>
+    <module>ModRet2024</module>
+    <module>PRET-RW13_shared</module>
+    <module>core-renderer</module>
+    <module>ctsql-jdbc</module>
+    <module>facturae-api</module>
+    <module>gwt-visualization</module>
+    <module>hibernate-tools-jakarta</module>
+    <module>izenpesigner-applet</module>
+    <module>jimi</module>
+    <module>mityc-lib-api</module>
+    <module>mityc-lib-policy</module>
+    <module>mityc-lib-trust</module>
+    <module>mityc-lib-xades</module>
+    <module>paradoxjdbc3</module>
+    <module>richfaces-api</module>
+    <module>sinaduraCore</module>
+    <module>xmlsec-adsi</module>
+
+    <!-- javax -> jakarta repackages (formerly top-level directories) -->
+    <module>jakarta-bcmail-jdk14</module>
+    <module>jakarta-bcprov-jdk14</module>
+    <module>jakarta-ejb3-persistence</module>
+    <module>jakarta-el-api</module>
+    <module>jakarta-google-api-client-servlet</module>
+    <module>jakarta-google-api-services-oauth2</module>
+    <module>jakarta-google-oauth-client</module>
+    <module>jakarta-google-oauth-client-servlet</module>
+    <module>jakarta-gwt-dev</module>
+    <module>jakarta-gwt-user</module>
+    <module>jakarta-hibernate</module>
+    <module>jakarta-hibernate-annotations</module>
+    <module>jakarta-hibernate-commons-annotations</module>
+    <module>jakarta-jacc</module>
+    <module>jakarta-jsf-api</module>
+    <module>jakarta-jsf-facelets</module>
+    <module>jakarta-jsf-impl</module>
+    <module>jakarta-jstl</module>
+    <module>jakarta-jta</module>
+    <module>jakarta-persistence-api</module>
+    <module>jakarta-richfaces-api</module>
+    <module>jakarta-richfaces-impl</module>
+    <module>jakarta-richfaces-ui</module>
+    <module>jakarta-validation</module>
+  </modules>
+</project>
