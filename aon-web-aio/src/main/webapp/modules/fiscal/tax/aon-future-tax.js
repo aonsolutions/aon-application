@@ -151,7 +151,7 @@ export class AonFutureTax extends AonElement {
         resp.forEach((res, idx) => {
           let options = {
             iconHtmlCustom: /*html*/ `${res.lettersHtml}<span style="float: right;color: black;font-weight: 500; margin-top: 10px;">${res.resultFormat}</span>`,
-            title: `${res.model}`,
+            title: `${res.model || res.modelText}`,
             subtitle: `${res.periodText} - ${res.year}`,
           };
           aonTable.addLi(options, idx, () => this.openDialog(res));
