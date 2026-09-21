@@ -28,7 +28,13 @@ export class AonMobilePackageList extends AonMobileList {
             this.loadMore()
     };
 
+    disconnectedCallback() {
+        this.removeEventListener(EVENT.MORE, this.moreFn);
+    }
+
     initialize() {
+        this.id = this.id || 'aonMobilePackageList';
+        super.initialize();
         this.more = this.packages ? false : true;
         this.filter = this.filter || {
             page:1,
