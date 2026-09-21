@@ -740,7 +740,7 @@ public class Deca extends PdfUtils{
 			cp1.setBorder(PdfPCell.NO_BORDER);
 			parameters.addCell(cp1);
 		
-			PdfPCell cr1 = new PdfPCell(new Phrase("Resultado",getFont1()));
+			PdfPCell cr1 = new PdfPCell(new Phrase("Valor",getFont1()));
 			cr1.setBorder(PdfPCell.NO_BORDER);
 			parameters.addCell(cr1);
 			

@@ -12,7 +12,6 @@ import { Product } from '../../models/product/Product.js';
 import { Item } from '../../models/product/Item.js';
 import { getProductCategories, saveItem, saveProduct } from '../../services/productService.js';
 import { TaxIVAPercentage, TaxIVAPercentage2, TaxRetentionPercentage, TaxRetentionPercentage2 } from '../invoice/invoiceEnums.js';
-import { AonMobileProductList } from './aon-mobile-product-list.js';
 import { AonProductList } from './aon-product-list.js';
 import * as OPTION from '../invoice/InvoiceOptions.js';
 import { createInput, createNumber, createSelect } from '../../components/CreateComponent.js';
@@ -289,7 +288,7 @@ export class AonProduct extends AonElement {
 		} else if(this.getApplication().getParent().selectedOption.id === OPTION.PRODUCT.id) {
 			filter = {expense: false};
 		}
-		let productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
+		let productList = new AonProductList();
 		productList.id = this.PRODUCT_LIST;	
 		productList.filter = filter;
 		this.getApplication().setContent(productList);

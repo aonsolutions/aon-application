@@ -1,9 +1,11 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
-import { MATERIAL_ICONS } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS } from '../../environments/environments.js';
 import {getUserList, getUserRoles} from '../../services/service.js';
 import { AonUser } from './aon-user.js';
 
 export class AonMobileUserList extends AonMobileList {
+
+    PER_PAGE = 30;
 
     more;
 
@@ -14,32 +16,48 @@ export class AonMobileUserList extends AonMobileList {
     connectedCallback () {
         this.initialize();
         this.init();
-        this.addEventListener('more', () => {
-    		if(this.more)
-    			this.loadMore()
-    	});
+        this.addEventListener(EVENT.MORE, this.moreFn);
+    }
+
+    moreFn = () => {
+        if(this.more)
+            this.loadMore();
+    };
+
+    disconnectedCallback() {
+        this.removeEventListener(EVENT.MORE, this.moreFn);
     }
 
     initialize() {
-        this.more = false;
+        super.initialize();
+        this.more = true;
     }
 
     loadMore() {
         let filter = this.getFilter();
-        if(filter.page) {
-            filter.page = filter.page + 1;
-            this.setFilter(filter);
-            getUserList(filter).then(users => {
-                if(users.length == 0)
-                    this.more = false;
-                users.forEach((user, i) => this.addRow(user, i));
-            });
-        }
+        if(!filter.page) return;
+        this.more = false;
+        filter.page = filter.page + 1;
+        this.setFilter(filter);
+        getUserList(filter).then(users => {
+            if(users.length > 0)
+                this.more = true;
+            users.forEach((user, i) => this.addRow(user, i));
+        });
     }
 
     init() {
+        let filter = this.getFilter();
+        filter.page = 1;
+        filter.perPage = filter.perPage || this.PER_PAGE;
+        this.setFilter(filter);
+        this.more = true;
+
         this.build();
-        getUserList(this.getFilter()).then(users => {
+        getUserList(filter).then(users => {
+            if(users.length == 0){
+                this.empty();
+            }
             users.forEach((user, i) => this.addRow(user, i));
         });
     }
@@ -69,15 +87,10 @@ export class AonMobileUserList extends AonMobileList {
 	}
 
     setValue(value) {
-        getUserList(this.getFilter()).then(users => {
-            this.build();
-            users.filter(f => 
-                f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
-                || f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
-            ).forEach((user, i) => {
-                this.addRow(user, i)
-            });
-        });
+        let filter = this.getFilter();
+        filter.value = value;
+        this.setFilter(filter);
+        this.init();
 	}
 }
 window.customElements.define('aon-mobile-user-list', AonMobileUserList);

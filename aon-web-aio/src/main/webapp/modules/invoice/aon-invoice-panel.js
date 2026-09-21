@@ -26,6 +26,7 @@ import { AonCustomer } from "../registry/customer/aon-customer.js";
 import { AonSupplier } from "../registry/supplier/aon-supplier.js";
 import { AonCreditor } from "../registry/creditor/aon-creditor.js";
 import { AonInvestList } from "../product/aon-invest-list.js";
+import { AonMobileInvestList } from "../product/aon-mobile-invest-list.js";
 import { AonInvest } from "../product/aon-invest.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonUploadToast } from "../../components/aon-upload-toast.js";
@@ -53,6 +54,8 @@ import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
 import { AonIncomeList } from "./aon-income-list.js";
 import { AonExpenseList } from "./aon-expense-list.js";
+import { AonMobileIncomeList } from "./aon-mobile-income-list.js";
+import { AonMobileExpenseList } from "./aon-mobile-expense-list.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 import { AonDialog } from "../../components/aon-dialog.js";
 import { InvoiceCommunicationConfiguration } from "../../models/InvoiceCommunicationConfiguration.js";
@@ -61,6 +64,11 @@ import { AonIncome } from "./aon-income.js";
 import { Income } from "./Income.js";
 import { Expense } from "./Expense.js";
 import { AonExpense } from "./aon-expense.js";
+import { AonMobileCustomer } from "../registry/customer/aon-mobile-customer.js";
+import { AonMobileSupplier } from "../registry/supplier/aon-mobile-supplier.js";
+import { AonMobileCreditor } from "../registry/creditor/aon-mobile-creditor.js";
+import { AonMobileProduct } from "../product/aon-mobile-product.js";
+import { AonMobileInvest } from "../product/aon-mobile-invest.js";
 
 export class AonInvoicePanel extends AonElement {
 	selectedOption;
@@ -220,8 +228,6 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-
-
 	buildInvoiceToolbarOptions(acceptedInvoices, processing) {
 		this.clearToolbar();
 		if (!this.isMobile()) {
@@ -242,12 +248,10 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_PRODUCT, () => this.addProduct());
+		} else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_PRODUCT, () => this.addProduct());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PRODUCTO EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_PRODUCT, () => this.addProduct());
-		// }
 
 		this.buildToolbarSearchOption();
 	}
@@ -256,12 +260,10 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_EXPENSE, () => this.addExpense());
+		} else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_EXPENSE, () => this.addExpense());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR GASTO EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_EXPENSE, () => this.addExpense());
-		// }
 		this.buildToolbarSearchOption();
 	}
 
@@ -269,12 +271,10 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
+		}else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
 		}
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR BIEN AFECTO EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_INVEST_ASSET, () => this.addInvest());
-		// }
 
 		this.buildToolbarSearchOption();
 	}
@@ -287,15 +287,12 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_CUSTOMER, () => this.addCustomer());
+		} else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_CUSTOMER, () => this.addCustomer());
 		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('customer'));
-
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR CLIENTE EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_CUSTOMER, () => this.addCustomer());
-		// }
 		this.buildToolbarSearchOption();
 	}
 
@@ -303,14 +300,12 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_SUPPLIER, () => this.addSupplier());
+		} else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_SUPPLIER, () => this.addSupplier());
 		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('supplier'));
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PROVEEDOR EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_SUPPLIER, () => this.addSupplier());
-		// }
 		this.buildToolbarSearchOption();
 	}
 
@@ -318,14 +313,12 @@ export class AonInvoicePanel extends AonElement {
 		this.clearToolbar();
 		if (!this.isMobile()) {
 			this.getApplication().addToolbarOption2(ACTION.ADD_CREDITOR, () => this.addCreditor());
+		} else {
+		  this.getApplication().removeFloatOption();
+		  this.getApplication().addFloatOption(ACTION.ADD_CREDITOR, () => this.addCreditor());
 		}
 		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
 		if (isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('creditor'));
-		// TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR ACREEDOR EN EL MÓVIL
-		// else {
-		//   this.getApplication().removeFloatOption();
-		//   this.getApplication().addFloatOption(ACTION.ADD_CREDITOR, () => this.addCreditor());
-		// }
 		this.buildToolbarSearchOption();
 	}
 
@@ -580,7 +573,7 @@ export class AonInvoicePanel extends AonElement {
 
 	aonIncome() {
 		if(!this.checkConfiguration()) return;
-		let table = new AonIncomeList();
+		let table = this.isMobile() ? new AonMobileIncomeList() : new AonIncomeList();
 		this.getApplication().setContent(table);
 	}
 
@@ -591,7 +584,7 @@ export class AonInvoicePanel extends AonElement {
 
 	aonExpense() {
 		if(!this.checkConfiguration()) return;
-		let table = new AonExpenseList();
+		let table = this.isMobile() ? new AonMobileExpenseList() : new AonExpenseList();
 		this.getApplication().setContent(table);
 	}
 
@@ -661,7 +654,9 @@ export class AonInvoicePanel extends AonElement {
 		if (investList) {
 			investList.setFilter(filter);
 		} else {
-			investList = new AonInvestList();
+			investList = this.isMobile()
+				? new AonMobileInvestList()
+				: new AonInvestList();
 			investList.id = this.INVEST_LIST;
 			investList.filter = filter;
 			this.getApplication().setContent(investList);
@@ -676,14 +671,14 @@ export class AonInvoicePanel extends AonElement {
 
 	addCustomer() {
 		if(!this.checkConfiguration()) return;
-		let aonCustomer = new AonCustomer();
+		let aonCustomer = this.isMobile() ? new AonMobileCustomer() : new AonCustomer();
 		aonCustomer.id = this.id + "Customer";
 		this.getApplication().setContent(aonCustomer);
 	}
 
 	addSupplier() {
 		if(!this.checkConfiguration()) return;
-		let aonSupplier = new AonSupplier();
+		let aonSupplier = this.isMobile() ? new AonMobileSupplier() : new AonSupplier();
 		aonSupplier.id = this.id + "Supplier";
 		aonSupplier.setSupplier();
 		this.getApplication().setContent(aonSupplier);
@@ -691,7 +686,7 @@ export class AonInvoicePanel extends AonElement {
 
 	addCreditor() {
 		if(!this.checkConfiguration()) return;
-		let aonCreditor = new AonCreditor();
+		let aonCreditor = this.isMobile() ? new AonMobileCreditor() : new AonCreditor();
 		aonCreditor.id = this.id + "Creditor";
 		aonCreditor.setCreditor();
 		this.getApplication().setContent(aonCreditor);
@@ -699,14 +694,14 @@ export class AonInvoicePanel extends AonElement {
 
 	addProduct() {
 		if(!this.checkConfiguration()) return;
-		let aonProduct = new AonProduct();
+		let aonProduct = this.isMobile() ? new AonMobileProduct() : new AonProduct();
 		aonProduct.id = this.id + "Product";
 		this.getApplication().setContent(aonProduct);
 	}
 
 	addExpense() {
 		if(!this.checkConfiguration()) return;
-		let aonProduct = new AonProduct();
+		let aonProduct = this.isMobile() ? new AonMobileProduct() :	new AonProduct();
 		aonProduct.id = this.id + "Expense";
 		aonProduct.expense = true;
 		this.getApplication().setContent(aonProduct);
@@ -714,7 +709,7 @@ export class AonInvoicePanel extends AonElement {
 
 	addInvest() {
 		if(!this.checkConfiguration()) return;
-		let aonInvest = new AonInvest();
+		let aonInvest = this.isMobile() ? new AonMobileInvest() : new AonInvest();
 		aonInvest.id = this.id + "Invest";
 		this.getApplication().setContent(aonInvest);
 	}

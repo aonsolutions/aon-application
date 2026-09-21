@@ -27,6 +27,8 @@ export class AonMobileSalesList extends AonMobileList {
     }
 
     initialize() {
+        this.id = this.id || 'aonMobileSalesList';
+        super.initialize();
         this.filter = this.filter || {
             page: 1,
             perPage: 30,

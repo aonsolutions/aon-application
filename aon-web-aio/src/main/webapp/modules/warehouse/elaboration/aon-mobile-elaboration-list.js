@@ -32,6 +32,8 @@ export class AonMobileElaborationList extends AonMobileList {
     }
 
     initialize() {
+        this.id = this.id || 'aonMobileElaborationList';
+        super.initialize();
         this.more = true;
         this.filtro = this.filtro || {
             page:1,

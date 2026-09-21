@@ -32,6 +32,7 @@ export class AonMobileDeliveryList extends AonMobileList {
 
     initialize() {
         this.id = this.id || 'aonDeliveryList';
+        super.initialize();
         this.filter = this.filter || {
             page: 1,
             perPage: 30,
