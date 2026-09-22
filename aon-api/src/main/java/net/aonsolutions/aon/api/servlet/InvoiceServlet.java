@@ -268,51 +268,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
-		
 		// ***********************************
 		// If the invoice is not a sales invoice or TBAI is not active, we accept and communicate the invoice
-		if (invoice.isSales()) {
-			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
-			if (config.isVerifactu()) {
-				if (InvoiceCommunicator.mustBeAnnulled(api.getOccam(), invoice, InvoiceCommunicationType.VERIFACTU)) {
-					cancelAndCommunicateInvoice(api, config, company, invoice);
-					return new JSONObject();
-				}
-			}
-			anularTbai(api, config, company, invoice);
-			anularSii(api, config, company, invoice);
-		}
+		InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(api.getOccam());
+		if (invoice.isSales() || config.isSii() || config.isLroe()) {
+			cancelAndCommunicateInvoice(api, config, company, invoice);
+		} else AON.annulInvoice(api.getOccam(), invoiceId);
+		
 		// ***********************************
-		
-		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-			f.getAttachModuleProperty().eq(invoiceId)
-			.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value()))
-			, AttachType.INVOICE, true);		
-
-		// ids to null
-		invoice.setId(null);
-		invoice.detailStream()
-			.map( d -> d.setId(null))
-			.flatMap(d -> d.taxStream())
-			.forEach(t -> t.setId(null)); 
-		
-		invoice.financeStream()
-			.map( f -> f.setId(null))
-			.forEach(t -> t.setId(null));
-		
-		// ----------
-	
-		Rawdoc rawdoc = new Rawdoc()
-			.setData(attach.getData())
-			.setDomain(invoice.getDomain())
-			.setJson(InvoiceJSON.toJSON(invoice).toString())
-			.setMimeType(attach.getMimeType())
-			.setNature(RawdocNature.INVOICE)
-			.setStatus(RawdocStatus.TRASH)
-			.setType(invoice.isPurchase() ? RawdocType.INPUT : RawdocType.OUTPUT);
-		AON.deleteInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
-		
 		return new JSONObject();	
 	}
 
@@ -510,32 +473,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	public static void anularTbai(AonApiData api, InvoiceCommunicationConfiguration config, Company company,  Invoice invoice) throws Exception {
-		if (config.isTbai() || config.isLroe()) {
-			boolean accepted = true;
-			if(config.isBizkaia()) {
-				try(CloseableAONContext ctx = AONContext.getAONContext(api.getDomain(), api.getUser())) {
-					accepted = InvoiceInfoDAO.getMap(ctx, config, invoice)
-							.map( ic -> ic.get(InvoiceCommunicationType.LROE) )
-							.filter( Objects::nonNull )
-							.map(info -> info.isAccepted() || info.isAcceptedWithErrors())
-							.orElse( true )
-						;
-				}
-			}
-			if (accepted) {
-				config.setCertificate(checkCertificate(api));
-				TbaiMain tbai = new TbaiMain();
-				try {
-					tbai.createAnulacionTBAI(company, invoice, config);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new AonApiException(e.getMessage());
-				}
-			}
-		}
-	}
-	
 	public static void acceptSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice) throws Exception {
 		if(invoice.isSales() && icc.isSii() && !icc.isTbai()) {
 			try {
@@ -547,27 +484,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(api.getOccam(), params, "")
 						.collect(Collectors.toCollection(LinkedList::new));		
 				manager.suministroFacturas(api.getDomain(), api.getUser().getLogin(), company, invoice, contextList, null);
-			} catch (Exception e) {
-				if (e instanceof InvoiceCommunicationException ice) {
-					throw ice;
-				} else {
-					throw new InvoiceCommunicationException( e );
-				}
-			}
-		}
-	}
-	
-	public static void anularSii(AonApiData api, InvoiceCommunicationConfiguration icc, Company company,  Invoice invoice)  throws Exception {
-		if(invoice.isSales() && icc.isSii() && !icc.isTbai()) {
-			try {
-				SIIManager manager = SIIManager.getInstance(icc);
-				
-				AccountingReportParams params = new AccountingReportParams();
-				params.setDomain(api.getOccam().getDomain());
-				params.setInvoices(new Integer[] {invoice.getId()});
-				LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(api.getOccam(), params, "")
-						.collect(Collectors.toCollection(LinkedList::new));		
-				manager.bajaFacturas(api.getDomain(), api.getUser().getLogin(), company, invoice, contextList, null);
 			} catch (Exception e) {
 				if (e instanceof InvoiceCommunicationException ice) {
 					throw ice;
@@ -910,9 +826,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Integer certId = JsonUtils.getInteger(api.getData(), IJsonNames.CERT);
 		List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 		InvoiceCommunicatorContext icc = new InvoiceCommunicatorContext(api.getDomain(), api.getUser(), certId, invoices)
-				.setConfig(config)
-				.setCompany(company)
-				.setPreserveRawdocOnDeletion(true);
+			.setConfig(config)
+			.setCompany(company);
 		try {
 			InvoiceCommunicator.cancelInvoice(icc);
 		} catch (Exception e) {

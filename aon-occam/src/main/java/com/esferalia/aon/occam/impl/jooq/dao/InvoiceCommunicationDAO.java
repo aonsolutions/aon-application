@@ -36,6 +36,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationHistory;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
@@ -49,9 +51,12 @@ import com.esferalia.aon.occam.api.model.type.DataRequestType;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoiceFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceBatchDetailDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO.InvoiceInfoFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceCommunicationConfigurationValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -740,6 +745,55 @@ public class InvoiceCommunicationDAO {
 	// *********** INVOICE COMMUNICATION COMMON ********************
 	// *************************************************************
 
+	public static InvoiceBatch saveAccept(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
+		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.REGISTER, request, response);
+	}
+	
+	public static InvoiceBatch saveCancel(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
+		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.ANNULMENT, request, response);
+	}
+	
+	public static InvoiceBatch saveModify(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request, byte[] response) {
+		return save(ctx, domain, communicationType, InvoiceCommunicationOperation.MODIFICATION, request, response);
+	}
+	
+	public static InvoiceBatch save(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, InvoiceCommunicationOperation operation, byte[] request, byte[] response) {
+		DataRequest dataRequest = saveRequest(ctx, domain, communicationType, request);
+		DataResponse dataResponse = saveResponse(ctx, domain, communicationType, dataRequest, response);		
+		return saveInvoiceBatch(ctx, domain, dataResponse, communicationType, operation);
+	}
+	
+	public static void saveInvoice(AONContext ctx, Domain domain, InvoiceBatch batch, Integer invoiceId, InvoiceCommunicationStatus status) {
+		saveInvoiceInfo(ctx, domain.getId(), invoiceId, batch.getType(), status);	
+		saveInvoiceBatchdetail(ctx, batch, invoiceId, status);
+	}
+	
+	/**
+	 * Fichero enviado en la ultima comunicacion de la factura del tipo y de la
+	 * operacion indicados, o vacio si la factura no se ha comunicado asi todavia.
+	 */
+	public static Optional<byte[]> getLastRequest(AONContext ctx, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationOperation operation) {
+		Byte attachSource = DataAttachSource.safeByteOf(communicationType);
+		if (invoiceId == null || communicationType == null || operation == null || attachSource == null) {
+			return Optional.empty();
+		}
+		
+		return ctx.getDslContext().select(DATA_ATTACH.DATA)
+			.from(INVOICE_BATCH_DETAIL)
+			.join(INVOICE_BATCH).on(INVOICE_BATCH.ID.eq(INVOICE_BATCH_DETAIL.INVOICE_BATCH))
+			.join(DATA_RESPONSE).on(DATA_RESPONSE.ID.eq(INVOICE_BATCH.DATA_RESPONSE))
+			.join(DATA_ATTACH).on(DATA_ATTACH.SOURCE_ID.eq(DATA_RESPONSE.DATA_REQUEST)
+				.and(DATA_ATTACH.SOURCE.eq(attachSource))
+				.and(DATA_ATTACH.TYPE.eq(DataAttachType.REQUEST.value()))
+			)
+			.where(INVOICE_BATCH_DETAIL.INVOICE.eq(invoiceId))
+			.and(INVOICE_BATCH.TYPE.eq(communicationType.value()))
+			.and(INVOICE_BATCH.OPERATION.eq(operation.value()))
+			.orderBy(INVOICE_BATCH.DATE.desc())
+			.limit(1)
+			.fetchOptional(DATA_ATTACH.DATA);
+	}
+	
 	public static DataRequest saveRequest(AONContext ctx, Domain domain, InvoiceCommunicationType communicationType, byte[] request) {
 		if(communicationType == null) {
 			throw new AonCoreException("No communication type");
@@ -789,6 +843,17 @@ public class InvoiceCommunicationDAO {
 		return dataResponse;		
 	}
 	
+	public static InvoiceBatch saveInvoiceBatch(AONContext ctx, Domain domain, DataResponse dataResponse, InvoiceCommunicationType communicationType, InvoiceCommunicationOperation operation) {
+		InvoiceBatch invoiceBatch = new InvoiceBatch()
+			.setDomain(domain.getId())
+			.setDate(new Date())
+			.setDataResponse(dataResponse.getId())
+			.setType(communicationType)
+			.setOperation(operation);
+		return InvoiceBatchDAO.save(ctx, invoiceBatch);
+	}
+	
+	
 	public static InvoiceInfo saveInvoiceInfo(AONContext ctx, Integer domainId, Integer invoiceId, InvoiceCommunicationType communicationType, InvoiceCommunicationStatus status) {
 		InvoiceInfo info = InvoiceInfoDAO.get(ctx, invoiceId, communicationType)
 			.orElse( 
@@ -800,6 +865,15 @@ public class InvoiceCommunicationDAO {
 		;
 		info.setStatus(status);
 		return InvoiceInfoDAO.save(ctx, info);
+	}
+	
+	public static InvoiceBatchDetail saveInvoiceBatchdetail(AONContext ctx, InvoiceBatch invoiceBatch, Integer invoice, InvoiceCommunicationStatus status) {
+		InvoiceBatchDetail ibd = new InvoiceBatchDetail()
+			.setDomain(invoiceBatch.getDomain())
+			.setInvoiceBatch(invoiceBatch.getId())
+			.setInvoice(invoice)
+			.setStatus(status);
+		return InvoiceBatchDetailDAO.save(ctx, ibd);
 	}
 	
 	// *************************************************************
@@ -860,5 +934,9 @@ public class InvoiceCommunicationDAO {
 					.setStatus(InvoiceCommunicationStatus.safeValueOf(st));
 				InvoiceInfoDAO.save(ctx, info);
 		});
+	}
+	
+	public static void validatePreCommunicationInvoiceAnnulment(AONContext ctx, Invoice invoice) {
+		InvoiceValidation.validatePreCommunicationInvoiceAnnulment(ctx, null, invoice);
 	}
 }

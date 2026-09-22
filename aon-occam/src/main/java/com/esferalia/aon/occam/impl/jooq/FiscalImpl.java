@@ -25,16 +25,11 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, AccountingReportParams params) {
 		return VATDAO.getVatSummary(ctx, params);
-//		return OLDVATDAO.getVatSummary(ctx, params.getFromDate()
-//				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params))
-//				.stream();
 	}
 	
 	@Override
 	public Stream<VatContext> getVatContext(AONContext ctx, AccountingReportParams params) {
 		return VATDAO.getVatBreakdown(ctx, params);
-//		return OLDVATDAO.getVatBreakdown(ctx, params.getFromDate()
-//				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params));
 	}
 	
 	@Override

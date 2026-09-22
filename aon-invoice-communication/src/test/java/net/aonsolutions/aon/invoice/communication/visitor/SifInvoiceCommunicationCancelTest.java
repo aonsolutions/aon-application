@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
  
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
@@ -56,6 +58,8 @@ class SifInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCancelTes
 		assertAcceptedInvoiceInfo(invoice);
 		
 		InvoiceCommunicator.cancelInvoice(cc);
+		assertAnnulledInvoice( invoice );
+		assertCanceledInvoiceInfo( invoice );
 		assertCanceledDataResponse( cc, invoice );
 	}
 
@@ -158,6 +162,26 @@ class SifInvoiceCommunicationCancelTest extends AbsInvoiceCommunicationCancelTes
 		assertNotNull(huella.getValue());
 	}
 	
+	private void assertAnnulledInvoice(Invoice i) {
+		Invoice inv = InvoiceDAO.getInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(inv); // la factura NO se borra
+		assertEquals(i.getId(), inv.getId());
+		assertTrue(inv.isAnnulled()); // queda anulada
+		Invoice full = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(full);
+		assertFalse(full.hasFinances()); // la anulacion borra los vencimientos
+	}
+
+	private void assertCanceledInvoiceInfo(Invoice i) {
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.SIF);
+		assertNotNull(invoiceInfoOpt);
+		assertTrue(invoiceInfoOpt.isPresent());
+		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertSame(InvoiceCommunicationStatus.CANCELLED, invoiceInfo.getStatus());
+	}
+
 	private DataResponse assertCanceledDataResponse(InvoiceCommunicatorContext cc, Invoice invoice) {
 		assertNotNull(cc);
 		assertNotNull(cc.getDataResponse());

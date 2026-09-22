@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedEvent;
 import com.esferalia.aon.gwt.fiscal.client.invoice.AonInvoiceUncheckedHandler;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceCheckedHandlers;
 import com.esferalia.aon.gwt.fiscal.client.invoice.HasInvoiceUncheckedHandlers;
-import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationIconsPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceCommunicationPanel;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
@@ -77,7 +77,7 @@ class InvoiceConsoleTableRow extends AonDisplayGridRow implements HasInvoiceChec
 				, new Label() );
 		}
 		
-		this.addCell(new InvoiceCommunicationIconsPanel( opts, inv ), AON.CSS.aonTextRight() );
+		this.addCell(new InvoiceCommunicationPanel( opts, inv ), AON.CSS.aonTextRight() );
 		
 		if (inv.isAnnulled()) {
 			this.getElement().getStyle().setBackgroundColor("mistyrose");

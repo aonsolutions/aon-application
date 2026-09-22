@@ -1,14 +1,18 @@
 package net.aonsolutions.aon.tbai.lroe;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -49,6 +53,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_altamodifpeticion_v1_0_1.LROEPJ240FacturasEmitidasSinSGAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_1_2_facturasemitidas_sinsg_anulacionpeticion_v1_0_0.LROEPJ240FacturasEmitidasSinSGAnulacionPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
+import net.aonsolutions.aon.tbai.LroeValidation;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
 
@@ -243,44 +248,35 @@ public class LROE240_1_2 extends LROE240 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+	public static LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
 		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
-	private LROEPJ240FacturasEmitidasSinSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	
-		
+	public static LROEPJ240FacturasEmitidasSinSGAnulacionPeticion buildBaja(InvoiceCommunicatorContext context) throws InvoiceCommunicationException, JAXBException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
 		LROEPJ240FacturasEmitidasSinSGAnulacionPeticion lroe = new LROEPJ240FacturasEmitidasSinSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(context.getCompany(), info));
+
 		AnulacionesFacturasEmitidasSinSGType anulaciones = new AnulacionesFacturasEmitidasSinSGType();
+
+		for(Invoice invoice : context.invoiceStream().toList()) {
+			AnulacionFacturaEmitidaSinSGType anulacion = new AnulacionFacturaEmitidaSinSGType();
+			IDFacturaType factura = new IDFacturaType();
+			factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
+			factura.setSerieFactura(invoice.getSeries());
+			factura.setNumFactura(Integer.toString(invoice.getNumber()));
+			anulacion.setIDFactura(factura);
+			anulaciones.getFacturaEmitida().add(anulacion);		
+		}
 		
-		AnulacionFacturaEmitidaSinSGType anulacion = new AnulacionFacturaEmitidaSinSGType();
-		IDFacturaType factura = new IDFacturaType();
-		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		factura.setSerieFactura(invoice.getSeries());
-		factura.setNumFactura(Integer.toString(invoice.getNumber()));
-		anulacion.setIDFactura(factura);
-		anulaciones.getFacturaEmitida().add(anulacion);
 		lroe.setFacturasEmitidas(anulaciones);
+		LroeValidation.validateAnulacionSinSG(lroe);
 		return lroe;
 	}
 	
-	public LROEResponse anulacion(InvoiceCommunicationConfiguration icc, Company company, Invoice invoice)  {
-		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(icc, invoice));
-			final LROEPJ240FacturasEmitidasSinSGAnulacionPeticion p140 = buildBaja(company, invoice, info); 
-			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasSinSGAnulacionPeticion.class );
-			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
-
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( p140, bos );
-			byte[] xml = bos.toByteArray();
-			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
-			byte[] data = toGzip(xml);
-			return send(icc, buildJSON(company, info), data).setDataRequest(dataRequest);
-		} catch (Exception e) {
-			return error(e);
-		}
+	public static byte[] sendCancel(InvoiceCommunicatorContext context, byte[] requestXml) throws InvoiceCommunicationException, JAXBException, IOException {
+		LROEInfo info = buildInfo(OperacionEnum.AN_0, context.getExercise());
+		byte[] requestXmlGzip = toGzip(requestXml);
+		return post(context.getConfig(), buildJSON(context.getCompany(), info), requestXmlGzip);
 	}
 }

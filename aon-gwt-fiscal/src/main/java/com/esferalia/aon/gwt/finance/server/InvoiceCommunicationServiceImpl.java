@@ -33,13 +33,17 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationException;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicatorContext;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.invoice.communication.InvoiceCommunicator;
 import net.aonsolutions.aon.invoice.communication.visitor.AcceptInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.TbaiMain;
@@ -162,69 +166,41 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	}
 
 	@Override
-	public String cancel(String domainName, int domainId, String login, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams) {
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		User user = new User().setLogin(login);
-
-		CancelInvoiceCommunicationTypeVisitor visitor = new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice, aeatParams.getCertificateId());
-		try {
-			type.visit(visitor);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return "";
-	}
-	
-	@Override
-	public String bajaLroe140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) throws Exception {
+	public String cancel(String domainName, int domainId, String login, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Occam occam = new Occam()
 				.setDomainName(domainName)
 				.setDomain(domainId)
-				.setUser(user);
-			Company company = AON.getCompanyForDomain(domainName, domainId, user);
+				.setUser(login);
+			Domain domain = AON.getDomain(domainName, domainId, login);
+			User user = new User().setLogin(login);
+			InvoiceCommunicationConfiguration config = AON.getInvoiceCommunicationConfiguration(occam);
+			Company company = AON.getCompanyForDomain(domainName, domainId, login);
 			Person person = AON.getPerson(occam, f -> f.getIdProperty().eq(company.getId()));
-			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
-			if(invoice.isSales()) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, icc);
-			} else {
-				LROE140_2_1 lroe = new LROE140_2_1();
-				lroe.anulacion(person, icc, invoice);
-			}
 			
-			return null;	
-		} catch (Exception e) {
+			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
+
+			InvoiceCommunicatorContext icc = new InvoiceCommunicatorContext(domain, user, aeatParams.getCertificateId(), invoices)
+				.setConfig(config)
+				.setCompany(company)
+				.setPerson(person)
+			;
+
+			InvoiceCommunicator.cancelInvoice(icc);
+		} catch (InvoiceCommunicationException e) {
 			e.printStackTrace();
-			throw e;
 		}
+		return null;
+	}
+	
+	@Override
+	public String bajaLroe140(String domainName, int domainId, String login, Invoice invoice, AEATParams aeatParams) throws Exception {
+		return cancel(domainName, domainId, login, invoice, aeatParams);
 	}
 
 	@Override
 	public String bajaLroe240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) throws Exception {
-		try {
-			Occam occam = new Occam()
-				.setDomainName(domainName)
-				.setDomain(domainId)
-				.setUser(user);
-			Domain domain = AON.getDomain(domainName, domainId, user);
-			Company company = AON.getCompanyForDomain(domainName, domainId, user);
-			InvoiceCommunicationConfiguration icc = AON.getInvoiceCommunicationConfiguration(occam);
-			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
-			icc.setCertificate(cert);
-			if(invoice.isSales()) {
-				TbaiMain tbai = new TbaiMain();
-				tbai.createAnulacionTBAI(company, invoice, icc);
-			} else {
-				LROE240_2 lroe = new LROE240_2();
-				lroe.anulacion(company, icc, invoice);
-			}
-			return null;	
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		return cancel(domainName, domainId, user, invoice, aeatParams);
 	}
 	
 	// SII
@@ -257,18 +233,7 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 	@Override
 	public ICResponse bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
 		try {
-			Domain domain = AON.getDomain(domainName, domainId, user);
-			Company company = AON.getCompanyForDomain(domainName, domainId, user);
-			
-			Integer invoiceId = invoice.getId();
-			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
-//			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
-			
-			CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
-					new CancelInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())
-						.setCompany(company);
-
-			InvoiceCommunicationType.SII.visit(visitor);
+			cancel(domainName, domainId, user, invoice, aeatParams);
 			return new ICResponse().setError(false);
 		} catch (Exception e) {
 			e.printStackTrace();

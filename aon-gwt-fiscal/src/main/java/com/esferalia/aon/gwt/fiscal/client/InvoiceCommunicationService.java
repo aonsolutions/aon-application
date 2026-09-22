@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationParams;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationTracking;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceCommunicationType;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -33,7 +32,7 @@ public interface InvoiceCommunicationService extends RemoteService {
 	Boolean refresh140(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 	Boolean refresh240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 
-	String cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams);
+	String cancel(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams);
 	
 	LinkedList<InvoiceCommunicationTracking> getInvoiceCommunicationTrackings(String domainName, int domainId, String login, Integer invoice);
 

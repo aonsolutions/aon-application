@@ -33,6 +33,13 @@ class InvoiceCommunicationIcon extends InlineLabel {
 		}
 	}
 	
+	public InvoiceCommunicationIcon(InvoiceModuleOptions options, Invoice invoice ) {
+		super();
+		setTitle(AON.MSG.noSif());
+		setStyleName(AON.CSS.aonLabelWithIcon());
+		addStyleName(AON.CSS.aonIconBlock());
+	}	
+	
 	private void initIcon(Administration admon, InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		StringBuilder title = new StringBuilder();
 		if (type != null) title.append( type.getAbbr() );
@@ -52,11 +59,14 @@ class InvoiceCommunicationIcon extends InlineLabel {
 
 	private String  getStatusDescription(InvoiceCommunicationType type, InvoiceCommunicationStatus status) {
 		if (type == InvoiceCommunicationType.NO_VERIFACTU && status == InvoiceCommunicationStatus.PENDING) {
-			return "Emitida/No comunicada";
+			return AON.MSG.archived();
+		}
+		if (type == InvoiceCommunicationType.SIF && status == InvoiceCommunicationStatus.ACCEPTED) {
+			return AON.MSG.archived();
 		}
 		return status == null ? InvoiceCommunicationStatus.PENDING.getDescription() : status.getDescription();
 	}
-
+	
 	private void decorateIcon(InvoiceCommunicationType type, Administration admon, InvoiceCommunicationStatus status) {
 		try {
 			type.visit(new InvoiceCommunicationTypeVisitor() {
@@ -83,7 +93,7 @@ class InvoiceCommunicationIcon extends InlineLabel {
 						addStyleName(AON.CSS.aonIconAeatYellow());
 					} else {
 						status.accept(new InvoiceCommunicationStatusVisitor() {
-							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatOrange());}
+							@Override public void visitPending() {addStyleName( AON.CSS.aonIconAeatLightGreen());}
 							@Override public void visitAccepted() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitAcceptedWithErrors() {addStyleName( AON.CSS.aonIconAeatGreen());}
 							@Override public void visitWrong() {addStyleName( AON.CSS.aonIconAeatRed());}

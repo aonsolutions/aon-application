@@ -21,6 +21,7 @@ class InvoiceConsoleToolbar extends AonToolbar {
 	private final AonToolbarButton showFilter;
 	private final AonToolbarButton hideFilter;
 	private final AonToolbarButton refresh;
+	private final AonToolbarButton analyze;
 	
 	private final InvoiceConsoleSelectionHandler selectionHandler;
 	private final AonToolbarButton send;
@@ -35,6 +36,9 @@ class InvoiceConsoleToolbar extends AonToolbar {
 		
 		refresh = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		this.add(refresh);
+		
+		analyze = new AonToolbarButton(AON.MSG.analysis(), AON.CSS.aonIconWizard());
+		this.add(analyze);
 		
 		showFilter = new AonToolbarButton(AON.MSG.showFilter(), AON.CSS.aonIconFilterOn());
 		showFilter.setVisible(false);
@@ -53,7 +57,6 @@ class InvoiceConsoleToolbar extends AonToolbar {
 			showFilter.setVisible(true);
 		});
 
-		
 		this.add(selectionHandler);
 		selectionHandler.addValueChangeHandler(e -> refresh(opts));
 		
@@ -77,7 +80,10 @@ class InvoiceConsoleToolbar extends AonToolbar {
 	void addClickHandlerToHideFilter( ClickHandler handler ) {
 		hideFilter.addClickHandler(handler);
 	}
-
+	void addClickHandlerToAnalyze(ClickHandler handler) {
+		analyze.addClickHandler(handler);
+	}
+	
 	public void addClickHandlerToRefresh(ClickHandler handler) {
 		refresh.addClickHandler(handler);
 	}

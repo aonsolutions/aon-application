@@ -104,6 +104,7 @@ class InvoiceJSONV1 {
 			.setRegistryAddress(raddress.getId())
 			.setAddress(raddress)
 			.setSigned(JsonUtils.getboolean(json, IJsonNames.SIGNED))
+			.setAnnulled(JsonUtils.getboolean(json, IJsonNames.ANNULLED))
 			
 			.setTaxableBase(JsonUtils.getdouble(json, IJsonNames.TAXABLE_BASE))
 			.setVatQuota(JsonUtils.getdouble(json, IJsonNames.VAT_QUOTA))
@@ -165,6 +166,7 @@ class InvoiceJSONV1 {
 			.put(IJsonNames.INVESTMENT, invoice.isInvestment())
 			.put(IJsonNames.SERVICE, invoice.isService())
 			.put(IJsonNames.SIGNED, invoice.isSigned())
+			.put(IJsonNames.ANNULLED, invoice.isAnnulled())
 			.put(IJsonNames.WITHHOLDING, invoice.isWithholding())
 			.put(IJsonNames.WITHHOLDING_FARMER, invoice.isWithholdingFarmer())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, invoice.isVatAccrualPayment())

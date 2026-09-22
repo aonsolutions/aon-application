@@ -574,6 +574,9 @@ public class Invoice implements Serializable, HasAudit {
 		if (this.details == null) this.details = new LinkedList<>();
 		return this.details;
 	}
+	public boolean hasPrepayments() {
+		return detailStream().filter(d -> d.isPrepayment()).count() > 0; 
+	}
 	
 	// ---------------------------------------------------- [FINANCES]
 	public Stream<Finance> financeStream() {
@@ -769,6 +772,43 @@ public class Invoice implements Serializable, HasAudit {
 		this.siiStatus = siiStatus;
 		return this;
 	}
+	
+	// TODO EMITIDAS POR TERCEROS | EMITIDAS POR DESTINATARIO | EMITIDAS POR SOFTWARE EXTERNO
+	
+	/**
+	 * Indica si la factura ha sido emitida por un tercero o por el destinatario (no por el emisor)
+	 * @return true si la factura ha sido emitida por un tercero o por el destinatario, false en caso contrario
+	 */
+	public boolean isIssuedByThirdPartyOrRecipient() {
+		return isIssuedByThirdParty() || isIssuedByRecipient();
+	}
+	
+	/**
+	 * Indica si la factura ha sido emitida por un tercero (no por el emisor ni por el destinatario)
+	 * @return true si la factura ha sido emitida por un tercero, false en caso contrario
+	 */
+	public boolean isIssuedByThirdParty() {
+		return false;
+	}
+
+	
+	/**
+	 * Indica si la factura ha sido emitida por el destinatario (no por el emisor ni por un tercero)
+	 * @return true si la factura ha sido emitida por el destinatario, false en caso contrario
+	 */
+	public boolean isIssuedByRecipient() {
+		return false;
+	}
+	
+
+	/**
+	 * Indica si la factura ha sido emitida por un software externo (no por el emisor ni por el destinatario ni por un tercero)
+	 * @return true si la factura ha sido emitida por un software externo, false en caso contrario
+	 */
+	public boolean isIssuedByExternalSoftware() {
+		return false;
+	}
+
 	
 	// ----------- VAT REGIMES
 	public boolean isExempt() {

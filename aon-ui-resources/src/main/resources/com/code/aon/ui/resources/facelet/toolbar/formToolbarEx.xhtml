@@ -62,7 +62,7 @@
 			<aon:if test="#{!skipRemoveButton and !skipEditTo}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
 					title="#{bundle.aon_key_remove_accelerator}"
-					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
+					value="#{removeValue}" reRender="#{removeButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
 					confirmTitle="#{removeConfirmTitle}"

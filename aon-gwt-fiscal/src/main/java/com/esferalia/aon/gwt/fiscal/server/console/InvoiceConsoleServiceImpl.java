@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceConsoleAnalysis;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -34,6 +35,11 @@ public class InvoiceConsoleServiceImpl extends AonStatelessRemoteServiceServlet 
 	@Override
 	public AccountingInvoice getAccountingInvoice(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException {
 		return INVOICECONSOLE.getOrInitializeAccountingInvoiceFromInvoice(occam, domain, invoiceId);
+	}
+	
+	@Override
+	public InvoiceConsoleAnalysis analyze(Occam occam, InvoiceConsoleParams params) throws AonCoreException {
+		return INVOICECONSOLE.analyze(occam, params);
 	}
 
 }

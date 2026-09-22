@@ -138,6 +138,15 @@
 		</aon:selectOneRadio>				
 	</aon:if>
 
+	
+	<aon:outputLabel for="Invoice_annulled" value="#{bundle.aon_annulled}" />
+	<aon:selectOneRadio id="Invoice_annulled"
+		value="#{searchController.defaultAnnulled}">
+		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+	</aon:selectOneRadio>				
+
+	
 	<aon:if test="#{company.EInvoice}">
 		<aon:outputLabel for="Invoice_signed" value="#{bundle.finance_signed}" />
 		<aon:selectOneRadio id="Invoice_signed"

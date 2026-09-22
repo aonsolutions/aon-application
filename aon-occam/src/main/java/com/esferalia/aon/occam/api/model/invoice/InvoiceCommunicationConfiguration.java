@@ -231,12 +231,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 		return is(data) && AonStringUtils.containsIgnoreCase(data.getExpression(), "test");
 	}
 	
-	private boolean was(List<EnterpriseData> history) {
-		return history != null && !history.isEmpty()
-			&& history.stream().anyMatch(d -> 
-				d.getStartDate() != null && d.getStartDate().before(new Date()));
-	}
-	
 	private boolean willBe(List<EnterpriseData> history) {
 		return history != null && !history.isEmpty()
 			&& history.stream().anyMatch(d -> 
@@ -323,22 +317,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isTbaiTest() {
 		return isTest(getTbaiData());
-	}
-	
-	/**
-	 * Determina si la empresa ha estado dada de alta en Ticket Bai en algún momento.
-	 * @return true si la empresa ha estado dada de alta en Ticket Bai en algún momento, false en caso contrario.
-	 */
-	public boolean wasTbai() {
-		return was(getTbaiDataHistory());
-	}
-
-	/**
-	 * Determina si la empresa estará dada de alta en Ticket Bai en algún momento.
-	 * @return true si la empresa estará dada de alta en Ticket Bai en algún momento, false en caso contrario.
-	 */
-	public boolean willBeTbai() {
-		return willBe(getTbaiDataHistory());
 	}
 	
 	/**
@@ -435,22 +413,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isLroeTest() {
 		return isTest(getLroeData());
-	}
-	
-	/**
-	 * Determina si la empresa ha estado dada de alta en LROE en algún momento.
-	 * @return true si la empresa ha estado dada de alta en LROE en algún momento, false en caso contrario.
-	 */
-	public boolean wasLroe() {
-		return was(getLroeDataHistory());
-	}
-	
-	/**
-	 * Determina si la empresa estará dada de alta en LROE en algún momento.
-	 * @return true si la empresa estará dada de alta en LROE en algún momento, false en caso contrario.
-	 */
-	public boolean willBeLroe() {
-		return willBe(getLroeDataHistory());
 	}
 	
 	@Deprecated
@@ -557,22 +519,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isSiiTest() {
 		return isTest(getSiiData());
-	}
-	
-	/**
-	 * Determina si la empresa ha estado dada de alta en SII en algún momento.
-	 * @return true si la empresa ha estado dada de alta en SII en algún momento, false en caso contrario.
-	 */
-	public boolean wasSii() {
-		return was(getSiiDataHistory());
-	}
-	
-	/**
-	 * Determina si la empresa estará dada de alta en SII en algún momento.
-	 * @return true si la empresa estará dada de alta en SII en algún momento, false en caso contrario.
-	 */
-	public boolean willBeSii() {
-		return willBe(getSiiDataHistory());
 	}
 	
 	@Deprecated
@@ -699,22 +645,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 
 	/**
-	 * Determina si la empresa ha estado dada de alta en Verifactu en algún momento.
-	 * @return true si la empresa ha estado dada de alta en Verifactu en algún momento, false en caso contrario.
-	 */
-	public boolean wasVerifactu() {
-		return was(getVerifactuDataHistory());
-	}
-	
-	/**
-	 * Determina si la empresa estará dada de alta en Verifactu en algún momento.
-	 * @return true si la empresa estará dada de alta en Verifactu en algún momento, false en caso contrario.
-	 */
-	public boolean willBeVerifactu() {
-		return willBe(getVerifactuDataHistory());
-	}
-	
-	/**
 	 * Indica si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual.
 	 * @return true si la empresa ha enviado facturas mediante VERIFACTU en el ejercicio actual, false en caso contrario.
 	 */
@@ -799,22 +729,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isNoVerifactu() {
 		return is(getNoVerifactuData());
-	}
-	
-	/**
-	 * Determina si la empresa está dada de alta en No Verifactu en modo test.
-	 * @return true si la empresa está dada de alta en No Verifactu en modo test, false en caso contrario.
-	 */
-	public boolean isNoVerifactuTest() {
-		return isTest(getNoVerifactuData());
-	}
-	
-	/**
-	 * Determina si la empresa ha estado dada de alta en No Verifactu en algún momento.
-	 * @return true si la empresa ha estado dada de alta en No Verifactu en algún momento, false en caso contrario.
-	 */
-	public boolean wasNoVerifactu() {
-		return was(getNoVerifactuDataHistory());
 	}
 	
 	/**
@@ -921,22 +835,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	}
 	
 	/**
-	 * Determina si la empresa ha estado dada de alta en SIF en algún momento.
-	 * @return true si la empresa ha estado dada de alta en SIF en algún momento, false en caso contrario.
-	 */
-	public boolean wasSif() {
-		return was(getSifDataHistory());
-	}
-	
-	/**
-	 * Determina si la empresa estará dada de alta en SIF en algún momento.
-	 * @return true si la empresa estará dada de alta en SIF en algún momento, false en caso contrario.
-	 */
-	public boolean willBeSif() {
-		return willBe(getSifDataHistory());
-	}
-	
-	/**
 	 * Indica si la empresa ha enviado facturas mediante SIF en el ejercicio actual.
 	 * @return true si la empresa ha enviado facturas mediante SIF en el ejercicio actual, false en caso contrario.
 	 */
@@ -1002,22 +900,6 @@ public class InvoiceCommunicationConfiguration implements Serializable{
 	 */
 	public boolean isNoSif() {
 		return is(getNoSifData());
-	}
-	
-	/**
-	 * Determina si la empresa ha estado dada de alta en NO SIF en algún momento.
-	 * @return true si la empresa ha estado dada de alta en NO SIF en algún momento, false en caso contrario.
-	 */
-	public boolean wasNoSif() {
-		return was(getNoSifDataHistory());
-	}
-	
-	/**
-	 * Determina si la empresa estará dada de alta en NO SIF en algún momento.
-	 * @return true si la empresa estará dada de alta en NO SIF en algún momento, false en caso contrario.
-	 */
-	public boolean willBeNoSif() {
-		return willBe(getNoSifDataHistory());
 	}
 	
 	// CERTIFICADO

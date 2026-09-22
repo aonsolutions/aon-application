@@ -107,13 +107,13 @@ public class GenerateSIIServlet extends HttpServlet{
 					com.esferalia.aon.occam.api.model.finance.Invoice inv = AON_SOLUTIONS.getInvoice(domainName, domain.getId(), login, ids[0]);
 					object = manager.getSuministroFacturasEmitidas(domain, login, company, inv, contextList, terceros);
 				} else if(isBaja(action)){
-//					object = manager.bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
+//					object = manager.bajaFacturasEmitidas(domain, login, company, inv);
 				}
 			} else if(option.contains("fr_")){
 				if(isSuministro(action)){
 					object = manager.getSuministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros, false);
 				} else if(isBaja(action)){
-//					object = manager.bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
+//					object = manager.bajaFacturasRecibidas(domain, login, company, invoice);
 				}
 			} else if("bienes".equalsIgnoreCase(option)){
 				if(isSuministro(action)){

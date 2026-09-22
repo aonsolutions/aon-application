@@ -898,7 +898,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return new Occam()
 				.setDomain(DomainManager.getCurrentDomain())
 				.setDomainName(AonUtil.getDomainName())
-				.setUser("");
+				.setUser(UserUtils.getInstance().getLoggedUser().getLogin());
 	}
 
 	public boolean isShowDiscountsWindow() {
@@ -1598,7 +1598,11 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	}
 
 	public boolean isReadOnly() {
-		return (isSigned() || isRecorded() || isRectified() || isSpecialRectifier());
+		return (isAnnulled() || isSigned() || isRecorded() || isRectified() || isSpecialRectifier());
+	}
+	
+	public boolean isAnnulled() {
+		return getInvoice().isAnnulled();
 	}
 	
 	public boolean isSigned() {
@@ -2183,6 +2187,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public boolean isCommunicableInvoice() {
 		return getInvoice().getNumber() > 0
+			&& !getInvoice().isAnnulled()
 			&& ( (isVerifactu() && !AonStringUtils.isBlank(getVerifactuUrl() ))
 				|| isNoVerifactu() 
 				|| isSif())
@@ -2234,6 +2239,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public boolean isIssueable() {
 		return !isNevv()
+			&& !isAnnulled()
 			&& (isVerifactu() || isNoVerifactu() ||  isSif() ||  isSii())
 			&& (!isVerifactuInvoice() || !isNoVerifactuInvoice() || !isSifInvoice() || !isSiiInvoice())
 			&& (getInvoice().getNumber() <= 0 || isUniqueNumberOfSeries());
@@ -2407,4 +2413,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 		return rectificationInvoices;
 	}
+	
+	public void annul(ActionEvent event) {
+		try {
+			Invoice invoice = (Invoice) getTo();
+			AON.annulInvoice(getOccam(), invoice.getId());
+			refreshEntireInvoice();
+		} catch (Throwable e) {
+			refreshEntireInvoice();
+			LOGGER.error(">>>> annul exception ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
 }

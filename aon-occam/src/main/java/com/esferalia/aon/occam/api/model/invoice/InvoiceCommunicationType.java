@@ -23,7 +23,7 @@ public enum InvoiceCommunicationType implements Serializable {
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitVERIFACTU();}},
 	NO_VERIFACTU ("No Verifactu","Plataforma No Verifactu")
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitNO_VERIFACTU();}},
-	SIF ("S.I.F.","Sistema de Informatico de facturaci\u00F3n")
+	SIF ("S.I.F.","Sistema Inform\u00E1tico de Facturaci\u00F3n")
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitSIF();}},
 	FACTURAE ("FacturaE","Factura Electr\u00F3nica") 
 		{ @Override public void visit(InvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitFACTURAE();}}

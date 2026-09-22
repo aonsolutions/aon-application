@@ -230,6 +230,8 @@ class VerifactuCanariasCommunicationCancelTest extends AbstractVerifactuTest {
 			List<Invoice> invoices = AonCollectionUtils.toList(invoice);
 			InvoiceCommunicatorContext  icc = getEnvironment().getInvoiceCommunicatorContextWithCertificate(invoices);
 			VERIFACTU.cancel(getEnvironment().getCtx(), icc);
+			assertAnnulledInvoice( invoice );
+			assertCanceledInvoiceInfo( invoice );
 			assertCanceledDataResponse( icc, invoice );
 			return invoice;
 		});
@@ -333,6 +335,26 @@ class VerifactuCanariasCommunicationCancelTest extends AbstractVerifactuTest {
 		assertEquals(invoice.getDomain(), huella.getDomain() );
 		assertEquals(InvoiceDataName.VERIFACTU_HUELLA, huella.getName());
 		assertNotNull(huella.getValue());
+	}
+	
+	private void assertAnnulledInvoice(Invoice i) {
+		Invoice inv = InvoiceDAO.getInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(inv); // la factura NO se borra
+		assertEquals(i.getId(), inv.getId());
+		assertTrue(inv.isAnnulled()); // queda anulada
+		Invoice full = InvoiceDAO.getFullInvoice(getEnvironment().getCtx(), i.getId());
+		assertNotNull(full);
+		assertFalse(full.hasFinances()); // la anulacion borra los vencimientos
+	}
+
+	private void assertCanceledInvoiceInfo(Invoice i) {
+		Optional<InvoiceInfo> invoiceInfoOpt = InvoiceInfoDAO.get(getEnvironment().getCtx(), i.getId(), InvoiceCommunicationType.VERIFACTU);
+		assertNotNull(invoiceInfoOpt);
+		assertTrue(invoiceInfoOpt.isPresent());
+		InvoiceInfo invoiceInfo = invoiceInfoOpt.get();
+		assertEquals(i.getId(), invoiceInfo.getInvoice());
+		assertEquals(i.getDomain(), invoiceInfo.getDomain());
+		assertSame(InvoiceCommunicationStatus.CANCELLED, invoiceInfo.getStatus());
 	}
 	
 	private DataResponse assertCanceledDataResponse(InvoiceCommunicatorContext cc, Invoice invoice) {

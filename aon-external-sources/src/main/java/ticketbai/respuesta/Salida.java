@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="IdentificadorTBAI" type="{urn:ticketbai:respuesta}IdentificadorTBAIType" minOccurs="0"/>
- *         &lt;element name="FechaRecepcion" type="{urn:ticketbai:respuesta}FechaHoraType"/>
- *         &lt;element name="Estado" type="{urn:ticketbai:respuesta}EstadoType"/>
- *         &lt;element name="Descripcion" type="{urn:ticketbai:respuesta}TextMax250Type"/>
- *         &lt;element name="Azalpena" type="{urn:ticketbai:respuesta}TextMax250Type"/>
- *         &lt;element name="ResultadosValidacion" type="{urn:ticketbai:respuesta}ResultadosValidacion" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="CSV" type="{urn:ticketbai:respuesta}TextMax40Type" minOccurs="0"/>
+ *         &lt;element name="IdentificadorTBAI" type="{urn:ticketbai:emision}IdentificadorTBAIType" minOccurs="0"/>
+ *         &lt;element name="FechaRecepcion" type="{urn:ticketbai:emision}FechaHoraType"/>
+ *         &lt;element name="Estado" type="{urn:ticketbai:emision}EstadoType"/>
+ *         &lt;element name="Descripcion" type="{urn:ticketbai:emision}TextMax250Type"/>
+ *         &lt;element name="Azalpena" type="{urn:ticketbai:emision}TextMax250Type"/>
+ *         &lt;element name="ResultadosValidacion" type="{urn:ticketbai:emision}ResultadosValidacion" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="CSV" type="{urn:ticketbai:emision}TextMax40Type" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

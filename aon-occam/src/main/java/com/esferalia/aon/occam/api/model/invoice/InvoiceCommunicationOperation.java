@@ -6,10 +6,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationOperation implements Serializable{
 
-	REGISTER("Alta") 				{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitRegister();}},	
-	MODIFICATION("Modificación") 	{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitModification();}},
-	ANNULMENT("Anulación") 			{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitAnnulment();}},
-	CONSULTATION("Consulta") 		{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitConsultation();}}
+	REGISTER("Alta") 					{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitRegister();}},	
+	MODIFICATION("Modificaci\u00F3n") 	{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitModification();}},
+	ANNULMENT("Anulaci\u00F3n") 		{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitAnnulment();}},
+	CONSULTATION("Consulta") 			{ @Override public <T> T visit(InvoiceCommunicationOperationVisitor<T> visitor) {return visitor.visitConsultation();}}
 	;
 	
 	

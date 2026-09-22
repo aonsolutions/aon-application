@@ -179,8 +179,13 @@ public class VERIFACTU {
 			
 			case ANULACION: {
 				if (correcto) {
-					// Si la respuesta es correcta, se borra la factura.
-					InvoiceDAO.delete(ctx, invoiceId, vc.isPreserveRawdocOnDeletion());
+					InvoiceCommunicationStatus ics = (r.getEstadoRegistro() == EstadoRegistroType.ACEPTADO_CON_ERRORES)
+						? InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS
+						: InvoiceCommunicationStatus.ACCEPTED;
+					saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, ics);
+					saveInvoiceInfo(ctx, vc.getDomainId(), invoiceId, InvoiceCommunicationStatus.CANCELLED);
+					// Si la respuesta es correcta, se anula la factura.
+					InvoiceDAO.annul(ctx, invoiceId);
 				} else {
 					// Si la respuesta es incorrecta, se guarda la comunicación.
 					saveInvoiceBatchdetail(ctx, invoiceBatch, invoiceId, InvoiceCommunicationStatus.WRONG);

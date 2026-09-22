@@ -18,11 +18,11 @@ public class LroeMain {
 		if(!ic.getInvoice().isSales()) {
 			if(FiscalModelType.M140.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE140_2_1 lroe = new LROE140_2_1();
-				info = lroe.buildInfo(OperacionEnum.A_00);
+				info = LROE140_2_1.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getConfiguration(), ic.getInvoice()));
 				response = lroe.alta(ic);
 			} else if(FiscalModelType.M240.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE240_2 lroe = new LROE240_2();
-				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getConfiguration(), ic.getInvoice()));
+				info = LROE240_2.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getConfiguration(), ic.getInvoice()));
 				response = lroe.alta(ic.getConfiguration(), ic.getCompany(), ic.getInvoice());
 			}
 		}
