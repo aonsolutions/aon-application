@@ -8,6 +8,7 @@ import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggest
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
 import { deleteIncome, getAccounts, setIncome } from '../../services/accountingService.js';
 import { AonIncomeList } from './aon-income-list.js';
+import { AonMobileIncomeList } from './aon-mobile-income-list.js';
 import { Income } from './Income.js';
 
 export class AonIncome extends AonElement {
@@ -246,7 +247,8 @@ export class AonIncome extends AonElement {
     }
     
     back() {
-        this.getApplication().setContent(new AonIncomeList());
+        let list = this.isMobile() ? new AonMobileIncomeList() : new AonIncomeList();
+        this.getApplication().setContent(list);
     }
 
     save() {

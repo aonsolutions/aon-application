@@ -34,6 +34,7 @@ export class AonMobileInventoryList extends AonMobileList {
 
     initialize() {
         this.id = this.id || 'aonMobileInventoryList';
+        super.initialize();
         this.more = true;
         this.filtro = this.filtro || {
             page:1,
