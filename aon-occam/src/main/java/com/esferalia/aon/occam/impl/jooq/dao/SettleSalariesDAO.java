@@ -14,9 +14,6 @@ import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -29,11 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.jooq.Record;
 import org.jooq.Result;
@@ -223,6 +215,21 @@ public class SettleSalariesDAO {
 //			.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 //			.where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
 //			.fetch();
+		
+		Byte fbatchType = ctx.getDslContext().select(FBATCH.TYPE)
+			.from(FBATCH)
+			.where(FBATCH.ID.eq(fbatchId))
+			.and(FBATCH.DOMAIN.eq(ctx.getDomainId()))
+			.fetchOne(FBATCH.TYPE);
+
+		if (fbatchType == null)
+			throw new AonCoreException("No existe la remesa " + fbatchId);
+
+		// Este generador solo produce pain.001 (transferencias 34-14).
+		if (fbatchType != (byte) 9 && fbatchType != (byte) 10)
+			throw new AonCoreException("La generacion del fichero para el tipo '"
+				+ getFileTypeDescription(fbatchType)
+				+ "' todavia no esta implementada");
 		 
 		Raddress address = RADDRESS.as("r");
 		Raddress address2 = RADDRESS.as("r2");
@@ -255,6 +262,7 @@ public class SettleSalariesDAO {
 		        )
 		        .leftJoin(GEOZONE).on(GEOZONE.ID.eq(address2.GEOZONE))
 		        .where(FBATCH_DETAIL.FBATCH.eq(fbatchId))
+		        .and(FBATCH_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 		        .fetch();
 
 
@@ -270,6 +278,7 @@ public class SettleSalariesDAO {
 				.innerJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
 				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
 				.where(FBATCH.ID.eq(fbatchId))
+				.and(FBATCH.DOMAIN.eq(ctx.getDomainId()))
 				.and(RADDRESS.TYPE.eq((byte)0))
 				.fetchOne();
 		
@@ -295,7 +304,7 @@ public class SettleSalariesDAO {
 		
 		xmlData += "<InitgPty>";
 		
-		xmlData += "<Nm>" + removeSpecialCharacters(fbatchEnterprise.get(REGISTRY.NAME)) + "</Nm>";
+		xmlData += "<Nm>" + clean(fbatchEnterprise.get(REGISTRY.NAME)) + "</Nm>";
 		
 		xmlData += "<Id>";
 		
@@ -327,7 +336,7 @@ public class SettleSalariesDAO {
 		
 		xmlData += "<Dbtr>";
 		
-		xmlData += "<Nm>" + removeSpecialCharacters(fbatchEnterprise.get(REGISTRY.NAME)) + "</Nm>";
+		xmlData += "<Nm>" + clean(fbatchEnterprise.get(REGISTRY.NAME)) + "</Nm>";
 		
 		xmlData += "<PstlAdr>";
 		
@@ -335,9 +344,9 @@ public class SettleSalariesDAO {
 		
 		if(null != fbatchEnterprise.get(RADDRESS.ID)) {
 		
-			xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.NUMBER)) + "</AdrLine>";
+			xmlData += "<AdrLine>" + clean(fbatchEnterprise.get(RADDRESS.STREET_TYPE)) + ". " + clean(fbatchEnterprise.get(RADDRESS.ADDRESS)) + " " + clean(fbatchEnterprise.get(RADDRESS.NUMBER)) + "</AdrLine>";
 			
-			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchEnterprise.get(RADDRESS.CITY)) + (null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + removeSpecialCharacters(fbatchEnterprise.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
+			xmlData += "<AdrLine>" + fbatchEnterprise.get(RADDRESS.ZIP) + " " + clean(fbatchEnterprise.get(RADDRESS.CITY)) + (null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + clean(fbatchEnterprise.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
 		
 		}
 		
@@ -374,7 +383,7 @@ public class SettleSalariesDAO {
 			
 			xmlData += "<Cdtr>";
 			
-			xmlData += "<Nm>" + removeSpecialCharacters(fbatchDetail.get(FINANCE.RNAME)) + "</Nm>";
+			xmlData += "<Nm>" + clean(fbatchDetail.get(FINANCE.RNAME)) + "</Nm>";
 			
 			xmlData += "<PstlAdr>";
 			
@@ -382,9 +391,9 @@ public class SettleSalariesDAO {
 			
 			if(null != fbatchDetail.get(RADDRESS.ID)) {
 			
-				xmlData += "<AdrLine>" + removeSpecialCharacters(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.NUMBER)) + "</AdrLine>";
+				xmlData += "<AdrLine>" + clean(fbatchDetail.get(RADDRESS.STREET_TYPE)) + ". " + clean(fbatchDetail.get(RADDRESS.ADDRESS)) + " " + clean(fbatchDetail.get(RADDRESS.NUMBER)) + "</AdrLine>";
 				
-				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + removeSpecialCharacters(fbatchDetail.get(RADDRESS.CITY)) + ( null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + removeSpecialCharacters(fbatchDetail.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
+				xmlData += "<AdrLine>" + fbatchDetail.get(RADDRESS.ZIP) + " " + clean(fbatchDetail.get(RADDRESS.CITY)) + ( null != fbatchEnterprise.get(GEOZONE.ID) ? (" (" + clean(fbatchDetail.get(GEOZONE.NAME)) + ")") : "" ) + "</AdrLine>";
 			
 			}
 			 
@@ -413,10 +422,24 @@ public class SettleSalariesDAO {
 		
 		System.out.println("SEPA GENERATED!");
 		
-		return saveAttach(ctx, fbatchId, generarBytesDesdeXML(xmlData));
+		return saveAttach(ctx, fbatchId, xmlData.getBytes(StandardCharsets.UTF_8));
 	}
 	
-	private static Integer saveAttach(CloseableAONContext ctx, Integer fbatchId, byte[] data) {
+	private static String getFileTypeDescription(Byte code) {
+	      if (code == null) return "Desconocido";
+	      switch (code) {
+	          case 0:  return "VISA";
+	          case 8:  return "SEPA 19-14 CORE (XML)";
+	          case 9:  return "SEPA 34-14 (XML)";
+	          case 10: return "SEPA 34-14 N\u00f3mina (XML)";
+	          case 12: return "SEPA 58 ANTICIPO (XML)";
+	          case 13: return "SEPA 58 COBRO (XML)";
+	          // TODO tipos heredados: 1, 2, 4, 5, 6, 7, 11, 14
+	          default: return "Tipo " + code;
+	      }
+	  }
+	
+	static Integer saveAttach(CloseableAONContext ctx, Integer fbatchId, byte[] data) {
 		Record fbatchEnterprise = ctx.getDslContext().select().from(FBATCH)
 				.innerJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(FBATCH.DOMAIN))
 				.where(FBATCH.ID.eq(fbatchId))
@@ -425,7 +448,7 @@ public class SettleSalariesDAO {
 		if(null != fbatchEnterprise.get(FBATCH.RATTACH)) {
 			ctx.getDslContext().update(RATTACH)
 				.set(RATTACH.DATA, data)
-				.set(RATTACH.DESCRIPTION, "SEPA_34_14_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
+				.set(RATTACH.DESCRIPTION, "SEPA_" + fbatchEnterprise.get(FBATCH.TYPE) + "_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
 				.set(RATTACH.MODIFICATION_USER,ctx.getUser())
 				.set(RATTACH.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 				.where(RATTACH.ID.eq(fbatchEnterprise.get(FBATCH.RATTACH)))
@@ -437,7 +460,7 @@ public class SettleSalariesDAO {
 				.set(RATTACH.DOMAIN, fbatchEnterprise.get(FBATCH.DOMAIN))
 				.set(RATTACH.REGISTRY, fbatchEnterprise.get(ENTERPRISE.REGISTRY))
 				.set(RATTACH.MIMETYPE, (byte)5) //XML
-				.set(RATTACH.DESCRIPTION, "SEPA_34_14_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
+				.set(RATTACH.DESCRIPTION, "SEPA_" + fbatchEnterprise.get(FBATCH.TYPE) + "_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
 				.set(RATTACH.DATA, data)
 				.set(RATTACH.TYPE, (byte)22) //¡?
 				.set(RATTACH.SECURITY_LEVEL, (byte)0)
@@ -471,7 +494,7 @@ public class SettleSalariesDAO {
 		}
 	}
 	
-	public static String removeSpecialCharacters(String input) {
+	static String removeSpecialCharacters(String input) {
 		if(AonStringUtils.isBlank(input)) return "";
 		return input.replace("Á", "A")
 	        .replace("É", "E")
@@ -503,21 +526,10 @@ public class SettleSalariesDAO {
         return formattedNumber;
     }
 	
-	private static byte[] generarBytesDesdeXML(String xmlData) throws Exception {
-        // Crea un StreamSource a partir de la cadena XML
-		InputStream inputStream = new ByteArrayInputStream(xmlData.getBytes(StandardCharsets.UTF_8));
-
-
-        // Crea un ByteArrayOutputStream para almacenar los bytes generados
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        // Utiliza un Transformer para transformar el XML en un flujo de bytes
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.transform(new StreamSource(inputStream), new StreamResult(outputStream));
-
-        // Devuelve los bytes generados
-        return outputStream.toByteArray();
-    }
+	private static String clean(String input) {
+	    String s = removeSpecialCharacters(input);
+	    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+	            .replace("\"", "&quot;").replace("'", "&apos;");
+	}
 	
 }

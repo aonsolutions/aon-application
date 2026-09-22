@@ -21,12 +21,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus.FBatchStatusVisitor;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -112,7 +112,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 	
 	private boolean fetchingData = false;
 	
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 	
 	private static enum COLS {
 		  CHK(""									,"2rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -123,7 +123,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		, STA(AON.MSG.status()						,"7.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, REG("Regs"								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, AMO("Importe"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
-		, TYP("Tipo"								,"7.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
+		, TYP("Tipo"								,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, ACT(AonStringUtils.EMPTY					,"5rem" 			,"")
 		;
 		
@@ -152,7 +152,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 	}
 	
 	// Constructor
-	public FBatchPaymentList(FinanceModuleOptions options, FBATCH_TYPE fbatchType) {
+	public FBatchPaymentList(FinanceModuleOptions options, FBatchType fbatchType) {
 		super("Remesas");
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -287,7 +287,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		newButton.addClickHandler(e -> {
 			final AonCustomDialog dialog = new AonCustomDialog();
 			dialog.setCaption("Remesa Vencimientos");
-			final AonFBatchPaymentPanel fbatchPanel = new AonFBatchPaymentPanel( options.getDomainName(), options.getDomain(), options.getUser(), fbatchType.name(), new AonFBatchPaymentPayrollPanelCallback() {
+			final AonFBatchPaymentPanel fbatchPanel = new AonFBatchPaymentPanel( options.getDomainName(), options.getDomain(), options.getUser(), fbatchType, new AonFBatchPaymentPayrollPanelCallback() {
 				
 				@Override
 				public void onCancel() {
@@ -515,7 +515,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		amount.addStyleName(AON.CSS.aonTextRight());
 		tab.addRow(row, amount, COLS.AMO.getColWidth());
 		
-		Label fileType = new Label(fBatch.getType() == (byte)0 ? "VISA" : "SEPA 34-14 (XML)");
+		Label fileType = new Label(fbatchType.getFileTypeDescription(fBatch.getType()));
 		fileType.addStyleName(AON.CSS.aonTextLeft());
 		tab.addRow(row, fileType, COLS.TYP.getColWidth());
 		
@@ -567,7 +567,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 
 			diskForm.submit();
 		});
-		setVisible(downloadFile, fBatch.getRattach() != null && fBatch.getType() != (byte)0);
+		setVisible(downloadFile, fBatch.getRattach() != null && FBatchType.isSepaFile(fBatch.getType()));
 		actionsPanel.add(downloadFile);
 		
 		// Download File
@@ -585,7 +585,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		});
 		setVisible(deleteFile, fBatch.getRattach() != null 
 			&& !fBatch.getStatus().equals(FBatchStatus.RECORDED) 
-			&& fBatch.getType() != (byte)0);
+			&& FBatchType.isSepaFile(fBatch.getType()));
 		actionsPanel.add(deleteFile);
 		
 		sepaButton.addClickHandler(e -> {
@@ -600,7 +600,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 			status.setText(FBatchStatus.GENERATED.getDescription());
 			status.removeStyleName(AON.CSS.aonColorRed());
 		});
-		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getBatchDetails().isEmpty() && fBatch.getType() != (byte)0 && fBatch.getRbank() != null);
+		setVisible(sepaButton, fBatch.getRattach() == null && !fBatch.getBatchDetails().isEmpty() && FBatchType.isSepaFile(fBatch.getType()) && fBatch.getRbank() != null);
 		actionsPanel.add(sepaButton);
 		
 		setVisible(diskForm, fBatch.getRattach() != null);
@@ -610,7 +610,7 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 		
 		fBatches.put(fBatch.getId(), new FBatchRow(tab.getRowsCount() - 1, fBatch));
 	}
-	
+
 	private void deleteFBatch(FinanceModuleOptions opt, FBatch fBatch) {
 		AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Remesa",
 				new HTML("Se va a proceder a eliminar la remesa '<b>" + fBatch.getDescription() + "</b>'.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -729,10 +729,12 @@ public abstract class FBatchPaymentList extends AonCustomDockLayout {
 	}
 	
 	private String getToolbarTitle() {
-		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
+		if(FBatchType.PAYROLL_PAYMENT == fbatchType)
 			return "Remesa Transferencias N\u00f3minas";
-		else if(FBATCH_TYPE.PAYMENT == fbatchType)
+		else if(FBatchType.PAYMENT == fbatchType)
 			return "Remesa Pagos";
+		else if(FBatchType.CHARGE == fbatchType)
+			return "Remesa Cobros";
 		else
 			return "Tipo Remesa Desconocido";
 	}

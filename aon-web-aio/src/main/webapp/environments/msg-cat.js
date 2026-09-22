@@ -277,6 +277,7 @@ export const COMMISSION_BANDS = 'Definició de Trams de Comissions';
 export const COMMISSION_CALCULATION = 'Càlcul de Comissions';
 export const COMMISSION_CONTROL = 'Control de Comissions Calculades';
 export const COMMISSION_TYPES = 'Tipus de Comissió';
+export const CHARGE_BATCH_NEW = 'Remesa de Cobraments (Nova)';
 export const CHARGES_MANAGEMENT = 'Gestió de Cobraments';
 export const CHARGES_PAYMENTS_PORTFOLIO = 'Cartera de cobraments i pagaments';
 export const COMMUNICATION_CENTER = 'Centre de Comunicació';
