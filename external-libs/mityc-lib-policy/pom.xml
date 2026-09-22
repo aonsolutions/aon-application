@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.code.aon.vendor</groupId>
+    <artifactId>external-libs</artifactId>
+    <version>9.23-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.code.aon.vendor</groupId>
+  <artifactId>mityc-lib-policy</artifactId>
+  <version>9.23-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Vendored es.mityc:lib-policy:1.1.8b</name>
+  <description>
+    Installs the checked-in binary of es.mityc:lib-policy:1.1.8b into the local repository so the
+    build no longer needs the external_free remote repository
+    (https://aonsolutions.github.io/aon-application/maven/2/external_free), which is gone.
+
+    The jar and the pom next to this file are the artifacts that repository served, byte for
+    byte -- they are NOT rebuilt here (two of the vendored jars are signed and several carry
+    no manifest, so repackaging them would change what the application loads at runtime).
+
+    Listed at the top of the reactor: these are plain third-party coordinates, not reactor
+    artifacts, so Maven cannot order them automatically. A single "clean install" over the
+    whole reactor installs them before any module that consumes them is built.
+  </description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <vendoredJar>${project.basedir}/lib-policy-1.1.8b.jar</vendoredJar>
+    <vendoredPom>${project.basedir}/lib-policy-1.1.8b.pom</vendoredPom>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.2</version>
+        <executions>
+          <execution>
+            <id>install-vendored-artifact</id>
+            <!-- initialize, not install: consumers resolve this from the local repository
+                 during their own dependency resolution, so it has to be there before any
+                 later module in the reactor reaches validate. -->
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${vendoredJar}</file>
+              <pomFile>${vendoredPom}</pomFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
