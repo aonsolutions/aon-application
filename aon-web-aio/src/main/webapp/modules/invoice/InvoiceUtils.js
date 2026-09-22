@@ -2,6 +2,7 @@ import { CONSTANT } from "../../environments/environments.js";
 import { downscaleImage } from "../../services/compressImg.js";
 import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
+import { isPdfOrImage, normalizeImageFile } from "../../services/imageFileService.js";
 import { Invoice } from "./Invoice.js";
 import * as LS from '../../services/localStorageService.js';
 import * as OPTION from './InvoiceOptions.js';
@@ -74,13 +75,24 @@ export const s3UploadInvoices = (company, el, files, jobId) => {
     return arr;
 }
 
-export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
+export const s3UploadInvoice = async (company, file, jobId, data, success, error) => {
+    // Como factura solo se admite un PDF o una imagen. Es lo unico que sabe procesar la lambda, y
+    // el atributo accept de los input no sirve de nada cuando el fichero llega arrastrado.
+    if (!await isPdfOrImage(file)) {
+        if (error) error(`Solo se pueden subir facturas en PDF o imagen: '${file.name}' no lo es.`);
+        return;
+    }
+
     let formData = new FormData();
     let xhr = new XMLHttpRequest();
     let prefix = data.prefix || '';
   	let fileOrder =  `0${data.uploaded}`.slice(-2);
   	data.uploaded += 1;
-   
+
+    // Los HEIC del iPhone no los sabe leer la lambda, y sin content type S3 guarda el objeto como
+    // octet-stream y la factura no se convierte a PDF: aqui se arreglan las dos cosas.
+    file = await normalizeImageFile(file);
+
     let re = /(?:\.([^.]+))?$/;
     let ext = re.exec(file.name)[0];
     
@@ -115,7 +127,7 @@ export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
     }
 
     formData.append('success_action_status', '201');
-    formData.append('Content-Type', file.type);
+    formData.append('Content-Type', file.type || 'application/octet-stream');
     formData.append('file', file);
 
     xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
