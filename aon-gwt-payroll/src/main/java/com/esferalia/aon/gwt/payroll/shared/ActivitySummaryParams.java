@@ -33,6 +33,8 @@ public class ActivitySummaryParams implements Serializable {
 	private String orderBy;
 	private boolean asc = true;
 	
+	private boolean isOffice = false;
+	
 	public ActivitySummaryParams() {
 		super();
 	}
@@ -196,6 +198,15 @@ public class ActivitySummaryParams implements Serializable {
 	
 	public ActivitySummaryParams setAsc(boolean asc) {
 		this.asc = asc;
+		return this;
+	}
+
+	public boolean isOffice() {
+		return isOffice;
+	}
+
+	public ActivitySummaryParams setOffice(boolean isOffice) {
+		this.isOffice = isOffice;
 		return this;
 	}
 	

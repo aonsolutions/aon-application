@@ -30,6 +30,9 @@ public class SyncSigCustomerDomainModule implements EntryPoint {
 
 	private TabLayoutPanel tabPanel;
 	private SigCustomerLinkTab linkTab;
+	private SigIntegrityTab integrityTab;
+	
+	private static String SESSION_API = "AONd95770f269e711eb94390242ac130002";
 
 	@Override
 	public void onModuleLoad() {
@@ -43,6 +46,7 @@ public class SyncSigCustomerDomainModule implements EntryPoint {
 		AON.ensureInjected();
 
 		linkTab = new SigCustomerLinkTab(params);
+		integrityTab = new SigIntegrityTab(params, SESSION_API);
 
 		// Busqueda por defecto guardada por otra pantalla
 		String searchQuery = getSearchQuery();
@@ -53,7 +57,7 @@ public class SyncSigCustomerDomainModule implements EntryPoint {
 
 		tabPanel = new TabLayoutPanel(2.5, Unit.EM);
 		tabPanel.add(linkTab, "Vincular");
-		// tabPanel.add(integrityTab, "Integridad Estados");   // paso 4
+		tabPanel.add(integrityTab, "Integridad Estados");
 
 		tabPanel.addSelectionHandler(event -> onTabSelected(event.getSelectedItem()));
 
@@ -72,7 +76,7 @@ public class SyncSigCustomerDomainModule implements EntryPoint {
 		if (TAB_LINK == index)
 			linkTab.ensureLoaded();
 		else if (TAB_INTEGRITY == index) {
-			// integrityTab.ensureLoaded();                    // paso 4
+			integrityTab.ensureLoaded();
 		}
 	}
 

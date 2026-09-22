@@ -3,12 +3,7 @@ package com.code.aon.webservice.warehouse;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Optional;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,15 +23,27 @@ import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "QRServlet", urlPatterns = {"/qr/*",
 												"/aon_gwt_aio/qr/*",
 												"/udapa/qr/*",
 												"/aon_gwt_aio/udapa/qr/*"})
+@Deprecated
 public class QRServlet extends HttpServlet{
-	
+
+    private static final Logger LOGGER = Logger.getLogger(QRServlet.class.getName());
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        LOGGER.info("DEPRECATED: QRServlet is deprecated and will be removed in future versions.");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+        
 		String domainName = req.getServerName();
 		Integer carrierPackingId = Integer.parseInt(req.getParameter("cp"));
 		Domain domain = AON.getDomain(domainName, 1, "", f -> f.getNameProperty().eq(domainName));
@@ -165,40 +172,6 @@ public class QRServlet extends HttpServlet{
 				array.put(deliveryJSON);
 			});
 		} 
-//		else if(CarrierPackingType.SHIPMENT_REQUEST.equals(carrierPacking.getType())
-//				&& CarrierPackingStatus.FINISHED.equals(carrierPacking.getStatus())){ // TODO RECEPTION
-//			json.put("type", "reception");
-//			AON.getIncomeStream(domain.getName(), domain.getId(), login, f -> f.getCarrierPackingProperty().eq(carrierPackingId))
-//			.forEach(income -> {
-//				JSONObject incomeJSON = DBIncome.incomeToJSON(income);
-//				RAddress ra = AON.getRAddress(domain.getName(), domain.getId(), login,f -> f.getIdProperty().eq(income.getAddress()));
-//				JSONObject addressJSON3 = ToJSON.raddressToJSON(ra);
-//				addressJSON3.put("document", AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() != null ?
-//						AON.getRegistry(domain.getName(), domain.getId(), login,ra.getRegistry()).getDocument() : "");
-//				incomeJSON.put("address", addressJSON3);
-//
-//				JSONArray details = new JSONArray();
-//				AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
-//				.forEach(detail -> {
-//					JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
-//					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
-//					
-//					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
-//						f2.getRegistryProperty().eq(income.getSupplier())
-//						.and(f2.getItemProperty().eq(detail.getItem().getId()))).getCode();
-//					detailJSON.put("code", code);
-//					
-//					detailJSON.put("format_tag", item.isPresent() ? item.get().getPackFormatTag().getName() : "");
-//					detailJSON.put("measurements", item.isPresent() ? item.get().getPackMeasurement() : 0.0);
-//					detailJSON.put("measurements_tag", item.isPresent() ? item.get().getPackMeasurementTag().getName() : "");
-//					detailJSON.put("units", item.isPresent() ? item.get().getPackUnits() : 0.0);
-//					details.put(detailJSON);	
-//				});
-//				
-//				incomeJSON.put("details", details);
-//				array.put(incomeJSON);
-//			});
-//		}
 		json.put("orders", array);
 		// --------------- //
 		Utils.giveBack(req, resp, json, new JSONObject());
@@ -206,6 +179,8 @@ public class QRServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        LOGGER.info("DEPRECATED: QRServlet is deprecated and will be removed in future versions.");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 /*		
 		{
 			  carrier_packing: {

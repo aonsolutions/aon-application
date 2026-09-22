@@ -333,6 +333,12 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			documentPanel.setStyleName(AON.CSS.aonItemFlex());
 			documentPanel.getElement().getStyle().setProperty("align-items", "flex-end");
 			
+			documentType.clearItems();
+			for(int i=0; i < DocumentType.values().length; i++)
+				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
+			documentType.setValue(seller.getDocumentType().toString());
+			documentPanel.add(documentType);
+			
 			documentNationality.clearItems();
 			for(int i=0; i < Country.values().length; i++)
 				documentNationality.addItem(Country.values()[i].getIso2(), Country.values()[i].getIso2());
@@ -340,22 +346,14 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			documentNationality.getElement().getStyle().setProperty("max-width", "5rem");
 			documentPanel.add(documentNationality);
 			
+			table1.setWidget(3,0,documentPanel);
+			
 			document.getTextBox().addValueChangeHandler(e -> {
 				DocumentType documentTypeValidator = DocumentValidator.validateDocument(document.getValue());
 				documentType.setValue(documentTypeValidator.toString());
 			});
 			document.setValue(seller.getDocument());
-			documentPanel.add(document);
-			
-			table1.setWidget(3,0,documentPanel);
-			
-			documentType.clearItems();
-			for(int i=0; i < DocumentType.values().length; i++)
-				documentType.addItem(DocumentType.values()[i].getDescription(), DocumentType.values()[i].toString());
-			documentType.setValue(seller.getDocumentType().toString());
-			table1.setWidget(3,1,documentType);
-			
-			table1.getColumnFormatter().setWidth(0, "5rem");
+			table1.setWidget(3,1,document);
 			
 			infoCard.add(table1);
 			

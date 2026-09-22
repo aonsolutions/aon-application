@@ -1,4 +1,5 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
+import { EVENT } from '../../environments/environments.js';
 import {getDocuments} from '../../services/service.js';
 
 export class AonMobileDocumentalList extends AonMobileList {
@@ -11,11 +12,23 @@ export class AonMobileDocumentalList extends AonMobileList {
   }
 
   connectedCallback () {
+    this.initialize();
     this.init();
-    this.addEventListener('more', () => {
-			if(this.more)
-				this.loadMore()
-		});
+    this.addEventListener(EVENT.MORE, this.moreFn);
+  }
+
+  moreFn = () => {
+    if(this.more)
+      this.loadMore();
+  };
+
+  disconnectedCallback() {
+    this.removeEventListener(EVENT.MORE, this.moreFn);
+  }
+
+  initialize() {
+    this.id = this.id || 'aonMobileDocumentalList';
+    super.initialize();
   }
 
   loadMore() {

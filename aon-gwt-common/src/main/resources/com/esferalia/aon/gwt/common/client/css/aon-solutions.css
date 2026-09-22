@@ -1278,7 +1278,7 @@
 .aon_search_filter_popup {
     display: flex;
     flex-direction: column;
-    width: 275px;
+    width: 300px;
     height: 28rem;
     overflow: hidden;
     background-color: #fff;
@@ -3275,7 +3275,7 @@
 .aon_message_toast_success { background: #4caf6e; }
 .aon_message_toast_info    { background: #2196f3; }
 
-  
+.aonSuggestPopup { max-height: 300px; overflow-y: auto; overflow-x: hidden; }
 
 
 

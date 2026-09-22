@@ -11,8 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelect
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.occam.api.model.customer.CustomersLinkedParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -48,6 +47,10 @@ public class SigCustomerLinkTab extends ResizeComposite {
 		build();
 		initWidget(docklayoutPanel);
 	}
+	
+	private final Timer searchTimer = new Timer() {
+	    @Override public void run() { onSearch(); }
+	};
 
 	private void build() {
 		docklayoutPanel = new AonCustomDockLayout("Clientes vinculados (SIG)") {
@@ -71,13 +74,19 @@ public class SigCustomerLinkTab extends ResizeComposite {
 
 		docklayoutPanel.setSearchPlaceholder("Busqueda por documento/nombre...");
 
+//		docklayoutPanel.addKeyUpHandler(e -> {
+//			String value = docklayoutPanel.getSearchTextBox().getValue();
+//			if (AonStringUtils.isNotBlank(value) && value.length() > 2) {
+//				onSearch();
+//			} else if (AonStringUtils.isBlank(value)) {
+//				onSearch();
+//			}
+//		});
+		
 		docklayoutPanel.addKeyUpHandler(e -> {
-			String value = docklayoutPanel.getSearchTextBox().getValue();
-			if (AonStringUtils.isNotBlank(value) && value.length() > 2) {
-				onSearch();
-			} else if (AonStringUtils.isBlank(value)) {
-				onSearch();
-			}
+		    String value = docklayoutPanel.getSearchTextBox().getValue();
+		    if (AonStringUtils.isBlank(value) || value.length() > 2)
+		        searchTimer.schedule(400);   // reprograma, no acumula
 		});
 
 		Set<String> customerStatusoptions = new LinkedHashSet<String>();
@@ -86,17 +95,17 @@ public class SigCustomerLinkTab extends ResizeComposite {
 		customerStatusoptions.add("Bloqueado");
 		customerStatus.setOptions(customerStatusoptions);
 
-		customerStatus.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				if (customerStatus.getSelectedOptions().isEmpty()) {
-					Set<String> selectedOptions = new LinkedHashSet<String>();
-					selectedOptions.add("Activo");
-					customerStatus.setSelectedOptions(selectedOptions);
-				}
-				onSearch();
-			}
-		});
+//		customerStatus.addBlurHandler(new BlurHandler() {
+//			@Override
+//			public void onBlur(BlurEvent event) {
+//				if (customerStatus.getSelectedOptions().isEmpty()) {
+//					Set<String> selectedOptions = new LinkedHashSet<String>();
+//					selectedOptions.add("Activo");
+//					customerStatus.setSelectedOptions(selectedOptions);
+//				}
+//				onSearch();
+//			}
+//		});
 
 		Set<String> selectedOptions = new LinkedHashSet<String>();
 		selectedOptions.add("Activo");
@@ -107,8 +116,13 @@ public class SigCustomerLinkTab extends ResizeComposite {
 		sync.addItem("No vinculados", "1");
 		sync.addItem("No sincronizados", "2");
 		sync.addItem("No vinculados ni sincronizados", "3");
-		sync.setValue("3");
-		sync.addChangeHandler(e -> onSearch());
+		sync.setValue("");
+		//sync.addChangeHandler(e -> onSearch());
+		
+		// Los filtros no buscan al cambiar: acumulan y se aplican al cerrar el panel.
+		// Cada busqueda son 40+ peticiones HTTP, no tiene sentido lanzarla tres veces
+		// mientras el usuario ajusta los filtros.
+		docklayoutPanel.addOnSearchHandler(e -> onSearch());
 
 		docklayoutPanel.addFilterWidget(customerStatus);
 		docklayoutPanel.addFilterWidget(sync);

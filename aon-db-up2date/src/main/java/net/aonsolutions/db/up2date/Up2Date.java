@@ -32,6 +32,7 @@ import net.aonsolutions.db.up2date.security.MigrateApp23To9;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.DropNoJustifiedTGSSFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
+import net.aonsolutions.db.up2date.warehouse.CarrierPackingAddQrColumn;
 
 public class Up2Date {
 
@@ -639,6 +640,7 @@ public class Up2Date {
 			// ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
 			// FixPreavisoQuote.FIXPREAVISOQUOTE,
 			// DropNoJustifiedTGSSFix.DROPNOJUSTIFIEDTGSSFIX,
+			CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN,
 			
 
 
@@ -687,6 +689,8 @@ public class Up2Date {
 			
 			// INVOICE REFACTOR
 			InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
+	
+			CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN
 	};
 
 	// ------------------------------------------------------------------------

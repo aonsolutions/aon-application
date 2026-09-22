@@ -2,9 +2,12 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
@@ -27,6 +30,7 @@ import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -48,94 +52,101 @@ public class JooqActivitySummary {
 		}
 		return SETTINGS;
 	}
-
+	
 	public static List<ActivitySummaryObject> getActivitySummary(Connection connection, Integer domainId,
-			Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
-
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-
-		if (params.getStart() != null && params.getEnd() != null) {
-			Map<Integer, ActivitySummaryObject> summaryMap = null;
-			Map<Integer, ActivitySummaryObject> salaryMap = null;
-			Map<Integer, ActivitySummaryObject> itMap = null;
-
-			if (parentDomainId == null && params.getChildomain() == null) {
-				try {
-					Integer[] childDomains = null;
-
-					if (null != userId)
-						childDomains = getChildDomainIDs(dslContext, domainId, userId);
-					else
-						childDomains = getChildDomainIDs(dslContext, domainId, null);
-
-					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
-					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
-					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
-
-				} catch (SQLException e) {
-					throw new IllegalArgumentException(e.getMessage());
-				}
-			} else {
-
-				if (params.getChildomain() == null)
-					params.setChildomain(domainId);
-				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
-				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
-				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
-
-			}
-
-			fillMapData(summaryMap, salaryMap);
-			fillMapData(summaryMap, itMap);
-
-			return sortedList(summaryMap, params);
-
-		}
-
-		return new ArrayList<>();
+	        Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
+	    DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+	    return buildActivitySummary(dslContext, domainId, parentDomainId, userId, params);
 	}
 
-	public static List<ActivitySummaryObject> getSigActivitySummary(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
-		if (params.getStart() != null && params.getEnd() != null) {
-			Map<Integer, ActivitySummaryObject> summaryMap = null;
-			Map<Integer, ActivitySummaryObject> salaryMap = null;
-			Map<Integer, ActivitySummaryObject> itMap = null;
+	private static List<ActivitySummaryObject> buildActivitySummary(DSLContext dslContext, Integer domainId,
+	        Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
 
-			if (parentDomainId == null && params.getChildomain() == null) {
-				try {
-					Integer[] childDomains = null;
+	    if (params.getStart() == null || params.getEnd() == null)
+	        return new ArrayList<>();
 
-					if (null != userId)
-						childDomains = getChildDomainIDs(dslContext, domainId, userId);
-					else
-						childDomains = getChildDomainIDs(dslContext, domainId, null);
+	    Map<Integer, ActivitySummaryObject> summaryMap = null;
+	    Map<Integer, ActivitySummaryObject> salaryMap = null;
+	    Map<Integer, ActivitySummaryObject> itMap = null;
 
-					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
-					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
-					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
+	    if (params.getChildomain() == null && (parentDomainId == null || params.isOffice())) {
 
-				} catch (SQLException e) {
-					throw new IllegalArgumentException(e.getMessage());
-				}
-			} else {
+	        Integer[] childDomains = null;
+	        try {
+	            childDomains = params.isOffice()
+	                    ? getOfficeDomainIDs(dslContext, domainId, userId)
+	                    : getChildDomainIDs(dslContext, domainId, userId);
+	        } catch (SQLException e) {
+	            throw new IllegalArgumentException(e.getMessage());
+	        }
 
-				if (params.getChildomain() == null)
-					params.setChildomain(domainId);
-				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
-				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
-				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+	        if (params.isOffice() && (childDomains == null || childDomains.length == 0))
+	            return new ArrayList<>();
 
-			}
+	        summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
+	        salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
+	        itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
 
-			fillMapData(summaryMap, salaryMap);
-			fillMapData(summaryMap, itMap);
+	    } else {
 
-			return sortedList(summaryMap, params);
+	        if (params.getChildomain() == null)
+	            params.setChildomain(domainId);
+	        summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
+	        salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
+	        itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+	    }
 
-		}
+	    fillMapData(summaryMap, salaryMap);
+	    fillMapData(summaryMap, itMap);
 
-		return new ArrayList<>();
+	    return sortedList(summaryMap, params);
 	}
+
+//	public static List<ActivitySummaryObject> getActivitySummary(Connection connection, Integer domainId,
+//			Integer parentDomainId, Integer userId, ActivitySummaryParams params) {
+//
+//		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+//
+//		if (params.getStart() != null && params.getEnd() != null) {
+//			Map<Integer, ActivitySummaryObject> summaryMap = null;
+//			Map<Integer, ActivitySummaryObject> salaryMap = null;
+//			Map<Integer, ActivitySummaryObject> itMap = null;
+//
+//			if (parentDomainId == null && params.getChildomain() == null) {
+//				try {
+//					Integer[] childDomains = null;
+//
+//					if (null != userId)
+//						childDomains = getChildDomainIDs(dslContext, domainId, userId);
+//					else
+//						childDomains = getChildDomainIDs(dslContext, domainId, null);
+//
+//					summaryMap = getSummaryEnterprise(dslContext, params, childDomains);
+//					salaryMap = getSummaryEnterpriseSalary(dslContext, params, childDomains);
+//					itMap = getSummaryEnterpriseIT(dslContext, params, childDomains);
+//
+//				} catch (SQLException e) {
+//					throw new IllegalArgumentException(e.getMessage());
+//				}
+//			} else {
+//
+//				if (params.getChildomain() == null)
+//					params.setChildomain(domainId);
+//				summaryMap = getSummaryEmployee(dslContext, params, params.getChildomain());
+//				salaryMap = getSummaryEmployeeSalary(dslContext, params, params.getChildomain());
+//				itMap = getSummaryEmployeeIT(dslContext, params, params.getChildomain());
+//
+//			}
+//
+//			fillMapData(summaryMap, salaryMap);
+//			fillMapData(summaryMap, itMap);
+//
+//			return sortedList(summaryMap, params);
+//
+//		}
+//
+//		return new ArrayList<>();
+//	}
 
 	private static List<ActivitySummaryObject> sortedList(Map<Integer, ActivitySummaryObject> summaryMap,
 			ActivitySummaryParams params) {
@@ -223,6 +234,28 @@ public class JooqActivitySummary {
 		else
 			return dslContext.select().from(DOMAIN).where(DOMAIN.PARENT.eq(domain))
 					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes))).fetchArray(DOMAIN.ID);
+	}
+	
+	public static Integer[] getOfficeDomainIDs(DSLContext dslContext, Integer domainId, Integer userId)
+	        throws SQLException {
+	    List<Integer> userScopes = dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+	            .where(USER_SCOPE.USER_ID.eq(userId)).fetch(USER_SCOPE.SCOPE);
+
+	    Condition condition = CUSTOMER.DOMAIN.eq(domainId)
+	            .and(CUSTOMER.STATUS.eq((byte) 0))
+	            .and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
+	            .and(ENTERPRISE.DOMAIN.isNotNull());
+
+	    if (!userScopes.isEmpty())
+	        condition = condition.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)));
+	    
+	    return dslContext.selectDistinct(DOMAIN.ID)
+	            .from(CUSTOMER
+	                    .join(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(CUSTOMER.REGISTRY))
+	                    .join(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(RRELATIONSHIP.RELATED_REGISTRY))
+	                    .join(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE.DOMAIN)))
+	            .where(condition)
+	            .fetchArray(DOMAIN.ID);
 	}
 
 	private static void fillMapData(Map<Integer, ActivitySummaryObject> summaryMap,

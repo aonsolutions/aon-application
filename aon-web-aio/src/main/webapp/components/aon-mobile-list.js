@@ -107,7 +107,7 @@ export class AonMobileList extends AonElement {
     span.appendChild(div);
 
     if(data.subtitleTwo){
-      li.style.paddingBottom = "37px";
+
       if(icon){
         icon.style.marginTop = "16px";
       }

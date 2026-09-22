@@ -1244,6 +1244,7 @@ CREATE TABLE `carrier_packing` (
   `net` decimal(15,4) DEFAULT NULL COMMENT 'Neto',
   `reception_start_date` datetime DEFAULT NULL COMMENT 'Fecha entrada transporte, recepcion',
   `reception_end_date` datetime DEFAULT NULL COMMENT 'Fecha salida transporte, recepcion',
+  `qr` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Url del codigo QR de la hoja de ruta',
   `creation_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',

@@ -1882,4 +1882,11 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.saveDomainStatus(domainName, domain, user, newStatus, newExpDate, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	// *********************** [CUSTOMER SIG ALIGN DATE]
+	@Override
+	public void alignSigCustomerDate(String domainName, Integer domainId, String user, Integer customerId, Date expirationDate, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.alignSigCustomerDate(domainName, domainId, user, customerId, expirationDate, new AsyncCallbackWrapper<>(callback));
+	}
 }

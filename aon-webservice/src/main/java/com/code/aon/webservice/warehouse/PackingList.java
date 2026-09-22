@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.PdfUtils;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.server.warehouse.XMLUtils;
@@ -92,7 +93,7 @@ public class PackingList extends PdfUtils{
 			Paragraph order = new Paragraph(" ");
 			order.add(getSeparator());
 			document.add(order);
-			if(!"reception".equals(printType)){
+			if(!"reception".equals(printType)) {
 				String observation  = json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") != null ?
 						json.getJSONObject(MSG.CARRIER_PACKING).getString("observation") : "";
 				com.esferalia.aon.occam.server.warehouse.CarrierPackingParams params = XMLUtils.readXml(json.getJSONObject(MSG.CARRIER_PACKING).getString("params"));
@@ -103,17 +104,21 @@ public class PackingList extends PdfUtils{
 				document.add(getObservations(observation, type, params));		
 				document.add(new Paragraph(" "));
 				document.add(new Paragraph(" "));
-			}
-			Integer cpId = json.getJSONObject(MSG.CARRIER_PACKING).getInt(MSG.ID);
-			BarcodeQRCode qrcode = new BarcodeQRCode("https://" + domain.getName() + "/qr?cp=" + cpId, 100, 100, null);
+			}			
+
 			PdfPTable table = new PdfPTable(2);
 			PdfPCell firma = new PdfPCell(new Phrase("Firma Transportista", getFont1()));
 			firma.setBorder(PdfPCell.NO_BORDER);
 			table.addCell(firma);
-			
-			PdfPCell qr = new PdfPCell(qrcode.getImage());
-			qr.setBorder(PdfPCell.NO_BORDER);
-			table.addCell(qr);
+
+//			if(json.optString("qr") != null) {
+//				String qrCodeUrl = json.getString("qr");
+//				BarcodeQRCode qrcode = new BarcodeQRCode(qrCodeUrl, 100, 100, null);
+//				PdfPCell qr = new PdfPCell(qrcode.getImage());
+//				qr.setBorder(PdfPCell.NO_BORDER);
+//				table.addCell(qr);
+//			}
+
 			table.setWidthPercentage(100);
 			document.add(table);
 			//document.add(new Paragraph(new Phrase("Firma Transportista", getFont1())));					
@@ -140,6 +145,7 @@ public class PackingList extends PdfUtils{
         header.addCell(getHeaderLogo(image));
 		header.addCell(getHeaderCompany(json));
 		header.addCell(getHeaderPackingList(json.getJSONObject("carrier_packing")));
+	
 		return header;
 	}
 	
@@ -223,8 +229,6 @@ public class PackingList extends PdfUtils{
 		c9.setBorder(PdfPCell.NO_BORDER);
 		header3.addCell(c9);
 		
-		
-		
 		return header3;
 	}	
 	
@@ -250,7 +254,9 @@ public class PackingList extends PdfUtils{
 	}
 
 	private static PdfPCell getSubHeaderBoeInfo() {
-		String boeInfo = "DOCUMENTO DE CONTROL orden FOM/2861/13-12 2012(BOE nº 5 de 5/01/2013)";
+		String boeInfo = "DOCUMENTO ELECTRONICO DE CONTROL ADMINISTRATIVO Orden FOM/2861/2012 ( Ley 9/2025, D.T. 8.ª)";
+		
+//		String boeInfo = "DOCUMENTO DE CONTROL orden FOM/2861/13-12 2012(BOE nº 5 de 5/01/2013)";
 		Paragraph title = new Paragraph(boeInfo, getBoeInfoFont());
 		title.setAlignment(Element.ALIGN_CENTER);
 		title.add(getSeparator());

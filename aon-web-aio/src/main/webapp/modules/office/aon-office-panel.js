@@ -784,8 +784,14 @@ export class AonOfficePanel extends AonElement {
 					break;
 				case OfficeOptions.AON_CUSTOMER_PAYROLL_ACTIVITY.id:
 					this.clearToolbar();
-					localStorage.setItem("isSig", this.isSig());
-					GWT.iLoad(GWT.CUSTOMER_PAYROLL_ACTIVITY_MODULE, this.getApplication().CONTENT);
+					if(this.isSig()){
+						localStorage.setItem("isSig", this.isSig());
+						GWT.iLoad(GWT.CUSTOMER_PAYROLL_ACTIVITY_MODULE, this.getApplication().CONTENT);
+					} else {
+						localStorage.setItem("isOffice", "true");
+						GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT);
+					}
+					
 					break;
 
 				case LINK_CUSTOMER_DOMAINS.id:
