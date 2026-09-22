@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.FbatchDetail.FBATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 
@@ -23,8 +22,10 @@ import com.esferalia.aon.occam.api.model.finance.FBatchDetailFilter;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetailProperties;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 public class FBatchDetailDAO {
 
@@ -90,21 +91,44 @@ public class FBatchDetailDAO {
 	
 	private static FBatchDetail insert(AONContext ctx, FBatchDetail fbatchDetail) {
 		ctx.checkWrite();
+		
+		if (fbatchDetail.getFinance() == null || fbatchDetail.getFinance().getId() == null)
+			throw new AonCoreException("Detalle de remesa sin vencimiento asociado");
+
+		// El importe y la pertenencia al dominio los decide la BD, no el cliente.
+		Record financeRec = ctx.getDslContext().select(FINANCE.AMOUNT, FINANCE.DUE_DATE)
+			.from(FINANCE)
+			.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
+			.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+			.fetchOne();
+
+		if (financeRec == null)
+			throw new AonCoreException("El vencimiento " + fbatchDetail.getFinance().getId() + " no existe en este dominio");
+
+		final Double amount = financeRec.get(FINANCE.AMOUNT);
+		
 		FbatchDetailRecord record = ctx.getDslContext().insertInto(FBATCH_DETAIL)
 				.set(FBATCH_DETAIL.DOMAIN, ctx.getDomainId())
 				.set(FBATCH_DETAIL.FBATCH, fbatchDetail.getFbatch())
 				.set(FBATCH_DETAIL.FINANCE, fbatchDetail.getFinance() == null ? null : fbatchDetail.getFinance().getId())
-				.set(FBATCH_DETAIL.AMOUNT, fbatchDetail.getAmount())
+				.set(FBATCH_DETAIL.AMOUNT, amount)
 				.set(FBATCH_DETAIL.STATUS, fbatchDetail.getStatus())
 				.set(FBATCH_DETAIL.CREATION_USER,ctx.getUser())
 				.set(FBATCH_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 				.returning()
 				.fetchOne();
 		
-		ctx.log().debug("INSERT FBATCH_DETAIL ID: " + record.getValue(FBATCH.ID));
+		ctx.log().debug("INSERT FBATCH_DETAIL ID: " + record.getValue(FBATCH_DETAIL.ID));
+		
+
+		FBatch fbatch = FBatchDAO.get(ctx, fbatchDetail.getFbatch());
+		
+		if (FBatchType.dueDateLimitedByIssueDate(fbatch.getType())
+		        && financeRec.get(FINANCE.DUE_DATE).after(fbatch.getIssueDate()))
+		    throw new AonCoreException("El vencimiento " + fbatchDetail.getFinance().getId()
+		            + " vence despues de la fecha de la remesa y no puede incluirse en un 19-14");
 		
 		if(fbatchDetail.getFinance() != null) {
-			FBatch fbatch = FBatchDAO.get(ctx, fbatchDetail.getFbatch());
 			
 			FinanceTrackingDAO.insert(ctx, 
 					new FinanceTracking()
@@ -113,13 +137,14 @@ public class FBatchDetailDAO {
 						.setTrackingDate(new Date())
 						.setType(FinanceTrackingType.BATCHED)
 						.setDescription("Remesa : " + fbatch.getId() + " - " + fbatch.getDescription())
-						.setAmount(fbatchDetail.getAmount())
+						.setAmount(amount)
 			);
 			
 			
 			ctx.getDslContext().update(FINANCE)
 				.set(FINANCE.STATUS, (byte)FinanceStatus.BATCHED.ordinal())
 				.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
+				.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 				.execute();
 		}
 		
@@ -146,24 +171,27 @@ public class FBatchDetailDAO {
 				ctx.getDslContext().update(FINANCE)
 					.set(FINANCE.STATUS, newFinanceStatus.value())
 					.where(FINANCE.ID.eq(fbatchDetail.getFinance().getId()))
+					.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 					.execute();
 			}
 			
 			ctx.getDslContext().deleteFrom(FBATCH_DETAIL)
 				.where(FBATCH_DETAIL.ID.equal(fbatchDetail.getId()))
+				.and(FBATCH_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 				.execute();
 			
 			ctx.log().debug("DELETE FBATCH_DETAIL ID: " + fbatchDetail.getId());
 		
 		} else {
 			ctx.getDslContext().update(FBATCH_DETAIL)
-				.set(FBATCH_DETAIL.FBATCH, fbatchDetail.getFbatch())
-				.set(FBATCH_DETAIL.FINANCE, fbatchDetail.getFinance() == null ? null : fbatchDetail.getFinance().getId())
-				.set(FBATCH_DETAIL.AMOUNT, fbatchDetail.getAmount())
+//				.set(FBATCH_DETAIL.FBATCH, fbatchDetail.getFbatch())
+//				.set(FBATCH_DETAIL.FINANCE, fbatchDetail.getFinance() == null ? null : fbatchDetail.getFinance().getId())
+//				.set(FBATCH_DETAIL.AMOUNT, fbatchDetail.getAmount())
 				.set(FBATCH_DETAIL.STATUS, fbatchDetail.getStatus())
 				.set(FBATCH_DETAIL.MODIFICATION_USER,ctx.getUser())
 				.set(FBATCH_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 				.where(FBATCH_DETAIL.ID.equal(fbatchDetail.getId()))
+				.and(FBATCH_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 				.execute();
 		
 			ctx.log().debug("UPDATE FBATCH_DETAIL ID: " + fbatchDetail.getId());
@@ -182,8 +210,8 @@ public class FBatchDetailDAO {
 		if(fbatchDetail.isPresent()) {
 			if(fbatchDetail.get().getFinance() != null) {
 				FinanceTracking lastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.get().getFinance().getId());
-				if(lastTracking.getType().equals(FinanceTrackingType.BATCHED))
-					FinanceTrackingDAO.delete(ctx, lastTracking);
+				if(null != lastTracking && FinanceTrackingType.BATCHED.equals(lastTracking.getType()))
+ 					FinanceTrackingDAO.delete(ctx, lastTracking);
 				
 				FinanceTracking previusLastTracking = FinanceTrackingDAO.getLastTracking(ctx, fbatchDetail.get().getFinance().getId());
 				FinanceStatus newFinanceStatus = FinanceStatus.PENDING;
@@ -196,6 +224,7 @@ public class FBatchDetailDAO {
 				ctx.getDslContext().update(FINANCE)
 					.set(FINANCE.STATUS, newFinanceStatus.value())
 					.where(FINANCE.ID.eq(fbatchDetail.get().getFinance().getId()))
+					.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 					.execute();
 			}
 		}
@@ -203,6 +232,7 @@ public class FBatchDetailDAO {
 		ctx.getDslContext()
 			.delete(FBATCH_DETAIL)
 			.where(FBATCH_DETAIL.ID.equal(id))
+			.and(FBATCH_DETAIL.DOMAIN.eq(ctx.getDomainId()))
 			.execute();
 		
 		ctx.log().debug("DELETE FBATCH_DETAIL ID " + id);

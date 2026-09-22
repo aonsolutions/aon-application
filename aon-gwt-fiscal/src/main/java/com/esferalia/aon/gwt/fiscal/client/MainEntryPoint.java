@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSupportAgentModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSyncDomainModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.SyncSigCustomerDomainModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
@@ -57,6 +56,7 @@ import com.esferalia.aon.gwt.fiscal.client.tariff.TariffModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -296,6 +296,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_FINANCE_UTILITIES_ENTRY_POINT = "FinanceUtilities";
 	private static final String FS_FBATCH_PAYMENT_PAYROLL_ENTRY_POINT = "FBatchPaymentPayroll";
 	private static final String FS_FBATCH_PAYMENT_TREASURY_ENTRY_POINT = "FBatchPaymentTreasury";
+	private static final String FS_FBATCH_CHARGE_TREASURY_ENTRY_POINT = "FBatchChargeTreasury";
 	
 	//
 	//    ================================================================== ACCOUNTING
@@ -648,7 +649,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYROLL_PAYMENT);
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBatchType.PAYROLL_PAYMENT);
 					fBatchPaymentPayrollModule.onModuleLoad();
 				}
 				
@@ -663,8 +664,23 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBATCH_TYPE.PAYMENT);
+					FBatchPaymentModule fBatchPaymentPayrollModule = new FBatchPaymentModule(FBatchType.PAYMENT);
 					fBatchPaymentPayrollModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_FBATCH_CHARGE_TREASURY_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FBatchPaymentModule fBatchChargeModule = new FBatchPaymentModule(FBatchType.CHARGE);
+					fBatchChargeModule.onModuleLoad();
 				}
 				
 			});

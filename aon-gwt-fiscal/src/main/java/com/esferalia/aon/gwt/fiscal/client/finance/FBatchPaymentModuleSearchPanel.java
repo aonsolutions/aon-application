@@ -9,11 +9,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FBatchParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -30,6 +30,8 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 	// Variables
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
+	
+	private FBatchType fbatchType;
 
 	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
 	
@@ -50,13 +52,15 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 	// -----------------------  CONSTRUCTOR  -----------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentModuleSearchPanel(final FinanceModuleOptions opt, FBATCH_TYPE fbatchType) {
+	public FBatchPaymentModuleSearchPanel(final FinanceModuleOptions opt, FBatchType fbatchType) {
 		super(AonStringUtils.EMPTY);
 		addStyleName(AON.CSS.aonFlexColumn());
 		getElement().getStyle().setProperty("margin", "0 1rem");
 		getElement().getStyle().setProperty("padding", "1rem");
 		getElement().getStyle().setProperty("background-color", "rgb(241, 241, 241)");
 		getElement().getStyle().setProperty("border-radius", "10px");
+		
+		this.fbatchType = fbatchType;
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
@@ -71,7 +75,6 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 		
 		bank.clearItems();
 		bank.addItem("-", "");
-		bank.addChangeHandler(e -> search(opt));
 		
 		FINANCE_SERVICE.getCompanyBanks(opt.getDomainName(), opt.getDomain(), opt.getUser(), new AsyncCallback<LinkedList<RegistryBank>>() {
 			
@@ -88,19 +91,23 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 		});
 		
 		type.clearItems();
-		type.addChangeHandler(e -> search(opt));
 		
-		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
+		if(FBatchType.PAYROLL_PAYMENT == fbatchType)
 			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
-		else if(FBATCH_TYPE.PAYMENT == fbatchType) {
+		else if(FBatchType.PAYMENT == fbatchType) {
 			type.addItem("Todo", "-1");
 			type.addItem("VISA", "0");
 			type.addItem("SEPA 34-14 (XML)", "9");
+		} else if(FBatchType.CHARGE == fbatchType) {
+			type.addItem("Todo", "-1");
+			type.addItem("SEPA 19-14 CORE (XML)", "8");
+			type.addItem("SEPA 58 ANTICIPO (XML)", "12");
+			type.addItem("SEPA 58 COBRO (XML)", "13");
+			type.addItem("SEPA 34-14 ABONO (XML)", "14");
 		}
 		
 		status.clearItems();
 		status.addItem("-", "");
-		status.addChangeHandler(e -> search(opt));
 		
 		for(int i=0; i < FBatchStatus.values().length; i++) {
 			FBatchStatus fBatchStatus = FBatchStatus.values()[i];
@@ -111,7 +118,6 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 		confidential.addItem("Todo", "");
 		confidential.addItem("No Confidencial", "0");
 		confidential.addItem("Confidencial", "1");
-		confidential.addChangeHandler(e -> search(opt));
 		
 		add(createRow(description, fromIssueDate, toIssueDate, status));
 		add(createRow(bank, type, confidential));
@@ -163,7 +169,10 @@ public class FBatchPaymentModuleSearchPanel extends HTMLPanel implements HasValu
 			.setFromIssueDate(fromIssueDate.getValue())
 			.setToIssueDate(toIssueDate.getValue())
 			.setRbank(AonStringUtils.isBlank(bank.getValue()) ? null : Integer.parseInt(bank.getValue()))
-			.setType((byte) Integer.parseInt(type.getValue()))
+			.setFbatchType(fbatchType)
+			.setType(AonStringUtils.isBlank(type.getValue()) || "-1".equals(type.getValue())
+			         ? null
+			         : (byte) Integer.parseInt(type.getValue()))
 			.setStatus(AonStringUtils.isBlank(status.getValue()) ? null :  (byte) Integer.parseInt(status.getValue()))
 			.setConfidential(AonStringUtils.isBlank(confidential.getValue()) ? null : AonStringUtils.equalsIgnoreCase(confidential.getValue(), "1"))
 			;

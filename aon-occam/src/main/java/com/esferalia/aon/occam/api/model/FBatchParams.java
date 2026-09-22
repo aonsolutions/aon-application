@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.FBatchType;
+
 public class FBatchParams implements Serializable{
 
 	private static final long serialVersionUID = 1011376614663696492L;
@@ -14,7 +16,10 @@ public class FBatchParams implements Serializable{
 	private Date fromIssueDate;
 	private Date toIssueDate;
 	private Integer rbank;
-	private Byte type;
+	
+	private FBatchType fbatchType;   // pantalla de origen (obligatorio)
+	private Byte type;               // filtro concreto, null = todos los de fbatchType
+	
 	private Byte status;
 	private Boolean confidential;
 	
@@ -69,6 +74,15 @@ public class FBatchParams implements Serializable{
 
 	public FBatchParams setRbank(Integer rbank) {
 		this.rbank = rbank;
+		return this;
+	}
+	
+	public FBatchType getFbatchType() {
+		return fbatchType;
+	}
+	
+	public FBatchParams setFbatchType(FBatchType fbatchType) {
+		this.fbatchType = fbatchType;
 		return this;
 	}
 

@@ -27,6 +27,7 @@ public enum AonError implements Serializable{
 	,INVALID_INSERT("Los datos no se han grabado correctamente")
 	,INVALID_UPDATE("Los datos no se han modificado correctamente")
 	,INVALID_COMPANY("Company no encontrado")
+	,INVALID_DATA("El dato \"{0}\" no es v\u00E1lido")
 	,NO_SCOPES_DEFINED_FOR_USER("No se han definido \u00E1mbitos para el usuario")
 	,NOT_DIRTY("{0} NOT SAVED! (not dirty) id: {1}")
 

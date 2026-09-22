@@ -60,6 +60,11 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 title: MSG.PAYMENT_BATCHES_RECEIPT,
                 action: () => this.rootPanel(new JSF.AonJsfFBatchCharge())
             }, {
+                description: MSG.CHARGE_BATCH_NEW,
+                title: MSG.CHARGE_BATCH_NEW,
+                action: () => GWT.iLoad(GWT.FBATCH_CHARGE_TREASURY),
+                filter: () => this.isSig()
+            }, {
                 description: MSG.SEPA_DIRECT_DEBIT_ORDER,
                 title: MSG.SEPA_DIRECT_DEBIT_ORDER,
                 action: () => this.rootPanel(new JSF.AonJsfSddMandate())
