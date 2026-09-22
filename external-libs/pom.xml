@@ -2,6 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- The reactor reaches this tree through this parent reference. Maven treats a <parent>
+       as a dependency edge, so the "also make dependents" selection CI runs ("mvn -pl .
+       -amd") pulls in every project that declares aon.parent as its parent. Without this
+       element external-libs and its modules have no edge to the root and are silently left
+       out of that build, and the vendored artifacts never reach the local repository. Each
+       module below points its own <parent> here, extending the same chain to them. -->
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>9.23-SNAPSHOT</version>
+  </parent>
+
   <groupId>com.code.aon.vendor</groupId>
   <artifactId>external-libs</artifactId>
   <version>9.23-SNAPSHOT</version>
@@ -32,6 +44,9 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <!-- Inherited from aon.parent, which binds source:jar-no-fork for every module. Nothing
+         here is built from source, so there is nothing to attach. -->
+    <maven.source.skip>true</maven.source.skip>
   </properties>
 
   <modules>
