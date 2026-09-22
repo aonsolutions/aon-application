@@ -24,6 +24,10 @@
     served: bcprov-jdk14-jakarta and izenpesigner-applet are signed jars, and gwt-dev-jakarta,
     gwt-user-jakarta, jta and jimi carry no manifest at all, so repackaging them would change
     what the application loads at runtime.
+
+    The one module that does not follow the install-file pattern is gwt-maven-plugin: Maven
+    resolves plugins before the reactor is consulted, so it is a real "maven-plugin" module
+    that repackages the checked-in binary instead of installing it as a file.
   </description>
 
   <properties>
@@ -31,6 +35,11 @@
   </properties>
 
   <modules>
+    <!-- Maven never resolves plugins from the reactor, so this one has to be installed
+         before the aon-gwt-* modules execute gwt:compile; it is listed first here, and
+         external-libs itself is listed first in the root reactor. -->
+    <module>gwt-maven-plugin</module>
+
     <module>ModRet2024</module>
     <module>PRET-RW13_shared</module>
     <module>core-renderer</module>

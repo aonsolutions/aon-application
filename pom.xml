@@ -44,7 +44,6 @@
     <!-- VENDORED THIRD-PARTY (must precede any module that consumes them).
          These replace the external_free remote repository, which no longer exists. Each one
          installs a checked-in jar+pom during "initialize"; see external-libs/pom.xml. -->
-    <module>gwt-maven-plugin</module>
     <module>external-libs</module>
     <!-- NET AONSULTIONS PLUGINS -->
     <module>invofox.sdk</module>

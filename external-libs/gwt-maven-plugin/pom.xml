@@ -11,9 +11,10 @@
     Repackages the checked-in gwt-maven-plugin binary so the build no longer needs the
     external_free remote repository. Upstream: https://github.com/tbroyer/gwt-maven-plugin
 
-    Listed first in the reactor: Maven never resolves plugins from the reactor, so this
-    module must be installed before the aon-gwt-* modules execute gwt:compile. A single
-    "clean install" over the whole reactor satisfies that ordering.
+    Listed first under external-libs, which is itself first in the root reactor: Maven
+    never resolves plugins from the reactor, so this module must be installed before the
+    aon-gwt-* modules execute gwt:compile. A single "clean install" over the whole reactor
+    satisfies that ordering.
   </description>
 
   <properties>
