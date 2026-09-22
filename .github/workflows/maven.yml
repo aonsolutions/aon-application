@@ -159,6 +159,17 @@ jobs:
     #  run: |
     #    find ~/.m2/repository -name "*SNAPSHOT.jar" | xargs md5sum
 
+    - name: Install vendored third-party artifacts
+      # The jars under external-libs/ are put into the local repository by install-file
+      # executions, under their original coordinates (org.hibernate:hibernate-jakarta:3.2.7.ga
+      # and friends). Consumers depend on those coordinates, not on the vendor modules, so
+      # there is no reactor edge between them: with -T the build order is the dependency
+      # graph rather than the <modules> order, and a --projects selection can leave the tree
+      # out entirely. Installing the tree in its own invocation puts every vendored artifact
+      # in ~/.m2 before anything resolves it, whatever the main build selects or how it is
+      # scheduled. It takes a few seconds -- nothing here is compiled.
+      run: mvn -B -f external-libs/pom.xml install
+
     - name: Set up MySQL
       run: |
         sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
