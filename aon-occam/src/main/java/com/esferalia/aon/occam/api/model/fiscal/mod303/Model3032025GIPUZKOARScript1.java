@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -36,23 +37,23 @@ public enum Model3032025GIPUZKOARScript1 implements IModelScript<Mod303Key> {
 	,DED02 ("IVA deducible en operaciones interiores"
 									,new Mod303Key[]{Mod303Key.GP_C017	,null			  	,Mod303Key.GP_C018}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED03 ("IVA deducible en importaciones"
 									,new Mod303Key[]{Mod303Key.GP_C019	,null			  	,Mod303Key.GP_C020}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED04 ("Adquisiciones intracomunitarias de bienes y servicios"
 									,new Mod303Key[]{Mod303Key.GP_C021	,null			  	,Mod303Key.GP_C022}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED05 ("Rectificaci\u00F3n de decucciones"
 									,new Mod303Key[]{Mod303Key.GP_C045	,null			  	,Mod303Key.GP_C046}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED06 (Mod303Key.GP_C023.getDescription() 
 									,new Mod303Key[]{null			  	,null			  	,Mod303Key.GP_C023}
 									,new KeyTypes[]{KeyTypes.NONE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED07 (Mod303Key.GP_C024.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.GP_C024},null,NONE)
 	,DED08 (Mod303Key.GP_C025.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.GP_C025},null,COMPUTE)
 	

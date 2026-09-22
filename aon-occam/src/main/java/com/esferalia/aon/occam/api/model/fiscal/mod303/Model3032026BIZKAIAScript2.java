@@ -2,8 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal.mod303;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -17,10 +17,10 @@ public enum Model3032026BIZKAIAScript2 implements IModelScript<Mod303Key> {
 	// -------------------- IVA DEDUCIBLE ----------------------
 	// ---------------------------------------------------------
 	 DED01 ("IVA DEDUCIBLE" ,null,null,TITLE)
-	,DED02 ("IVA deducible en operaciones interiores"			,new Mod303Key[]{Mod303Key.BZ_C024},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DED03 ("IVA deducible en importaciones"					,new Mod303Key[]{Mod303Key.BZ_C025},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DED04 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod303Key[]{Mod303Key.BZ_C026},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DED05 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod303Key[]{Mod303Key.BZ_C027},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED02 ("IVA deducible en operaciones interiores"			,new Mod303Key[]{Mod303Key.BZ_C024},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED03 ("IVA deducible en importaciones"					,new Mod303Key[]{Mod303Key.BZ_C025},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED04 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod303Key[]{Mod303Key.BZ_C026},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED05 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod303Key[]{Mod303Key.BZ_C027},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED06 ("Regularizaci\u00F3n de bienes de inversion"		,new Mod303Key[]{Mod303Key.BZ_C028},null,NONE)
 	,DED07 ("Total a deducir"									,new Mod303Key[]{Mod303Key.BZ_C030},null,COMPUTE)
 		
