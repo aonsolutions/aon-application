@@ -8,7 +8,6 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import * as LS from '../../../services/localStorageService.js';
 
 
 export class AonPayrollList extends AonElement {
@@ -77,7 +76,7 @@ export class AonPayrollList extends AonElement {
 
 
   buildToolbarSearch(){
-	let btnSearch = this.getApplication().addSearchOption(LS.isFutureTheme());
+	let btnSearch = this.getApplication().addSearchOption(false);
     
     let timeOut = null;
     btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
