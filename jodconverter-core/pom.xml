@@ -119,8 +119,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <!-- source/target come from the parent (${compileSource}/${compileTarget}).
+               The original 1.6 pair is not accepted by the JDK this reactor builds with,
+               and it clashes with the add-exports argument the parent passes to javac. -->
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>

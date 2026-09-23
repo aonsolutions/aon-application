@@ -129,10 +129,24 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		}
 	}
 
+	private Expression createCustomerStatusExpression(IManagerBean feeBean, InvoicingParameters params) throws ManagerBeanException {
+		String statusAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_STATUS);
+		String blockedDateAlias = resolveAlias(feeBean, IEntityAlias.CUSTOMER_FEE_CUSTOMER_EXPIRATION_DATE);
+		Expression active = ExpressionUtilities.getEqualExpression(statusAlias, CustomerStatus.ACTIVE);
+		Expression blocked = ExpressionUtilities.getAndExpression(
+			 ExpressionUtilities.getEqualExpression(statusAlias, CustomerStatus.BLOCKED)
+			,ExpressionUtilities.getGreaterThanExpression(blockedDateAlias, params.getInvoiceDate())
+		);
+		return ExpressionUtilities.getOrExpression(active, blocked);
+	}
+	
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		
+		// criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addExpression(createCustomerStatusExpression(feeBean, params));
+		
 		criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
 		criteria.addExpression(createFromToExpression(params.getMonth(), params.getYear()));
 		if (params.getInvoicingGroup() != null && params.getInvoicingGroup().getId() != null) {

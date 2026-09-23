@@ -3,6 +3,7 @@ import { Attach } from '../models/Attach.js';
 import { AonDialog } from './aon-dialog.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
+import { PDF_OR_IMAGE_ACCEPT } from '../services/imageFileService.js';
 import * as LS from "../services/localStorageService.js";
 
 export class AonNewUpload extends AonElement {
@@ -56,7 +57,7 @@ export class AonNewUpload extends AonElement {
         this.LABEL = this.id + 'Label';
         this.SPAN = this.id + 'Span';
         this.message = this.message || MSG.ATTACH_FILES_DRAGGING_DROPPING;
-        this.accept = this.accept || 'image/jpeg, image/png, application/pdf';
+        this.accept = this.accept || PDF_OR_IMAGE_ACCEPT;
 
         this.type = this.type || 'Documental';
 

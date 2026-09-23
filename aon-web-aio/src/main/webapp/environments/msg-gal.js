@@ -274,6 +274,7 @@ export const COMMISSION_BANDS = 'Definición de tramos de comisións';
 export const COMMISSION_CALCULATION = 'Cálculo de Comisións';
 export const COMMISSION_CONTROL = 'Control de Comisións Calculadas';
 export const COMMISSION_TYPES = 'Tipos de Comisión';
+export const CHARGE_BATCH_NEW = 'Nova Remesa de Cobros';
 export const COMMUNICATION_CENTER = 'Centro de Comunicación';
 export const COMPANY_DOWNLOAD = 'Descarga de Empresas';
 export const COST_PROFILES = 'Perfís de custo';

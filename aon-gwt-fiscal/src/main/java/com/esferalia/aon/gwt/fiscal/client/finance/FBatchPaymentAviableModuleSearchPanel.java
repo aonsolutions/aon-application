@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.finance;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,9 +10,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -43,7 +44,7 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 	private AonCustomListBox confidentialFilter = new AonCustomListBox("Confidencial");
 	
 	private FinanceModuleOptions opt;
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 	private FBatch fbatch;
 	
 	private Set<PayMethodType> payMethods;
@@ -53,7 +54,7 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 	// -----------------------  CONSTRUCTOR  -----------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentAviableModuleSearchPanel(FinanceModuleOptions opt, FBATCH_TYPE fbatchType, FBatch fbatch) {
+	public FBatchPaymentAviableModuleSearchPanel(FinanceModuleOptions opt, FBatchType fbatchType, FBatch fbatch) {
 		super(AonStringUtils.EMPTY);
 		addStyleName(AON.CSS.aonFlexColumn());
 		getElement().getStyle().setProperty("margin", "0 1rem");
@@ -94,10 +95,18 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 		bankSearch.clearItems();
 		bankSearch.addItem("-", "");
 		
+		boolean isCharge = FBatchType.CHARGE == fbatchType;
+
 		financeShow.clearItems();
-		financeShow.addItem("Pagos", "1");
-		financeShow.addItem("Abonos", "0");
-		financeShow.addItem("Pagos y Abonos", "");
+		if (isCharge) {
+		    financeShow.addItem("Cobros", "0");
+		    financeShow.addItem("Devoluciones", "1");
+		    financeShow.addItem("Cobros y Devoluciones", "");
+		} else {
+		    financeShow.addItem("Pagos", "1");
+		    financeShow.addItem("Abonos", "0");
+		    financeShow.addItem("Pagos y Abonos", "");
+		}
 		
 		financeType.clearItems();
 		financeType.addItem(FinanceStatus.PENDING.getDescription(), Byte.toString(FinanceStatus.PENDING.value()));
@@ -109,9 +118,12 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 		confidentialFilter.addItem("NO confidenciales", "0");
 		confidentialFilter.addItem("Confidenciales", "1");
 		
-		if(FBATCH_TYPE.PAYROLL_PAYMENT != fbatchType) {
+		if(FBatchType.PAYROLL_PAYMENT != fbatchType) {
 			add(createRow(fromDueDate, toDueDate, fromAmount, toAmount));
-			add(createRow(paymethodType, bankSearch, financeShow, financeType));
+			if (FBatchType.CHARGE == fbatchType)
+				add(createRow(paymethodType, bankSearch, financeType));
+			else
+				add(createRow(paymethodType, bankSearch, financeShow, financeType));
 			add(createRow(fromInvoiceDate, toInvoiceDate, confidentialFilter));
 		} else {
 			add(createRow(fromDueDate, toDueDate));
@@ -131,6 +143,10 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 			row.add(w[i]);
 		
 		return row;
+	}
+	
+	public void setFBatch(FBatch fbatch) {
+	    this.fbatch = fbatch;
 	}
 	
 	// -------------------------------------------------------------------
@@ -173,7 +189,10 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 		
 		paymethodType.setValue("");
 		bankSearch.setValue("");
-		financeShow.setValue("1");
+		
+		boolean isCharge = FBatchType.CHARGE == fbatchType;
+		financeShow.setValue(isCharge ? "0" : "1");
+		
 		financeType.setValue(FinanceStatus.PENDING.value() + "");
 		
 		fromInvoiceDate.setValue(null);
@@ -185,8 +204,7 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 	public FinanceParams getParams() {
 		FinanceParams params = new FinanceParams()
 				.setDomain(opt.getDomain())
-				.setPayment(true)
-				.setIsPayroll(FBATCH_TYPE.PAYROLL_PAYMENT == this.fbatchType)
+				.setIsPayroll(FBatchType.PAYROLL_PAYMENT == this.fbatchType)
 				.setFromDueDate(fromDueDate.getValue())
 				.setToDueDate(toDueDate.getValue())
 				.setGTAmount(fromAmount.getValue())
@@ -199,19 +217,31 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 		if(AonStringUtils.isNotBlank(bankSearch.getValue()))
 			params.setBankAlias(bankSearch.getValue());
 		
-		if(AonStringUtils.equals(financeShow.getValue(), "1")) {
+		boolean isCharge = FBatchType.CHARGE == this.fbatchType;
+		Byte fileType = this.fbatch.getType();
+
+		if (isCharge) {
+			params.setCollection(true);
+		} else if (AonStringUtils.equals(financeShow.getValue(), "1")) {
+		    params.setPayment(true);
+		} else if (AonStringUtils.equals(financeShow.getValue(), "0")) {
+		    params.setCharge(true);
+		} else {
 			params.setPayment(true);
-			if(this.fbatch.getType() != (byte)0)
-				params.setPayMethodType(PayMethodType.BANK_TRANSFER);
-//			params.setPayMethodType(this.fbatch.getType() == (byte)0 ? PayMethodType.CREDIT_CARD : PayMethodType.BANK_TRANSFER);
-		} else if(AonStringUtils.equals(financeShow.getValue(), "0")) {
-			params.setCharge(true);
-		} else
-			params.setPaymentCharge(true);
-		
-		// Override payMethod if its one selected
-		if(AonStringUtils.isNotBlank(paymethodType.getValue()))
-			params.setPayMethodType(PayMethodType.safeValueOf(Byte.parseByte(paymethodType.getValue())));
+		    params.setPaymentCharge(true);
+		}
+
+		// Forma de pago exigida por el tipo de fichero (en cobros: domiciliación, los 4 códigos).
+		PayMethodType expected = this.fbatchType.expectedPayMethod(fileType);
+		if (expected != null) params.setPayMethodType(expected);
+
+		Date  issueDate = this.fbatch.getIssueDate();
+
+		// 19-14 CORE: solo vencimientos con fecha <= fecha de la remesa.
+		if (FBatchType.dueDateLimitedByIssueDate(fileType) && issueDate != null) {
+		    Date userLimit = toDueDate.getValue();
+		    params.setToDueDate(userLimit == null || userLimit.after(issueDate) ? issueDate : userLimit);
+		}
 		
 		if(AonStringUtils.isBlank(financeType.getValue())) {
 			params.setPending(true);

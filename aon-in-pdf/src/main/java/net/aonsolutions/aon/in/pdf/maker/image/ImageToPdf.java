@@ -19,6 +19,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.util.Matrix;
 
 import net.aonsolutions.aon.in.pdf.api.toolkit.PDFToolkit;
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
@@ -73,18 +74,42 @@ public class ImageToPdf implements AutoCloseable {
 		try {
 			InputStream is = new ByteArrayInputStream(image);
 			BufferedImage bufferedImage = ImageIO.read(is);
+			
+			// ImageIO devuelve null cuando no tiene con que descodificar el formato (HEIC de
+			// iPhone, AVIF, WebP): sin esto reventaria mas abajo con un NullPointerException que
+			// no dice nada de lo que ha pasado.
+			if (bufferedImage == null)
+				throw new CanNotCreatePdfException(
+						"No se puede leer la imagen, formato " + ImageFormat.of(image) + " sin descodificador.");
 	
             float imageWidth = bufferedImage.getWidth();
             float imageHeight = bufferedImage.getHeight();
 			
+			// Las fotos de movil guardan el giro en la EXIF, que ni ImageIO ni el PDF aplican:
+			// sin esto la pagina sale girada (apaisada) respecto a lo que vio el usuario.
+			int orientation = ExifOrientation.read(image);
+			boolean swapsSides = ExifOrientation.swapsSides(orientation);
+			float pageWidth = swapsSides ? imageHeight : imageWidth;
+			float pageHeight = swapsSides ? imageWidth : imageHeight;
 						
-			this.page = new PDPage( new PDRectangle(imageWidth, imageHeight));
+			this.page = new PDPage( new PDRectangle(pageWidth, pageHeight));
 			this.document.addPage(this.page);
 			this.contents = new PDPageContentStream(this.document, this.page);
+			
+			Matrix transform = ExifOrientation.getTransform(orientation, imageWidth, imageHeight);
+			if (transform != null) {
+				this.contents.saveGraphicsState();
+				this.contents.transform(transform);
+			}
 				
 			PDFToolkit.drawImage(this.document, this.contents, image, 0, 0, imageWidth, imageHeight);
 		
+			if (transform != null)
+				this.contents.restoreGraphicsState();
+		
 			this.contents.close();
+		} catch (CanNotCreatePdfException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new CanNotCreatePdfException(e);
 		}

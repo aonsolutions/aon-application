@@ -40,10 +40,23 @@ public class PdfUtils {
 		return font1;
 	}
 	
+	public static Font getFont5(){
+		Font font1 = new Font();
+		font1.setSize((float) 10);
+		font1.setStyle(Font.BOLD);
+		return font1;
+	}
+	
 	public static Font getFont4(){
 		Font font1 = new Font();
 		font1.setSize(12);
 		return font1;
+	}
+	
+	public static Font getFont6(){
+		Font font2 = new Font();
+		font2.setSize(6);
+		return font2;
 	}
 	
 	public static PdfPCell emptyCell() {

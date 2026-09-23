@@ -41,9 +41,10 @@
     <commons-cli.version>1.11.0</commons-cli.version>
   </properties>
   <modules>
-    <!--  
-		<module>jakarta.persistence-api</module>
-		-->
+    <!-- VENDORED THIRD-PARTY (must precede any module that consumes them).
+         These replace the external_free remote repository, which no longer exists. Each one
+         installs a checked-in jar+pom during "initialize"; see external-libs/pom.xml. -->
+    <module>external-libs</module>
     <!-- NET AONSULTIONS PLUGINS -->
     <module>invofox.sdk</module>
     <!-- MAVEN PLUGINS -->
@@ -169,6 +170,7 @@
     <module>aon-ui-help</module>
     <!-- OTHER -->
     <module>aon-jasperreports</module>
+    <module>jodconverter-core</module>
     <module>aon-common-resources</module>
     <module>aon-db-up2date</module>
     <module>aon-sepe</module>
@@ -370,19 +372,6 @@
   </issueManagement>
   <repositories>
     <repository>
-      <id>external_free</id>
-      <name>External Free Repository</name>
-      <url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </repository>
-    <repository>
       <id>central-repository</id>
       <name>Central Repository</name>
       <layout>default</layout>
@@ -479,16 +468,6 @@
     <pluginRepository>
       <id>Codehaus Public</id>
       <url>https://repository-master.mulesoft.org/nexus/content/groups/public/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>aon.external.free</id>
-      <url>https://aonsolutions.github.io/aon-application/maven/2/external_free</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

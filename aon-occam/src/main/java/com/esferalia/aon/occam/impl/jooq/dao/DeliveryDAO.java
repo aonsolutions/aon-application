@@ -17,6 +17,10 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_FORMAT_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_MEASUREMENT_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_UNITS_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.STOCK_UNIT_TAG;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -50,15 +54,12 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.management.ShipmentPeriod;
-import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
-import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
@@ -175,6 +176,10 @@ public class DeliveryDAO {
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(PACK_FORMAT_TAG).on(PACK_FORMAT_TAG.ID.eq(ITEM.PACK_FORMAT_TAG))
+			.leftOuterJoin(PACK_UNITS_TAG).on(PACK_UNITS_TAG.ID.eq(ITEM.PACK_UNITS_TAG))
+			.leftOuterJoin(PACK_MEASUREMENT_TAG).on(PACK_MEASUREMENT_TAG.ID.eq(ITEM.PACK_MEASUREMENT_TAG))
+			.leftOuterJoin(STOCK_UNIT_TAG).on(STOCK_UNIT_TAG.ID.eq(ITEM.STOCK_UNIT_TAG))
 			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(DELIVERY.SCOPE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(DELIVERY.WORKPLACE))
 			.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(DELIVERY.CARRIER))
@@ -199,9 +204,6 @@ public class DeliveryDAO {
 		Delivery delivery = getFullStream(ctx, filter).findFirst().orElse(new Delivery()); 
 		if(delivery.getId() != null) {
 			delivery.setPackaging(DeliveryPackagingDAO.getList(ctx, f -> f.getDeliveryProperty().eq(delivery.getId())));
-		}
-		if(delivery.getAddress().getId() != null) {
-			delivery.setAddress(RegistryAddressDAO.get(ctx, f -> f.getIdProperty().eq(delivery.getAddress().getId())));
 		}
 		return delivery; 
 	}
@@ -246,9 +248,6 @@ public class DeliveryDAO {
 	}
 	
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter){
-		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getTypeProperty().eq(TagType.PACKING.value())));
-		
 		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
 			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
 			.orderBy(DELIVERY.ID.desc())
@@ -256,37 +255,48 @@ public class DeliveryDAO {
 				new DeliveryFiller()::apply,
 				new DeliveryDetailFiller()::apply
 			);
-		map.forEach((object, details) -> details.forEach(detail -> {
-			if(!detail.isEmpty()) {
-				detail.setItem(completeItemPackingTag(detail.getItem(), tagList));
-				object.addDetail(detail);
-			}
-		}));
+		map.forEach((object, details) -> details.stream()
+			.filter(detail -> !detail.isEmpty())
+			.forEach(object::addDetail));
+		fillAddresses(ctx, map.keySet());
 		return map.keySet().stream(); 
 	}
 	
-	private static Item completeItemPackingTag(Item item, List<Tag> tags) {
-		item.setPackFormatTag(getItemPackingTag(tags, item.getPackFormatTag()));
-		item.setPackMeasurementTag(getItemPackingTag(tags, item.getPackMeasurementTag()));
-		item.setPackUnitsTag(getItemPackingTag(tags, item.getPackUnitsTag()));
-		item.setStockUnitTag(getItemPackingTag(tags, item.getStockUnitTag()));
-		return item;
+	private static void fillAddresses(AONContext ctx, Collection<Delivery> deliveries){
+		Integer[] ids = deliveries.stream()
+			.map(Delivery::getAddress)
+			.filter(address -> address != null && address.getId() != null)
+			.map(RegistryAddress::getId)
+			.distinct()
+			.toArray(Integer[]::new);
+		if(ids.length == 0)
+			return;
+		Map<Integer, RegistryAddress> addresses = RegistryAddressDAO
+			.getStream(ctx, f -> f.getIdProperty().in(ids))
+			.collect(Collectors.toMap(RegistryAddress::getId, Function.identity(), (a, b) -> a));
+		deliveries.stream()
+			.filter(delivery -> delivery.getAddress() != null && delivery.getAddress().getId() != null)
+			.forEach(delivery -> {
+				RegistryAddress address = addresses.get(delivery.getAddress().getId());
+				if(address != null) delivery.setAddress(address);
+			});
 	}
 	
-	private static Tag getItemPackingTag(List<Tag> tags, Tag tag) {
-		return tags.stream().filter(f -> f.getId().equals(tag.getId())).findFirst().orElse(tag);
-	}
-		
 	public static Stream<Delivery> getFullStream(AONContext ctx, DeliveryFilter filter, Integer page, Integer perPage){
-		Map<Delivery, List<DeliveryDetail>> map = selectFull(ctx, filter)
-			.groupBy(DELIVERY.ID, DELIVERY_DETAIL.ID)
+		if(page == null || perPage == null)
+			return getFullStream(ctx, filter);
+		Integer[] ids = ctx.getDslContext()
+			.select(DELIVERY.ID)
+			.from(DELIVERY)
+			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
+			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.where(DELIVERY_PROPERTIES.getConditions(filter))
 			.orderBy(DELIVERY.ID.desc())
-			.fetchGroups(
-				new DeliveryFiller()::apply,
-				new DeliveryDetailFiller()::apply
-			);
-		map.forEach((object, details) -> details.forEach(object::addDetail));
-		return map.keySet().stream(); 
+			.limit(perPage).offset(offset(page, perPage))
+			.fetch(DELIVERY.ID).toArray(new Integer[0]);
+		if(ids.length == 0)
+			return Stream.empty();
+		return getFullStream(ctx, f -> f.getIdProperty().in(ids)); 
 	}
 	
 	// ----- GET LIST
@@ -486,22 +496,26 @@ public class DeliveryDAO {
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+				.leftOuterJoin(PACK_FORMAT_TAG).on(PACK_FORMAT_TAG.ID.eq(ITEM.PACK_FORMAT_TAG))
+				.leftOuterJoin(PACK_UNITS_TAG).on(PACK_UNITS_TAG.ID.eq(ITEM.PACK_UNITS_TAG))
+				.leftOuterJoin(PACK_MEASUREMENT_TAG).on(PACK_MEASUREMENT_TAG.ID.eq(ITEM.PACK_MEASUREMENT_TAG))
+				.leftOuterJoin(STOCK_UNIT_TAG).on(STOCK_UNIT_TAG.ID.eq(ITEM.STOCK_UNIT_TAG))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new DeliveryDetailFiller())
 			.findFirst().orElse(new DeliveryDetail());
 	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryDetailFilter filter){
-		List<Tag> tagList = TagDAO.getList(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getTypeProperty().eq(TagType.PACKING.value())));
-	
 		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
 				.join(ITEM).on(DELIVERY_DETAIL.ITEM.eq(ITEM.ID))
 				.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 				.join(DELIVERY).on(DELIVERY.ID.eq(DELIVERY_DETAIL.DELIVERY))
+				.leftOuterJoin(PACK_FORMAT_TAG).on(PACK_FORMAT_TAG.ID.eq(ITEM.PACK_FORMAT_TAG))
+				.leftOuterJoin(PACK_UNITS_TAG).on(PACK_UNITS_TAG.ID.eq(ITEM.PACK_UNITS_TAG))
+				.leftOuterJoin(PACK_MEASUREMENT_TAG).on(PACK_MEASUREMENT_TAG.ID.eq(ITEM.PACK_MEASUREMENT_TAG))
+				.leftOuterJoin(STOCK_UNIT_TAG).on(STOCK_UNIT_TAG.ID.eq(ITEM.STOCK_UNIT_TAG))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new DeliveryDetailFiller())
-			.map(detail -> detail.setItem(completeItemPackingTag(detail.getItem(), tagList)));
+			.fetch().stream().map(new DeliveryDetailFiller());
 	}
 	
 	public static Stream<DeliveryDetail> getDeliveryDetailStream(AONContext ctx, DeliveryFilter deliveryFilter, DeliveryDetailFilter detailFilter,
@@ -523,6 +537,10 @@ public class DeliveryDAO {
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(DELIVERY_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+			.leftOuterJoin(PACK_FORMAT_TAG).on(PACK_FORMAT_TAG.ID.eq(ITEM.PACK_FORMAT_TAG))
+			.leftOuterJoin(PACK_UNITS_TAG).on(PACK_UNITS_TAG.ID.eq(ITEM.PACK_UNITS_TAG))
+			.leftOuterJoin(PACK_MEASUREMENT_TAG).on(PACK_MEASUREMENT_TAG.ID.eq(ITEM.PACK_MEASUREMENT_TAG))
+			.leftOuterJoin(STOCK_UNIT_TAG).on(STOCK_UNIT_TAG.ID.eq(ITEM.STOCK_UNIT_TAG))
 			.where(whereConditions)
 			.orderBy(DELIVERY.ISSUE_TIME,DELIVERY.SERIES,DELIVERY.NUMBER,DELIVERY_DETAIL.LINE)
 			.fetch().stream().map(new DeliveryDetailFiller());

@@ -32,6 +32,7 @@ public class CarrierPacking implements Serializable{
 	private Double net; // PESO NETO
 	private Date receptionStartDate; // FECHA ENTRADA TRANSPORTE (RECEPCIÓN)
 	private Date receptionEndDate; // FECHA SALIDA TRANSPORTE (RECEPCIÓN)
+	private String qr; // URL DEL CODIGO QR
 	
 	private String creationUser;
 	private Date creationDate;
@@ -238,6 +239,13 @@ public class CarrierPacking implements Serializable{
 	}
 	public CarrierPacking setReceptionEndDate(Date receptionEndDate) {
 		this.receptionEndDate = receptionEndDate;
+		return this;
+	}
+	public String getQr() {
+		return qr;
+	}
+	public CarrierPacking setQr(String qr) {
+		this.qr = qr;
 		return this;
 	}
 	public void separateComments(String comments) {

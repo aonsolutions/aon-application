@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -59,7 +60,7 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 	
 	private boolean isConfidential = false;
 	
-	public AonFBatchPaymentPanel(final String domainName, final int domain, final String user, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public AonFBatchPaymentPanel(final String domainName, final int domain, final String user, FBatchType fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
 		initializeCommonService();
 		
 		this.domainName = domainName;
@@ -91,7 +92,7 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 		});
 	}
 	
-	public void show(final FBatch fbatch, String fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
+	public void show(final FBatch fbatch, FBatchType fbatchType, final AonFBatchPaymentPayrollPanelCallback callback) {
 		
 		FlowPanel rootPanel = new FlowPanel();
 		rootPanel.getElement().getStyle().setProperty("padding", "1rem 0");
@@ -125,13 +126,27 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 		table.setWidget(1,1,issueDate);
 		
 		table.setWidget(2,0,new InlineLabel("Tipo Fichero"));
-		if(AonStringUtils.equals(fbatchType, "PAYROLL_PAYMENT"))
-			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
-		else {
-			type.addItem("VISA", "0");
-			type.addItem("SEPA 34-14 (XML)", "9");
+		// En edición fbatchType llega null: se deduce del tipo guardado.
+		final FBatchType effectiveType = fbatchType != null ? fbatchType : FBatchType.of(fbatch.getPayment(), fbatch.getType());
+		if (effectiveType == null)
+			throw new IllegalStateException("Tipo de remesa desconocido: " + fbatch.getType());
+
+		type.clear();
+		for (byte code : effectiveType.getSelectableCodes())
+			type.addItem(fbatchType.getFileTypeDescription(code), String.valueOf(code));
+		
+		// Remesa existente con tipo heredado: se muestra tal cual y no se deja cambiar.
+		if (fbatch.getId() != null && !effectiveType.isSelectable(fbatch.getType())) {
+			type.addItem(effectiveType.getFileTypeDescription(fbatch.getType()),
+			             String.valueOf(fbatch.getType()));
+			setSelectedValueLB(type, String.valueOf(fbatch.getType()));
+			type.setEnabled(false);
+		} else if (fbatch.getId() != null) {
+			setSelectedValueLB(type, String.valueOf(fbatch.getType()));
+		} else {
+			type.setSelectedIndex(0);
 		}
-		type.setSelectedIndex(0);
+		 
 		table.setWidget(2,1,type);
 		
 		table.setWidget(3,0,new InlineLabel(AON.MSG.bankAccount()));
@@ -198,8 +213,8 @@ public abstract class AonFBatchPaymentPanel extends SimplePanel {
 					
 					if (fbatch.getId() == null) {
 						fbatch.setDomain(domainId);
-						fbatch.setPayment((byte)1); // Pago
-						fbatch.setStatus(FBatchStatus.PENDING); // Pendiente
+						fbatch.setPayment(FBatchType.CHARGE == effectiveType ? (byte)0 : (byte)1);
+ 						fbatch.setStatus(FBatchStatus.PENDING); // Pendiente
 					}
 					
 					commonService.createUpdateFBatch(domainName, domainId, user, fbatch, new AsyncCallback<FBatch>() {

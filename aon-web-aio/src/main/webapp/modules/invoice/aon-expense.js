@@ -8,6 +8,7 @@ import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
 import { deleteExpense, getAccounts, setExpense } from '../../services/accountingService.js';
 import { AonExpenseList } from './aon-expense-list.js';
+import { AonMobileExpenseList } from './aon-mobile-expense-list.js';
 import { Expense } from './Expense.js';
 
 export class AonExpense extends AonElement {
@@ -247,7 +248,8 @@ export class AonExpense extends AonElement {
     }
 
     back() {
-        this.getApplication().setContent(new AonExpenseList());
+        let list = this.isMobile() ? new AonMobileExpenseList() : new AonExpenseList();
+        this.getApplication().setContent(list);
     }
 
     save() {

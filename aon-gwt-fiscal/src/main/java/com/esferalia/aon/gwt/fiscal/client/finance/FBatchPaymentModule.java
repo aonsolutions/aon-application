@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -19,13 +20,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
 public class FBatchPaymentModule  implements EntryPoint {
-	
-	public static enum FBATCH_TYPE {
-		  CHARGE
-		, PAYMENT
-		, PAYROLL_PAYMENT
-		;
-	}
 	
 	private static CommonServiceAsync COMMON_SERVICE;
 	
@@ -35,13 +29,13 @@ public class FBatchPaymentModule  implements EntryPoint {
 	private FBatchPaymentEntryModule fBatchPaymentPayrollEntryModule;
 	private FBatchPaymentList fBatchPaymentList;
 	
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 	
 	// -------------------------------------------------------------------
 	// ----------------------  ON MODULE LOAD  ---------------------------
 	// -------------------------------------------------------------------
 	
-	public FBatchPaymentModule(FBATCH_TYPE fbatchType) {
+	public FBatchPaymentModule(FBatchType fbatchType) {
 		this.fbatchType = fbatchType;
 	}
 

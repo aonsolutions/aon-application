@@ -64,13 +64,13 @@ import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO.CarrierPackingFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CarrierPackingDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPackingPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.WarehouseValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -571,12 +571,13 @@ public class WarehouseDAO {
 				.fetch().stream().map(new CarrierPackingFiller());
 	}
 	
+	@Deprecated
 	public static Integer insertCarrierPacking(AONContext ctx, CarrierPacking carrierPacking){
 		if(carrierPacking.getNumber()==null || carrierPacking.getNumber()==0){
 			Integer num = getCarrierPackingStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getSeriesProperty().eq(carrierPacking.getSeries())))
 					.mapToInt(r -> r.getNumber()).max().orElse(0);
-			carrierPacking.setNumber(num +1);
+			carrierPacking.setNumber(num + 1);
 		}
 		return ctx.getDslContext().insertInto(CARRIER_PACKING, CARRIER_PACKING.CARRIER,
 				CARRIER_PACKING.CARRIER_REFERENCE, CARRIER_PACKING.COMMENTS, CARRIER_PACKING.CREATION_DATE,
@@ -587,7 +588,8 @@ public class WarehouseDAO {
 				CARRIER_PACKING.NUMBER, CARRIER_PACKING.NUMBER_PLATE,
 				CARRIER_PACKING.SERIES,	CARRIER_PACKING.STATUS, CARRIER_PACKING.TYPE,
 				CARRIER_PACKING.GROSS, CARRIER_PACKING.TARE, CARRIER_PACKING.ADDITIONAL_TARE, CARRIER_PACKING.NET, 
-				CARRIER_PACKING.RECEPTION_START_DATE, CARRIER_PACKING.RECEPTION_END_DATE)
+				CARRIER_PACKING.RECEPTION_START_DATE, CARRIER_PACKING.RECEPTION_END_DATE,
+				CARRIER_PACKING.QR)
 				.values(carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0,
 						carrierPacking.getCarrierReference(), carrierPacking.getComments(), carrierPacking.getCreationDate() != null ? new Timestamp(new Date().getTime()) : null,
 						ctx.getUser(), carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null,
@@ -597,10 +599,12 @@ public class WarehouseDAO {
 						carrierPacking.getNumber() != null ? carrierPacking.getNumber() : 1, carrierPacking.getNumberPlate(), 
 						carrierPacking.getSeries(), carrierPacking.getStatus() != null ? carrierPacking.getStatus().value() : 0, carrierPacking.getStatus() != null ? carrierPacking.getType().value() : 0,
 						carrierPacking.getGross(), carrierPacking.getTare(), carrierPacking.getAdditionalTare(), carrierPacking.getNet(),
-						AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()), AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
+						AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()), AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()),
+						carrierPacking.getQr())
 				.returning(CARRIER_PACKING.ID).fetchOne().getId();
 	}
 	
+	@Deprecated
 	public static CarrierPacking updateCarrierPacking(AONContext ctx, CarrierPacking carrierPacking, CarrierPackingFilter filter){
 		return ctx.getDslContext().update(CARRIER_PACKING)
 				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
@@ -624,6 +628,7 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
 				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
 				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
+				.set(CARRIER_PACKING.QR, carrierPacking.getQr())
 				.set(CARRIER_PACKING.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
 				.set(CARRIER_PACKING.MODIFICATION_USER, ctx.getUser())
 			.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))

@@ -30,6 +30,7 @@ import org.jooq.Record5;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -68,7 +69,7 @@ public class JooqActivitySummary {
 	    Map<Integer, ActivitySummaryObject> salaryMap = null;
 	    Map<Integer, ActivitySummaryObject> itMap = null;
 
-	    if (/*parentDomainId == null && */ params.getChildomain() == null) {
+	    if (params.getChildomain() == null && (parentDomainId == null || params.isOffice())) {
 
 	        Integer[] childDomains = null;
 	        try {
@@ -247,7 +248,7 @@ public class JooqActivitySummary {
 
 	    if (!userScopes.isEmpty())
 	        condition = condition.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)));
-
+	    
 	    return dslContext.selectDistinct(DOMAIN.ID)
 	            .from(CUSTOMER
 	                    .join(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(CUSTOMER.REGISTRY))

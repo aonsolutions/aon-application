@@ -9,6 +9,7 @@ import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { uploadDocuments, uploadOption } from "../documental/DocumentalUtils.js";
+import { PDF_OR_IMAGE_ACCEPT } from "../../services/imageFileService.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
@@ -286,7 +287,7 @@ export class AonDesktop extends AonElement {
 	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`
-          <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+          <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' accept='${PDF_OR_IMAGE_ACCEPT}' multiple>
           <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>`;
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);

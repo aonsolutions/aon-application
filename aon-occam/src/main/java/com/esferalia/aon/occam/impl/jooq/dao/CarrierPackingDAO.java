@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,13 +18,14 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CarrierPackingDAO {
@@ -129,6 +131,74 @@ public class CarrierPackingDAO {
 		return ++next;
 	}
 	
+	
+	public static CarrierPacking save(AONContext ctx, CarrierPacking carrierPacking) {
+		return carrierPacking.getId() == null
+			? insert(ctx, carrierPacking)
+			: update(ctx, carrierPacking);
+	}
+
+	private static CarrierPacking insert(AONContext ctx, CarrierPacking carrierPacking){
+		return ctx.getDslContext().insertInto(CARRIER_PACKING)
+				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
+				.set(CARRIER_PACKING.CARRIER_REFERENCE, carrierPacking.getCarrierReference())
+				.set(CARRIER_PACKING.COMMENTS, carrierPacking.getComments())
+				.set(CARRIER_PACKING.CREATION_DATE, carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null)
+				.set(CARRIER_PACKING.CREATION_USER, carrierPacking.getCreationUser())
+				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null)
+				.set(CARRIER_PACKING.DOMAIN, carrierPacking.getDomain())
+				.set(CARRIER_PACKING.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
+				.set(CARRIER_PACKING.DRIVER_NAME, carrierPacking.getDriverName())
+				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null)
+				.set(CARRIER_PACKING.NUMBER, carrierPacking.getNumber())
+				.set(CARRIER_PACKING.NUMBER_PLATE, carrierPacking.getNumberPlate())
+				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
+				.set(CARRIER_PACKING.STATUS, carrierPacking.getStatus().value())
+				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
+				.set(CARRIER_PACKING.GROSS, carrierPacking.getGross())
+				.set(CARRIER_PACKING.TARE, carrierPacking.getTare())
+				.set(CARRIER_PACKING.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
+				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
+				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
+				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
+				.set(CARRIER_PACKING.QR, carrierPacking.getQr())
+				.set(CARRIER_PACKING.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(CARRIER_PACKING.CREATION_USER, ctx.getUser())
+				.set(CARRIER_PACKING.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(CARRIER_PACKING.MODIFICATION_USER, ctx.getUser())
+			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
+	}
+	
+	private static CarrierPacking update(AONContext ctx, CarrierPacking carrierPacking){
+		return ctx.getDslContext().update(CARRIER_PACKING)
+				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
+				.set(CARRIER_PACKING.CARRIER_REFERENCE, carrierPacking.getCarrierReference())
+				.set(CARRIER_PACKING.COMMENTS, carrierPacking.getComments())
+				.set(CARRIER_PACKING.CREATION_DATE, carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null)
+				.set(CARRIER_PACKING.CREATION_USER, carrierPacking.getCreationUser())
+				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null)
+				.set(CARRIER_PACKING.DOMAIN, carrierPacking.getDomain())
+				.set(CARRIER_PACKING.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
+				.set(CARRIER_PACKING.DRIVER_NAME, carrierPacking.getDriverName())
+				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null)
+				.set(CARRIER_PACKING.NUMBER, carrierPacking.getNumber())
+				.set(CARRIER_PACKING.NUMBER_PLATE, carrierPacking.getNumberPlate())
+				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
+				.set(CARRIER_PACKING.STATUS, carrierPacking.getStatus().value())
+				.set(CARRIER_PACKING.TYPE, carrierPacking.getType().value())
+				.set(CARRIER_PACKING.GROSS, carrierPacking.getGross())
+				.set(CARRIER_PACKING.TARE, carrierPacking.getTare())
+				.set(CARRIER_PACKING.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
+				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
+				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
+				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
+				.set(CARRIER_PACKING.QR, carrierPacking.getQr())
+				.set(CARRIER_PACKING.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(CARRIER_PACKING.MODIFICATION_USER, ctx.getUser())
+			.where(CARRIER_PACKING.ID.eq(carrierPacking.getId()))
+			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
+	}
+	
 	/*
 	 * FILLERS 
 	 */
@@ -164,6 +234,7 @@ public class CarrierPackingDAO {
 					.setNet(r.getValue(CARRIER_PACKING.NET))						
 					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
 					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))
+					.setQr(r.getValue(CARRIER_PACKING.QR))
 					;
 		}
 	}

@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -61,6 +62,7 @@ public class FaceServlet extends AonApiHttpServlet {
 					.setLogin(login);
 		
 			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
+			Person person = AON.getPerson(api.getOccam(), f -> f.getIdProperty().eq(company.getId()));
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
 			Workplace workplace = new Workplace();
 			if(!invoice.getDetails().isEmpty() && invoice.getDetails().get(0).getWorkplace() != null &&
@@ -73,7 +75,7 @@ public class FaceServlet extends AonApiHttpServlet {
 			}
 
 //			Version 3.2.2
-			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, workplace, invoice, legalLiterals, period);
+			FacturaeWriter facturae = new FacturaeWriter(domain, user, company, person.getId() != null ? person : null, workplace, invoice, legalLiterals, period);
 			byte[] data = facturae.generate();
 			try {
 				Certificate certificate = checkCertificate(api);

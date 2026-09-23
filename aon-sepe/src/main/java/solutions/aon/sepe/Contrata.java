@@ -867,9 +867,11 @@ public class Contrata {
 
 			webClient.waitForBackgroundJavaScript(5000);
 
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe.html");
 
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
 
 			// For contract 502 check if duration equals or less than 90 days
 			try {
@@ -891,6 +893,9 @@ public class Contrata {
 					setOccupation(cto, form);
 
 					webClient.waitForBackgroundJavaScript(5000);
+					
+//					Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Desktop/sepe_502_2.html");
+					
 					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 				}
 			} catch (Exception e) {
@@ -938,7 +943,7 @@ public class Contrata {
 			} catch (Exception e) {
 			}
 
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_2.html");
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home") + "/Desktop/sepe_3.html");
 			
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			handleSepeExceptions(htmlPage);
