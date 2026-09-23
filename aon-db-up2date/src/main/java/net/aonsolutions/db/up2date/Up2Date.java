@@ -20,7 +20,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.InvoiceAddAnnulledColumn;
-import net.aonsolutions.db.up2date.invoice.InvoiceAttach2InvoiceDoc;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoFixII;
 import net.aonsolutions.db.up2date.payroll.ExoneEreFMayComp3707Fix;
@@ -641,17 +640,16 @@ public class Up2Date {
 			// ExoneEreFMayComp3707Fix.EXONEEREFMAYCOMP3707FIX,
 			// FixPreavisoQuote.FIXPREAVISOQUOTE,
 			// DropNoJustifiedTGSSFix.DROPNOJUSTIFIEDTGSSFIX,
-			InvoiceAttach2InvoiceDoc.INVOICEATTACH2INVOICEDOC,
-			//TODO CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN,
+			CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN,
 			
 
 
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-      // CalendarFixNulls.CALENDAR_FIX_NULLS,
-      //	 InsertDefaultScope.INSERT_DEAFULT_SCOPE,
-      //	 DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+			CalendarFixNulls.CALENDAR_FIX_NULLS,
+			InsertDefaultScope.INSERT_DEAFULT_SCOPE,
+			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
@@ -678,22 +676,21 @@ public class Up2Date {
 			
 			// RecordDataAlterTable.RECORD_DATA_ALTER_TABLE
 			// DeleteDomainAppApp7.DELETE_DOMAIN_APP_APP7
-			// DeleteDomainAppApp10.DELETE_DOMAIN_APP_APP10,
-			// DeleteDomainAppApp19.DELETE_DOMAIN_APP_APP19,
-			// MigrateApp23To9.MIGRATE_APP_23_TO_9,
+			DeleteDomainAppApp10.DELETE_DOMAIN_APP_APP10,
+			DeleteDomainAppApp19.DELETE_DOMAIN_APP_APP19,
+			MigrateApp23To9.MIGRATE_APP_23_TO_9,
 
 			// InvoiceTrackingAlterTableJson.INVOICE_TRACKING_ALTER_TABLE_JSON,
 			
 			// UpdateMailAccountProtocolReplayTo.UPDATEMAILACCOUNTPROTOCOLREPLAYTO,
 			// UpdateMailAccountType.UPDATEMAILACCOUNTTYPE,
-			//UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY,
-			//TODO: CustomerAlterExpirationDate.CUSTOMERALTEREXPIRATIONDATE,
+			UserScopeAlterStartEndAuditory.USERSCOPEALTERSTARTENDAUDITORY,
+			CustomerAlterExpirationDate.CUSTOMERALTEREXPIRATIONDATE,
 			
 			// INVOICE REFACTOR
-			//TODO: InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
-			//TODO: InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
+			InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
 	
-			//TODO: CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN
+			CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN
 	};
 
 	// ------------------------------------------------------------------------

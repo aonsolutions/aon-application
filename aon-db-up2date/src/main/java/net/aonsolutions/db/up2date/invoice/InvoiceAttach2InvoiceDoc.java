@@ -191,7 +191,7 @@ public class InvoiceAttach2InvoiceDoc implements Update {
 	}
 		
 	private static Pattern getDatabasePattern() {
-		return Pattern.compile(System.getProperty("database", ".*"), Pattern.DOTALL);
+		return Pattern.compile(System.getProperty("database", "none database"), Pattern.DOTALL);
 	}
 
 	private static String md5(byte [] data)  {

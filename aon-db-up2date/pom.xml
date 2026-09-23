@@ -10,8 +10,22 @@
   <artifactId>aon.db.up2date</artifactId>
   <description>AON DB UP TO DATE</description>
   <name>AON DB UP2DATE</name>
+  <properties>
+    <!-- Sources compiled only when the attach2doc profile is active.
+         The profile overrides this property so the class is included. -->
+    <attach2doc.excludedSources>net/aonsolutions/db/up2date/invoice/InvoiceAttach2InvoiceDoc.java</attach2doc.excludedSources>
+  </properties>
   <build>
     <plugins>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <excludes>
+            <exclude>${attach2doc.excludedSources}</exclude>
+        </excludes>
+    </configuration>
+</plugin>
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-assembly-plugin</artifactId>
@@ -78,10 +92,14 @@
   </dependencies>
 	<profiles>
 		<profile>
-			<id>invoice2attach</id>
+			<id>attach2doc</id>
+			<properties>
+				<!-- Nothing real excluded: InvoiceAttach2InvoiceDoc is compiled. -->
+				<attach2doc.excludedSources>**/no-such-source-to-exclude.java</attach2doc.excludedSources>
+			</properties>
 			<activation>
 				<property>
-					<name>invoice2attach</name>
+					<name>attach2doc</name>
 					<value>true</value>
 				</property>
 			</activation>
