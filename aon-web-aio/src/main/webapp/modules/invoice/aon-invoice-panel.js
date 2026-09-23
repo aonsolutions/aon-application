@@ -49,6 +49,7 @@ import { getCounter, addCounter, clearCounter } from "./InvoiceCounter.js";
 import { AonFutureTax } from "../fiscal/tax/aon-future-tax.js";
 import { generateJobId } from "./InvoiceUtils.js";
 import { getReader } from "../../services/utils.js";
+import { normalizeImageFile, PDF_OR_IMAGE_ACCEPT } from "../../services/imageFileService.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
 import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
@@ -111,7 +112,7 @@ export class AonInvoicePanel extends AonElement {
 		this.innerHTML = `
 			<aon-application id='${this.INVOICE}' title='${MSG.BILLING}' drag_and_drop='true'></aon-application>
 			<aon-dialog-menu id='aonDialogAddOption'> </aon-dialog-menu>
-			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
+			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' accept='${PDF_OR_IMAGE_ACCEPT}' multiple>
 			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
 		
@@ -953,9 +954,11 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	uploadCamera(files) {
-		getReader(files[0]).then(file => {
-			this.buildInvoiceImageEditor(file);
-		}).catch(() => null);
+		// El HEIC hay que pasarlo a JPEG antes del editor: Cropper tampoco sabe pintarlo.
+		normalizeImageFile(files[0])
+			.then(file => getReader(file))
+			.then(file => this.buildInvoiceImageEditor(file))
+			.catch(() => null);
 	}
 
 	downloadRegistryExcel(type) {
@@ -972,7 +975,7 @@ export class AonInvoicePanel extends AonElement {
 
 	buildInvoiceImageEditor(file) {
 		let editor = new AonImageEditor();
-		editor.setImage("data:image/jpeg;base64," + file.content);
+		editor.setImage(`data:${file.contentType || 'image/jpeg'};base64,` + file.content);
 		editor.addEventListener(EVENT.CROPPER, (e) => {
 			let uploadToast = this.getElement('aonUploadToast');
 			if (!uploadToast) {

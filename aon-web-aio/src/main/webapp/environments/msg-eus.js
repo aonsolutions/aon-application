@@ -274,6 +274,7 @@ export const COMMISSION_BANDS = 'Komisio-tarten definizioa';
 export const COMMISSION_CALCULATION = 'Komisioaren Kalkulua';
 export const COMMISSION_CONTROL = 'Kalkulatutako Komisioen Kontrola';
 export const COMMISSION_TYPES = 'Komisio Motak';
+export const CHARGE_BATCH_NEW = 'Kobro Bateratu Berria';
 export const COMMUNICATION_CENTER = 'Komunikazio Zentroa';
 export const COMPANY_DOWNLOAD = 'Enpresaren Deskarga';
 export const COST_PROFILES = 'Kostu-profilak';

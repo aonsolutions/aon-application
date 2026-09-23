@@ -1,4 +1,5 @@
 import {AonElement} from './AonElement.js';
+import { PDF_OR_IMAGE_ACCEPT } from '../services/imageFileService.js';
 import { CONSTANT, CSS, TAG, EVENT } from '../environments/environments.js';
 
 export class AonDashboardUploadButton extends AonElement {
@@ -89,7 +90,7 @@ export class AonDashboardUploadButton extends AonElement {
       this.INPUT = this.id + 'Input';
       this.LABEL = this.id + 'Label';
       this.SPAN = this.id + 'Span';
-      this.accept = this.accept || 'image/jpeg, image/png, application/pdf';
+      this.accept = this.accept || PDF_OR_IMAGE_ACCEPT;
 
       this.type = 'Documental';
   }

@@ -13,6 +13,7 @@ import * as HELP from './aon-site-help.js';
 import { AonMessenger } from '../modules/messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
+import { PDF_OR_IMAGE_ACCEPT } from "../services/imageFileService.js";
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonFiscal } from '../modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from '../modules/timecontrol/aon-timecontrol.js';
@@ -1268,7 +1269,7 @@ export class AonNewMenu extends AonElement {
 
 						let input = this.createElement(TAG.INPUT);
 						input.type = CONSTANT.FILE;
-						input.accept = this.accept;
+						input.accept = PDF_OR_IMAGE_ACCEPT;
 						input.className = CSS.AON_NONE;
 						input.multiple = 'multiple';
 
