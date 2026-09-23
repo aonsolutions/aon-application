@@ -37,8 +37,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.itextpdf.text.pdf.draw.LineSeparator;
@@ -80,7 +80,7 @@ public class Deca extends PdfUtils{
 			Double totalWeight = 0.0;
 			
 			for(Delivery delivery : context.getDeliveries()) {
-				document.add(order(delivery));
+				document.add(order(delivery, context.getCompany()));
 				totalPackages = totalPackages + delivery.getTotalPackages();
 				totalWeight = totalWeight + delivery.getTotalWeight();
 				document.add(new Paragraph(" "));
@@ -490,7 +490,7 @@ public class Deca extends PdfUtils{
         return p;
 	}
 	
-	private static Paragraph order(Delivery delivery){
+	private static Paragraph order(Delivery delivery, CompanyFull company){
 		Paragraph paragraph = new Paragraph();
 		
 		PdfPTable tableM = new PdfPTable(1);
@@ -501,30 +501,39 @@ public class Deca extends PdfUtils{
 		
 		PdfPTable destinatario = new PdfPTable(4);
 		destinatario.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-		float[] medidaCeldas = {1f, 3f, 1f, 1f};
+		float[] medidaCeldas = {3f, 3f, 1f, 1f};
 		try {
 			destinatario.setWidths(medidaCeldas);
 		} catch (DocumentException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	
-		PdfPCell c = new PdfPCell(new Phrase("Destinatario", getFont1()));
+		PdfPCell c = new PdfPCell(new Phrase("Lugar de Origen", getFont1()));
 		c.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(c);
+
+		PdfPCell cD = new PdfPCell(new Phrase("Destinatario", getFont1()));
+		cD.setBorder(PdfPCell.NO_BORDER);
+		destinatario.addCell(cD);
+		
+		destinatario.addCell(new Phrase("Albarán:", getFont1()));
+		destinatario.addCell(new Phrase(delivery.getReferenceCode(), getFont2()));
+		
+		String streetType = company.getMainAddress().getStreetType() != null ? company.getMainAddress().getStreetType().getDescription() + " " : "";
+		String address = company.getMainAddress().getAddress() != null ? company.getMainAddress().getAddress() + " " : "";
+		String number = company.getMainAddress().getNumber() != null ? company.getMainAddress().getNumber() + " " : "";
+		String address2 = company.getMainAddress().getAddress2() != null ? company.getMainAddress().getAddress2() + " " : "";
+		String address3 = company.getMainAddress().getAddress3() != null ? company.getMainAddress().getAddress3() + " " : "";
+		String fullAddress = streetType + address + number + address2 + address3;
+		
+		PdfPCell cb = new PdfPCell(new Phrase(fullAddress, getFont2()));
+		cb.setBorder(PdfPCell.NO_BORDER);
+		destinatario.addCell(cb);
 
 		PdfPCell ca = new PdfPCell(new Phrase(delivery.getCustomer().getName(), getFont1()));
 		ca.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(ca);
-		String descr = "Albarán:";
-		String val = delivery.getReferenceCode();
-
-		destinatario.addCell(new Phrase(descr,getFont1()));
-		destinatario.addCell(new Phrase(val,getFont2()));
 		
-		destinatario.addCell("");
-		PdfPCell cbc = new PdfPCell(new Phrase("NIF: " + delivery.getCustomer().getDocument(), getFont2()));
-		cbc.setBorder(PdfPCell.NO_BORDER);
- 		destinatario.addCell(cbc);
 		destinatario.addCell(new Phrase("Fecha:",getFont1()));
 		String dstr = "";
 		try {
@@ -532,33 +541,53 @@ public class Deca extends PdfUtils{
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		destinatario.addCell(new Phrase(dstr,getFont2()));
+		destinatario.addCell(new Phrase(dstr, getFont2()));
 		
-		destinatario.addCell("");
-		String streetType = delivery.getAddress().getStreetType() != null ? delivery.getAddress().getStreetType().getDescription() + " " : "";
-		String address = delivery.getAddress().getAddress() != null ? delivery.getAddress().getAddress() + " " : "";
-		String number = delivery.getAddress().getNumber() != null ? delivery.getAddress().getNumber() + " " : "";
-		String address2 = delivery.getAddress().getAddress2() != null ? delivery.getAddress().getAddress2() + " " : "";
-		String address3 = delivery.getAddress().getAddress3() != null ? delivery.getAddress().getAddress3() + " " : "";
-		String fullAddress = streetType + address + number + address2 + address3;
-		PdfPCell cb = new PdfPCell(new Phrase(fullAddress, getFont2()));
-		cb.setBorder(PdfPCell.NO_BORDER);
-		destinatario.addCell(cb);
-		destinatario.addCell(new Phrase("Su Referencia:", getFont1()));
-		destinatario.addCell(new Phrase("", getFont2())); //TODO ¿?
-		
-		destinatario.addCell("");
-		
-		String zip = delivery.getAddress().getZip() != null ? delivery.getAddress().getZip() + " " : "";
-		String city = delivery.getAddress().getCity() != null ? delivery.getAddress().getCity() + " " : "";
-		String province = delivery.getAddress().getProvince() != null ? delivery.getAddress().getProvince() + " " : "";
-		String country = delivery.getAddress().getCountry() != null ? delivery.getAddress().getCountry().getName() + " " : "";
+		String zip = company.getMainAddress().getZip() != null ? company.getMainAddress().getZip() + " " : "";
+		String city = company.getMainAddress().getCity() != null ? company.getMainAddress().getCity() + " " : "";
+		String province = company.getMainAddress().getProvince() != null ? company.getMainAddress().getProvince() + " " : "";
+		String country = company.getMainAddress().getCountry() != null ? company.getMainAddress().getCountry().getName() + " " : "";
 		
 		PdfPCell cc = new PdfPCell(new Phrase(zip + city + province + country, getFont2()));
 		cc.setBorder(PdfPCell.NO_BORDER);
 		destinatario.addCell(cc);
+			
+		PdfPCell cbc = new PdfPCell(new Phrase("NIF: " + delivery.getCustomer().getDocument(), getFont2()));
+		cbc.setBorder(PdfPCell.NO_BORDER);
+ 		destinatario.addCell(cbc);
+		
+		destinatario.addCell(new Phrase("Su Referencia:", getFont1()));
+		destinatario.addCell(new Phrase("", getFont2())); //TODO ¿?
+		
+		
+		destinatario.addCell("");
+
+		String streetType1 = delivery.getAddress().getStreetType() != null ? delivery.getAddress().getStreetType().getDescription() + " " : "";
+		String address1 = delivery.getAddress().getAddress() != null ? delivery.getAddress().getAddress() + " " : "";
+		String number1 = delivery.getAddress().getNumber() != null ? delivery.getAddress().getNumber() + " " : "";
+		String address21 = delivery.getAddress().getAddress2() != null ? delivery.getAddress().getAddress2() + " " : "";
+		String address31 = delivery.getAddress().getAddress3() != null ? delivery.getAddress().getAddress3() + " " : "";
+		String fullAddress1 = streetType1 + address1 + number1 + address21 + address31;
+		PdfPCell cb2 = new PdfPCell(new Phrase(fullAddress1, getFont2()));
+		cb2.setBorder(PdfPCell.NO_BORDER);
+		destinatario.addCell(cb2);
+		
 		destinatario.addCell("");
 		destinatario.addCell("");
+		
+		destinatario.addCell("");
+		
+		String zip2 = delivery.getAddress().getZip() != null ? delivery.getAddress().getZip() + " " : "";
+		String city2 = delivery.getAddress().getCity() != null ? delivery.getAddress().getCity() + " " : "";
+		String province2 = delivery.getAddress().getProvince() != null ? delivery.getAddress().getProvince() + " " : "";
+		String country2 = delivery.getAddress().getCountry() != null ? delivery.getAddress().getCountry().getName() + " " : "";
+		
+		PdfPCell cc2 = new PdfPCell(new Phrase(zip2 + city2 + province2 + country2, getFont2()));
+		cc2.setBorder(PdfPCell.NO_BORDER);
+		destinatario.addCell(cc2);
+		destinatario.addCell("");
+		destinatario.addCell("");
+		
 		table.addCell(destinatario);
 
 		table.addCell(getDottedSeparator());
