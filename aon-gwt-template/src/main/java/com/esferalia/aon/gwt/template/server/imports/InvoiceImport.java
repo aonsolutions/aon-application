@@ -818,6 +818,8 @@ public class InvoiceImport extends ImportUtils{
 				}
 			}
 				
+			checkFinanceAccount(ar, financeAccount);
+
 			ai.setPayAccountId(financeAccount.getId())
 			  .setPayAccountCode(financeAccount.getCode())
 			  .setPayAccountDescription(financeAccount.getDescription());
@@ -1187,6 +1189,8 @@ public class InvoiceImport extends ImportUtils{
 				financeAccount = getAccount(domain, user, iic.getFinanceAccount(), "");
 			}
 				
+			checkFinanceAccount(ar, financeAccount);
+
 			ai.setPayAccountId(financeAccount.getId())
 			  .setPayAccountCode(financeAccount.getCode())
 			  .setPayAccountDescription(financeAccount.getDescription());
@@ -1259,6 +1263,19 @@ public class InvoiceImport extends ImportUtils{
 	}
 	
 	
+	private static void checkFinanceAccount(AccountingRegistry ar, Account financeAccount) throws Exception {
+		if(financeAccount == null || financeAccount.getId() == null) return;
+		if(ar == null || ar.getAccountId() == null) return;
+		if(!financeAccount.getId().equals(ar.getAccountId())) return;
+
+		String registryType = ar.getType() != null
+			? ar.getType().getDescription().toLowerCase()
+			: "registro";
+		throw new Exception("La cuenta de tesorería (" + financeAccount.getCode()
+			+ ") coincide con la cuenta contable del " + registryType
+			+ ". Indique una cuenta de tesorería distinta o cambie la cuenta del " + registryType + ".");
+	}
+
 	private static Account getAccount(Domain domain, User user, String accountCode, String accountName) {
 		Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), accountCode);
 		if(account == null) {

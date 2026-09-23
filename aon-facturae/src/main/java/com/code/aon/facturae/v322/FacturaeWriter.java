@@ -20,6 +20,7 @@ import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.product.util.DiscountExpression;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -104,22 +105,25 @@ public class FacturaeWriter {
 	private User user;
 	private Invoice invoice;
 	private CompanyFull company;
+	private Person person;
 	private Workplace workplace;
 	private String legalLiterals;
 	private BillingPeriod billingPeriod;
 	
-	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice) {
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Person person, Workplace workplace, Invoice invoice) {
 		this.domain = domain;
 		this.user = user;
 		this.company = company;
+		this.person = person;
 		this.workplace = workplace;
 		this.invoice = invoice;
 	}
 	
-	public FacturaeWriter(Domain domain, User user, CompanyFull company, Workplace workplace, Invoice invoice, String legalLiterals, BillingPeriod billingPeriod) {
+	public FacturaeWriter(Domain domain, User user, CompanyFull company, Person person, Workplace workplace, Invoice invoice, String legalLiterals, BillingPeriod billingPeriod) {
 		this.domain = domain;
 		this.user = user;
 		this.company = company;
+		this.person = person;
 		this.workplace = workplace;
 		this.invoice = invoice;
 		this.legalLiterals = legalLiterals;
@@ -160,6 +164,14 @@ public class FacturaeWriter {
 		this.company = company;
 	}
 
+	public Person getPerson() {
+		return person;
+	}
+	
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	
 	public Workplace getWorkplace() {
 		return workplace;
 	}
@@ -394,9 +406,15 @@ public class FacturaeWriter {
 	
 	private IndividualType getIndividual( Registry registry, String name, RegistryAddress address ) {
 		IndividualType individualType = new IndividualType();
-		String[] nameSplited = getNameSplited(name);
-		individualType.setName( Util.toTextMax40Type(nameSplited[0]) );
-		individualType.setFirstSurname( Util.toTextMax40Type(nameSplited[1]) );
+		if(getPerson() != null) {
+			individualType.setName( Util.toTextMax40Type(getPerson().getFirstName()) );
+			individualType.setFirstSurname( Util.toTextMax40Type(getPerson().getFirstSurname()) );			
+			individualType.setSecondSurname( Util.toTextMax40Type(getPerson().getSecondSurname()) );
+		} else {
+			String[] nameSplited = getNameSplited(name);
+			individualType.setName( Util.toTextMax40Type(nameSplited[0]) );
+			individualType.setFirstSurname( Util.toTextMax40Type(nameSplited[1]) );			
+		}
 		if ( address != null ) {
 			CountryType country = getCountry(address.getCountry());
 			if ( CountryType.ESP.equals(country) ) {
