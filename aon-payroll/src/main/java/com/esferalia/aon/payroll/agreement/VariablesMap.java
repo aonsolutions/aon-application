@@ -2580,6 +2580,18 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_DIA_MENSUAL", "SAL_DIA_M");
 		variablesMap.put("SUPLEMENTO_LOCOMOCION_ANUAL", "SUP_LOC_A");
 		
+		//Act. 22/09/26
+		variablesMap.put("COMPLEMENTO_INMERSION_AMBIENTE_CONTAMINADO_MENSUAL", "C_INM_AMB_CONT_M");
+		variablesMap.put("COMPLEMENTO_INMERSION_MAS_50_MTS_Y_MAS_DE_15_DESCOMPRESION_MENSUAL", "C_INM_50M_15D_M");
+		variablesMap.put("COMPLEMENTO_INMERSION_MAS_60_MTS_MENSUAL", "C_INM_60M_M");
+		variablesMap.put("COMPLEMENTO_INTERVENCION_MENSUAL", "C_INTERV_M");
+		variablesMap.put("DIETA_CUARTO_TURNO_MENSUAL", "DIETA_4T_M");
+		variablesMap.put("PLUS_CONDUCTOR_CRISTALERO_MENSUAL", "P_COND_CRIST_M");
+		variablesMap.put("PLUS_GRUAS_TORRES_DIARIO", "P_GRUAS_TORRES_D");
+		variablesMap.put("PLUS_PARADA_ANUAL", "P_PARADA_A");
+		variablesMap.put("TRANSPORTE_DE_MONEDA_HORAS", "TRANS_MONEDA_H");
+		variablesMap.put("VIVIENDA_MENSUAL", "VIVIENDA_M");
+		
 	}
 	
 	public static void main(String[] args) {

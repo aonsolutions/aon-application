@@ -72,6 +72,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.BookingCheckDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FBatchDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FBatchSepaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
@@ -862,7 +863,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Integer createSepaFile(CloseableAONContext ctx, Integer fbatchId) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> SettleSalariesDAO.createSepaFile(ctx, fbatchId));
+				configuration -> FBatchSepaDAO.createSepaFile(ctx, fbatchId));
 	}
 
 	@Override

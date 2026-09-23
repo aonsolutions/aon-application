@@ -30,6 +30,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.api.AonInvofox;
 import net.aonsolutions.aon.api.AonSecurity;
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
+import net.aonsolutions.aon.in.pdf.maker.image.ImageFormat;
 import net.aonsolutions.aon.in.pdf.maker.image.ImageToPdf;
 import net.aonsolutions.aon.sign.PdfSigner;
 import solutions.aon.aws.s3.S3;
@@ -87,6 +88,14 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 			if (isImage(s3UploadEventObject)) {
 				try {
 					byte[] image = download(s3UploadEventObject);
+
+					// El content type que dio el navegador puede ser generico o estar vacio, asi
+					// que el formato de verdad lo dicen los bytes. Lo dejamos anotado para que el
+					// rawdoc lo lleve bien aunque la conversion no salga.
+					ImageFormat format = ImageFormat.of(image, s3UploadEventObject.getKey());
+					if (format.isImage() && format.getContentType() != null)
+						s3UploadEventObject.setContentType(format.getContentType(), s3UploadEventObject);
+
 					byte[] pdf = imageToPdf(image);
 
 					// sign PDF.
@@ -106,7 +115,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 						s3UploadEventObject.setFileName(s3UploadEventObject.getFileName().replace(extension, ".pdf"));
 					}
 					solutions.aon.aws.s3.S3.getInstance().upload(s3UploadEventObject.getBucket(),
-							s3UploadEventObject.getKey(), pdf);
+							s3UploadEventObject.getKey(), pdf, "application/pdf");
 					s3UploadEventObject.setContentType("application/pdf", s3UploadEventObject);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -172,7 +181,19 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 		String contentType = solutions.aon.aws.s3.S3.getInstance().getContentType(s3UploadEventObject.getBucket(),
 				s3UploadEventObject.getKey());
 		System.out.println(contentType);
-		return contentType != null && contentType.toLowerCase().contains("image");
+		return isImage(contentType, s3UploadEventObject.getKey());
+	}
+
+	/**
+	 * El navegador solo sabe el tipo de un fichero si el sistema operativo se lo dice, y con los
+	 * HEIC de iPhone muchas veces no lo sabe: entonces sube el fichero sin tipo, S3 lo guarda como
+	 * "binary/octet-stream" y la factura se quedaba sin convertir a PDF. Cuando el content type no
+	 * aclara nada, decide la extension.
+	 */
+	static boolean isImage(String contentType, String key) {
+		if (contentType != null && contentType.toLowerCase().contains("image"))
+			return true;
+		return ImageFormat.ofFileName(key).isImage();
 	}
 
 	static byte[] imageToPdf(byte[] image) throws IOException, CanNotCreatePdfException {

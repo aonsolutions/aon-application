@@ -277,6 +277,7 @@ export const COMMISSION_BANDS = 'Commission Bands Definition';
 export const COMMISSION_CALCULATION = 'Commission Calculation';
 export const COMMISSION_CONTROL = 'Commission Control';
 export const COMMISSION_TYPES = 'Commission Types';
+export const CHARGE_BATCH_NEW = 'Charge Batch (New)';
 export const CHARGES_MANAGEMENT = 'Charges Management';
 export const CHARGES_PAYMENTS_PORTFOLIO = 'Charges and Payments Portfolio';
 export const COMMUNICATION_CENTER = 'Communication Center';

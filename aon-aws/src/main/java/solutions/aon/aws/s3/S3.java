@@ -228,6 +228,20 @@ public class S3 {
 		}
 	}
 	
+	/**
+	 * Sube el objeto diciendo de que tipo es. Sin esto S3 lo guarda como "binary/octet-stream" y
+	 * quien se lo descargue despues no sabe que tiene entre manos.
+	 */
+	public String upload(String bucket, String key, byte [] bytes, String contentType) {
+		try(S3Client client = getClient()) {
+			PutObjectRequest.Builder request = PutObjectRequest.builder().bucket(bucket).key(key);
+			if (contentType != null)
+				request.contentType(contentType);
+		    client.putObject(request.build(), RequestBody.fromBytes(bytes));
+		    return key;
+		}
+	}
+	
 	public String upload(String bucket, String key, byte [] bytes, Map<String, String> metadata) {
 		try(S3Client client = getClient()) {
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).metadata(metadata).build();

@@ -25,7 +25,6 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
@@ -33,6 +32,7 @@ import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus.FBatchStatusVisitor;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -114,7 +114,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	private LinkedHashMap<Integer, FinanceRow> batchedFinances;
 	private LinkedHashSet<Integer> selectedFinances;
 	
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 	private FBatch fbatch;
 	
 	private static enum COLS {
@@ -183,7 +183,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	}
 	
 	// Constructor
-	public FBatchPaymentBatchedList(FinanceModuleOptions options, FBATCH_TYPE fbatchType, FBatch fbatch) {
+	public FBatchPaymentBatchedList(FinanceModuleOptions options, FBatchType fbatchType, FBatch fbatch) {
 		super("Vencimientos Remesados");
 		
 		this.options = options;
@@ -251,7 +251,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 				if (null != financeRow) {
 					Optional<FBatchDetail> fbatchDetail = fbatch.getBatchDetails().stream()
 							.filter(fbatchDetial -> null != fbatchDetial.getFinance()
-									&& fbatchDetial.getFinance().getId() == financeRow.getFinance().getId())
+									&& fbatchDetial.getFinance().getId().equals(financeRow.getFinance().getId()))
 							.findFirst();
 					if (fbatchDetail.isPresent())
 						fbatchDetail.get().setRemoved(true);
@@ -318,13 +318,19 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		});
 		
 		type.clearItems();
-		if(FBATCH_TYPE.PAYROLL_PAYMENT == fbatchType)
+		if(FBatchType.PAYROLL_PAYMENT == fbatchType)
 			type.addItem("SEPA 34-14 N\u00f3mina (XML)", "10");
-		else if(FBATCH_TYPE.PAYMENT == fbatchType) {
-			type.addItem("GEN\u00c9RICO", "0");
+		else if(FBatchType.PAYMENT == fbatchType) {
+			type.addItem("VISA", "0");
 			type.addItem("SEPA 34-14 (XML)", "9");
+		} else if(FBatchType.CHARGE == fbatchType) {
+			type.addItem("Ninguno", "0");
+			type.addItem("SEPA 19-14 CORE (XML)", "8");
+			type.addItem("SEPA 58 ANTICIPO (XML)", "12");
+			type.addItem("SEPA 58 COBRO (XML)", "13");
 		}
 		type.addChangeHandler(e -> {
+			if (AonStringUtils.isBlank(type.getValue())) return;
 			fbatch.setType(Byte.parseByte(type.getValue()));
 			saveFBatch(fbatch);
 		});
@@ -455,7 +461,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		
 		tab.createHeader();
 		
-		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+		if(FBatchType.PAYROLL_PAYMENT.equals(this.fbatchType)) {
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
 				tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? selectedCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		} else {
@@ -507,12 +513,12 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 				addSelectedButton.setEnabled(selectedFinances.size() > 0 && !fbatch.isRecorded() && !fbatch.isGenerated());
 			}
 		});
-		tab.addRow(row, finance.isPending() || finance.isBatched() || finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label(), COLS.CHK.getColWidth());
+		tab.addRow(row, finance.isPending() || finance.isBatched() || !missingSalary(finance) ? checkButton : new Label(), COLS.CHK.getColWidth());
 		
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		tab.addRow(row, issueDate, COLS.FEC.getColWidth());
 		
-		if(!FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+		if(!FBatchType.PAYROLL_PAYMENT.equals(this.fbatchType)) {
 			
 			Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 			tab.addRow(row, invDate, COLS.FFT.getColWidth());
@@ -540,7 +546,8 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 		amount.addStyleName(AON.CSS.aonTextRight());
 		tab.addRow(row, amount, COLS.AMO.getColWidth());
 		
-		if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+		if(salaryAmountMismatch(finance)) {
+
 			issueDate.addStyleName(AON.CSS.aonColorOrange());
 			titular.addStyleName(AON.CSS.aonColorOrange());
 			amount.addStyleName(AON.CSS.aonColorOrange());
@@ -549,7 +556,7 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 			issueDate.setTitle(title);
 			titular.setTitle(title);
 			amount.setTitle(title);
-		} if(!finance.hasSalary()) {
+		} else if(missingSalary(finance)) {
 			issueDate.addStyleName(AON.CSS.aonColorRed());
 			titular.addStyleName(AON.CSS.aonColorRed());
 			amount.addStyleName(AON.CSS.aonColorRed());
@@ -564,19 +571,33 @@ public abstract class FBatchPaymentBatchedList extends AonCustomDockLayout {
 	}
 	
 	private boolean notValidAccountBic(Finance finance) {
-		return  (this.fbatch.getType() == (byte)9 || this.fbatch.getType() == (byte)10) && 
-				(AonStringUtils.isBlank(finance.getBankAccountSafeValue()) || !finance.getBankAccount().isValidBankAccount()|| AonStringUtils.isBlank(finance.getBic()));
+		return FBatchType.requiresBankAccount(this.fbatch.getType())
+				&& (AonStringUtils.isBlank(finance.getBankAccountSafeValue())
+					|| !finance.getBankAccount().isValidBankAccount()
+					|| AonStringUtils.isBlank(finance.getBic()));
 	}
 	
 	private boolean hasNegativeAmount(Finance finance) {
-		return  finance.getAmount() < 0.00;
+		// Mismo criterio que en la lista de disponibles: un cobro negativo es una devolución válida.
+		return !negativeCharge(finance) && finance.getAmount() < 0.00;
+	}
+	
+	private boolean negativeCharge(Finance finance) {
+		return !finance.isPayment() && finance.getAmount() < 0.00;
+	}
+
+	private boolean missingSalary(Finance finance) {
+		return FBatchType.PAYROLL_PAYMENT == this.fbatchType && !finance.hasSalary();
+	}
+
+	private boolean salaryAmountMismatch(Finance finance) {
+		return FBatchType.PAYROLL_PAYMENT == this.fbatchType
+				&& finance.hasSalary() && null != finance.getSalaryTotalLiquid()
+				&& (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid();
 	}
 	
 	private boolean isSelectable(Finance finance) {
-		return 
-				!(this.fbatch.getType() != (byte)0 && 
-					(AonStringUtils.isBlank(finance.getBankAccountSafeValue()) || !finance.getBankAccount().isValidBankAccount() || AonStringUtils.isBlank(finance.getBic())))
-				|| this.fbatch.getType() == (byte)0;
+		return !notValidAccountBic(finance);
 	}
 	
 	private void getEnterpriseBanks(Consumer<LinkedList<RegistryBank>> success) {

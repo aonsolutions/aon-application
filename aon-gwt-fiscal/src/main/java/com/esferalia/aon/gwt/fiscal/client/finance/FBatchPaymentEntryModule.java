@@ -16,11 +16,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.type.FBatchStatus;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -84,13 +84,13 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 	private boolean hasSaved;
 	
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 
 	// -------------------------------------------------------------------
 	// --------------------- ON MODULE LOAD ----------------------------
 	// -------------------------------------------------------------------
 
-	public FBatchPaymentEntryModule(FBATCH_TYPE fbatchType) {
+	public FBatchPaymentEntryModule(FBatchType fbatchType) {
 		this.fbatchType = fbatchType;
 	}
 
@@ -288,7 +288,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	}
 	
 	private void showHideToolbarButtons(){
-		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && this.fBatch.getType() != (byte)0 && this.fBatch.getRbank() != null);
+		sepaButton.setVisible(this.fBatch.getRattach() == null && !this.fBatch.getBatchDetails().isEmpty() && FBatchType.isSepaFile(this.fBatch.getType()) && this.fBatch.getRbank() != null);
 		downloadButton.setVisible(this.fBatch.getRattach() != null);
 		deleteFileButton.setVisible(this.fBatch.getRattach() != null);
 		excelButton.setVisible(this.fBatch.getRattach() != null);
@@ -297,10 +297,12 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	}
 	
 	private String getToolbarTitle() {
-		if(FBATCH_TYPE.PAYROLL_PAYMENT == this.fbatchType)
+		if(FBatchType.PAYROLL_PAYMENT == this.fbatchType)
 			return "Remesa Transferencias N\u00f3minas";
-		else if(FBATCH_TYPE.PAYMENT == this.fbatchType)
+		else if(FBatchType.PAYMENT == this.fbatchType)
 			return "Remesa Pagos";
+		else if(FBatchType.CHARGE == this.fbatchType)
+			return "Remesa Cobros";
 		else
 			return "Tipo Remesa Desconocido";
 	}
@@ -393,7 +395,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 						fBatchPaymentAviableList.setFBatch(fBatch);
 						fBatchPaymentBatchedList.setFBatch(fBatch);
 						
-						sepaButton.setVisible(!savedFbatch.getBatchDetails().isEmpty() && fBatch.getRbank() != null);
+						showHideToolbarButtons();
 					}
 
 					@Override

@@ -626,6 +626,11 @@ export const FBATCH_PAYMENT_TREASURY = {
   entryPoint: 'FBatchPaymentTreasury'
 };
 
+export const FBATCH_CHARGE_TREASURY = {
+  module: GWT_FISCAL,
+  entryPoint: 'FBatchChargeTreasury'
+};
+
 export const FEE_PROJECTION = {
   module: GWT_AIO,
   entryPoint: 'fee',

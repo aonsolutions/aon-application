@@ -51,6 +51,15 @@ public class FinanceUtils {
 						.and(p.getAmountProperty().lt(0.00))
 					)
 			);
+		} else if (null != params.getCollection() && params.getCollection()) {
+			// Remesas de cobro: vencimiento de cobro con importe positivo.
+			// La forma de pago la impone el tipo de fichero y se aplica mas abajo,
+			// con params.getPayMethodType(), para no cablearla aqui.
+			prop = prop
+					.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )))
+					.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( false )))
+					.and(p.getAmountProperty().gt(0.00));
+	 
 		} else if (null != params.getCharge() && params.getCharge()) {
 			prop = prop
 					.and(p.getPayrollProperty().eq( AonEnumUtils.getByte( false )))
