@@ -1,7 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { CONSTANT, MSG, EVENT } from "../../../environments/environments.js";
 import * as GWT from "../../../gwt/gwt.js";
-import * as LS from "../../../services/localStorageService.js";
 import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
 import {
   getDomainUserRoles,
@@ -242,12 +241,8 @@ export class AonComunicaUtils extends AonElement {
           aonView = new AonAltaDirecta();
           break;
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
-          if(LS.isNewTheme()){
-            aonView = new AonCompanyCostsListNew();
-			aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
-          } else {
-            aonView = new AonCompanyCostsList();
-          }
+          aonView = new AonCompanyCostsListNew();
+          aonView.addEventListener(EVENT.BUILD, paintCompanyCostPieChart );
           break;
       }
       if (aonView) {
@@ -256,7 +251,7 @@ export class AonComunicaUtils extends AonElement {
         if (data) aonView.data = data;
         this.getApplication().setContent(aonView);
         
-        if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
+        if(view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
           /*await paintCompanyCostPieChart();*/
         }
       }
@@ -269,18 +264,14 @@ export class AonComunicaUtils extends AonElement {
       let aonView = undefined;
       switch (view) {
         case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
-          if(LS.isNewTheme()){
-            aonView = new AonCompanyCostsListNew(cardFilter);
-          } else {
-            aonView = new AonCompanyCostsList();
-          }
+          aonView = new AonCompanyCostsListNew(cardFilter);
           break;
       }
       if (aonView) {
         aonView.id = view;
         this.getApplication().setContent(aonView);
         
-        if(LS.isNewTheme() && view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
+        if(view === PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST){
           await paintCompanyCostPieChart();
         }
       }

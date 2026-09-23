@@ -91,7 +91,7 @@ export class AonTimecontrol extends AonElement {
 
 		this.applicationEl.addSidenavOptions3(data);
 
-		if (this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
+		if (this.getDur().isTimecontrol() && !this.isMobile()) {
 
 			getTimeControl()
 				.then(r => {

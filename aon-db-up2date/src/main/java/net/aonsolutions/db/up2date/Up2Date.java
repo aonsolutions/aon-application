@@ -33,6 +33,7 @@ import net.aonsolutions.db.up2date.security.MigrateApp23To9;
 import net.aonsolutions.db.up2date.security.UserScopeAlterStartEndAuditory;
 import net.aonsolutions.db.up2date.tgss.DropNoJustifiedTGSSFix;
 import net.aonsolutions.db.up2date.timecontrol.CalendarFixNulls;
+import net.aonsolutions.db.up2date.warehouse.CarrierPackingAddQrColumn;
 
 public class Up2Date {
 
@@ -641,15 +642,16 @@ public class Up2Date {
 			// FixPreavisoQuote.FIXPREAVISOQUOTE,
 			// DropNoJustifiedTGSSFix.DROPNOJUSTIFIEDTGSSFIX,
 			InvoiceAttach2InvoiceDoc.INVOICEATTACH2INVOICEDOC,
+			//TODO CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN,
 			
 
 
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-//			CalendarFixNulls.CALENDAR_FIX_NULLS,
-//			InsertDefaultScope.INSERT_DEAFULT_SCOPE,
-//			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+      // CalendarFixNulls.CALENDAR_FIX_NULLS,
+      //	 InsertDefaultScope.INSERT_DEAFULT_SCOPE,
+      //	 DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
 			// NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
@@ -689,6 +691,9 @@ public class Up2Date {
 			
 			// INVOICE REFACTOR
 			//TODO: InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
+			//TODO: InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
+	
+			//TODO: CarrierPackingAddQrColumn.CARRIER_PACKING_ADD_QR_COLUMN
 	};
 
 	// ------------------------------------------------------------------------

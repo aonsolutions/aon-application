@@ -277,6 +277,7 @@ export const COMMISSION_BANDS = 'Provisionsstaffel-Definition';
 export const COMMISSION_CALCULATION = 'Provisionsberechnung';
 export const COMMISSION_CONTROL = 'Provisionskontrolle';
 export const COMMISSION_TYPES = 'Provisionstypen';
+export const CHARGE_BATCH_NEW = 'Neue Einnahmenverarbeitung';
 export const CHARGES_MANAGEMENT = 'Einzugsverwaltung';
 export const CHARGES_PAYMENTS_PORTFOLIO = 'Zahlungsportfolio';
 export const COMMUNICATION_CENTER = 'Kommunikationszentrum';

@@ -15,7 +15,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod347Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -127,25 +126,15 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		// Pais / Clave
 		
 		FlexTable tab2 = new FlexTable();
-//		tab2.getColumnFormatter().setWidth(0, "110px");
 		tab2.getColumnFormatter().setWidth(0, "110px");
 		tab2.getColumnFormatter().setWidth(1, "auto");
 		
 		tab2.setStyleName(AON.CSS.aonWidthAll());
 		tab2.addStyleName(AON.CSS.aonNowrap());
 		
-//		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.province()));
 		tab2.setWidget(0, 0, new Model347SmallerLabel(AON.MSG.country()));
 		tab2.setWidget(0, 1, new Model347SmallerLabel(AON.MSG.key()));
 
-//		ProvinceListBox province = new ProvinceListBox();
-//		province.setValue(declared.getProvince());
-//		province.addChangeHandler(event -> {
-//			declared.setProvince( Province.safeValueOf(province.getSelectedIndex()) );				                                    
-//			callback.onValueChanged(declared);
-//		});
-//		tab2.setWidget(1, 0, province);
-				
 		CountryListBox country = new CountryListBox();
 		country.setWidth(WIDTH_120PX);
 		country.setValue(declared.getCountry());
@@ -168,32 +157,12 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		// igic de caja / isp / exenta
 		
 		FlexTable tab3 = new FlexTable();
-//		tab3.getColumnFormatter().setWidth(0, "90px");       // Seguro
-//		tab3.getColumnFormatter().setWidth(1, WIDTH_120PX);  // Arrendamiento
 		tab3.getColumnFormatter().setWidth(0, WIDTH_120PX);  // IGIC caja
 		tab3.getColumnFormatter().setWidth(1, "80px");		 // ISP
 		tab3.getColumnFormatter().setWidth(2, "auto");		 // Exenta
 		
 		tab3.setStyleName(AON.CSS.aonWidthAll());
 		tab3.addStyleName(AON.CSS.aonNowrap());
-		
-//		CheckBox insurance = new CheckBox("Op. seguro");
-//		insurance.setTitle("Operaci\u00F3n de seguro");
-//		insurance.setValue(declared.isInsuranceOperation());
-//		insurance.addClickHandler(event -> {
-//			declared.setInsuranceOperation(insurance.getValue());
-//			callback.onValueChanged(declared);				
-//		});   
-//		tab3.setWidget(0, 0, insurance);
-		
-//		CheckBox rental = new CheckBox("Arr. local negocio");
-//		rental.setTitle("Arrendamiento de local de negocio");
-//		rental.setValue(declared.isBusinessPremiseRental());
-//		rental.addClickHandler(event -> {
-//			declared.setBusinessPremiseRental(rental.getValue());
-//			callback.onValueChanged(declared);				
-//		});   
-//		tab3.setWidget(0, 1, rental);
 		
 		accrual.setText("Op. IGIC de caja");
 		accrual.setTitle("Operaci\u00F3n IGIC criterio de caja");		
@@ -377,21 +346,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		
 		AonTableButton button = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button.setTabIndex(-2); // NO FOCUS
-		button.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN, new AsyncCallback<String>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					cbk.showError(AON.MSG.errorMessage());
-				}
-
-				@Override
-				public void onSuccess(String result) {
-					cbk.showInfoPanel(result);
-				}
-		
-			}
-		));
+		button.addClickHandler(event -> cbk.showInvoiceVatBreakdownInfo(button, mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN));
 		
 		tab5.setWidget(2, 5, button);
 		
@@ -482,21 +437,7 @@ public class Model3472025DeclaredPanelCanarias extends SimpleLayoutPanel impleme
 		
 		AonTableButton button1 = new AonTableButton("Ver desglose en facturas", AON.CSS.aonIconData());
 		button1.setTabIndex(-2); // NO FOCUS
-		button1.addClickHandler(event -> Model347.SERVICE.getInfo(cbk.getOptions().getOccam(),
-			mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN, new AsyncCallback<String>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					cbk.showError(AON.MSG.errorMessage());
-				}
-
-				@Override
-				public void onSuccess(String result) {
-					cbk.showInfoPanel(result);
-				}
-		
-			}
-		));
+		button1.addClickHandler(event -> cbk.showInvoiceVatBreakdownInfo(button, mod347, declared, FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN));
 		
 		tab51.setWidget(2, 5, button1);
 		

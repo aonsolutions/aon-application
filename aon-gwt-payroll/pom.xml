@@ -17,7 +17,6 @@
 				<groupId>net.ltgt.gwt.maven</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>HEAD-SNAPSHOT</version>
-				<extensions>true</extensions>
 				<configuration>
 					<skipModule>true</skipModule>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>

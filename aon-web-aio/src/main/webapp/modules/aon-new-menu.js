@@ -13,6 +13,7 @@ import * as HELP from './aon-site-help.js';
 import { AonMessenger } from '../modules/messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
+import { PDF_OR_IMAGE_ACCEPT } from "../services/imageFileService.js";
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { AonFiscal } from '../modules/fiscal/aon-fiscal.js';
 import { AonTimecontrol } from '../modules/timecontrol/aon-timecontrol.js';
@@ -45,6 +46,7 @@ import { AonParent } from "./aon-parent.js";
 
 import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
+import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
@@ -1166,7 +1168,7 @@ export class AonNewMenu extends AonElement {
 		if (CONTENT_INDEX.app === app.app)
 			return !this.getDur().isConsole();
 		if (MenuApps.TOOLS.app === app.app)
-			return this.isBeta() && !LS.isNewTheme();
+			return false;
 		if (MenuApps.OFFICE.app === app.app)
 			return this.getDur().isOffice();
 		if (MenuApps.MARKETING.app === app.app)
@@ -1267,7 +1269,7 @@ export class AonNewMenu extends AonElement {
 
 						let input = this.createElement(TAG.INPUT);
 						input.type = CONSTANT.FILE;
-						input.accept = this.accept;
+						input.accept = PDF_OR_IMAGE_ACCEPT;
 						input.className = CSS.AON_NONE;
 						input.multiple = 'multiple';
 
@@ -1508,9 +1510,6 @@ export class AonNewMenu extends AonElement {
 
 	getSupersetDashboard() {
 		return new Promise((resolve, reject) => {
-			reject("Superset dashboard disabled");
-		});
-/*		return new Promise((resolve, reject) => {
 			getApplicationParameters({ params: ['SUPERSET_DASHBOARD'] })
 				.then(appParams => {
 					if (appParams?.length > 0) {
@@ -1528,7 +1527,7 @@ export class AonNewMenu extends AonElement {
 				});
 			;
 		});
-*/	}
+	}
 
 	getApplicationsOptions() {
 

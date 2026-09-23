@@ -139,6 +139,8 @@ export const AON_INCOME = 'aon-income';
 export const AON_EXPENSE = 'aon-expense';
 export const AON_INCOME_LIST = 'aon-income-list';
 export const AON_EXPENSE_LIST = 'aon-expense-list';
+export const AON_MOBILE_INCOME_LIST = 'aon-mobile-income-list';
+export const AON_MOBILE_EXPENSE_LIST = 'aon-mobile-expense-list';
 export const AON_INVOICE_PANEL = 'aon-invoice-panel';
 export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
@@ -196,12 +198,15 @@ export const AON_PROJECT = 'aon-project';
 
 export const AON_PRODUCT_LIST = 'aon-product-list';
 export const AON_PRODUCT = 'aon-product';
+export const AON_MOBILE_PRODUCT = 'aon-mobile-product';
 
 export const AON_GROUP_LIST = 'aon-group-list';
 export const AON_WORKGROUP = 'aon-workgroup';
 
 export const AON_INVEST = 'aon-invest';
 export const AON_INVEST_LIST = 'aon-invest-list';
+export const AON_MOBILE_INVEST = 'aon-mobile-invest';
+export const AON_MOBILE_INVEST_LIST = 'aon-mobile-invest-list';
 
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';

@@ -17,11 +17,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.type.FBatchType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -100,7 +100,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	
 	private boolean fetchingData = false;
 	
-	private FBATCH_TYPE fbatchType;
+	private FBatchType fbatchType;
 	private FBatch fbatch;
 	
 	private static enum COLS {
@@ -171,7 +171,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	}
 	
 	// Constructor
-	public FBatchPaymentAviableList(FinanceModuleOptions options, FBATCH_TYPE fbatchType, FBatch fbatch) {
+	public FBatchPaymentAviableList(FinanceModuleOptions options, FBatchType fbatchType, FBatch fbatch) {
 		super("Vencimientos Disponibles");
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -299,7 +299,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	
 	private void checkAllAviable(boolean check) {
 		for (FinanceRow financeRow : aviableFinances.values()) {
-			if (!isSelectable(financeRow.getFinance()) || notValidAccountBic(financeRow.getFinance()) || hasNegativeAmount(financeRow.getFinance()))
+			if (!isCheckable(financeRow.getFinance()))
 				continue;
 			
 			financeRow.getFinance().setSelected(check);
@@ -351,6 +351,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	
 	public void setFBatch(FBatch fBatch) {
 		this.fbatch = fBatch;
+		searchPanel.setFBatch(fBatch);
 		
 		resetInfo();
 		
@@ -410,7 +411,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		
 		tab.createHeader();
 		
-		if(FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType))
+		if(FBatchType.PAYROLL_PAYMENT.equals(this.fbatchType))
 			for ( COLS_PAYROLL col : COLS_PAYROLL.values()) 
 				tab.addHeader(col.equals(COLS_PAYROLL.CHK) ? aviableCount : new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 		else
@@ -461,7 +462,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), selectedFinances.contains(finance.getId()) ? AON.CSS.aonIconChecked() : AON.CSS.aonIconCheck());
-		checkButton.setEnabled(!fbatch.isRecorded() && !fbatch.isGenerated() && !(notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary()));
+		checkButton.setEnabled(isCheckable(finance));
 		checkButton.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -486,7 +487,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 		Label issueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		tab.addRow(row, issueDate, COLS.FEC.getColWidth());
 		
-		if(!FBATCH_TYPE.PAYROLL_PAYMENT.equals(this.fbatchType)) {
+		if(!FBatchType.PAYROLL_PAYMENT.equals(this.fbatchType)) {
 			
 			Label invDate = new Label(null == finance.getInvoice() ? "" : AON.DATE_FORMAT.format(finance.getInvoice().getIssueDate()));
 			tab.addRow(row, invDate, COLS.FFT.getColWidth());
@@ -526,7 +527,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			amount.setTitle(infoTitle);
 		}
 		
-		if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+		if(salaryAmountMismatch(finance)) {
 			issueDate.addStyleName(AON.CSS.aonColorOrange());
 			titular.addStyleName(AON.CSS.aonColorOrange());
 			amount.addStyleName(AON.CSS.aonColorOrange());
@@ -535,7 +536,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			issueDate.setTitle(title);
 			titular.setTitle(title);
 			amount.setTitle(title);
-		} else if(!finance.hasSalary()) {
+		} else if(missingSalary(finance)) {
 			issueDate.addStyleName(AON.CSS.aonColorRed());
 			titular.addStyleName(AON.CSS.aonColorRed());
 			amount.addStyleName(AON.CSS.aonColorRed());
@@ -553,7 +554,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			amount.setTitle(infoTitle);
 		}
 
-		tab.addRow(row, notValidAccountBic(finance) || hasNegativeAmount(finance) || !finance.hasSalary() ? infoButton : new Label(), COLS.ACT.getColWidth());
+		tab.addRow(row, notValidAccountBic(finance) || hasNegativeAmount(finance) || missingSalary(finance) ? infoButton : new Label(), COLS.ACT.getColWidth());
 		
 		aviableFinances.put(finance.getId(), new FinanceRow(tab.getRowsCount(), finance));
 	}
@@ -566,9 +567,10 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 			: !finance.getBankAccount().isValidBankAccount()
 					? "La cuenta bacanria asociada al titular no es correcta"
 					: AonStringUtils.isBlank(finance.getBic()) ? "No existe BIC asociado al titular" : "";
-		else if (!finance.hasSalary()) return "Este vencimiento tiene asociada una nomina inexistente";
-		else if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid())
-			return "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
+		else if (missingSalary(finance)) 
+			return "Este vencimiento tiene asociada una nomina inexistente";
+		else if(salaryAmountMismatch(finance))
+ 			return "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
 		else if(finance.isReturned()) 
 			return "El vencimiento es una devoluci\u00f3n";
 		else
@@ -576,8 +578,30 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	}
 	
 	private boolean notValidAccountBic(Finance finance) {
-		return  (this.fbatch.getType() == (byte)9 || this.fbatch.getType() == (byte)10) && 
-				(AonStringUtils.isBlank(finance.getBankAccountSafeValue()) || !finance.getBankAccount().isValidBankAccount()|| AonStringUtils.isBlank(finance.getBic()));
+		return FBatchType.requiresBankAccount(this.fbatch.getType())
+				&& (AonStringUtils.isBlank(finance.getBankAccountSafeValue())
+					|| !finance.getBankAccount().isValidBankAccount()
+					|| AonStringUtils.isBlank(finance.getBic()));
+	}
+	
+	/** La nómina solo se exige en remesas de nóminas. */
+	private boolean missingSalary(Finance finance) {
+		return FBatchType.PAYROLL_PAYMENT == this.fbatchType && !finance.hasSalary();
+	}
+
+	private boolean salaryAmountMismatch(Finance finance) {
+		return FBatchType.PAYROLL_PAYMENT == this.fbatchType
+				&& finance.hasSalary() && null != finance.getSalaryTotalLiquid()
+				&& (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid();
+	}
+
+	/** Única condición de selección: la usan la casilla individual y "seleccionar todo". */
+	private boolean isCheckable(Finance finance) {
+		return !fbatch.isRecorded() && !fbatch.isGenerated()
+				&& isSelectable(finance)
+				&& !notValidAccountBic(finance)
+				&& !hasNegativeAmount(finance)
+				&& !missingSalary(finance);
 	}
 	
 	private boolean hasNegativeAmount(Finance finance) {
@@ -589,10 +613,7 @@ public abstract class FBatchPaymentAviableList extends AonCustomDockLayout {
 	}
 
 	private boolean isSelectable(Finance finance) {
-		return 
-				!(this.fbatch.getType() != (byte)0 && 
-					(AonStringUtils.isBlank(finance.getBankAccountSafeValue()) || !finance.getBankAccount().isValidBankAccount() || AonStringUtils.isBlank(finance.getBic())))
-				|| this.fbatch.getType() == (byte)0;
+		return !notValidAccountBic(finance);
 	}
 	
 	private void getList(Consumer<List<Finance>> success) {

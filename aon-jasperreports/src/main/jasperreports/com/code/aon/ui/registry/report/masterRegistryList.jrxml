@@ -5,6 +5,10 @@
 	<property name="ireport.zoom" value="1.274523270841428"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<!-- Conserva el texto completo en el elemento impreso aunque no quepa en el ancho de la celda,
+	     para que las exportaciones a Excel/CSV no pierdan digitos: el numero de caracteres que
+	     cabe depende de las metricas de la fuente del sistema y varia entre entornos. -->
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>

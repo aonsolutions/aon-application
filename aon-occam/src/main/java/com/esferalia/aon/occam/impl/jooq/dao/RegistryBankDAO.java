@@ -68,24 +68,24 @@ public class RegistryBankDAO {
 		
 		public static RegistryBank build(Record r) {
 			return new RegistryBank()
-					.setId(r.getValue(RBANK.ID))
-					.setRegistry(r.getValue(RBANK.REGISTRY))
-					.setDomain(r.getValue(RBANK.DOMAIN))
-					.setAccount(checkField(r, ACCOUNT.ID)
-					        ? FullAccountFiller.build(r)
-					        : new Account().setId(getValue(r, RBANK.ID)))
-					.setActive(getBoolean(r, RBANK.ACTIVE))
-					.setAlias(r.getValue(RBANK.ALIAS))
-					.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))
-					.setRequisition(r.getValue(RBANK.REQUISITION))
-					.setSepaMandateRef(r.getValue(RBANK.SEPA_MANDATE_REF))
-					.setBic(r.getValue(RBANK.BIC))
-					.setSuffix(r.getValue(RBANK.SUFIX))
-					.setBalance(r.getValue(RBANK.BALANCE))
-					.setAvailableBalance(r.getValue(RBANK.AVAILABLE_BALANCE))
-					.setBalanceDate(r.getValue(RBANK.BALANCE_DATE))
-					.setDirty(false)
-					.setRemoved(false);
+				.setId(r.getValue(RBANK.ID))
+				.setRegistry(r.getValue(RBANK.REGISTRY))
+				.setDomain(r.getValue(RBANK.DOMAIN))
+				.setAccount(checkField(r, ACCOUNT.ID)
+			        ? FullAccountFiller.build(r)
+			        : new Account().setId(getValue(r, RBANK.ACCOUNT)))
+				.setActive(getBoolean(r, RBANK.ACTIVE))
+				.setAlias(r.getValue(RBANK.ALIAS))
+				.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))
+				.setRequisition(r.getValue(RBANK.REQUISITION))
+				.setSepaMandateRef(r.getValue(RBANK.SEPA_MANDATE_REF))
+				.setBic(r.getValue(RBANK.BIC))
+				.setSuffix(r.getValue(RBANK.SUFIX))
+				.setBalance(r.getValue(RBANK.BALANCE))
+				.setAvailableBalance(r.getValue(RBANK.AVAILABLE_BALANCE))
+				.setBalanceDate(r.getValue(RBANK.BALANCE_DATE))
+				.setDirty(false)
+				.setRemoved(false);
 		}
 		
 	}
@@ -299,7 +299,7 @@ public class RegistryBankDAO {
 		return ctx.getDslContext().select(ACCOUNT.fields())
 			.from ( RBANK )
 			.join( ACCOUNT ).on(RBANK.ACCOUNT.eq(ACCOUNT.ID))
-			.where(RBANK.REGISTRY.eq(rbankId))
+			.where(RBANK.ID.eq(rbankId))
 			.fetch()
 			.stream()
 			.map(new FullAccountFiller () )
@@ -330,6 +330,7 @@ public class RegistryBankDAO {
 				.setAlias( rbank.getAlias() )
 				.setActive( true );
 			account = AccountDAO.save( ctx, account);
+			updateAccount(ctx, rbankId, account.getId());
 		}
 		return account;
 	}

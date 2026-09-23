@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.warehouse;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum CarrierPackingStatus {
 
 	PENDING("Pendiente", "orangered"),
@@ -35,5 +37,13 @@ public enum CarrierPackingStatus {
 		if (i == null) return null;
 		if (i < 0 || i >= CarrierPackingStatus.values().length) return null;
 		return CarrierPackingStatus.values()[i];
+	}
+	public static CarrierPackingStatus safeValueOf( String i ) {
+		if (AonStringUtils.isBlank(i)) return null;
+		for (CarrierPackingStatus value : values()) {
+			if (i.equalsIgnoreCase(value.name()))
+				return value;
+		}
+		return null;
 	}
 }

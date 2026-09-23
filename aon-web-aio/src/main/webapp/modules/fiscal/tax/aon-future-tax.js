@@ -10,7 +10,6 @@ import {
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
-import * as LS from "../../../services/localStorageService.js";
 import { FISCAL_VIEWS } from "../FiscalEnums.js";
 import { AonTaxDetail } from "./aon-tax-detail.js";
 
@@ -96,11 +95,7 @@ export class AonFutureTax extends AonElement {
       aonTable.addColumn("Hacienda", "", "hacienda", "10%");
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
-      if (LS.isNewTheme()) {
-        aonTable.addColumn("Estado", "string", "statusHtml", "12%");
-      } else {
-        aonTable.addColumn("Estado", "", "statusText", "12%");
-      }
+      aonTable.addColumn("Estado", "string", "statusHtml", "12%");
       aonTable.addColumn("Importe", "number", "resultFormat", "15%");
       aonTable.addColumn("", "icons", "icons", "100px");
 
@@ -156,7 +151,7 @@ export class AonFutureTax extends AonElement {
         resp.forEach((res, idx) => {
           let options = {
             iconHtmlCustom: /*html*/ `${res.lettersHtml}<span style="float: right;color: black;font-weight: 500; margin-top: 10px;">${res.resultFormat}</span>`,
-            title: `${res.model}`,
+            title: `${res.model || res.modelText}`,
             subtitle: `${res.periodText} - ${res.year}`,
           };
           aonTable.addLi(options, idx, () => this.openDialog(res));

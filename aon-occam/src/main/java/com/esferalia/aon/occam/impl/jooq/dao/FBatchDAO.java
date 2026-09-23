@@ -108,11 +108,16 @@ public class FBatchDAO {
 	
 	public static FBatch get(AONContext ctx, Integer fbatchId) {
 		ctx.checkRead();
+		if (fbatchId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("ID Remesa"));
 		Record record = ctx.getDslContext().select()
 			.from(FBATCH)
 			.leftOuterJoin(RBANK).on(RBANK.ID.eq(FBATCH.RBANK))
 			.where(FBATCH.ID.eq(fbatchId))
+			.and(FBATCH.DOMAIN.eq(ctx.getDomainId()))
 			.fetchOne();
+		
+		if (record == null)
+			throw new AonCoreException(AonError.NOT_EXIST.format("Remesa con id " + fbatchId));			
 		
 		FBatch fBatch = new FBatchFiller().apply(record);
 		
@@ -152,6 +157,13 @@ public class FBatchDAO {
 	
 	private static FBatch update(AONContext ctx, FBatch fbatch) {
 		ctx.checkWrite();
+		
+		// Estado real en BD: el cliente no decide si la remesa es modificable.
+		FBatch current = get(ctx, fbatch.getId());
+		if (current.isRecorded())
+			throw new AonCoreException(AonError.INVALID_DATA.format(
+					"No se puede modificar una remesa contabilizada"));
+		
 		ctx.getDslContext().update(FBATCH)
 			.set(FBATCH.DESCRIPTION, fbatch.getDescription())
 			.set(FBATCH.ISSUE_DATE, AonDateUtils.toSql(fbatch.getIssueDate()))
@@ -165,10 +177,16 @@ public class FBatchDAO {
 			.set(FBATCH.MODIFICATION_USER,ctx.getUser())
 			.set(FBATCH.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(FBATCH.ID.equal(fbatch.getId()))
+			.and(FBATCH.DOMAIN.eq(ctx.getDomainId()))
 			.execute();
 		ctx.log().debug("UPDATE FBATCH ID: " + fbatch.getId());
 		
-		fbatch.getBatchDetails().forEach(fBatchDetail -> FBatchDetailDAO.save(ctx, fBatchDetail));
+		fbatch.getBatchDetails().forEach(fBatchDetail -> {
+			if (fBatchDetail.getFbatch() != null && !fBatchDetail.getFbatch().equals(fbatch.getId()))
+				throw new AonCoreException(AonError.INVALID_DATA.format(
+						"Detalle de remesa que no pertenece a la remesa " + fbatch.getId()));
+			FBatchDetailDAO.save(ctx, fBatchDetail);
+		});
 		
 		return get(ctx, fbatch.getId());
 	}
@@ -183,19 +201,22 @@ public class FBatchDAO {
 		ctx.checkWrite();
 		FBatch fbatch = get(ctx, id);
 		
-		if (fbatch.isPending() || fbatch.isGenerated()) {
-			removeFBatchDetails(ctx, fbatch);
-			
-			if(fbatch.getRattach() != null)
-				removeRattach(ctx, fbatch.getRattach());
-			
-			ctx.getDslContext()
-				.delete(FBATCH)
-				.where(FBATCH.ID.equal(id))
-				.execute();
-			
-			ctx.log().debug("DELETE FINANCE ID " + fbatch.getId());
-		}
+		if (!fbatch.isPending() && !fbatch.isGenerated())
+			throw new AonCoreException(AonError.INVALID_DATA.format(
+					"Solo se pueden eliminar remesas pendientes o con fichero generado"));
+
+		removeFBatchDetails(ctx, fbatch);
+
+		if(fbatch.getRattach() != null)
+			removeRattach(ctx, fbatch.getRattach());
+
+		ctx.getDslContext()
+			.delete(FBATCH)
+			.where(FBATCH.ID.equal(id))
+			.and(FBATCH.DOMAIN.eq(ctx.getDomainId()))
+			.execute();
+
+		ctx.log().debug("DELETE FBATCH ID " + fbatch.getId());
 	}
 	
 	private static void removeRattach(CloseableAONContext ctx, Integer rattachId) {
@@ -244,10 +265,21 @@ public class FBatchDAO {
 	// ---------------------------------------------------------- ACCOUNTING
 	public static FBatch record(AONContext ctx, Integer fbatchId, Date paymentDate) {
 		ctx.checkWrite();
-		if (fbatchId == null) throw new AonCoreException(AonError.EMPTY_DATA.format("ID Remesa"));
+		
+		if (fbatchId == null) 
+			throw new AonCoreException(AonError.EMPTY_DATA.format("ID Remesa"));
+		
 		FBatch fbatch = get(ctx, fbatchId);
-		if (fbatch == null || fbatch.getId() == null) throw new AonCoreException(AonError.NOT_EXIST.format("Remesa con id " + fbatchId));
+		
+		if (fbatch == null || fbatch.getId() == null) 
+			throw new AonCoreException(AonError.NOT_EXIST.format("Remesa con id " + fbatchId));
+		if (fbatch.isRecorded())
+			throw new AonCoreException(AonError.INVALID_DATA.format("La remesa " + fbatchId + " ya está contabilizada"));
+		if (fbatch.getBatchDetails() == null || fbatch.getBatchDetails().isEmpty())
+			throw new AonCoreException(AonError.EMPTY_DATA.format("Vencimientos de la remesa " + fbatchId));
+		
 		FinanceEntryDAO.recordFBatch(ctx, fbatch, paymentDate);
+		
 		return get(ctx, fbatchId);
 	}
 

@@ -6,6 +6,8 @@ import '../../components/aon-application.js';
 import { AonMobileHome } from '../home/aon-mobile-home.js';
 import { AonMobileDesktop } from './aon-mobile-desktop.js';
 import * as UA  from '../../services/userAgentService.js';
+import { changeStatusBarColor } from '../../services/actionService.js';
+import { mobileAction } from '../../services/service.js';
 
 import * as LS from '../../services/localStorageService.js';
 
@@ -102,6 +104,8 @@ export class AonMobileParent extends AonElement {
 	}
 
    	build(companies) {
+  		this.statusBarOut();
+
   		let content = this.getElement(this.PARENT_CONTENT) || this.createElement(TAG.DIV);
 		content.id = this.PARENT_CONTENT;
 		this.clearElement(content);
@@ -118,6 +122,20 @@ export class AonMobileParent extends AonElement {
   		content.appendChild(ul);
   		this.appendChild(content);
   	}
+
+	// Si se muestra el listado de empresas es que no hay ninguna empresa
+	// seleccionada, la cabecera es blanca y hay que ajustar la status bar.
+	statusBarOut() {
+		let aonHeader = this.getElement('aonHeader');
+		if(aonHeader && aonHeader.companyOut) {
+			aonHeader.companyOut();
+		} else {
+			let ionicData = { action: "statusBar", statusBar: false};
+			if(UA.isAndroidApp()) {
+				changeStatusBarColor(ionicData, "#FFFFFF", false);
+			} else mobileAction(ionicData);
+		}
+	}
 
   	buildLi(company, color) {
   		let li = this.createElement(TAG.LI);

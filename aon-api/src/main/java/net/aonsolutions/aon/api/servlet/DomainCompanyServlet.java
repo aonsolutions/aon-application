@@ -7,8 +7,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -38,11 +41,13 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
+import com.esferalia.aon.occam.api.model.registry.SigIntegrityRules;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -69,6 +74,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String CUSTOMER_SUMMARY_ACTIVITY = "/customer-summary-activity/";
 	public static final String SYNC_AON_CUSTOMER = "/sync-aon-customer/";
 	public static final String AON_CUSTOMER_DOMAIN = "/aon-customer-domain/:domainName";
+	public static final String SIG_INTEGRITY = "/sig-integrity/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -95,6 +101,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
+					.addRoute(SIG_INTEGRITY, DomainCompanyServlet::getSigIntegrity)
 					.addRoute(AON_CUSTOMER_DOMAIN, DomainCompanyServlet::getAonCustomerDomain)
 					.addRoute(CHECK_ITEMS, DomainCompanyServlet::getCheckedItems)
 					.addRoute(SYNC_AON_CUSTOMER, DomainCompanyServlet::getAviableSyncDomains)
@@ -203,6 +210,160 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getNameProperty().like("%" + api.getData().opt(IJsonNames.DOCUMENT) + "%").or(f.getDescriptionProperty().like("%" + api.getData().opt(IJsonNames.DOCUMENT) + "%")));
 		}
 		return filter;
+	}
+	
+	/**
+	 * Diagnostica pares (cliente, dominio) para la pestania de integridad SIG.
+	 *
+	 * Entrada: { "rows": [ {customer, domainId, domainName, schema, status, expirationDate}, ... ] }
+	 * expirationDate en milisegundos, o ausente/null.
+	 *
+	 * El cliente vive en el schema del despacho y este servlet no lo ve, por eso
+	 * su estado viaja en la peticion. Los dominios se resuelven agrupados por
+	 * schema: una conexion por schema distinto, no por fila.
+	 */
+	private static JSONArray getSigIntegrity(AonApiData api) {
+
+	    JSONArray input = api.getData().optJSONArray("rows");
+	    JSONArray out = new JSONArray();
+
+	    if (null == input || input.isEmpty())
+	        return out;
+
+	    List<SigIntegrityRequest> rows = new ArrayList<>();
+	    for (int i = 0; i < input.length(); i++)
+	        rows.add(SigIntegrityRequest.fromJSON(input.getJSONObject(i)));
+
+	    Map<String, Domain> bySchemaAndId = new HashMap<>();
+
+	    rows.stream()
+	        .filter(r -> AonStringUtils.isNotBlank(r.schema) && null != r.domainId)
+	        .collect(Collectors.groupingBy(r -> r.schema))
+	        .forEach((schema, list) -> {
+	            List<Integer> ids = list.stream().map(r -> r.domainId).distinct().collect(Collectors.toList());
+	            try {
+	                AON_SOLUTIONS.getDomainsBySchema(schema, ids)
+	                    .forEach(d -> bySchemaAndId.put(schema + "|" + d.getId(), d));
+	            } catch (Exception e) {
+	                LOGGER.warning("SIG integridad: fallo leyendo el schema " + schema + " -> " + e.getMessage());
+	            }
+	        });
+
+	    // Fallback para raddinfo sin schema: getDomain(name) recorre todos los
+	    // schemas, asi que se cachea por nombre para no repetirlo dentro del lote.
+	    Map<String, Domain> byName = new HashMap<>();
+
+	    for (SigIntegrityRequest r : rows) {
+	        Domain domain = null;
+
+	        if (AonStringUtils.isNotBlank(r.schema) && null != r.domainId)
+	            domain = bySchemaAndId.get(r.schema + "|" + r.domainId);
+
+	        if (null == domain && AonStringUtils.isNotBlank(r.domainName)) {
+	            if (byName.containsKey(r.domainName))
+	                domain = byName.get(r.domainName);
+	            else {
+	                domain = AON_SOLUTIONS.getDomain(r.domainName);
+	                byName.put(r.domainName, domain);
+	            }
+	        }
+
+	        out.put(diagnose(r, domain));
+	    }
+
+	    return out;
+	}
+
+	private static JSONObject diagnose(SigIntegrityRequest r, Domain domain) {
+
+	    JSONObject o = new JSONObject()
+	            .put("customer", r.customerId)
+	            .put("domainId", null == r.domainId ? JSONObject.NULL : r.domainId)
+	            .put("domainName", AonStringUtils.isBlank(r.domainName) ? JSONObject.NULL : r.domainName)
+	            .put("schema", AonStringUtils.isBlank(r.schema) ? JSONObject.NULL : r.schema);
+
+	    if (null == domain || null == domain.getId()) {
+	        return o.put("found", false)
+	                .put("aligned", false)
+	                .put("domainNeedsUpdate", false)
+	                .put("customerNeedsUpdate", false)
+	                .put("diagnosis", "No se ha encontrado el dominio vinculado");
+	    }
+
+	    Date    targetDate   = SigIntegrityRules.targetDate(r.status, r.expirationDate, domain.getExpirationDate());
+	    boolean targetActive = SigIntegrityRules.targetDomainActive(r.status);
+
+	    boolean activeDiffers = domain.isActive() != targetActive;
+	    boolean domainDateDiffers = !SigIntegrityRules.sameDay(domain.getExpirationDate(), targetDate);
+	    boolean customerNeedsUpdate = !SigIntegrityRules.sameDay(r.expirationDate, targetDate);
+	    boolean domainNeedsUpdate = activeDiffers || domainDateDiffers;
+
+	    return o.put("found", true)
+	            .put("domainActive", domain.isActive())
+	            .put("domainExpirationDate", millis(domain.getExpirationDate()))
+	            .put("domainAonCustomer", null == domain.getAonCustomer() ? JSONObject.NULL : domain.getAonCustomer())
+	            .put("domainAccessible", SigIntegrityRules.domainAccessible(domain))
+	            .put("targetDomainActive", targetActive)
+	            .put("targetDate", millis(targetDate))
+	            .put("domainNeedsUpdate", domainNeedsUpdate)
+	            .put("customerNeedsUpdate", customerNeedsUpdate)
+	            .put("aligned", !domainNeedsUpdate && !customerNeedsUpdate)
+	            // informativo: pertenece a "Vincular", no bloquea ni desalinea
+	            .put("aonCustomerMismatch", !AonNumberUtils.equals(domain.getAonCustomer(), r.customerId))
+	            .put("diagnosis", describe(r, targetActive, targetDate,
+	                    activeDiffers, domainDateDiffers, customerNeedsUpdate));
+	}
+
+	private static String describe(SigIntegrityRequest r, boolean targetActive, Date targetDate,
+	        boolean activeDiffers, boolean domainDateDiffers, boolean customerNeedsUpdate) {
+
+	    List<String> parts = new ArrayList<>();
+
+	    if (activeDiffers)
+	        parts.add(targetActive ? "encender el dominio" : "apagar el dominio");
+
+	    if (domainDateDiffers)
+	        parts.add(null == targetDate
+	                ? "quitar la fecha de expiraci\u00f3n del dominio"
+	                : "fijar la fecha del dominio a " + AonDateUtils.simpleFormat(targetDate));
+
+	    if (customerNeedsUpdate)
+	        parts.add(null == targetDate
+	                ? "quitar la fecha de expiraci\u00f3n del cliente"
+	                : "fijar la fecha del cliente a " + AonDateUtils.simpleFormat(targetDate));
+
+	    String status = null == r.status ? RegistryStatus.ACTIVE.getDescription() : r.status.getDescription();
+
+	    return parts.isEmpty()
+	            ? "Alineado"
+	            : "Cliente " + status + ": " + String.join(", ", parts);
+	}
+
+	private static Object millis(Date date) {
+	    return null == date ? JSONObject.NULL : Long.valueOf(date.getTime());
+	}
+
+	/** Fila de entrada del diagnostico. */
+	private static class SigIntegrityRequest {
+
+	    Integer customerId;
+	    Integer domainId;
+	    String  domainName;
+	    String  schema;
+	    RegistryStatus status;
+	    Date    expirationDate;
+
+	    static SigIntegrityRequest fromJSON(JSONObject json) {
+	        SigIntegrityRequest r = new SigIntegrityRequest();
+	        r.customerId     = json.optIntegerObject("customer", null);
+	        r.domainId       = json.optIntegerObject("domainId", null);
+	        r.domainName     = json.optString("domainName", null);
+	        r.schema         = json.optString("schema", null);
+	        r.status         = RegistryStatus.safeValueOf(json.optString("status", null));
+	        r.expirationDate = json.isNull("expirationDate")
+	                ? null : new Date(json.optLong("expirationDate"));
+	        return r;
+	    }
 	}
 	
 	private static JSONArray getCustomerDomains(AonApiData api) {

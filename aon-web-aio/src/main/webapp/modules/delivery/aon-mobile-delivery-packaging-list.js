@@ -21,7 +21,8 @@ export class AonMobileDeliveryPackagingList extends AonMobileList {
     }
 
     initialize() {
-
+        this.id = this.id || 'aonMobileDeliveryPackagingList';
+        super.initialize();
     }
 
     init() {

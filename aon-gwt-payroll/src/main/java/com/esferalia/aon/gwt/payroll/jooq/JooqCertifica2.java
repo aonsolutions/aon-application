@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -49,8 +48,6 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info.Certifica2Period;
 import com.esferalia.aon.jooq.tables.records.Certifica2BatchRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
-import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -97,6 +94,7 @@ public class JooqCertifica2 {
 
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat monthKeyFormat = new SimpleDateFormat("yyyyMM");
 	
 	private static SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
@@ -688,10 +686,11 @@ public class JooqCertifica2 {
 			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Date seniorityDate, Integer contractId) {
 
 		List<Certifica2Period> certifica2List = new ArrayList<>();
-		Integer maxDays = 0;
-		
-		// Start from settle days, cause is 180 days INCLUDING holidays
-		maxDays += certifica2Info.getSettleQuoteDays();
+
+		// Los dias de vacaciones no disfrutadas ya consumen cupo (son posteriores a la baja)
+		Integer maxDays = certifica2Info.getSettleQuoteDays();
+
+		boolean generalRegime = !AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163");
 
 		java.util.Date filterDateJava = DateUtils.copyDateOnly(certifica2Info.getEndDate());
 		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
@@ -700,14 +699,23 @@ public class JooqCertifica2 {
 		if (null != seniorityDate)
 			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
 
-		// TODO: ¿que casos hay que hacerlo por ssNumber en vez de contractId?
-		
+		Date windowEndDate = parseDateToSQL(certifica2Info.getEndDate());
+
+		// Bases adicionales (atrasos + preaviso) indexadas por anio-mes.
+		// Solo regimen general de momento.
+		Map<String, Double[]> extraBases = generalRegime
+				? getExtraBases(dslContext, contractId, filterDate, windowEndDate)
+				: new HashMap<>();
+
+		// Un mes solo puede recibir la base extra una vez, aunque tenga varias nominas
+		List<String> consumedMonths = new ArrayList<>();
+
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(certifica2Info.getSSNumber()))
 				.and(SALARY.CCC.eq(certifica2Info.getCcc()))
 				.and(SALARY.TYPE.eq(SalaryType.SALARY.value()))
 				.and(SALARY.END_DATE.ge(filterDate))
-				.and(SALARY.END_DATE.le(parseDateToSQL(certifica2Info.getEndDate())))
+				.and(SALARY.END_DATE.le(windowEndDate))
 				.and(SALARY.CONTRACT.eq(contractId))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
@@ -716,7 +724,7 @@ public class JooqCertifica2 {
 		Integer contractDuration = 0;
 
 		for (Record salary : salariesRecords) {
-			if (maxDays > 180)
+			if (maxDays >= 180)
 				break;
 
 			Integer salaryId = salary.get(SALARY.ID);
@@ -725,8 +733,9 @@ public class JooqCertifica2 {
 			Date salaryEndDate = salary.get(SALARY.END_DATE);
 
 			int salaryDaysBetween = 0;
-			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
-				if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
+			if (!generalRegime) {
+				if (AonStringUtils.isNotBlank(certifica2Info.getMdCtz())
+						&& AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
 					salaryDaysBetween = getAgrarianDays(dslContext, salaryId);
 					contractDuration += salaryDaysBetween;
 				} else {
@@ -735,40 +744,22 @@ public class JooqCertifica2 {
 				}
 			} else
 				salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
-			
+
 			Double baseCGC = salary.get(SALARY.CGC_BASE);
 			Double baseCGP = salary.get(SALARY.CGP_BASE);
-			
-			baseCGC += checkCGCDelaySalary(dslContext, salaryStartDate, contractId);
-			baseCGP += checkCGPDelaySalary(dslContext, salaryStartDate, contractId);
 
-			// Initialize Certifica2Info
-			Certifica2Period certifica2Period = null;
-
-			// Ya has cumplido los 180 dias de registro
-			if (maxDays + salaryDaysBetween > 180) {
-				int restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
-				if(0 == restDays) continue;
-
-				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), restDays,
-						baseCGC / 30 * restDays, baseCGP / 30 * restDays);
-				
-				certifica2Period.setDate(salaryStartDate);
-
-				maxDays += salaryDaysBetween;
-
-			} else {
-				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), salaryDaysBetween, baseCGC, baseCGP);
-				
-				certifica2Period.setDate(salaryStartDate);
-
-				maxDays += salaryDaysBetween;
+			// Atrasos y preaviso: se suman INTEGROS al mes, aunque la nomina sea parcial
+			String monthKey = monthKeyFormat.format(salaryStartDate);
+			if (!consumedMonths.contains(monthKey)) {
+				Double[] extra = extraBases.get(monthKey);
+				if (null != extra) {
+					baseCGC += extra[0];
+					baseCGP += extra[1];
+					consumedMonths.add(monthKey);
+				}
 			}
 
-			certifica2List.add(certifica2Period);
-
+			maxDays = addCertifica2Period(certifica2List, maxDays, salaryStartDate, salaryDaysBetween, baseCGC, baseCGP);
 		}
 
 		List<Map<String, String>> quoteDataList = new ArrayList<>();
@@ -783,9 +774,9 @@ public class JooqCertifica2 {
 			quoteData.put("daysCtz", certifica2.getQuotedDays() + "");
 			quoteData.put("bccc", round(certifica2.getBase_cgc(), 2) + "");
 			quoteData.put("bcd", round(certifica2.getBase_unemployment(), 2) + "");
-			
-			if(!checkQuoteData(quoteDataList, quoteData)) quoteDataList.add(quoteData);
-			
+
+			if (!checkQuoteData(quoteDataList, quoteData))
+				quoteDataList.add(quoteData);
 		}
 
 		// Contract duration for agrarian only
@@ -794,54 +785,190 @@ public class JooqCertifica2 {
 
 		certifica2Info.setQuoteDataList(quoteDataList);
 	}
+	
+	/**
+	 * Bases adicionales que hay que sumar a las de la nomina, indexadas por anio-mes (yyyyMM):
+	 *   - Atrasos (SalaryType.DELAY) cuyo charge_date cae dentro de la ventana de 180 dias.
+	 *   - Preaviso: los BASE_CGC/BASE_CGP del finiquito contenidos en el rango de DIAS_PREAVISO.
+	 * Ninguna de las dos aporta dias cotizados, solo base.
+	 */
+	private static Map<String, Double[]> getExtraBases(DSLContext dslContext, Integer contractId,
+			Date windowStart, Date windowEnd) {
 
-	private static Double checkCGCDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
-		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
-			.where(SALARY.TYPE.eq(SalaryType.DELAY.value()))
-			.and(SALARY.CONTRACT.eq(contractId))
-			.and(SALARY.START_DATE.le(salaryStartDate))
-			.and(SALARY.END_DATE.ge(salaryStartDate))
-			.fetch();
-		
-		if(delaySalaries.isEmpty()) return 0.00;
-		
-		Result<SalaryDataRecord> delaySalaryDatas = dslContext.selectFrom(SALARY_DATA)
-			.where(SALARY_DATA.SALARY.in(delaySalaries.stream().map(delaySalary -> delaySalary.getId()).collect(Collectors.toList())))
-			.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
-			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
-			.fetch();
-		
-		if(delaySalaryDatas.isEmpty()) return 0.00;
-		
-		double cgcDelaySum = delaySalaryDatas.stream().mapToDouble(delaySalaryData -> Double.parseDouble(delaySalaryData.getExpression())).sum();
-		
-		return cgcDelaySum;
+		Map<String, Double[]> extraBases = new HashMap<>();
+
+		// ---------------- Atrasos ----------------
+		List<Integer> delayIds = dslContext.select(SALARY.ID).from(SALARY)
+				.where(SALARY.TYPE.eq(SalaryType.DELAY.value()))
+				.and(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.CHARGE_DATE.ge(windowStart))
+				.and(SALARY.CHARGE_DATE.le(windowEnd))
+				.fetch(SALARY.ID);
+
+		if (!delayIds.isEmpty()) {
+			Result<Record> delayBaseRecords = dslContext.select().from(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.in(delayIds))
+					.and(SALARY_DATA.NAME.in("BASE_CGC", "BASE_CGP"))
+					.fetch();
+
+			for (Record delayBaseRecord : delayBaseRecords)
+				addExtraBase(extraBases, delayBaseRecord);
+		}
+
+		// ---------------- Preaviso ----------------
+		Result<Record> settlementRecords = getSettlementRecords(dslContext, contractId);
+
+		if (settlementRecords.isEmpty())
+			return extraBases;
+
+		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
+
+		Result<Record> preavisoRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(settlementId))
+				.and(SALARY_DATA.NAME.eq("DIAS_PREAVISO")).fetch();
+
+		if (preavisoRecords.isEmpty())
+			return extraBases;
+
+		// Los tramos de vacaciones no disfrutadas caen dentro del rango de preaviso:
+		// hay que excluirlos o se contarian dos veces (ya van en la casilla de vacaciones cotizadas)
+		List<String> holidayRanges = new ArrayList<>();
+
+		Result<Record> holidaysRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(settlementId))
+				.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).fetch();
+
+		for (Record holidaysRecord : holidaysRecords)
+			holidayRanges.add(getRangeKey(holidaysRecord.get(SALARY_DATA.START_DATE),
+					holidaysRecord.get(SALARY_DATA.END_DATE)));
+
+		for (Record preavisoRecord : preavisoRecords) {
+			Date preavisoStart = preavisoRecord.get(SALARY_DATA.START_DATE);
+			Date preavisoEnd = preavisoRecord.get(SALARY_DATA.END_DATE);
+
+			if (null == preavisoStart || null == preavisoEnd)
+				continue;
+
+			Result<Record> preavisoBaseRecords = dslContext.select().from(SALARY_DATA)
+					.where(SALARY_DATA.SALARY.eq(settlementId))
+					.and(SALARY_DATA.NAME.in("BASE_CGC", "BASE_CGP"))
+					.and(SALARY_DATA.START_DATE.ge(preavisoStart))
+					.and(SALARY_DATA.END_DATE.le(preavisoEnd))
+					.fetch();
+
+			for (Record preavisoBaseRecord : preavisoBaseRecords) {
+				if (holidayRanges.contains(getRangeKey(preavisoBaseRecord.get(SALARY_DATA.START_DATE),
+						preavisoBaseRecord.get(SALARY_DATA.END_DATE))))
+					continue;
+
+				addExtraBase(extraBases, preavisoBaseRecord);
+			}
+		}
+
+		return extraBases;
 	}
 
-	private static Double checkCGPDelaySalary(DSLContext dslContext, Date salaryStartDate, Integer contractId) {
-		Result<SalaryRecord> delaySalaries = dslContext.selectFrom(SALARY)
-			.where(SALARY.TYPE.eq(SalaryType.DELAY.value()))
-			.and(SALARY.CONTRACT.eq(contractId))
-			.and(SALARY.START_DATE.le(salaryStartDate))
-			.and(SALARY.END_DATE.ge(salaryStartDate))
-			.fetch();
-		
-		if(delaySalaries.isEmpty()) return 0.00;
-		
-		Result<SalaryDataRecord> delaySalaryDatas = dslContext.selectFrom(SALARY_DATA)
-			.where(SALARY_DATA.SALARY.in(delaySalaries.stream().map(delaySalary -> delaySalary.getId()).collect(Collectors.toList())))
-			.and(SALARY_DATA.NAME.eq("BASE_CGP"))
-			.and(SALARY_DATA.START_DATE.le(salaryStartDate))
-			.and(SALARY_DATA.END_DATE.ge(salaryStartDate))
-			.fetch();
-		
-		if(delaySalaryDatas.isEmpty()) return 0.00;
-		
-		double cgcDelaySum = delaySalaryDatas.stream().mapToDouble(delaySalaryData -> Double.parseDouble(delaySalaryData.getExpression())).sum();
-		
-		return cgcDelaySum;
-		
+	private static void addExtraBase(Map<String, Double[]> extraBases, Record baseRecord) {
+		Date baseStartDate = baseRecord.get(SALARY_DATA.START_DATE);
+
+		if (null == baseStartDate)
+			return;
+
+		String monthKey = monthKeyFormat.format(baseStartDate);
+
+		Double[] bases = extraBases.get(monthKey);
+		if (null == bases) {
+			bases = new Double[] { 0.00, 0.00 };
+			extraBases.put(monthKey, bases);
+		}
+
+		Double value = parseDouble(baseRecord.get(SALARY_DATA.EXPRESSION));
+
+		if (AonStringUtils.equalsIgnoreCase(baseRecord.get(SALARY_DATA.NAME), "BASE_CGC"))
+			bases[0] += value;
+		else
+			bases[1] += value;
+	}
+
+	/**
+	 * Anade un tramo al listado aplicando el prorrateo si se supera el tope de 180 dias.
+	 */
+	private static Integer addCertifica2Period(List<Certifica2Period> certifica2List, Integer maxDays,
+			Date periodDate, int days, Double baseCGC, Double baseCGP) {
+
+		if (days <= 0)
+			return maxDays;
+
+		if (null == baseCGC) baseCGC = 0.00;
+		if (null == baseCGP) baseCGP = 0.00;
+
+		int quotedDays = days;
+		Double periodCGC = baseCGC;
+		Double periodCGP = baseCGP;
+
+		if (maxDays + days > 180) {
+			quotedDays = days - (maxDays + days - 180);
+
+			if (quotedDays <= 0)
+				return maxDays + days;
+
+			periodCGC = baseCGC / 30 * quotedDays;
+			periodCGP = baseCGP / 30 * quotedDays;
+		}
+
+		Certifica2Period certifica2Period = new Certifica2Period(yearDateFormat.format(periodDate),
+				monthDateFormat.format(periodDate), quotedDays, periodCGC, periodCGP);
+		certifica2Period.setDate(periodDate);
+
+		certifica2List.add(certifica2Period);
+
+		return maxDays + days;
+	}
+
+	/**
+	 * Suma de los salary_data con ese nombre y ese tramo exacto de fechas, o null si no hay ninguno.
+	 */
+	private static Double getSalaryDataBase(DSLContext dslContext, Integer salaryId, String name,
+			Date startDate, Date endDate) {
+
+		List<String> values = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(salaryId))
+				.and(SALARY_DATA.NAME.eq(name))
+				.and(null == startDate ? DSL.trueCondition() : SALARY_DATA.START_DATE.eq(startDate))
+				.and(null == endDate ? DSL.trueCondition() : SALARY_DATA.END_DATE.eq(endDate))
+				.fetch(SALARY_DATA.EXPRESSION);
+
+		if (values.isEmpty())
+			return null;
+
+		Double sum = 0.00;
+		for (String value : values)
+			sum += parseDouble(value);
+
+		return sum;
+	}
+
+	private static Result<Record> getSettlementRecords(DSLContext dslContext, Integer contractId) {
+		return dslContext.select().from(SALARY)
+				.where(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value()))
+				.orderBy(SALARY.END_DATE.desc()).fetch();
+	}
+
+	private static String getRangeKey(Date startDate, Date endDate) {
+		return (null == startDate ? "" : fullDateFormat.format(startDate)) + "|"
+				+ (null == endDate ? "" : fullDateFormat.format(endDate));
+	}
+
+	private static Double parseDouble(String value) {
+		if (AonStringUtils.isBlank(value))
+			return 0.00;
+
+		try {
+			return Double.parseDouble(value.trim().replace(",", "."));
+		} catch (NumberFormatException e) {
+			return 0.00;
+		}
 	}
 
 	private static boolean checkQuoteData(List<Map<String, String>> quoteDataList, Map<String, String> quoteData) {
@@ -868,53 +995,69 @@ public class JooqCertifica2 {
 	private static void getCertifica2Holidays(DSLContext dslContext,
 			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Integer contractId) {
 
-		// Check Settle for unEnjoy Holidays
-		Result<Record> settlementRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId))
-				.and(SALARY.TYPE.eq(SalaryType.SETTLE.value())).orderBy(SALARY.END_DATE.desc()).fetch();
+		Result<Record> settlementRecords = getSettlementRecords(dslContext, contractId);
 
-		Certifica2Period settlementCertifica2Info = null;
-
-		if (settlementRecords.isEmpty())
-			settlementCertifica2Info = new Certifica2Period(null, null, 0, 0.00, 0.00);
-		else {
-			Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
-
-			List<String> holidaysList = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(settlementId))
-					.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).fetch(SALARY_DATA.EXPRESSION);
-
-			Integer holidayDays = 0;
-
-			for (String holidays : holidaysList)
-				holidayDays += (int) (AonStringUtils.isBlank(holidays) ? 0 : Double.parseDouble(holidays));
-
-			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
-					.where(SALARY_PAYMENT.SALARY.eq(settlementId)).and(SALARY_PAYMENT.TYPE.eq((byte) 6)).fetchOne();
-
-			Double baseCGC = 0.00;
-			Double baseCGP = 0.00;
-
-			if (null != holidaysRecord) {
-				baseCGC = settlementRecords.get(0).get(SALARY.CGC_BASE);
-				baseCGP = settlementRecords.get(0).get(SALARY.CGP_BASE);
-			}
-			
-			if(holidayDays == 0) {
-				Date settleEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-				Date contractEndDate = dslContext.select(CONTRACT.END_DATE).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne(CONTRACT.END_DATE);
-				
-				if(null != contractEndDate)
-					holidayDays = DateUtils.getDaysBetween(contractEndDate, settleEndDate);
-				
-			}
-
-			settlementCertifica2Info = new Certifica2Period(null, null, holidayDays, baseCGC, baseCGP);
+		if (settlementRecords.isEmpty()) {
+			certifica2Info.setSettleQuoteDays(0);
+			certifica2Info.setBaseCgc(0.00);
+			certifica2Info.setBaseUnemployment(0.00);
+			return;
 		}
 
-		certifica2Info.setSettleQuoteDays(settlementCertifica2Info.getQuotedDays());
-		certifica2Info.setBaseCgc(round(settlementCertifica2Info.getBase_cgc(), 2));
-		certifica2Info.setBaseUnemployment(round(settlementCertifica2Info.getBase_unemployment(), 2));
+		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
 
+		// Vacaciones no disfrutadas: necesitamos el registro completo (fechas), no solo la expresion
+		Result<Record> holidaysRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.SALARY.eq(settlementId))
+				.and(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+				.orderBy(SALARY_DATA.START_DATE).fetch();
+
+		Record holidaysPaymentRecord = dslContext.select().from(SALARY_PAYMENT)
+				.where(SALARY_PAYMENT.SALARY.eq(settlementId)).and(SALARY_PAYMENT.TYPE.eq((byte) 6)).fetchOne();
+
+		Integer holidayDays = 0;
+		Double baseCGC = 0.00;
+		Double baseCGP = 0.00;
+		boolean baseFound = false;
+
+		for (Record holidaysRecord : holidaysRecords) {
+			holidayDays += parseDouble(holidaysRecord.get(SALARY_DATA.EXPRESSION)).intValue();
+
+			if (null == holidaysPaymentRecord)
+				continue;
+
+			Date holidayStart = holidaysRecord.get(SALARY_DATA.START_DATE);
+			Date holidayEnd = holidaysRecord.get(SALARY_DATA.END_DATE);
+
+			// Bases del MISMO tramo de fechas que las vacaciones no disfrutadas
+			Double cgc = getSalaryDataBase(dslContext, settlementId, "BASE_CGC", holidayStart, holidayEnd);
+			Double cgp = getSalaryDataBase(dslContext, settlementId, "BASE_CGP", holidayStart, holidayEnd);
+
+			if (null != cgc || null != cgp) {
+				baseFound = true;
+				baseCGC += (null == cgc ? 0.00 : cgc);
+				baseCGP += (null == cgp ? 0.00 : cgp);
+			}
+		}
+
+		// Fallback al comportamiento anterior si no hay salary_data de bases con esas fechas
+		if (!baseFound && null != holidaysPaymentRecord) {
+			baseCGC = settlementRecords.get(0).get(SALARY.CGC_BASE);
+			baseCGP = settlementRecords.get(0).get(SALARY.CGP_BASE);
+		}
+
+		if (holidayDays == 0) {
+			Date settleEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
+			Date contractEndDate = dslContext.select(CONTRACT.END_DATE).from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId)).fetchOne(CONTRACT.END_DATE);
+
+			if (null != contractEndDate)
+				holidayDays = DateUtils.getDaysBetween(contractEndDate, settleEndDate);
+		}
+
+		certifica2Info.setSettleQuoteDays(holidayDays);
+		certifica2Info.setBaseCgc(round(baseCGC, 2));
+		certifica2Info.setBaseUnemployment(round(baseCGP, 2));
 	}
 
 	// ----------------------------------------------------- saveCertific@2Info to

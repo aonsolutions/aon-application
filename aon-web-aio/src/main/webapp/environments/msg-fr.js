@@ -287,6 +287,7 @@ export const COMMISSION_BANDS = 'Définition des Tranches de Commissions';
 export const COMMISSION_CALCULATION = 'Calcul des Commissions';
 export const COMMISSION_CONTROL = 'Contrôle des Commissions';
 export const COMMISSION_TYPES = 'Types de Commission';
+export const CHARGE_BATCH_NEW = 'Nouveau Lot d\'Encaissements';
 export const CHARGES_MANAGEMENT = 'Gestion des Encaissements';
 export const CHARGES_PAYMENTS_PORTFOLIO = 'Portefeuille d\'Encaissements et Paiements';
 export const COMMUNICATION_CENTER = 'Centre de Communication';

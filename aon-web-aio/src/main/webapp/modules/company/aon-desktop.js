@@ -9,6 +9,7 @@ import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../timecontrol/aon-sign.js';
 import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { uploadDocuments, uploadOption } from "../documental/DocumentalUtils.js";
+import { PDF_OR_IMAGE_ACCEPT } from "../../services/imageFileService.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
@@ -102,14 +103,11 @@ export class AonDesktop extends AonElement {
 	}
 
 	async connectedCallback() {
-		if (LS.isNewTheme()) {
-			/*let span = this.getElement('aonHeaderHome');
-			if (span) span.style.display = 'none';*/
+		/*let span = this.getElement('aonHeaderHome');
+		if (span) span.style.display = 'none';*/
 
-			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
-			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
-			
-		}
+		let expandButtonDiv = this.getElement('aonExpandButtonDiv');
+		if (expandButtonDiv) expandButtonDiv.style.display = 'block';
 		
 		// Check if fixed new button is needed
 		if(LS.isFutureTheme()){
@@ -138,13 +136,11 @@ export class AonDesktop extends AonElement {
 	}
 
 	disconnectedCallback() {
-		if (LS.isNewTheme()) {
-			let span = this.getElement('aonHeaderHome');
-			if (span) span.style.display = 'block';
+		let span = this.getElement('aonHeaderHome');
+		if (span) span.style.display = 'block';
 
-			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
-			if (expandButtonDiv) expandButtonDiv.style.display = 'none';
-		}
+		let expandButtonDiv = this.getElement('aonExpandButtonDiv');
+		if (expandButtonDiv) expandButtonDiv.style.display = 'none';
 	}
 
 	async getInvoiceConfiguration() {
@@ -291,7 +287,7 @@ export class AonDesktop extends AonElement {
 	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`
-          <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+          <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' accept='${PDF_OR_IMAGE_ACCEPT}' multiple>
           <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>`;
 
 		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
@@ -316,15 +312,9 @@ export class AonDesktop extends AonElement {
 		contentData.id = "contentData";
 		contentData.style.margin = '1rem';
 
-		if (LS.isNewTheme()) {
-			// Intiliaze App List
-			content.appendChild(contentData);
-			this.createDashboard(contentData, company);
-		} else {
-			// Intiliaze App List
-			this.createAppList(contentData, company);
-			content.appendChild(contentData);
-		}
+		// Intiliaze App List
+		content.appendChild(contentData);
+		this.createDashboard(contentData, company);
 	}
 
 	uploadDocumentsDesktop(input, files) {
@@ -1397,9 +1387,6 @@ export class AonDesktop extends AonElement {
 		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			if (!LS.isNewTheme()) {
-				li.classList.add(CSS.AON_APP_LI);
-			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -1456,9 +1443,6 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li)
 			li.id = this.AON_DESKTOP + app.app.initCap();
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			if (!LS.isNewTheme()) {
-				li.classList.add(CSS.AON_APP_LI);
-			}
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -1467,16 +1451,13 @@ export class AonDesktop extends AonElement {
 				this.appSelection(app.app);
 				this.appOption = false
 			});
-			if (LS.isNewTheme()) {
+			li.addEventListener(EVENT.MOUSEOVER, () => {
+				li.style.backgroundColor = app.backgroundColor || '#eaf1fb';
+			});
 
-				li.addEventListener(EVENT.MOUSEOVER, () => {
-					li.style.backgroundColor = app.backgroundColor || '#eaf1fb';
-				});
-
-				li.addEventListener(EVENT.MOUSELEAVE, () => {
-					li.style.backgroundColor = 'transparent';
-				});
-			}
+			li.addEventListener(EVENT.MOUSELEAVE, () => {
+				li.style.backgroundColor = 'transparent';
+			});
 
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';

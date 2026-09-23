@@ -136,7 +136,10 @@ export class AonPayrollMenu extends AonSuiteMenu {
 				id: "gwt-activity-summary",
 		        description: MSG.ACTIVITY_SUMMARY,
 		        title: MSG.ACTIVITY_SUMMARY,
-		        action: () => GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT),
+		        action: () => {
+					localStorage.setItem("isOffice", this.getDur().isOffice() ? "true" : "false");
+					GWT.iLoad(GWT.ACTIVITY_SUMMARY, this.getApplication().CONTENT);
+				},
 		    },{
 				id: "gwt-contract-media",
 		        description: MSG.SALARY_STAFF_REPORT,
@@ -221,11 +224,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: MSG.ENVIRONMENT_CALC_VARIABLES,
 		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES),
 		        filter: () => this.getDur().isConsole()
-			},{
-		        description: MSG.WORKER_CALC_VARIABLES,
-		        title: MSG.WORKER_CALC_VARIABLES,
-		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
-		    }],
+			}],
 			filter: () => this.isDomainManagementAvailable()
 		},{
 		    title: MSG.UTILITIES,
@@ -254,6 +253,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        title: MSG.HOLIDAYS,
 		        action: () => this.rootPanel(new JSF.AonJsfHolidays),
 		        filter: () => this.isNotDomainManagementAvailable()
+		    },
+		    {
+		        description: MSG.WORKER_CALC_VARIABLES,
+		        title: MSG.WORKER_CALC_VARIABLES,
+		        action: () => GWT.iLoad(GWT.CONTRACT_VARIABLES, this.getApplication().CONTENT)
 		    }],
 		    filter: () => !this.isDomainManagementAvailable()
 		},{

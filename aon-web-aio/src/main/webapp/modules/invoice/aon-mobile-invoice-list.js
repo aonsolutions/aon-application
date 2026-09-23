@@ -5,7 +5,7 @@ import {Invoice} from './Invoice.js';
 
 import {setInvoices, addInvoices, setIndex} from './InvoiceCache.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 import { formatNumber } from '../../services/utils.js';
 import { AonMobileList } from '../../components/aon-mobile-list.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
@@ -24,11 +24,17 @@ export class AonMobileInvoiceList extends AonMobileList {
     this.initialize();
     this.buildDur().then(() => {
       this.init();
-      this.addEventListener('more', () => {
-        if(this.more)
-          this.loadMore()
-      });
+      this.addEventListener(EVENT.MORE, this.moreFn);
     });
+  }
+
+  moreFn = () => {
+    if(this.more)
+      this.loadMore();
+  };
+
+  disconnectedCallback() {
+    this.removeEventListener(EVENT.MORE, this.moreFn);
   }
 
   initialize() {

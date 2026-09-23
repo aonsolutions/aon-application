@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -21,5 +22,6 @@ public interface Model347ServiceAsync {
 	void changeStatus(Occam occam,Mod347 mod347, FiscalStatus newStatus, AsyncCallback<Mod347> callback);
 	void getInfo(Occam occam, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
 	void duplicate(Occam occam, Mod347 mod347, AsyncCallback<Mod347> callback);
+	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> asyncCallback);
 
 }

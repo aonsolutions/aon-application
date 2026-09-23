@@ -187,6 +187,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 //		toolbar.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
+	public void closeFilterPopup() {
+		searchFilterComponent.closeFilterPopup();
+	}
+	
 	protected abstract void onClearFilter();
 
 }

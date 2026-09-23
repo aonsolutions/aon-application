@@ -1481,6 +1481,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void getDomainSigAddInfo(String domainName, Integer domainId, String user, ArrayList<Integer> customerIds, AsyncCallback<HashMap<Integer, List<DomainSigAddInfo>>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getDomainSigAddInfo(domainName, domainId, user, customerIds, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCustomerFeesRelatedRegistry(String domainName, int domainId, String user, Integer customerRelatedRegistry, AsyncCallback<LinkedList<Fee>> callback) throws AonCoreException {
@@ -1875,5 +1881,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void saveDomainStatus(String domainName, int domain, String user, RegistryStatus newStatus, Date newExpDate, AsyncCallback<Domain> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.saveDomainStatus(domainName, domain, user, newStatus, newExpDate, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// *********************** [CUSTOMER SIG ALIGN DATE]
+	@Override
+	public void alignSigCustomerDate(String domainName, Integer domainId, String user, Integer customerId, Date expirationDate, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.alignSigCustomerDate(domainName, domainId, user, customerId, expirationDate, new AsyncCallbackWrapper<>(callback));
 	}
 }

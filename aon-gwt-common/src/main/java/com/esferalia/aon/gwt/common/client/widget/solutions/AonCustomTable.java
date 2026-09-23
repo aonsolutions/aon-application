@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,7 +20,9 @@ public class AonCustomTable extends HTMLPanel {
 		getElement().getStyle().setProperty("padding", "1rem");
 		getElement().getStyle().setProperty("gap", "0");
 		getElement().getStyle().setProperty("width", "100%");
-		getElement().getStyle().setProperty("min-width", "fit-content");
+		getElement().getStyle().setProperty("boxSizing", "border-box");
+		getElement().getStyle().setProperty("minWidth", "0");
+		getElement().getStyle().setProperty("maxWidth", "100%");
 	}
 	
 	public void setMaxHeight(String maxHeight) {
@@ -35,20 +38,14 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public Label addHeader(Label label, String width) {
 		addCellHeaderStyle(label);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			label.getElement().getStyle().setProperty("width", width);
-			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else label.getElement().getStyle().setProperty("min-width", width);
+		applyCellWidth(label, width);
 		header.add(label);
 		return label;
 	}
 	
 	public Label addHeader(Label label, String width, String styles) {
 		addCellHeaderStyle(label);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			label.getElement().getStyle().setProperty("width", width);
-			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else label.getElement().getStyle().setProperty("min-width", width);
+		applyCellWidth(label, width);
 		header.add(label);
 		addInlineStyle(label, styles);
 		return label;
@@ -56,13 +53,15 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public Widget addHeader(Widget wdiget, String width, String styles) {
 		addCellHeaderStyle(wdiget);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			wdiget.getElement().getStyle().setProperty("width", width);
-			wdiget.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else wdiget.getElement().getStyle().setProperty("min-width", width);
+		applyCellWidth(wdiget, width);
 		header.add(wdiget);
 		addInlineStyle(wdiget, styles);
 		return wdiget;
+	}
+	
+	public void addHeader(AonTableButton button, String width) {
+		applyCellWidth(button, width);
+		header.add(button);
 	}
 	
 	public void createFooter() {
@@ -70,23 +69,17 @@ public class AonCustomTable extends HTMLPanel {
 		addFooterStyle();
 		add(footer);
 	}
-	
+
 	public Label addFooter(Label label, String width) {
 		addCellFooterStyle(label);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			label.getElement().getStyle().setProperty("width", width);
-			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else label.getElement().getStyle().setProperty("min-width", width);
+		applyCellWidth(label, width);
 		footer.add(label);
 		return label;
 	}
-	
+
 	public Label addFooter(Label label, String width, String styles) {
 		addCellFooterStyle(label);
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			label.getElement().getStyle().setProperty("width", width);
-			label.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else label.getElement().getStyle().setProperty("min-width", width);
+		applyCellWidth(label, width);
 		footer.add(label);
 		addInlineStyle(label, styles);
 		return label;
@@ -126,21 +119,46 @@ public class AonCustomTable extends HTMLPanel {
 	    return camelCaseProperty.toString();
 	}
 	
-	public void addHeader(AonTableButton button, String width) {
-		button.getElement().getStyle().setProperty("width", width);
-		header.add(button);
+	private static final String FLEX_WIDTH = "-moz-available";
+
+	/** Aplica el ancho de una celda. El valor {@value #FLEX_WIDTH} marca la columna
+	 *  el\u00e1stica: crece con el espacio sobrante y puede encoger (min-width: 0),
+	 *  que es lo que permite el ellipsis sin desbordar la fila. */
+	private void applyCellWidth(Widget widget, String width) {
+		Style style = widget.getElement().getStyle();
+		style.setProperty("boxSizing", "border-box");
+		style.setProperty("minWidth", "0");
+
+		if (AonStringUtils.equalsIgnoreCase(width, FLEX_WIDTH)) {
+			style.setProperty("flex", "1 1 0");
+			style.clearProperty("width");
+			style.clearProperty("maxWidth");
+		} else {
+			style.setProperty("flex", "0 0 " + width);
+			style.setProperty("width", width);
+			style.setProperty("maxWidth", width);
+		}
 	}
 	
 	public void addHeaderStyle() {
 		header.addStyleName(AON.CSS.aonItemFlex());
 		header.addStyleName(AON.CSS.aonCustomTableHeader());
+		applyContainerStyle(header);
 	}
-	
+
 	public void addFooterStyle() {
 		footer.addStyleName(AON.CSS.aonItemFlex());
 		footer.addStyleName(AON.CSS.aonCustomTableFooter());
+		applyContainerStyle(footer);
 	}
 
+	private void applyContainerStyle(HTMLPanel panel) {
+		panel.getElement().getStyle().setProperty("width", "100%");
+		panel.getElement().getStyle().setProperty("minWidth", "0");
+		panel.getElement().getStyle().setProperty("maxWidth", "100%");
+		panel.getElement().getStyle().setProperty("boxSizing", "border-box");
+	}
+	
 	public void addCellHeaderStyle(Label label) {
 		label.addStyleName(AON.CSS.aonCustomTableCellHeader());
 	}
@@ -161,17 +179,14 @@ public class AonCustomTable extends HTMLPanel {
 	}
 	
 	public void addRow(HTMLPanel row, Widget widget, String width) {
-		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
-			widget.getElement().getStyle().setProperty("width", width);
-			widget.getElement().getStyle().setProperty("width", "-webkit-fill-available");
-		} else widget.getElement().getStyle().setProperty("min-width", width);
-		
+		applyCellWidth(widget, width);
 		row.add(widget);
 	}
-	
+
 	public void addRowStyle(HTMLPanel row) {
 		row.addStyleName(AON.CSS.aonItemFlex());
 		row.addStyleName(AON.CSS.aonCustomRow());
+		applyContainerStyle(row);
 	}
 
 	public Integer getRowsCount() {

@@ -184,8 +184,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.CustomerFee" sqlName="customer_fee">
-		<alias names="id,domain,project_id,customer_id,customer_registry_name,customer_status,customer_scope,customer_scope_id,line,item_id,item_product_id,item_product_category_id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,seller_id,workPlace_id,invoicingGroup,invoicingGroup_id,invoicingGroup_customer_id,invoicingGroup_customer_scope_id"/>
-		<hibernate names="id,domain,project.id,customer.id,customer.registry.name,customer.status,customer.scope,customer.scope&lt;id,line,item.id,item.product.id,item.product.category.id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,seller.id,workPlace.id,invoicingGroup,invoicingGroup.id,invoicingGroup.customer.id,invoicingGroup.customer.scope&lt;id"/>
+		<alias names="id,domain,project_id,customer_id,customer_registry_name,customer_status,customer_expirationDate,customer_scope,customer_scope_id,line,item_id,item_product_id,item_product_category_id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,seller_id,workPlace_id,invoicingGroup,invoicingGroup_id,invoicingGroup_customer_id,invoicingGroup_customer_scope_id"/>
+		<hibernate names="id,domain,project.id,customer.id,customer.registry.name,customer.status,customer.expirationDate,customer.scope,customer.scope&lt;id,line,item.id,item.product.id,item.product.category.id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,seller.id,workPlace.id,invoicingGroup,invoicingGroup.id,invoicingGroup.customer.id,invoicingGroup.customer.scope&lt;id"/>
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">

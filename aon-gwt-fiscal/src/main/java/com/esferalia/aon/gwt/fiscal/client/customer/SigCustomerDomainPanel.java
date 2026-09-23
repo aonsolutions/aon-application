@@ -185,37 +185,31 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		for (COLS col : COLS.values())
 			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
-
+	
 	private void searchData() {
-		if (!isMoreData())
-			return;
+	    if (!isMoreData()) return;
 
-		onShowELoadingMessage(
-				"Cargando informaci\u00f3n clientes/dominios. Este proceso puede llevar unos segundos...");
+	    onShowELoadingMessage("Cargando informaci\u00f3n clientes/dominios. Este proceso puede llevar unos segundos...");
 
-		getList(customers -> {
-			boolean something = false;
+	    getList(customers -> {
+	        boolean firstPage = (0 == offset.intValue());
 
-			for (Customer customer : customers) {
-				something = true;
-				paintRow(customer);
-			}
+	        customers.forEach(this::paintRow);
 
-			if(!params.isNoRaddInfo() && !params.isNoAonCustomer()) {
-				offset.setValue(offset.intValue() + limit - 1);
-				enableMoreData();
+	        if (params.isNoRaddInfo() || params.isNoAonCustomer()) {
+	            // limit = MAX_VALUE: carga unica, sin scroll infinito
+	            disableMoreData();
+	            disableSearch();
+	        } else {
+	            offset.setValue(offset.intValue() + customers.size());
+	            if (customers.size() < limit) disableMoreData();
+	            enableSearch();
+	        }
 
-				if (!something) {
-					paintEmptyRow();
-					disableMoreData();
-				}
-				enableSearch();
-			} else disableSearch();
-				
-			onHideMessage();
+	        if (firstPage && customers.isEmpty()) paintEmptyRow();
 
-		});
-
+	        onHideMessage();
+	    });
 	}
 
 	private void paintEmptyRow() {
@@ -251,7 +245,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 		HTMLPanel customerRaddInfoPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		customerRaddInfoPanel.addStyleName(AON.CSS.aonItemFlex());
-		List<DomainSigAddInfo> customerRaddInfo = customersRaddInfo.get(customer.getId());
+		List<DomainSigAddInfo> customerRaddInfo = safeList(customersRaddInfo, customer.getId());
 		if(customerRaddInfo.size() > 1) {
 			
 			customerRaddInfo.forEach(ds -> {
@@ -271,7 +265,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 		HTMLPanel customerDomainPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		customerDomainPanel.addStyleName(AON.CSS.aonItemFlex());
-		List<DomainCompany> customerDomain = customersDomain.get(customer.getId());
+		List<DomainCompany>    customerDomain   = safeList(customersDomain,   customer.getId());
 		if(customerDomain.size() > 1) {
 			
 			customerDomain.forEach(ds -> {
@@ -346,9 +340,9 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		SimplePanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setHeight("25rem");
 		centerPanel.setWidth("100%");
-		
-		List<DomainSigAddInfo> customerRaddInfo = customersRaddInfo.get(customer.getId());
-		List<DomainCompany> customerDomain = customersDomain.get(customer.getId());
+
+		List<DomainSigAddInfo> customerRaddInfo = safeList(customersRaddInfo, customer.getId());
+		List<DomainCompany>    customerDomain   = safeList(customersDomain,   customer.getId());
 		
 		SyncSigMultipleDomainsTable table = new SyncSigMultipleDomainsTable(customer, customerRaddInfo, customerDomain) {
 			
@@ -392,12 +386,15 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 					end -> {
 						checkCustomerDomains(customerIds, 
 							parsedCustomers -> {
+								
+								
+								
 								if(params.isNoRaddInfo() && !params.isNoAonCustomer())
-									success.accept(customers.stream().filter(c -> customersRaddInfo.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+									success.accept(customers.stream().filter(c -> safeList(customersRaddInfo, c.getId()).isEmpty()).collect(Collectors.toList()));
 								else if(!params.isNoRaddInfo() && params.isNoAonCustomer())
-									success.accept(customers.stream().filter(c -> customersDomain.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+									success.accept(customers.stream().filter(c -> safeList(customersDomain, c.getId()).isEmpty()).collect(Collectors.toList()));
 								else if(params.isNoRaddInfo() && params.isNoAonCustomer())
-									success.accept(customers.stream().filter(c -> customersDomain.get(c.getId()).isEmpty() && customersRaddInfo.get(c.getId()).isEmpty()).collect(Collectors.toList()));
+									success.accept(customers.stream().filter(c -> safeList(customersDomain, c.getId()).isEmpty() && safeList(customersRaddInfo, c.getId()).isEmpty()).collect(Collectors.toList()));
 								else
 									success.accept(customers);
 							});
@@ -407,75 +404,71 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			}
 		});
 	}
-
+	
 	private void checkCustomerDomains(List<Integer> customerIds, Consumer<Void> success) {
-		int total = customerIds.size();
-		int[] pending = { total };
+	    int total = customerIds.size();
+	    int[] pending = { total };
+	    List<String> errors = new ArrayList<>();
 
-		customerIds.forEach(customerId -> {
-			String host = isLocalDev ? "localhost:8080" : "aon.solutions";
-			String endPoint = "/ms/api/domain/" + customerId;
+	    customerIds.forEach(customerId -> {
+	        String host = isLocalDev ? "localhost:8080" : "aon.solutions";
+	        String endPoint = "/ms/api/domain/" + customerId;
 
-			this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
-				@Override
-				public void onSuccess(List<DomainCompany> domainCompanies) {
-					customersDomain.put(customerId, domainCompanies);
-					checkFinish();
-				}
+	        this.bookingApi.getDomainCompanies(host, endPoint, new AsyncCallback<List<DomainCompany>>() {
+	            @Override
+	            public void onSuccess(List<DomainCompany> domainCompanies) {
+	                customersDomain.put(customerId, domainCompanies);
+	                checkFinish();
+	            }
 
-				@Override
-				public void onFailure(Throwable exception) {
-					onShowErrorMessage(exception.getMessage());
-					checkFinish();
-				}
+	            @Override
+	            public void onFailure(Throwable exception) {
+	                // sin entrada en el mapa, paintRow reventaba con NPE
+	                customersDomain.put(customerId, new ArrayList<DomainCompany>());
+	                errors.add("cliente " + customerId + ": " + exception.getMessage());
+	                checkFinish();
+	            }
 
-				private void checkFinish() {
-					pending[0]--;
-					if (pending[0] == 0) {
-						success.accept(null);
-					}
-				}
-			});
-		});
+	            private void checkFinish() {
+	                pending[0]--;
+	                if (0 == pending[0]) {
+	                    if (!errors.isEmpty())
+	                        onShowErrorMessage("No se pudo obtener el dominio de " + errors.size()
+	                                + " cliente(s). Primero -> " + errors.get(0));
+	                    success.accept(null);
+	                }
+	            }
+	        });
+	    });
 
-		if (total == 0) {
-			success.accept(null);
-		}
+	    if (0 == total) success.accept(null);
 	}
-
+	
 	private void checkCustomerRaddInfos(List<Integer> customerIds, Consumer<Void> success) {
-		int total = customerIds.size();
-		int[] pending = { total };
+	    if (customerIds.isEmpty()) {
+	        success.accept(null);
+	        return;
+	    }
 
-		customerIds.forEach(customerId -> {
-			COMMON_SERVICE.getDomainSigAddInfo(params.getDomainName(), params.getDomainId(), params.getUser(),
-					customerId, new AsyncCallback<List<DomainSigAddInfo>>() {
+	    COMMON_SERVICE.getDomainSigAddInfo(params.getDomainName(), params.getDomainId(), params.getUser(),
+	            new ArrayList<Integer>(customerIds),
+	            new AsyncCallback<HashMap<Integer, List<DomainSigAddInfo>>>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							onShowErrorMessage(caught.getMessage());
-							checkFinish();
-						}
+	        @Override
+	        public void onSuccess(HashMap<Integer, List<DomainSigAddInfo>> raddInfos) {
+	            customersRaddInfo.putAll(raddInfos);
+	            // el servidor ya devuelve entrada para todos, pero no confiamos en ello
+	            customerIds.forEach(id -> customersRaddInfo.putIfAbsent(id, new ArrayList<DomainSigAddInfo>()));
+	            success.accept(null);
+	        }
 
-						@Override
-						public void onSuccess(List<DomainSigAddInfo> customerDomainSigAddInfo) {
-							customersRaddInfo.put(customerId, customerDomainSigAddInfo);
-							checkFinish();
-						}
-
-						private void checkFinish() {
-							pending[0]--;
-							if (pending[0] == 0) {
-								success.accept(null);
-							}
-						}
-
-					});
-		});
-
-		if (total == 0) {
-			success.accept(null);
-		}
+	        @Override
+	        public void onFailure(Throwable caught) {
+	            customerIds.forEach(id -> customersRaddInfo.put(id, new ArrayList<DomainSigAddInfo>()));
+	            onShowErrorMessage("Error obteniendo la vinculaci\u00f3n (raddinfo) de los clientes : " + caught.getMessage());
+	            success.accept(null);
+	        }
+	    });
 	}
 	
 	private void showSelectedCustomer(Customer customer) {
@@ -514,8 +507,8 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 	private void onSyncCustomerDomain(Customer customer, String domainName) {
 		onShowELoadingMessage("Vinculando cliente con dominio...");
 		
-		List<DomainCompany> customerDomainList = customersDomain.get(customer.getId());
-		List<DomainSigAddInfo> customerRaddInfoList = customersRaddInfo.get(customer.getId());
+		List<DomainCompany>    customerDomainList   = safeList(customersDomain,   customer.getId());
+		List<DomainSigAddInfo> customerRaddInfoList = safeList(customersRaddInfo, customer.getId());
 		
 		Optional<DomainCompany> domainCompanyTmp = Optional.empty();
 		if(!customerDomainList.isEmpty())
@@ -548,6 +541,10 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 				)
 				);
 		
+		if (domainCompanyTmp.isEmpty()) {
+		    onShowErrorMessage("No se puede resolver el dominio del cliente " + customer.getId());
+		    return;
+		}
 		DomainCompany domainCompany = domainCompanyTmp.get();
 		
 		COMMON_SERVICE.syncCustomer(params.getDomainName(), params.getDomainId(), params.getUser(), customer.getId(), domainCompany, true, new AsyncCallback<Void>() {
@@ -602,6 +599,11 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			return "El cliente esta inactivo pero el dominio esta activo o no tiene fecha de expiraci\u00f3n";
 		
 		return null;
+	}
+	
+	private static <T> List<T> safeList(Map<Integer, List<T>> map, Integer key) {
+	    List<T> list = map.get(key);
+	    return null != list ? list : new ArrayList<>();
 	}
 
 	protected abstract void onShowErrorMessage(String errorMessage);

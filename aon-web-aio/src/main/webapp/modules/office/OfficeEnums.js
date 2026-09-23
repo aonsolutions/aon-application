@@ -1,6 +1,7 @@
 import { AonCheckbox } from "../../components/aon-checkbox.js";
+import { AonDate } from "../../components/aon-date.js";
 import { AON_WORKGROUP } from "../../environments/aonTag.js";
-import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 
 
 const AON_CUSTOMER = {
@@ -147,55 +148,107 @@ const getButtonsStatus = () => {
     return div;
 }
 
-const CustomerFilter = [
-    {
-        type: CONSTANT.SELECT,
-        id: "scope",
-        name: "scope",
-        title: MSG.SCOPE,
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type:CONSTANT.SELECT,
-        id: "projectType",
-        name: "projectType",
-        title: "Tipo de expediente",
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type:CONSTANT.SELECT,
-        id: "rrelationship",
-        name: "rrelationship",
-        title: "Vinculo",
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type: CONSTANT.SELECT,
-        id: "type",
-        name: "type",
-        title: MSG.TYPE,
-        autocomplete: true,
-        default:true,
-        emptyclear:true
-    },
-    {
-        type: CONSTANT.HTML_ELEMENT,
-        id: CONSTANT.HTML_ELEMENT,
-        element: getButtonsStatus()
-    }
-];
+/**
+ * Los HTML_ELEMENT se instancian al evaluar el array, asi que un array
+ * constante reutiliza el mismo nodo en cada buildOptionsFilter y sus
+ * componentes se reconstruyen encima al reinsertarse. Como funcion, cada
+ * llamada devuelve nodos limpios.
+ */
+function getCustomerFilter() {
+    return [
+        {
+            type: CONSTANT.SELECT,
+            id: "scope",
+            name: "scope",
+            title: MSG.SCOPE,
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "projectType",
+            name: "projectType",
+            title: "Tipo de expediente",
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "rrelationship",
+            name: "rrelationship",
+            title: "Vinculo",
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.SELECT,
+            id: "type",
+            name: "type",
+            title: MSG.TYPE,
+            autocomplete: true,
+            default: true,
+            emptyclear: true
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: "statusDateRange",
+            element: getDateRange("statusDateRange", "F. Estado", "statusDateFrom", "statusDateTo")
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: "blockDateRange",
+            element: getDateRange("blockDateRange", "F. Bloqueo", "blockDateFrom", "blockDateTo")
+        },
+        {
+            type: CONSTANT.HTML_ELEMENT,
+            id: CONSTANT.HTML_ELEMENT,
+            element: getButtonsStatus()
+        }
+    ];
+}
+
+/**
+ * Pareja desde/hasta en horizontal. El div va como HTML_ELEMENT porque
+ * divOpts apila sus hijos directos; los inputs siguen siendo descendientes
+ * con name propio, que es lo que serializa getValues().
+ */
+function getDateRange(id, title, fromName, toName) {
+    const wrap = document.createElement(TAG.DIV);
+    wrap.id = id;
+
+    const row = document.createElement(TAG.DIV);
+    row.style.display = 'flex';
+    row.style.gap = '10px';
+    wrap.appendChild(row);
+
+    const cell = (name, cellTitle) => {
+        const el = new AonDate();
+        el.id = name;
+        el.name = name;
+        el.title = cellTitle;
+
+        const div = document.createElement(TAG.DIV);
+        div.style.flex = '1';
+        div.style.minWidth = '0';   // sin esto el input no encoge y desborda
+        div.appendChild(el);
+
+        return div;
+    };
+
+    row.appendChild(cell(fromName, title + " (" + ( MSG.FROM || 'Desde' ) + ")"));
+    row.appendChild(cell(toName, title + " (" + ( MSG.TO || 'Hasta' ) + ")"));
+
+    return wrap;
+}
 
 export const OfficeEnums = {
     OfficeViews,
     OfficeOptions,
     OfficeSidenav,
-    CustomerFilter,
-    ServiceOptions
+    ServiceOptions,
+    getCustomerFilter 
 }
 

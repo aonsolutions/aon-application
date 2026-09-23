@@ -3,6 +3,7 @@ import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { getReader, waitEl } from "../services/utils.js";
+import { normalizeImageFile, PDF_OR_IMAGE_ACCEPT } from "../services/imageFileService.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles, uploadFileDocumental } from "../services/service.js";
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
@@ -85,7 +86,7 @@ export class AonMobileMenu extends AonElement {
 
   build() {
     this.innerHTML = `
-      <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+      <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' accept='${PDF_OR_IMAGE_ACCEPT}' multiple>
       <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
       <input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
     `;
@@ -108,9 +109,11 @@ export class AonMobileMenu extends AonElement {
       if(this.SELECTED == "documental"){
         this.saveDocumentFile(files[0]);
       } else {
-          getReader(files[0]).then(file => {
-            this.buildInvoiceImageEditor(file);
-          }).catch(()=>null);
+          // El HEIC hay que pasarlo a JPEG antes del editor: Cropper tampoco sabe pintarlo.
+          normalizeImageFile(files[0])
+            .then(file => getReader(file))
+            .then(file => this.buildInvoiceImageEditor(file))
+            .catch(()=>null);
       }
     });
 
@@ -120,7 +123,7 @@ export class AonMobileMenu extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = id;
     div.className = 'aonMobileMenu';
-    if(this.isSab()) {
+    if(this.isIosSab()) {
       div.style.height = '4rem'; 
     }
     this.appendChild(div);
@@ -533,7 +536,7 @@ export class AonMobileMenu extends AonElement {
 
   buildInvoiceImageEditor(file) {
     let editor = new AonImageEditor();
-    editor.setImage("data:image/jpeg;base64,"+ file.content);
+    editor.setImage(`data:${file.contentType || 'image/jpeg'};base64,` + file.content);
     editor.addEventListener(EVENT.CROPPER, (e) => {
       let uploadToast = this.getElement('aonUploadToast');
 		  if(!uploadToast){ 

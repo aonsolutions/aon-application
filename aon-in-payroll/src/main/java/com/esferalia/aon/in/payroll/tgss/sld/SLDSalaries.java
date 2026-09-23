@@ -428,6 +428,7 @@ public class SLDSalaries {
 			return Optional.of(DeductionType.JOB_TRAINING);
 		case "OTRAS HORAS EXTRAS":
 			return Optional.of(DeductionType.NON_STRUCTURAL_OVERTIME);
+		case "COTIZACION ESPECIAL SOLIDARIDAD":
 		case "1º TRAMO COTIZACION ADIC. SOLIDARIDAD":
 		case "2º TRAMO COTIZACION ADIC. SOLIDARIDAD":
 		case "3º TRAMO COTIZACION ADIC. SOLIDARIDAD":
@@ -524,6 +525,8 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.UNEMPLOY_EMPLOYEE);
 		case "OTRAS HORAS EXTRAS":
 			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_EMPLOYEE);
+		case "COTIZACION ESPECIAL SOLIDARIDAD":
+			return Optional.of(ContextVariable.SOLIDARITY_EMPLOYEE);
 		case "1º TRAMO COTIZACION ADIC. SOLIDARIDAD":
 			return Optional.of(ContextVariable.SOLIDARITY_FIRST_EMPLOYEE);
 		case "2º TRAMO COTIZACION ADIC. SOLIDARIDAD":
@@ -580,6 +583,8 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_ENTERPRISE);
 		case "COTIZ.ADICIONAL CONTRATOS TEMP.CORTA DUR":
 			return Optional.of(ContextVariable.CGC_ENTERPRISE_TEMP);
+		case "COTIZACION ESPECIAL SOLIDARIDAD":
+			return Optional.of(ContextVariable.SOLIDARITY_ENTERPRISE);
 		case "1º TRAMO COTIZACION ADIC. SOLIDARIDAD":
 			return Optional.of(ContextVariable.SOLIDARITY_FIRST_ENTERPRISE);
 		case "2º TRAMO COTIZACION ADIC. SOLIDARIDAD":
