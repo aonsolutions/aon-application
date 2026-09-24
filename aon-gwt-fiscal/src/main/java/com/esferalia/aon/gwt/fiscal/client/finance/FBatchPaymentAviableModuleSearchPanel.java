@@ -37,7 +37,7 @@ public class FBatchPaymentAviableModuleSearchPanel extends HTMLPanel implements 
 	private AonCustomListBox paymethodType = new AonCustomListBox("Forma Pago");
 	private AonCustomListBox bankSearch = new AonCustomListBox("Banco");
 	private AonCustomListBox financeShow = new AonCustomListBox("Mostrar");
-	private AonCustomListBox financeType = new AonCustomListBox("T. Vencimento");
+	private AonCustomListBox financeType = new AonCustomListBox("Estado Vencimento");
 	
 	private AonCustomDateBox fromInvoiceDate = new AonCustomDateBox("F. Desde Fact.");
 	private AonCustomDateBox toInvoiceDate = new AonCustomDateBox("F. Hasta Fact.");
