@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqModificationFormBuilder {
@@ -72,8 +74,11 @@ public class JooqModificationFormBuilder {
 						form.setSepeId(sepeIdData.getExpression());
 					}
 				}
+				
 				//-------------------
-				//----- EMPLOYEE -----
+				//----- EMPLOYEE ----
+				//-------------------
+				
 				if (contract.getPerson() != null && contract.getPerson() > 0) {
 					Integer personId = contract.getPerson();
 					Optional<Person> optPerson = AON.getPerson(domainName, domainId, login, f -> f.getIdProperty().eq(personId));
@@ -87,7 +92,7 @@ public class JooqModificationFormBuilder {
 				}
 				//--------------------
 				//----- COMPANY -----
-				Workplace workplace = AON.getWorkplace(domainName, domainId, login, f -> f.getIdProperty().eq(contract.getWorkplace()));
+				Workplace workplace = WorkplaceDAO.get(ctx, contract.getWorkplace(), new Options().setSecurity(false));
 				if (workplace != null) {
 					CompanyFull companyFull = AON.getCompanyFull(domainName, domainId, login);
 					Company company = companyFull.getRegistry()/*AON.getCompany(domainName, domainId, login, f -> f.getIdProperty().eq(workplace.getEnterprise()))*/;
@@ -99,7 +104,8 @@ public class JooqModificationFormBuilder {
 							address = AON.get(domainName, domainId, login, new RegistryAddressFilter() {
 								@Override
 								public Filter filter(RegistryAddressProperties properties) {
-									return properties.getIdProperty().eq(workplace.getAddress());
+									return properties.getIdProperty().eq(workplace.getAddress() != null 
+											? workplace.getAddress().getId() : null);
 								}
 							});
 						}

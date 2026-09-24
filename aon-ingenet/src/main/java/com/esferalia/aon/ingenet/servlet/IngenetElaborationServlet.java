@@ -10,11 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -63,6 +58,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "IngenetElaborationServlet", urlPatterns = { "/ingenet/elaboration/*", "/ingenet/elaboration/dev/*" })
 public class IngenetElaborationServlet extends AbstractIngenetServlet {
@@ -375,22 +375,18 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace().getId()));
-		if(workplace!=null){
-			RAddress address = RegistryOldDAO
-					.getRAddressStream(ctx,
-							p -> p.getIdProperty().eq(workplace.getAddress()))
-					.findFirst().orElse(new RAddress());
-			if(address!=null){
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, sales.getDomain(), sales.getWorkplace().getId()).orElse(null);
+		if(workplace!=null){			
+			if(workplace.getAddress() != null && workplace.getAddress().getId() != null){
 				DATOSCENTROTRABAJOTYPE datos = new DATOSCENTROTRABAJOTYPE();
 				datos.setDESCRIPCION(workplace.getDescription());
 				datos.setDATOSDIRECCION(new DATOSDIRECCIONTYPE());
-				datos.getDATOSDIRECCION().setDIRECCION(address.getAddress());
-				datos.getDATOSDIRECCION().setDIRECCION2(address.getAddress2());
-				datos.getDATOSDIRECCION().setDIRECCION3(address.getAddress3());
-				datos.getDATOSDIRECCION().setCIUDAD(address.getCity());
-				datos.getDATOSDIRECCION().setCODIGOPOSTAL(address.getZip());
-				datos.getDATOSDIRECCION().setPROVINCIA(null);
+				datos.getDATOSDIRECCION().setDIRECCION(workplace.getAddress().getAddress());
+				datos.getDATOSDIRECCION().setDIRECCION2(workplace.getAddress().getAddress2());
+				datos.getDATOSDIRECCION().setDIRECCION3(workplace.getAddress().getAddress3());
+				datos.getDATOSDIRECCION().setCIUDAD(workplace.getAddress().getCity());
+				datos.getDATOSDIRECCION().setCODIGOPOSTAL(workplace.getAddress().getZip());
+				datos.getDATOSDIRECCION().setPROVINCIA(workplace.getAddress().getProvince());
 				return datos;
 			} else {
 				String errorMsg = "Centro de trabajo sin direccion definida:" 

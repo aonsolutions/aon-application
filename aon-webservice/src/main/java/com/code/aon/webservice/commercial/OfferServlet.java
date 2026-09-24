@@ -5,17 +5,12 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -27,10 +22,14 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.OfferStatus;
 import com.esferalia.aon.occam.api.model.type.OfferType;
-import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.json.TediCompanyJSON;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OfferServlet", urlPatterns = {"/offer/*",
@@ -104,7 +103,10 @@ public class OfferServlet extends HttpServlet{
 				.and(f.getSeriesProperty().eq("TEDI")))
 				.max((i, j) -> i.getNumber().compareTo(j.getNumber())).orElse(new Offer().setNumber(0));
 			
-			Workplace wp = AON.getWorkplace(domain.getName(), domain.getId(), "", f-> f.getDomainProperty().eq(domain.getId()));
+			Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser("");
+			Workplace wp = AON.getWorkplace(occam, f-> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getActiveProperty().eq((byte) 1)));
 			Offer offer = new Offer()
 					.setDomain(domain.getId())
 					.setIssueDate(new Date())

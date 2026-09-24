@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -49,7 +50,6 @@ import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -71,7 +71,6 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -82,7 +81,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDetailCompositionDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
@@ -365,9 +363,9 @@ public class DeliveryCreator implements Serializable {
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
 		LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 		
-		Workplace wp = WorkplaceDAO.getWorkplace(ctx, f -> f
+		Workplace wp = WorkplaceDAO.get(ctx, f -> f
 				.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getActiveProperty().eq((byte)1)));
+				.and(f.getActiveProperty().eq((byte)1)), new Options().setSecurity(false));
 		
 		delivery.setDomain(ctx.getDomainId());
 		delivery.setProject(new Project());

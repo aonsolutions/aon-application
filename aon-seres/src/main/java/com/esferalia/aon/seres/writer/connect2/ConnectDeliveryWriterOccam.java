@@ -35,6 +35,7 @@ import com.esferalia.aon.file.seres.connect2.delivery.v4.data.SEH1P;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -68,17 +69,20 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private String domainName;
 	private Integer domainId;
 	private String login;
+	private Occam occam;
 
 	public ConnectDeliveryWriterOccam(String domainName, Integer domainId, String login) {
 		this.domainName = domainName;
 		this.domainId = domainId;
 		this.login = login;
+		this.occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
 	}
 	
 	public ConnectDeliveryWriterOccam(Domain domain, String login) {
 		this.domainName = domain.getName();
 		this.domainId = domain.getId();
 		this.login = login;
+		this.occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(login);
 	}
 
 	public FileOutput createFile(Delivery delivery) throws FileNotFoundException, UnsupportedEncodingException {
@@ -706,7 +710,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private Workplace getWorkPlace(Integer workplaceId) {
-		return AON.getWorkplace(domainName, domainId, login, f -> f.getIdProperty().eq(workplaceId));
+		return AON.getWorkplace(occam, f -> f.getIdProperty().eq(workplaceId), new Options().setSecurity(false));
 	}
 	
 	private Registry getRegistry(Integer registryId) {

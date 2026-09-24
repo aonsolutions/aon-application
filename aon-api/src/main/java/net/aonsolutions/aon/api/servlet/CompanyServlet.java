@@ -196,7 +196,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 					.setDescription("PRINCIPAL")
 					.setDomain(domain.getId())
 					.setEnterprise(c.getId())
-					.setAddress(raddress.getId())
+					.setAddress(raddress)
 					.setPayrollWorkplace(new PayrollWorkplace().setDomain(domain.getId()));
 				
 				AON.saveWorkplace(domain, new User(), workplace);

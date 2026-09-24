@@ -107,16 +107,10 @@ public class IngenetSalesManager {
 							createRegistryAddress(ctx, domainId,
 									sales.getShippingAddress());
 						}
-						Workplace wp = WorkplaceDAO.getWorkplace(
-								ctx,
-								f -> f.getDomainProperty()
-										.eq(ctx.getDomainId())
-										.and(f.getIdProperty().eq(
-												sales
-								.getWorkPlace().getId())));
+						Workplace wp = WorkplaceDAO.getWorkplace(ctx, ctx.getDomainId(), sales.getWorkPlace().getId()).orElse(null);
 						if (sales.getWorkPlace() != null
 								&& sales.getWorkPlace().getId() != null
-								&& wp==null) {
+								&& wp == null) {
 							createWorkplace(ctx, domainId, sales.getWorkPlace());
 						}
 						

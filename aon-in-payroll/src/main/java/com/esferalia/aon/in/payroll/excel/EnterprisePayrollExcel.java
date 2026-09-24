@@ -56,6 +56,7 @@ import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -64,6 +65,7 @@ import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -380,13 +382,8 @@ public class EnterprisePayrollExcel {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser()
-					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-					.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId =  WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
@@ -447,13 +444,8 @@ public class EnterprisePayrollExcel {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser()
-					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-					.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId = WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls = new LinkedList<>();
 			
@@ -522,13 +514,8 @@ public class EnterprisePayrollExcel {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-						, aonContext.getDomainId()
-						, aonContext.getUser()
-						, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-				.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId = WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			
 			Map<String, Map<String, Map<SalaryType, IEnterprisePayroll>>> completeWorkplaceData = new LinkedHashMap<>();
@@ -650,13 +637,8 @@ public class EnterprisePayrollExcel {
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
 			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser()
-					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-					.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId = WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId, null)
@@ -698,14 +680,8 @@ public class EnterprisePayrollExcel {
 		
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
-			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser()
-					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-					.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId = WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, month, year, eId, wId, null)
@@ -744,14 +720,8 @@ public class EnterprisePayrollExcel {
 		
 		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(params.getDomainName(), params.getLogin())) {
-			
-			AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
-			if (eId == null || eId == 0)
-				eId = AON.getWorkplace(aonContext.getDomainName()
-					, aonContext.getDomainId()
-					, aonContext.getUser()
-					, w -> w.getIdProperty().eq(atomicWorkplace.get()))
-					.getEnterprise();
+			if (wId != null && (eId == null || eId == 0))
+				eId = WorkplaceDAO.get(aonContext, wId, new Options().setSecurity(false)).getEnterprise();
 			
 			List<IEnterprisePayroll> payrolls =
 					getEnterprisePayrolls(aonContext, month, year, eId, wId, types)
@@ -3579,8 +3549,7 @@ public class EnterprisePayrollExcel {
 	private static String getEnterpriseName(AONContext aonContext, Integer enterpriseId, Integer workplaceId) {
 			AtomicInteger eId = new AtomicInteger(enterpriseId);
 			if (enterpriseId == null || enterpriseId == 0)
-				eId.set(AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), "",
-						w -> w.getIdProperty().eq(workplaceId)).getEnterprise());
+				eId.set(WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise());
 			return AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
 					r -> r.getIdProperty().eq(eId.get())).getName();
 	}

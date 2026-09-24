@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -365,9 +366,9 @@ public class DeliveryCreatorFactory implements Serializable {
 	private Delivery fillDelivery(AONContext ctx, ALBARANTYPE albaran, Delivery delivery) {
 		LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 		
-		Workplace wp = WorkplaceDAO.getWorkplace(ctx, f -> f
+		Workplace wp = WorkplaceDAO.get(ctx, f -> f
 				.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getActiveProperty().eq((byte)1)));
+				.and(f.getActiveProperty().eq((byte)1)), new Options().setSecurity(false));
 		
 		delivery.setDomain(ctx.getDomainId());
 		delivery.setProject(new Project());

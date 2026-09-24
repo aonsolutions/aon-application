@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -86,7 +87,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertTransferStock(Domain domain, User user);
 
-	public List<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user);
+	public List<Workplace> getWorkplaces(Domain domain, User user);
 	
 	public List<Department> getDepartments(Domain domain, User user, String workplace);
 	

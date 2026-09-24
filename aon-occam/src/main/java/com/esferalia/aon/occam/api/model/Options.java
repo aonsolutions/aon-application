@@ -11,9 +11,11 @@ public class Options implements Serializable {
 	private Integer perPage;
 	private Integer offset;
 	private Integer limit;
+	private boolean security;
 
 	public Options() {
 		this.full = false;
+		this.security = true;
 	}
 	
 	public boolean isFull() {
@@ -64,6 +66,14 @@ public class Options implements Serializable {
 		this.limit = limit;
 		return this;
 	}
-
+	
+	public boolean isSecurity() {
+		return security;
+	}
+	
+	public Options setSecurity(boolean security) {
+		this.security = security;
+		return this;
+	}
 
 }

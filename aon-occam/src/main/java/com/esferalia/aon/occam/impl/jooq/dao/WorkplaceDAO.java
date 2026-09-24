@@ -1,26 +1,31 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.CHILD_GEOZONE;
+import static com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.PARENT_GEOZONE;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.WorkplaceAutoComplete;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -30,54 +35,101 @@ public class WorkplaceDAO {
 	
 	}
 	
+	private static final WorkplacePropertiesDAO WORKPLACE_PROPERTIES = new WorkplacePropertiesDAO();
+
+	private static class WorkplacePropertiesDAO implements WorkplaceProperties {
+		protected Condition[] getConditions(WorkplaceFilter filter) {
+			if (filter == null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ID);} 
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ACTIVE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DOMAIN);}
+		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ADDRESS);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.CUSTOMER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DSL.trim(WORKPLACE.DESCRIPTION));}
+		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ECONOMICAGREEMENT);}
+		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ENTERPRISE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}
+	}
+	
+	// ----- SELECT
+
+	private static SelectConditionStep<Record> select(AONContext ctx, WorkplaceFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(WORKPLACE)
+			.leftOuterJoin(PAYROLL_WORKPLACE).on(PAYROLL_WORKPLACE.WORKPLACE.eq(WORKPLACE.ID))
+			.where(WORKPLACE_PROPERTIES.getConditions(filter));
+	}
+	
+	private static SelectConditionStep<Record> selectFull(AONContext ctx, WorkplaceFilter filter) {
+		 return ctx.getDslContext().select()
+			.from(WORKPLACE)
+			.leftOuterJoin(PAYROLL_WORKPLACE).on(PAYROLL_WORKPLACE.WORKPLACE.eq(WORKPLACE.ID))
+			.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(WORKPLACE.ADDRESS))
+			.leftOuterJoin(DOMAIN).on(DOMAIN.ID.eq(RADDRESS.DOMAIN))
+			.leftOuterJoin(CHILD_GEOZONE).on(CHILD_GEOZONE.ID.eq(RADDRESS.GEOZONE))
+			.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE).and(GEOTREE.DOMAIN.eq(DOMAIN.ID).or(GEOTREE.DOMAIN.eq(DOMAIN.PARENT))))
+			.leftOuterJoin(PARENT_GEOZONE).on(PARENT_GEOZONE.ID.eq(GEOTREE.PARENT))
+			.where(WORKPLACE_PROPERTIES.getConditions(filter));
+	}
+	
+	private static SelectConditionStep<Record> withSecurity(AONContext ctx, SelectConditionStep<Record> select) {
+		 return select.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE));
+	}
+	
+	// ----- GET
+
+	public static Workplace get(AONContext ctx, Integer workplaceId, Options... options){ 
+		return get(ctx, f -> f.getIdProperty().eq(workplaceId), options);
+	}
+	
+	public static Workplace get(AONContext ctx, WorkplaceFilter filter, Options... options){ 
+		Options opts = options.length > 0 ? options[0] : new Options();
+		return get(ctx, filter, opts);
+	}
+	
+	public static Workplace get(AONContext ctx, WorkplaceFilter filter, Options options){ 
+		ctx.checkRead();
+		SelectConditionStep<Record> select = options.isFull() 
+			? selectFull(ctx, filter) : select(ctx, filter);
+		if(options.isSecurity()) select = withSecurity(ctx, select);
+		return select.limit(1).fetch().stream().map(new WorkplaceFiller())
+			.findFirst().orElse(null);
+	}
+	
+	// ----- GET STREAM
+	
+	public static Stream<Workplace> getStream(AONContext ctx, WorkplaceFilter filter, Options... options){ 
+		Options opts = options.length > 0 ? options[0] : new Options();
+		return getStream(ctx, filter, opts);
+	}
+	
+	public static Stream<Workplace> getStream(AONContext ctx, WorkplaceFilter filter, Options options){ 
+		ctx.checkRead();
+		SelectConditionStep<Record> select = options.isFull() 
+			? selectFull(ctx, filter) : select(ctx, filter);
+		if(options.isSecurity()) select = withSecurity(ctx, select);
+		return select.fetch().stream().map(new WorkplaceFiller());
+	}
+		
+	@Deprecated
 	public static Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer worplaceId){
-		ctx.checkRead();
-		Optional<Workplace> workplace = ctx.getDslContext().select()
-			.from(WORKPLACE)
-			.where(WORKPLACE.DOMAIN.eq(domainId))
-			.and(WORKPLACE.ID.eq(worplaceId))
-			.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
-			.fetch()
-			.stream()
-			.map(new WorkplaceFiller())
-			.findFirst();
-		
-		if(workplace.isPresent())
-			workplace.get().setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(workplace.get().getId()) ));
-		
-		return workplace;
-		
+		return Optional.ofNullable(get(ctx, 
+			f -> f.getDomainProperty().eq(domainId).and(f.getIdProperty().eq(worplaceId)),
+			new Options().setFull(true)));		
 	}
-	
+
+	@Deprecated
 	public static Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId){
-		ctx.checkRead();
-		List<Workplace> workplaces = ctx.getDslContext().select()
-			.from(WORKPLACE)
-			.where(WORKPLACE.DOMAIN.eq(domainId))
-			.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
-			.fetch()
-			.stream()
-			.map(new WorkplaceFiller())
-			.collect(Collectors.toList());
-		
-		workplaces.forEach(w -> w.setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(w.getId()) )));
-		
-		return workplaces.stream();
+		return getStream(ctx, f -> f.getDomainProperty().eq(domainId));
 	}
-	
+
+	@Deprecated
 	public static Stream<Workplace> getWorkplacesNoScope(AONContext ctx, Integer domainId){
-		ctx.checkRead();
-		List<Workplace> workplaces = ctx.getDslContext().select()
-			.from(WORKPLACE)
-			.where(WORKPLACE.DOMAIN.eq(domainId))
-			.fetch()
-			.stream()
-			.map(new WorkplaceFiller())
-			.collect(Collectors.toList());
-		
-		workplaces.forEach(w -> w.setPayrollWorkplace(PayrollWorkplaceDAO.get(ctx, f -> f.getWorkplaceProperty().eq(w.getId()) )));
-		
-		return workplaces.stream();
+		return getStream(ctx, f -> f.getDomainProperty().eq(domainId), new Options().setSecurity(false));
 	}
 	
 	public static Workplace save(AONContext ctx, Workplace workplace) {
@@ -100,7 +152,7 @@ public class WorkplaceDAO {
 			.set(WORKPLACE.DOMAIN, workplace.getDomain())
 			.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
 			.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
-			.set(WORKPLACE.ADDRESS, workplace.getAddress())
+			.set(WORKPLACE.ADDRESS, workplace.getAddress() != null ? workplace.getAddress().getId() : null)
 			.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
 			.set(WORKPLACE.SCOPE, workplace.getScope())
 			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
@@ -109,7 +161,7 @@ public class WorkplaceDAO {
 			.fetchOne()
 			.getValue(WORKPLACE.ID);
 		workplace.setId(id);
-		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+		ctx.log().debug("INSERT WORKPLACE id: " + workplace.getId());	
 		return workplace;
 	}
 	
@@ -117,7 +169,7 @@ public class WorkplaceDAO {
 		ctx.getDslContext().update(WORKPLACE)
 		.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
 		.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
-		.set(WORKPLACE.ADDRESS, workplace.getAddress())
+		.set(WORKPLACE.ADDRESS, workplace.getAddress() != null ? workplace.getAddress().getId() : null)
 		.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
 		.set(WORKPLACE.SCOPE, workplace.getScope())
 		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
@@ -129,15 +181,13 @@ public class WorkplaceDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer workplaceId) {
-		
 		PayrollWorkplaceDAO.delete(ctx, workplaceId);
 		
 		ctx.getDslContext().delete(WORKPLACE)
 			.where(WORKPLACE.ID.eq(workplaceId))
 			.execute();
 		
-		ctx.log().debug("DELETE WORKPLACE id: " + workplaceId);	
-		
+		ctx.log().debug("DELETE WORKPLACE id: " + workplaceId);			
 	}
 	
 	static class WorkplaceFiller extends Filler implements Function<Record, Workplace> {
@@ -152,69 +202,17 @@ public class WorkplaceDAO {
 				.setId(getValue(r, WORKPLACE.ID))
 				.setDomain(getValue(r, WORKPLACE.DOMAIN))
 				.setActive(getBoolean(r, WORKPLACE.ACTIVE))
-				.setAddress(getValue(r, WORKPLACE.ADDRESS))
+				.setAddress(hasValue(r, RADDRESS.ID) 
+					? RegistryAddressFiller.build(r)  
+					: (isNull(r, WORKPLACE.ADDRESS) ? null : new RegistryAddress().setId(getValue(r, WORKPLACE.ADDRESS))))
 				.setCustomer(getValue(r, WORKPLACE.CUSTOMER))
 				.setDescription(getValue(r, WORKPLACE.DESCRIPTION))
 				.setEconomicAgreement(Administration.safeValueOf(getValue(r, WORKPLACE.ECONOMICAGREEMENT)))
 				.setEnterprise(getValue(r, WORKPLACE.ENTERPRISE))
-				.setScope(getValue(r, WORKPLACE.SCOPE));
+				.setScope(getValue(r, WORKPLACE.SCOPE))
+				.setPayrollWorkplace(hasValue(r, PAYROLL_WORKPLACE.ID) 
+					? PayrollWorkplaceDAO.PayrollWorkplaceFiller.build(r) : null);
 		}
-	}
-	// ******************************************************************
-	// ***************************************************** [OLD] ******
-	// ******************************************************************
-	// ******************************************************************
-	@Deprecated
-	private static final WorkplacePropertiesDAO WORKPLACE_PROPERTIES = new WorkplacePropertiesDAO();
-	@Deprecated
-	private static class WorkplacePropertiesDAO implements WorkplaceProperties {
-		protected Condition[] getConditions(WorkplaceFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ID);} 
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ACTIVE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.DOMAIN);}
-		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ADDRESS);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.CUSTOMER);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(DSL.trim(WORKPLACE.DESCRIPTION));}
-		@Override public Property<Byte> getEconomicagreementProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ECONOMICAGREEMENT);}
-		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.ENTERPRISE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(WORKPLACE.SCOPE);}
-		
-		@Override public Property<String> getGeozoneNameProperty() {return new FilterDAO.PropertyDAO<>(GEOZONE.NAME);}
-	}
-	
-	/**
-	 * @deprecated Use of domain is mandatory and 
-	 * 			Filter can return multiple results. 
-	 * 			If nothing is found, null must be returned.
-	 * 		 	Use Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer id) instead.
-	 */
-	@Deprecated
-	public static Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter){
-		return ctx.getDslContext().select().from(WORKPLACE)
-				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(WORKPLACE.ADDRESS))
-				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
-				.where(WORKPLACE_PROPERTIES.getConditions(filter))
-				.limit(1).fetchInto(WORKPLACE).stream().map(new WorkplaceFiller()).findFirst().orElse(null);	
-	}
-	
-	/**
-	 * @deprecated Use of domain is mandatory
-	 * @user Stream<Workplace> getWorkplaceList(AONContext ctx, Integer domainId) instead.
-	 */
-	@Deprecated
-	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
-		return ctx.getDslContext().select().from(WORKPLACE)
-				.where(WORKPLACE_PROPERTIES.getConditions(filter))
-				.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
-				.orderBy(WORKPLACE.DESCRIPTION)
-				.fetchInto(WORKPLACE)
-				.stream()
-				.map(new WorkplaceFiller())
-				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 
 }

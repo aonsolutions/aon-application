@@ -187,7 +187,8 @@ public class AonWorkplacePanel extends HTMLPanel {
 			statusLB.setValue(workplace.isActive());
 			if(null != workplace.getEconomicAgreement()) economicAgreementLB.setValue(workplace.getEconomicAgreement().getDescription());
 			scopeLB.setValue(workplace.getScope().toString());
-			addressLB.setValue(workplace.getAddress().toString());
+			if(null != workplace.getAddress() && null != workplace.getAddress().getId()) 
+				addressLB.setValue(workplace.getAddress().getId().toString());
 			
 			agreementLB.setValue(null != workplace.getPayrollWorkplace() && null != workplace.getPayrollWorkplace().getAgreement() ? workplace.getPayrollWorkplace().getAgreement().toString() : "");
 			enterpriseActivityLB.setValue(null != workplace.getPayrollWorkplace() && null != workplace.getPayrollWorkplace().getEnterpriseActivity() ? workplace.getPayrollWorkplace().getEnterpriseActivity().toString() : "");
@@ -215,7 +216,7 @@ public class AonWorkplacePanel extends HTMLPanel {
 				.setActive(statusLB.getValue())
 				.setEconomicAgreement(null == Administration.safeValueOf(economicAgreementLB.getValue()) ? Administration.COMMON_TERRITORY : Administration.safeValueOf(economicAgreementLB.getValue()))
 				.setScope(Integer.parseInt(scopeLB.getValue()))
-				.setAddress(Integer.parseInt(addressLB.getValue()))
+				.setAddress(new RegistryAddress().setId(Integer.parseInt(addressLB.getValue())))
 				;
     		
     		workplace.getPayrollWorkplace().setAgreement(AonStringUtils.isBlank(agreementLB.getValue()) ? null : Integer.parseInt(agreementLB.getValue()));

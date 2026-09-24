@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
@@ -33,11 +34,18 @@ public class WorkplaceJSON {
 			.setEnterprise(JsonUtils.getInteger(json, IJsonNames.ENTERPRISE))
 			.setCustomer(JsonUtils.getInteger(json, IJsonNames.CUSTOMER))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-			.setAddress(JsonUtils.getInteger(json, IJsonNames.ADDRESS))
+			.setAddress(getAddress(json))
 			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 			.setEconomicAgreement(Administration.safeValueOf(JsonUtils.getString(json, IJsonNames.ECONOMIC_AGREEMENT)))
 			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 			;
+	}
+	
+	private static RegistryAddress getAddress(JSONObject json) {
+		if(JsonUtils.isJSONObject(json, IJsonNames.ADDRESS))
+			return RegistryAddressJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ADDRESS));
+		Integer id = JsonUtils.getInteger(json, IJsonNames.ADDRESS);
+		return id != null ? new RegistryAddress().setId(id) : null;
 	}
 	
 	public static JSONArray toJSON(List<Workplace> list) {
@@ -58,7 +66,7 @@ public class WorkplaceJSON {
 				.put(IJsonNames.ENTERPRISE, object.getEnterprise())
 				.put(IJsonNames.CUSTOMER, object.getCustomer())
 				.put(IJsonNames.DESCRIPTION, object.getDescription())
-				.put(IJsonNames.ADDRESS, object.getAddress())
+				.put(IJsonNames.ADDRESS, RegistryAddressJSON.toJSON(object.getAddress()))
 				.put(IJsonNames.SCOPE, object.getScope())
 				.put(IJsonNames.ECONOMIC_AGREEMENT, object.getEconomicAgreement())
 				.put(IJsonNames.ACTIVE, object.isActive())

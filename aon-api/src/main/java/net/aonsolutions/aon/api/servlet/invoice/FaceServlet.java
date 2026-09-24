@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -64,14 +65,15 @@ public class FaceServlet extends AonApiHttpServlet {
 			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
 			Person person = AON.getPerson(api.getOccam(), f -> f.getIdProperty().eq(company.getId()));
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
-			Workplace workplace = new Workplace();
-			if(!invoice.getDetails().isEmpty() && invoice.getDetails().get(0).getWorkplace() != null &&
-					invoice.getDetails().get(0).getWorkplace().getId() != null) {
-				Integer wId = invoice.getDetails().get(0).getWorkplace().getId();
-				workplace = AON.getWorkplace(domainName, domainId, login, f -> f.getIdProperty().eq(wId));				
-			} else {
-				workplace = AON.getWorkplace(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
-						.and(f.getActiveProperty().eq((byte)1)));
+			
+			Workplace workplace = invoice.detailStream().map(InvoiceDetail::getWorkplace).filter(wp -> wp != null && wp.getId() != null).findFirst().orElse(null);
+			if(workplace != null && workplace.getId() != null) {
+				workplace = AON.getWorkplace(api.getOccam(), api.getDomain().getId(), workplace.getId()).orElse(null);
+			}
+			if(workplace == null) {
+				workplace = AON.getWorkplaces(api.getOccam(), f -> f.getDomainProperty().eq(domainId)
+						.and(f.getActiveProperty().eq((byte)1)))
+						.findFirst().orElse(new Workplace());
 			}
 
 //			Version 3.2.2

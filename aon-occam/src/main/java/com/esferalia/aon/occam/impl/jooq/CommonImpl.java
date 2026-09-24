@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -199,6 +200,15 @@ public class CommonImpl implements ICommon {
 	}		
 	
 	@Override
+	public Stream<Workplace> getWorkplaces(AONContext ctx, WorkplaceFilter filter, Options... options) {
+		return WorkplaceDAO.getStream(ctx, filter, options);
+	}
+	@Override
+	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter, Options... options) {
+		return WorkplaceDAO.get(ctx, filter, options);
+	}
+	
+	@Override
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> WorkplaceDAO.save(ctx, workplace));
@@ -209,21 +219,6 @@ public class CommonImpl implements ICommon {
 		ctx.getDslContext().transaction(
 			configuration -> WorkplaceDAO.delete(ctx, workplaceId));
 	}
-	
-	@Override
-	@Deprecated
-	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			WorkplaceDAO.getWorkplace(ctx, filter));
-	}
-	
-	@Override
-	@Deprecated
-	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter) {
-		return ctx.getDslContext().transactionResult(configuration -> 
-			WorkplaceDAO.getWorkplaceList(ctx, filter));
-	}
-
 	
 	// ---------- PAYROLL WORKPLACE
 	

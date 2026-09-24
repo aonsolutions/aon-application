@@ -11,8 +11,8 @@ import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -488,15 +488,15 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setWidget(0, 0, new Label(MSG.template()));
 		flex_table.setWidget(0, 1, lb0);
 		
-		item.getWorkplaces(getDomain(), getUser(), new AsyncCallback<List<WorkPlace>>() {
+		item.getWorkplaces(getDomain(), getUser(), new AsyncCallback<List<Workplace>>() {
 			
 			@Override
-			public void onSuccess(List<WorkPlace> result) {
+			public void onSuccess(List<Workplace> result) {
 
 				ListBox lb1 = new ListBox();
 				lb1.addItem("-");
-				for(WorkPlace w : result){
-					lb1.addItem(w.getName());
+				for(Workplace w : result){
+					lb1.addItem(w.getDescription());
 				}
 				lbaux = lb1;
 				lb1.addChangeHandler(new ChangeHandler() {

@@ -1,11 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 
-import java.util.List;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -13,6 +8,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.WorkplaceJSON;
 import com.esferalia.aon.occam.api.model.Workplace;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -92,9 +90,7 @@ public class WorkplaceServlet extends AonApiHttpServlet{
 	}
 
 	private Object getWorkplaces(AonApiData api) {
-		List<Workplace> workplaces = AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainProperty().eq(api.getDomain().getId()));
-		return WorkplaceJSON.toJSON(workplaces);
+		return WorkplaceJSON.toJSON(AON.getWorkplaces(api.getOccam(), api.getDomain().getId()));
 	}
 	
 	private JSONObject saveWorkplace(AonApiData api) {

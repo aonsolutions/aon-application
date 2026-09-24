@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionValue;
 import com.esferalia.aon.occam.api.model.Series;
@@ -551,11 +552,11 @@ public class AonFaker {
 			.setEnterprise(company.getId())
 			.setDescription(faker.beer().name())
 			.setScope(scope.getId())
-			.setAddress(company.getAddresses().getFirst().getId());
+			.setAddress(company.getAddresses().getFirst());
 	}
 	
 	public static Warehouse getWarehouse(AONContext ctx) {
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		Workplace workplace = WorkplaceDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()), new Options().setSecurity(false));
 		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		return new Warehouse()
 			.setDomain(ctx.getDomainId())	
@@ -686,7 +687,7 @@ public class AonFaker {
 		Customer customer = CustomerDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(customer.isEmpty()) customer = CustomerDAO.save(ctx, getCustomer(ctx));
 		
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		Workplace workplace = WorkplaceDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()), new Options().setSecurity(false));
 		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		
 		String series = "TEST";
@@ -735,7 +736,7 @@ public class AonFaker {
 		Supplier supplier = SupplierDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
 		if(supplier.isEmpty()) supplier = SupplierDAO.save(ctx, getSupplier(ctx));
 		
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		Workplace workplace = WorkplaceDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()), new Options().setSecurity(false));
 		if(workplace == null || workplace.getId() == null) workplace = WorkplaceDAO.save(ctx, getWorkplace(ctx));
 		
 		String series = "TEST";
@@ -1012,7 +1013,7 @@ public class AonFaker {
 		Administration[] administrations = Administration.values();
 		return new Workplace()
 				.setActive(random.nextBoolean())
-				.setAddress(Integer.parseInt(Faker.instance().numerify("#####")))
+				.setAddress(new RegistryAddress().setId(Integer.parseInt(Faker.instance().numerify("#####"))))
 				.setCustomer(getCustomer().getId())
 				.setDescription(Faker.instance().zelda().game())
 				.setDomain(getDomain().getId())

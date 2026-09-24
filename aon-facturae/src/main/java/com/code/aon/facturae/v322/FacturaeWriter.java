@@ -304,7 +304,7 @@ public class FacturaeWriter {
 	private AdministrativeCentreType getAdministrativeCentre() {
 		AdministrativeCentreType centre = new AdministrativeCentreType();
 		centre.setCentreCode(Util.toTextMax10Type(String.valueOf(getWorkplace().getId())));
-		RegistryAddress address = AON.getRegistryAddress(getDomain(), getUser(), f -> f.getIdProperty().eq(getWorkplace().getAddress()));
+		RegistryAddress address = AON.getRegistryAddress(getDomain(), getUser(), f -> f.getIdProperty().eq(getWorkplace().getAddress() != null ? getWorkplace().getAddress().getId() : null));
 		CountryType country = getCountry(address.getCountry());
 		if(CountryType.ESP.equals(country) ) {
 			centre.setAddressInSpain(getAddress(address, country));	

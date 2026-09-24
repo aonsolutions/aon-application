@@ -18,7 +18,11 @@ public class Filler {
 	protected static <T> boolean isNull(Record r, Field<T> field) {
 		return getValue(r, field) == null;
 	}
-	
+
+	protected static boolean hasValue(Record r, Field<?> field) {
+		return checkField(r, field) && r.getValue(field) != null;
+	}
+
 	protected static <T> T getValue(Record r, Field<T> field) {
 		return checkField(r, field)
 			? r.getValue(field)

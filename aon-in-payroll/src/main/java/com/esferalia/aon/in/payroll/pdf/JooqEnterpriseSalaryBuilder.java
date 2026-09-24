@@ -52,11 +52,13 @@ import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -177,10 +179,7 @@ public class JooqEnterpriseSalaryBuilder {
 			String enterpriseName = "";
 			if (enterpriseId <= 0) {
 				if (workplaceId != null && workplaceId > 0) {
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				} else {
 					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
 					if (optEnterprise.isPresent()) {
@@ -276,10 +275,7 @@ public class JooqEnterpriseSalaryBuilder {
 			String enterpriseName = "";
 			if (enterpriseId <= 0) {
 				if (workplaceId != null && workplaceId > 0) {
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				} else {
 					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
 					if (optEnterprise.isPresent()) {
@@ -360,10 +356,7 @@ public class JooqEnterpriseSalaryBuilder {
 			String enterpriseName = "";
 			if (null == enterpriseId || enterpriseId <= 0) {
 				if (workplaceId != null && workplaceId > 0) {
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				} else {
 					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
 					if (optEnterprise.isPresent()) {
@@ -468,10 +461,7 @@ public class JooqEnterpriseSalaryBuilder {
 			String enterpriseName = "";
 			if (enterpriseId == null || enterpriseId == 0) {
 				if (workplaceId != null && workplaceId > 0) {
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				} else {
 					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
 					if (optEnterprise.isPresent()) {
@@ -545,10 +535,7 @@ public class JooqEnterpriseSalaryBuilder {
 			String enterpriseName = "";
 			if (enterpriseId == null || enterpriseId == 0) {
 				if (workplaceId != null && workplaceId > 0) {
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				} else {
 					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
 					if (optEnterprise.isPresent()) {

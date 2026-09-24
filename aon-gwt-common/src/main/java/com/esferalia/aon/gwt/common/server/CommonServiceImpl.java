@@ -1080,7 +1080,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<Workplace> getWorkplaces(String domainName, int domain, String user) throws AonCoreException {
-		return AON.getWorkplaceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)));
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domain).setUser(user);
+		return AON.getWorkplaces(occam, f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1))).toList();
 	}
 	
 	@Override

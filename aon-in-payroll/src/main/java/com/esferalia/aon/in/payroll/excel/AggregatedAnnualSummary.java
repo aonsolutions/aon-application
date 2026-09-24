@@ -59,6 +59,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
@@ -875,9 +877,8 @@ public class AggregatedAnnualSummary {
 	}
 	
 	private static Enterprise getEnterpriseByWorkplaceId (AONContext aonContext, Integer workplaceId) {
-		Workplace workplace = AON.getWorkplace(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), f -> f.getIdProperty().eq(workplaceId));
-		Integer enterpriseId = workplace.getEnterprise();
-		return getEnterpriseById(aonContext, enterpriseId);
+		Workplace workplace = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false));
+		return getEnterpriseById(aonContext, workplace.getEnterprise());
 	}
 	
 	private static Enterprise pickEnterpriseFromDomain (AONContext aonContext) {

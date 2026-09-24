@@ -104,7 +104,7 @@ import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 
 
-public class TemplatesServlet extends AonStatelessRemoteServiceServlet implements ITemplate{
+public class TemplatesServlet extends AonStatelessRemoteServiceServlet implements ITemplate {
 
 	private static final long serialVersionUID = 6871016881549113129L;
 
@@ -1605,7 +1605,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 
-	public LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
+	public LinkedList<Workplace> getWorkplaces(Domain domain, User user){
 		return DBCatalogue.getWorkplaces(domain, user);
 	}
 	public LinkedList<Department> getDepartments(Domain domain, User user, String workplaceDescription){

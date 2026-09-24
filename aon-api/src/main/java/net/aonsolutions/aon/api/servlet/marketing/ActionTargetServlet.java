@@ -863,7 +863,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 				.setDescription("PRINCIPAL")
 				.setDomain(newDomain.getId())
 				.setEnterprise(companyId)
-				.setAddress(raddressId)
+				.setAddress(new RegistryAddress().setId(raddressId))
 				.setCustomer(customerId)
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
 				.setScope(enterpriseScope)

@@ -138,7 +138,7 @@ public class StatDAO {
 	 				.setLabel(seg.getName() + " ("+seg.getId()+")")
 	 				.setType(StatFilterType.SEGMENT)));
 		
-		for(Workplace wp : WorkplaceDAO.getWorkplaceList(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))){
+		for(Workplace wp : WorkplaceDAO.getStream(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())).toList()){
 			params.getFilterItems().add(
 			new StatFilterItem()
 				.setId(wp.getId())

@@ -1072,7 +1072,7 @@ public class Asserts {
 		assertEqualsNulls("Workplace", expected, actual);
 		
 		if (expected != null && actual != null) {
-			assertEquals(expected.getAddress(), actual.getAddress(), "Address");
+			assertEquals(expected.getAddress() != null ? expected.getAddress().getId() : null, actual.getAddress() != null ? actual.getAddress().getId() : null, "Address");
 			assertEquals(expected.getCustomer(), actual.getCustomer(), "Customer");
 			assertEquals(expected.getDescription(), actual.getDescription(), "Description");
 			assertEquals(expected.getDomain(), actual.getDomain(), "Domain");

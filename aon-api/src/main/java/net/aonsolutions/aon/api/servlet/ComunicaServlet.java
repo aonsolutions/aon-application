@@ -46,7 +46,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.PayrollWorkplace;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
@@ -574,7 +574,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String workplaceName      = params.optString(IJsonNames.WORKPLACE);
 		
 		// Try to get enterprise agreement default
-		if(AonStringUtils.isBlank(convenio)) convenio = getDefaultAgreement(domain, user, workplaceName);
+		if(AonStringUtils.isBlank(convenio)) convenio = getDefaultAgreement(api, workplaceName);
 
 		EmployeeBuilder builder = new EmployeeBuilder()
 		.setRegime(regime)
@@ -630,27 +630,27 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return new JSONObject().put(IJsonNames.FILE, base64);
 	}
 	
-	private String getDefaultAgreement(Domain domain, User user, String workplaceName) {
+	private String getDefaultAgreement(AonApiData api, String workplaceName) {
+		Domain domain = api.getDomain();
+		User user = api.getUser();
 		if(AonStringUtils.isNotBlank(workplaceName)) {
-			Workplace workplace = AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getGeozoneNameProperty().like(workplaceName)));
+			Workplace workplace = AON.getWorkplaces(api.getOccam(), 
+				f -> f.getDomainProperty().eq(domain.getId()),
+				new Options().setFull(true).setSecurity(false))
+			.filter(w -> w.getAddress() != null && workplaceName.equalsIgnoreCase(w.getAddress().getGeozoneName()))
+			.findFirst().orElse(null);					
 			
-			if(null != workplace) {
-				PayrollWorkplace parollWorkplace = AON.getPayrollWorkpalce(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkplaceProperty().eq(workplace.getId())));
-			
-				if(null != parollWorkplace && null != parollWorkplace.getAgreement()) {
-					try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
-						AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
-							.where(AGREEMENT.ID.eq(parollWorkplace.getAgreement()))
-							.fetchOne();
-						
-						if(null == agreementRecord) return getEnterpriseAgreement(domain, user);
-						else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? getEnterpriseAgreement(domain, user) : agreementRecord.getSsNumber();  
-					} catch (Exception e) {
-						return getEnterpriseAgreement(domain, user);
-					}
-				} else return getEnterpriseAgreement(domain, user);
+			if(workplace != null && workplace.getPayrollWorkplace() != null && workplace.getPayrollWorkplace().getAgreement() != null) {
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+					AgreementRecord agreementRecord = ctx.getDslContext().selectFrom(AGREEMENT)
+						.where(AGREEMENT.ID.eq(workplace.getPayrollWorkplace().getAgreement()))
+						.fetchOne();
+					if(null == agreementRecord) return getEnterpriseAgreement(domain, user);
+					else return AonStringUtils.isBlank(agreementRecord.getSsNumber()) ? getEnterpriseAgreement(domain, user) : agreementRecord.getSsNumber();  
+				} catch (Exception e) {
+					return getEnterpriseAgreement(domain, user);
+				}
 			} else return getEnterpriseAgreement(domain, user);
-			
 		} else return getEnterpriseAgreement(domain, user);
 	}
 	

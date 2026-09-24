@@ -283,8 +283,8 @@ public abstract class WorkplaceTable extends ScrollPanel {
 		tab.addRow(row, description, COLS.DES.getColWidth());
 		
 		Label address = new Label();
-		if(null != workplace.getAddress()) {
-			Optional<RegistryAddress> addressOpt = this.addresses.stream().filter(a -> a.getId().equals(workplace.getAddress())).findFirst();
+		if(null != workplace.getAddress() && null != workplace.getAddress().getId()) {
+			Optional<RegistryAddress> addressOpt = this.addresses.stream().filter(a -> a.getId().equals(workplace.getAddress().getId())).findFirst();
 			if(addressOpt.isPresent()) {
 				address = new Label(addressOpt.get().getFullAddress());
 				address.setTitle(addressOpt.get().getFullAddress());
