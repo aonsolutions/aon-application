@@ -445,10 +445,15 @@ public class SettleSalariesDAO {
 				.where(FBATCH.ID.eq(fbatchId))
 				.fetchOne();
 		
+		String description = FBatchAttachUtils.buildDescription(
+				fbatchEnterprise.get(FBATCH.PAYMENT),
+				fbatchEnterprise.get(FBATCH.TYPE),
+				fbatchEnterprise.get(FBATCH.DESCRIPTION));
+		
 		if(null != fbatchEnterprise.get(FBATCH.RATTACH)) {
 			ctx.getDslContext().update(RATTACH)
 				.set(RATTACH.DATA, data)
-				.set(RATTACH.DESCRIPTION, "SEPA_" + fbatchEnterprise.get(FBATCH.TYPE) + "_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
+				.set(RATTACH.DESCRIPTION, description)
 				.set(RATTACH.MODIFICATION_USER,ctx.getUser())
 				.set(RATTACH.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 				.where(RATTACH.ID.eq(fbatchEnterprise.get(FBATCH.RATTACH)))
@@ -460,7 +465,7 @@ public class SettleSalariesDAO {
 				.set(RATTACH.DOMAIN, fbatchEnterprise.get(FBATCH.DOMAIN))
 				.set(RATTACH.REGISTRY, fbatchEnterprise.get(ENTERPRISE.REGISTRY))
 				.set(RATTACH.MIMETYPE, (byte)5) //XML
-				.set(RATTACH.DESCRIPTION, "SEPA_" + fbatchEnterprise.get(FBATCH.TYPE) + "_XML_" + fbatchEnterprise.get(FBATCH.DESCRIPTION))
+				.set(RATTACH.DESCRIPTION, description)
 				.set(RATTACH.DATA, data)
 				.set(RATTACH.TYPE, (byte)22) //¡?
 				.set(RATTACH.SECURITY_LEVEL, (byte)0)

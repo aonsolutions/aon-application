@@ -78,6 +78,13 @@ public class Certifica2Servlet extends HttpServlet {
 				ereEnd = dateFormat.parse(ereEndStr);
 			} catch (Exception e) { ereEnd = null; }
 			
+			// Get startDate (fecha de inicio elegida en el diálogo)
+			String startDateStr = req.getParameter("startDate");
+			Date startDate = null;
+			try {
+			    startDate = dateFormat.parse(startDateStr);
+			} catch (Exception e) { startDate = null; }
+			
 			// Get Servlet outputStream
 			ServletOutputStream output = res.getOutputStream();	
 			
@@ -89,13 +96,8 @@ public class Certifica2Servlet extends HttpServlet {
 				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".xml\"");
 				
 				// Try to get Certifica2
-				data = JooqCertifica2.getCertitica2Data(domainName, contractId);
-				
-				// If not exist, create it and get it
-				if(null == data) {
-					JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId, suspensionReasonCode, ereCode, ereEnd);
-					data = JooqCertifica2.getCertitica2Data(domainName, contractId);
-				}
+				JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId, suspensionReasonCode, ereCode, ereEnd, startDate);
+			    data = JooqCertifica2.getCertitica2Data(domainName, contractId);
 				
 			} else if(AonStringUtils.equalsIgnoreCase(type, "PDF")) {
 				// Get employee endDate
@@ -117,7 +119,7 @@ public class Certifica2Servlet extends HttpServlet {
 				res.setContentType(MimeType.MIME_PDF.getName());
 				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
 				
-				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason, ereCode, ereEnd);
+				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason, ereCode, ereEnd, startDate);
 			}
 			
 			res.setStatus(HttpServletResponse.SC_OK);

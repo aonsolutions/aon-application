@@ -106,30 +106,55 @@ public class JooqCertifica2 {
 
 	// -----------------------------------------------------
 	// createCertifica2DB@2Info
-
-	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId, String suspensionReason, String ereCode, java.util.Date ereEnd) {
-		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			createCertifica2DB(connection, domainName, user, domainId, contractId, suspensionReason, ereCode, ereEnd);
-		} catch (Exception e) {
-			// Not use here
-		}
+	
+	// ---------- Overloads de compatibilidad ----------
+	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId,
+	        String suspensionReason, String ereCode, java.util.Date ereEnd) {
+	    createCertifica2DBServlet(domainName, user, contractId, suspensionReason, ereCode, ereEnd, null);
 	}
 
-	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId, Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd) {
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionCode, ereCode, ereEnd);
-		saveCertifica2Info(dslContext, domainName, user, domainId, contractId, certifica2Info.getSuspensionCode(), ereCode, ereEnd);
+	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId,
+	        Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd) {
+	    createCertifica2DB(connection, domainName, user, domainId, contractId, suspensionCode, ereCode, ereEnd, null);
+	}
+
+	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId,
+	        String suspensionReasonCode, String suspensionReason, String ereCode, java.util.Date ereEnd) {
+	    return createCertEnterprisePDF(domainName, user, contractId, suspensionReasonCode, suspensionReason, ereCode, ereEnd, null);
+	}
+
+	public static Certificates createCertificates(Connection connection, String domainName, String user,
+	        Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd) {
+	    return createCertificates(connection, domainName, user, contractId, suspensionCode, ereCode, ereEnd, null);
+	}
+
+	public static void createCertifica2DBServlet(String domainName, String user, Integer contractId,
+	        String suspensionReason, String ereCode, java.util.Date ereEnd, java.util.Date startDate) {
+	    try (Connection connection = AonServletUtils.getConnection(domainName)) {
+	        Integer domainId = AonServletUtils.getDomainID(domainName);
+	        createCertifica2DB(connection, domainName, user, domainId, contractId, suspensionReason, ereCode, ereEnd, startDate);
+	    } catch (Exception e) {
+	        // Not use here
+	    }
+	}
+
+	public static void createCertifica2DB(Connection connection, String domainName, String user, Integer domainId,
+	        Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd, java.util.Date startDate) {
+	    DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+	    Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionCode, ereCode, ereEnd, startDate);
+	    saveCertifica2Info(dslContext, domainName, user, domainId, contractId, certifica2Info.getSuspensionCode(), ereCode, ereEnd, startDate);
 	}
 	
-	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId, String suspensionReasonCode, String suspensionReason, String ereCode, java.util.Date ereEnd) {
+	public static byte[] createCertEnterprisePDF(String domainName, String user, Integer contractId,
+	        String suspensionReasonCode, String suspensionReason, String ereCode, java.util.Date ereEnd,
+	        java.util.Date startDate) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
 			if (AonStringUtils.isBlank(suspensionReasonCode))
 				suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode, ereEnd);
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode, ereEnd, startDate);
 			
 			// Set suspensionCode and reason
 			certifica2Info.setSuspensionCode(suspensionReasonCode);
@@ -330,13 +355,13 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- getCertific@2Info
 
 	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection connection,
-			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode, Date ereEnd) throws IllegalArgumentException {
+			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode, Date ereEnd, Date startDate) throws IllegalArgumentException {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode, ereEnd);
+		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode, ereCode, ereEnd, startDate);
 	}
 
 	private static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(DSLContext dslContext,
-			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode, java.util.Date ereEnd) throws IllegalArgumentException {
+			String domainName, String user, Integer contractId, String suspensionReasonCode, String ereCode, java.util.Date ereEnd, java.util.Date selectedStartDate) throws IllegalArgumentException {
 
 		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = new com.esferalia.aon.gwt.payroll.shared.Certifica2Info();
 
@@ -347,7 +372,7 @@ public class JooqCertifica2 {
 		Integer enterpriseCCCId = contractRecord.get(CONTRACT.ENTERPRISE_CCC);
 		Integer enterpriseActivityId = contractRecord.get(CONTRACT.ENTERPRISE_ACTIVITY);
 		
-		getContractData(dslContext, certifica2Info, contractRecord, suspensionReasonCode, ereCode, ereEnd);
+		getContractData(dslContext, certifica2Info, contractRecord, suspensionReasonCode, ereCode, ereEnd, selectedStartDate);
 
 		// Representative Data
 
@@ -369,27 +394,28 @@ public class JooqCertifica2 {
 		getCertifica2Holidays(dslContext, certifica2Info, contractId);
 		
 		// Certifica2 Periods
-
-		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
-		getCertifica2Periods(dslContext, certifica2Info, seniorityDate, contractId);
+		getCertifica2Periods(dslContext, certifica2Info, parseDateToSQL(certifica2Info.getStartDate()), contractId);
 
 		return certifica2Info;
 	}
+	private static void getContractData(DSLContext dslContext, Certifica2Info certifica2Info, Record contractRecord,
+	        String suspensionReasonCode, String ereCode, java.util.Date ereEnd, java.util.Date selectedStartDate)
+	        throws IllegalArgumentException {
 
-	private static void getContractData(DSLContext dslContext,
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Record contractRecord,
-			String suspensionReasonCode, String ereCode, java.util.Date ereEnd) throws IllegalArgumentException {
+	    Integer contractId = contractRecord.get(CONTRACT.ID);
+	    Integer personId = contractRecord.get(CONTRACT.PERSON);
 
-		Integer contractId = contractRecord.get(CONTRACT.ID);
-		Integer personId = contractRecord.get(CONTRACT.PERSON);
+	    Date contractStartDate = contractRecord.get(CONTRACT.START_DATE);
+	    Date seniorityDate     = contractRecord.get(CONTRACT.SENIORITY_DATE);
+	    Date endDate           = contractRecord.get(CONTRACT.END_DATE);
 
-		//Date startDate = null != contractRecord.get(CONTRACT.SENIORITY_DATE) ? contractRecord.get(CONTRACT.SENIORITY_DATE) : contractRecord.get(CONTRACT.START_DATE);
-		Date startDate = contractRecord.get(CONTRACT.START_DATE);
-		Date endDate = contractRecord.get(CONTRACT.END_DATE);
+	    // Las dos fechas viajan al cliente para poder elegir
+	    certifica2Info.setStartDate(contractStartDate);
+	    certifica2Info.setSeniorityDate(seniorityDate);
 
-		Result<Record> ereRecords = null;
-		
-		if (null == endDate) {
+	    Result<Record> ereRecords = null;
+
+	    if (null == endDate) {
 			ereRecords = dslContext.select().from(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 					.and(CONTRACT_DATA.NAME.in(ContextVariable.ERE_FACTORS_NAMES))
@@ -402,9 +428,7 @@ public class JooqCertifica2 {
 			endDate = ereRecords.get(0).get(CONTRACT_DATA.START_DATE);
 		}
 
-		int contractDuration = getDaysBetween(startDate, endDate);
-
-		Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
+	    Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
 
 		String name = personRecord.get(PERSON.NAME);
 		String surName = personRecord.get(PERSON.FIRST_SURNAME);
@@ -452,6 +476,10 @@ public class JooqCertifica2 {
 			cno = dslContext.select(CNO.TITLE).from(CNO).where(CNO.CODE.eq(cnoCode)).fetchOne(CNO.TITLE);
 		}
 		
+		// Fecha de inicio efectiva: la elegida por el usuario manda sobre la regla TC2 300 (esto está comentado)
+	    Date startDate = resolveStartDate(contractStartDate, seniorityDate, tc2, selectedStartDate);
+	    int contractDuration = getDaysBetween(startDate, endDate);
+		
 		// certifica2Info
 		certifica2Info.setDocument(dni);
 		certifica2Info.setSSNumber(ssNum);
@@ -465,9 +493,6 @@ public class JooqCertifica2 {
 		certifica2Info.setCnoCode(cnoCode);
 		certifica2Info.setCno(cno);
 		certifica2Info.setSuspensionCode(suspensionReasonCode);
-		
-		if(AonStringUtils.equalsIgnoreCase(tc2, "300"))
-			startDate = null != contractRecord.get(CONTRACT.SENIORITY_DATE) ? contractRecord.get(CONTRACT.SENIORITY_DATE) : contractRecord.get(CONTRACT.START_DATE);
 		
 		if(null != ereRecords) {
 			// Get last ere date for ereEndDate
@@ -488,6 +513,18 @@ public class JooqCertifica2 {
 			certifica2Info.setEndDate(endDate);
 		}
 
+	}
+	
+	private static Date resolveStartDate(Date contractStartDate, Date seniorityDate, String tc2,
+	        java.util.Date selectedStartDate) {
+
+	    if (null != selectedStartDate)
+	        return parseDateToSQL(selectedStartDate);
+
+//	    if (AonStringUtils.equalsIgnoreCase(tc2, "300") && null != seniorityDate)
+//	        return seniorityDate;
+
+	    return contractStartDate;
 	}
 
 	private static Integer getEnterpriseData(DSLContext dslContext,
@@ -683,7 +720,7 @@ public class JooqCertifica2 {
 	}
 
 	private static void getCertifica2Periods(DSLContext dslContext,
-			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Date seniorityDate, Integer contractId) {
+			com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, Date startDate, Integer contractId) {
 
 		List<Certifica2Period> certifica2List = new ArrayList<>();
 
@@ -693,11 +730,11 @@ public class JooqCertifica2 {
 		boolean generalRegime = !AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163");
 
 		java.util.Date filterDateJava = DateUtils.copyDateOnly(certifica2Info.getEndDate());
-		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
-		Date filterDate = parseDateToSQL(filterDateJava);
+	    filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
+	    Date filterDate = parseDateToSQL(filterDateJava);
 
-		if (null != seniorityDate)
-			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
+	    if (null != startDate)
+	        filterDate = filterDate.before(startDate) ? startDate : filterDate;
 
 		Date windowEndDate = parseDateToSQL(certifica2Info.getEndDate());
 
@@ -1063,13 +1100,15 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- saveCertific@2Info to
 	// DB
 
-	private static void saveCertifica2Info(DSLContext dslContext, String domainName, String user, Integer domainId, Integer contractId,
-			String suspensionReasonCode, String ereCode, java.util.Date ereEnd) throws IllegalArgumentException {
+	private static void saveCertifica2Info(DSLContext dslContext, String domainName, String user, Integer domainId,
+			Integer contractId, String suspensionReasonCode, String ereCode, java.util.Date ereEnd,
+			java.util.Date startDate) throws IllegalArgumentException {
+
 		if (AonStringUtils.isBlank(suspensionReasonCode))
 			suspensionReasonCode = getsuspensionReasonCodeDB(dslContext, contractId);
 
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
-				suspensionReasonCode, ereCode, ereEnd);
+		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName,
+				user, contractId, suspensionReasonCode, ereCode, ereEnd, startDate);
 
 		// ByteArrayOutputStream
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1084,32 +1123,65 @@ public class JooqCertifica2 {
 		String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
 				.where(REGISTRY.ID.eq(enterpriseId)).fetchOne(REGISTRY.DOCUMENT);
 
-		// --------------------------- INSERT CERTIFICA2_BATCH TABLE
-		Certifica2BatchRecord cetifica2BatchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
-				.set(CERTIFICA2_BATCH.DOMAIN, domainId).set(CERTIFICA2_BATCH.ENTERPRISE, enterpriseId)
-				.set(CERTIFICA2_BATCH.INCOME_FILE, (byte[]) null).set(CERTIFICA2_BATCH.OUTCOME_FILE, (byte[]) null)
-				.returning(CERTIFICA2_BATCH.ID).fetchOne();
-
-		Integer cetifica2BatchId = cetifica2BatchRecord.get(CERTIFICA2_BATCH.ID);
-
-		// --------------------------- INSERT CERTIFICA2_BATCH_DETAIL TABLE
-		dslContext.insertInto(CERTIFICA2_BATCH_DETAIL).set(CERTIFICA2_BATCH_DETAIL.DOMAIN, domainId)
-				.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2BatchId)
-				.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, contractId)
-				.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, suspensionReasonCode)
-				.set(CERTIFICA2_BATCH_DETAIL.STATUS, (byte) 0).set(CERTIFICA2_BATCH_DETAIL.ERE_NUMBER, (String) null)
-				.execute();
-
-		// Generate SEPE_BATCH_ATTACH description
 		java.util.Date date = new java.util.Date();
 		String sepeBatchDescription = enterpriseDocument + simpleDateFormat.format(date);
 
-		// --------------------------- INSERT SEPE_BATCH_ATTACH TABLE
-		dslContext.insertInto(SEPE_BATCH_ATTACH).set(SEPE_BATCH_ATTACH.DOMAIN, domainId)
-				.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2BatchId).set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte) 0)
-				.set(SEPE_BATCH_ATTACH.MIMETYPE, (byte) 5).set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription)
-				.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray()).set(SEPE_BATCH_ATTACH.TYPE, (byte) 0)
-				.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime())).execute();
+		// Batch previo del contrato (mismo criterio que getCertitica2Data)
+		Integer cetifica2BatchId = getLastCertifica2BatchId(dslContext, contractId);
+
+		if (null == cetifica2BatchId) {
+			// --------------------------- INSERT CERTIFICA2_BATCH TABLE
+			Certifica2BatchRecord cetifica2BatchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
+					.set(CERTIFICA2_BATCH.DOMAIN, domainId).set(CERTIFICA2_BATCH.ENTERPRISE, enterpriseId)
+					.set(CERTIFICA2_BATCH.INCOME_FILE, (byte[]) null).set(CERTIFICA2_BATCH.OUTCOME_FILE, (byte[]) null)
+					.returning(CERTIFICA2_BATCH.ID).fetchOne();
+
+			cetifica2BatchId = cetifica2BatchRecord.get(CERTIFICA2_BATCH.ID);
+
+			// --------------------------- INSERT CERTIFICA2_BATCH_DETAIL TABLE
+			dslContext.insertInto(CERTIFICA2_BATCH_DETAIL).set(CERTIFICA2_BATCH_DETAIL.DOMAIN, domainId)
+					.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2BatchId)
+					.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, contractId)
+					.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, suspensionReasonCode)
+					.set(CERTIFICA2_BATCH_DETAIL.STATUS, (byte) 0)
+					.set(CERTIFICA2_BATCH_DETAIL.ERE_NUMBER, (String) null).execute();
+		} else {
+			// --------------------------- UPDATE CERTIFICA2_BATCH_DETAIL TABLE
+			dslContext.update(CERTIFICA2_BATCH_DETAIL)
+					.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, suspensionReasonCode)
+					.set(CERTIFICA2_BATCH_DETAIL.STATUS, (byte) 0)
+					.where(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH.eq(cetifica2BatchId))
+					.and(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId)).execute();
+		}
+
+		// --------------------------- INSERT/UPDATE SEPE_BATCH_ATTACH TABLE
+		Integer sepeBatchAttachId = getLastSepeBatchAttachId(dslContext, cetifica2BatchId);
+
+		if (null == sepeBatchAttachId)
+			dslContext.insertInto(SEPE_BATCH_ATTACH).set(SEPE_BATCH_ATTACH.DOMAIN, domainId)
+					.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2BatchId).set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte) 0)
+					.set(SEPE_BATCH_ATTACH.MIMETYPE, (byte) 5).set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription)
+					.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray()).set(SEPE_BATCH_ATTACH.TYPE, (byte) 0)
+					.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime())).execute();
+		else
+			dslContext.update(SEPE_BATCH_ATTACH).set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription)
+					.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray())
+					.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime()))
+					.where(SEPE_BATCH_ATTACH.ID.eq(sepeBatchAttachId)).execute();
+	}
+
+	private static Integer getLastCertifica2BatchId(DSLContext dslContext, Integer contractId) {
+		return dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH).from(CERTIFICA2_BATCH_DETAIL)
+				.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId))
+				.orderBy(CERTIFICA2_BATCH_DETAIL.ID.desc()).limit(1)
+				.fetchOne(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
+	}
+
+	private static Integer getLastSepeBatchAttachId(DSLContext dslContext, Integer cetifica2BatchId) {
+		return dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
+				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2BatchId))
+				.and(SEPE_BATCH_ATTACH.SOURCE_TYPE.eq((byte) 0)).and(SEPE_BATCH_ATTACH.TYPE.eq((byte) 0))
+				.orderBy(SEPE_BATCH_ATTACH.ID.desc()).limit(1).fetchOne(SEPE_BATCH_ATTACH.ID);
 	}
 
 	private static String getsuspensionReasonCodeDB(DSLContext dslContext, Integer contractId) {
@@ -1272,11 +1344,11 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- createCertificates
 	// (Comunic@)
 
-	public static Certificates createCertificates(Connection connection, String domainName, String user, Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd) {
-		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
-		com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId,
-				suspensionCode, ereCode, ereEnd);
-		return createCertificates(certifica2Info);
+	public static Certificates createCertificates(Connection connection, String domainName, String user,
+	        Integer contractId, String suspensionCode, String ereCode, java.util.Date ereEnd, java.util.Date startDate) {
+	    DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+	    Certifica2Info certifica2Info = getCertifica2Info(dslContext, domainName, user, contractId, suspensionCode, ereCode, ereEnd, startDate);
+	    return createCertificates(certifica2Info);
 	}
 
 	private static Certificates createCertificates(com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info)
