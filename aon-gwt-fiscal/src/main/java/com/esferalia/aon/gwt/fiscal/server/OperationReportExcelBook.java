@@ -216,7 +216,7 @@ public class OperationReportExcelBook extends HttpServlet {
 		    draftHeaderCellStyle.setFont(draftHeaderFont);
 		    draftHeaderCellStyle.setWrapText(false);
 		    
-		    sheet.setRandomAccessWindowSize(params.isDraft() ? 3 : 2);  // La cabecera lleva 2 o 3 filas
+		    sheet.setRandomAccessWindowSize(2);  // La cabecera lleva 2 filas
 		    sheet.setDefaultColumnWidth(10);
 		    sheet.trackAllColumnsForAutoSizing();
 		    
@@ -226,7 +226,9 @@ public class OperationReportExcelBook extends HttpServlet {
 		    if (params.isDraft()) {
 		    	row = sheet.createRow(rowCount++);
 		    	String bookType = params.getBookType() == 0 ? "D E   I V A" : params.getBookType() == 1 ? "D E   I R P F" : "U N I F I C A D O   D E   I V A   E   I R P F";
-		    	addHorizontalMergedRegion("* * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *   L I B R O   R E G I S T R O   " + bookType + "   * * *   D O C U M E N T O   B O R R A D O R   * * *   N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L   * * *", workbook.getNumberOfSheets() == 1 ? 38 : 44, draftHeaderCellStyle);
+		    	String sep = "   * * *   ";
+		    	String draftHeader = "L I B R O   R E G I S T R O   " + bookType + sep + "D O C U M E N T O   B O R R A D O R" + sep + "N O   V Á L I D O   P A R A   P R E S E N T A C I Ó N   O F I C I A L";
+		    	addHorizontalMergedRegion(sep + AonStringUtils.repeat(draftHeader, sep, workbook.getNumberOfSheets() == 1 || params.getBookType() == 2 ? 2 : 3) + sep, workbook.getNumberOfSheets() == 1 ? 40 : 46, draftHeaderCellStyle);
 		    }
 		    
 		    if (!params.isDraft())		    	
@@ -265,10 +267,6 @@ public class OperationReportExcelBook extends HttpServlet {
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
     		addVerticalMergedRegion("Concepto de Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		if (params.isDraft()) {
-    			addVerticalMergedRegion("Descripción del Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    			addVerticalMergedRegion("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		}
     		addVerticalMergedRegion("Ingreso Computable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
@@ -315,10 +313,6 @@ public class OperationReportExcelBook extends HttpServlet {
 			addHeaderCell("Grupo o Epígrafe del IAE");
 		    addVerticalMergedRegion("Tipo de Factura");
     		addVerticalMergedRegion("Concepto de Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		if (params.isDraft()) {
-    			addVerticalMergedRegion("Descripción del Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    			addVerticalMergedRegion("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-    		}
     		addVerticalMergedRegion("Gasto Deducible", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
@@ -371,8 +365,10 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addHeaderCell("Tipo de Factura");
     		addHeaderCell("Concepto de Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
    			addHeaderCell("Descripción del Ingreso", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-   			addHeaderCell("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
     		addHeaderCell("Ingreso Computable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+   			addHeaderCell("Cuenta Contable");
+   			addHeaderCell("Fecha Asiento");
+   			addHeaderCell("Fecha IVA");
 		    addHeaderCell("Fecha Expedición");
 		    addHeaderCell("Fecha Operación");
 	    	addHeaderCell("Identificación de la Factura Serie");
@@ -413,8 +409,10 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addHeaderCell("Tipo de Factura");
     		addHeaderCell("Concepto de Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
    			addHeaderCell("Descripción del Gasto", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
-   			addHeaderCell("Cuenta Contable", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
     		addHeaderCell("Gasto Deducible", params.getBookType() == 0 ? headerCellStyleDisabled : headerCellStyle);
+    		addHeaderCell("Cuenta Contable");
+   			addHeaderCell("Fecha Asiento");
+   			addHeaderCell("Fecha IVA");
 		    addHeaderCell("Fecha Expedición");
 		    addHeaderCell("Fecha Operación");
 	    	addHeaderCell("Identificación Factura del Expedidor (Serie-Número)");
@@ -483,10 +481,9 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Ingreso (excepto Libro de IVA)
 
 			if (params.isDraft()) {
-    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription());                          // Descripción del Ingreso (excepto Libro de IVA)
+    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription());  // Descripción del Ingreso (excepto Libro de IVA)
     			if (params.getBookType() != 0)
     				sheet.autoSizeColumn(cellCount-1);
-    			addCell(params.getBookType() == 0 ? "" : op.getAccountCode()).setCellStyle(centerCellStyle);   // Cuenta Contable (excepto Libro de IVA)
     		}
 
 			if (params.getBookType() == 0) {
@@ -499,6 +496,12 @@ public class OperationReportExcelBook extends HttpServlet {
 				else
 					addCell(op.getConceptAmount()); // Ingreso computable
 			}
+			
+			if (params.isDraft()) {
+    			addCell(op.getAccountCode()).setCellStyle(centerCellStyle);   	// Cuenta Contable
+    			addCell(op.getAccountEntryDate());   							// Fecha Asiento
+    			addCell(op.getInvoiceTaxDate());     							// Fecha IVA
+    		}
 						
 			addCell(op.getEntryDate());      // Fecha Expedición
 			addCell("");                     // Fecha Operación (no se usa)
@@ -577,10 +580,9 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(params.getBookType() == 0 ? "" : op.getConceptCode()).setCellStyle(centerCellStyle); // Concepto de Gasto (excepto Libro de IVA)
 			
     		if (params.isDraft()) {
-    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription());                         // Descripción del Gasto (excepto Libro de IVA)
+    			addCell(params.getBookType() == 0 ? "" : op.getConceptDescription()); // Descripción del Gasto (excepto Libro de IVA)
     			if (params.getBookType() != 0)
     				sheet.autoSizeColumn(cellCount-1);
-    			addCell(params.getBookType() == 0 ? "" : op.getAccountCode()).setCellStyle(centerCellStyle);  // Cuenta Contable (excepto Libro de IVA)
     		}
 
 			if (params.getBookType() == 0) {
@@ -593,6 +595,12 @@ public class OperationReportExcelBook extends HttpServlet {
 				else
 					addCell(op.getConceptAmount()); // Gasto Deducible
 			}
+			
+    		if (params.isDraft()) {
+    			addCell(op.getAccountCode()).setCellStyle(centerCellStyle); // Cuenta Contable
+    			addCell(op.getAccountEntryDate());   						// Fecha Asiento
+    			addCell(op.getInvoiceTaxDate());     						// Fecha IVA
+			}    		
 						
 			addCell(op.getEntryDate());      // Fecha Expedición
 			addCell("");                     // Fecha Operación (no se usa)

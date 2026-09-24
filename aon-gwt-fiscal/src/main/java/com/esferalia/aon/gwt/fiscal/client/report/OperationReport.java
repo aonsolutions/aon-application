@@ -146,12 +146,12 @@ public class OperationReport implements EntryPoint {
 		toolbarPanel.add(refresh);
 		
 		// Botón exportar a Excel (Borrador)
-		final AonToolbarButton draft = new AonToolbarButton(AON.MSG.export() + " (Borrador)",AON.CSS.aonIconExcel());
+		final AonToolbarButton draft = new AonToolbarButton(AON.MSG.export() + " (Borrador de revisi\u00F3n)",AON.CSS.aonIconExcel());
 		draft.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams(true)));
 		toolbarPanel.add(draft);
 
 		// Botón exportar a Excel (Libros Oficiales)
-		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export() + " (Libros Oficiales)",AON.CSS.aonIconExcel());
+		final AonToolbarButton export = new AonToolbarButton(AON.MSG.export() + " (Formato AEAT)",AON.CSS.aonIconAeat());
 		export.addClickHandler(event -> submitForm(OPERATION_EXCEL_REPORT_BOOK, getWidgetParams(false)));
 		toolbarPanel.add(export);
 		

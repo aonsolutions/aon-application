@@ -14,7 +14,7 @@ public class OperationBreakdown implements Serializable {
 	private String conceptCode; 			// Codigo Concepto de Ingreso o Gasto
 	private double conceptAmount; 			// Ingreso computable o Gasto deducible 	
 	private Date entryDate; 				// Fecha Expedición
-	private Date taxDate;        			// Fecha Iva (Ejercicio y Periodo de Autoliquidación)	
+	private Date taxDate;        			// Fecha Liquidación (Ejercicio y Periodo de Autoliquidación)	
 	private String invoiceSeries; 			// Identificación de la Factura: Serie (Emitidas)
 	private String invoiceNumber; 			// Identificación de la Factura: Número (Emitidas), Serie-Numero (Recibidas)
 	private String receptionNumber; 		// Número recepción (Recibidas)
@@ -47,6 +47,8 @@ public class OperationBreakdown implements Serializable {
 	private int entryJournal;               // Número de Diario del asiento
 	private String conceptDescription; 		// Descripción Concepto de Ingreso o Gasto
 	private String accountCode; 			// Código Cuenta Contable
+	private Date accountEntryDate;        	// Fecha del Asiento
+	private Date invoiceTaxDate;        	// Fecha IVA de la factura
 	
 	public String getActivityCode() {
 		return activityCode;
@@ -328,6 +330,19 @@ public class OperationBreakdown implements Serializable {
 		this.accountCode = accountCode;
 		return this;
 	}
+	public Date getAccountEntryDate() {
+		return accountEntryDate;
+	}
+	public OperationBreakdown setAccountEntryDate(Date accountEntryDate) {
+		this.accountEntryDate = accountEntryDate;
+		return this;
+	}
+	public Date getInvoiceTaxDate() {
+		return invoiceTaxDate;
+	}
+	public OperationBreakdown setInvoiceTaxDate(Date invoiceTaxDate) {
+		this.invoiceTaxDate = invoiceTaxDate;
+		return this;
+	}	
 	
 }
-

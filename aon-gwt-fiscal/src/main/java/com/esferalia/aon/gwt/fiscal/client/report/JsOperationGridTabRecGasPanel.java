@@ -19,11 +19,11 @@ public class JsOperationGridTabRecGasPanel extends JsOperationGridPanel {
 		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("Concepto Gasto"), AON.CSS.aonWidth40());
 			row.addCell(new Label("Descripci\u00F3n Gasto"), AON.CSS.aonWidth100());
-			row.addCell(new Label("Cuenta Contable"), AON.CSS.aonWidth80());
 			row.addCell(new Label("Gasto Deducible"), AON.CSS.aonWidth80());
 		}
 		
-		row.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
+		row.addCell(new Label("Cuenta Contable"), AON.CSS.aonWidth80())
+			.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00FAmero Fra."), AON.CSS.aonWidth80())
 			.addCell(new Label("N\u00FAmero Recepci\u00F3n"), AON.CSS.aonWidth80())
 			.addCell(new Label("NIF Expedidor"), AON.CSS.aonWidth80())
@@ -63,10 +63,10 @@ public class JsOperationGridTabRecGasPanel extends JsOperationGridPanel {
 		if (getParams().getBookType() != 0) {
 			addCell(row, br.getConceptCode(), AON.CSS.aonTextCenter());
 			addCell(row, br.getConceptDescription());
-			addCell(row, br.getAccountCode());
 			addCell(row, br.getConceptAmount());
 		}
 		
+		addCell(row, br.getAccountCode());
 		addCell(row, br.getEntryDate());
 		addCell(row, br.getInvoiceNumber());
 		addCell(row, br.getReceptionNumber()); 
@@ -114,11 +114,11 @@ public class JsOperationGridTabRecGasPanel extends JsOperationGridPanel {
 				if (getParams().getBookType() != 0) {
 					row.addCell(new Label())
 					   .addCell(new Label())
-					   .addCell(new Label())
 					   .addCell(new Label());
 				}
 				
 				row.addCell(new Label())
+					.addCell(new Label())
 					.addCell(new Label())
 					.addCell(new Label())
 					.addCell(new Label())

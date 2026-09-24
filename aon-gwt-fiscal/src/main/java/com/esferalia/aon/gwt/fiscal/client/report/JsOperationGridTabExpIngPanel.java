@@ -19,11 +19,11 @@ public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
 		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("Concepto Ingreso"), AON.CSS.aonWidth40());
 			row.addCell(new Label("Descripci\u00F3n Ingreso"), AON.CSS.aonWidth100());
-			row.addCell(new Label("Cuenta Contable"), AON.CSS.aonWidth80());
 			row.addCell(new Label("Ingreso Computable"), AON.CSS.aonWidth80());
 		}
 		
-		row.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
+		row.addCell(new Label("Cuenta Contable"), AON.CSS.aonWidth80())
+			.addCell(new Label("Fecha Exp."), AON.CSS.aonWidth80())
 			.addCell(new Label("Serie"), AON.CSS.aonWidth60())
 			.addCell(new Label("N\u00FAmero Fra."), AON.CSS.aonWidth80())
 			.addCell(new Label("NIF Destinatario"), AON.CSS.aonWidth80())
@@ -37,8 +37,7 @@ public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
 		
 		if (getParams().getBookType() != 0) {
 			row.addCell(new Label("% Ret."), AON.CSS.aonWidth40())
-			   .addCell(new Label("Importe Retenci\u00F3n"), AON.CSS.aonWidth80())
-			;
+			   .addCell(new Label("Importe Retenci\u00F3n"), AON.CSS.aonWidth80());
 		}
 		
 		row.addCell(new Label("RECC"), AON.CSS.aonWidth40());
@@ -63,10 +62,10 @@ public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
 		if (getParams().getBookType() != 0) {
 			addCell(row, br.getConceptCode(), AON.CSS.aonTextCenter());
 			addCell(row, br.getConceptDescription());
-			addCell(row, br.getAccountCode());
 			addCell(row, br.getConceptAmount());
 		}
 		
+		addCell(row, br.getAccountCode());
 		addCell(row, br.getEntryDate());
 		addCell(row, br.getInvoiceSeries());
 		addCell(row, br.getInvoiceNumber());
@@ -111,11 +110,11 @@ public class JsOperationGridTabExpIngPanel extends JsOperationGridPanel {
 			if (getParams().getBookType() != 0) {
 				row.addCell(new Label())
 				   .addCell(new Label())
-				   .addCell(new Label())
 				   .addCell(new Label());
 			}
 			
 			row.addCell(new Label())
+				.addCell(new Label())
 				.addCell(new Label())
 				.addCell(new Label())
 				.addCell(new Label())

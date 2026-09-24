@@ -833,7 +833,7 @@ public class AccountingOperationDAO {
 				.setBase(base)               												// Base Imponible	
 				.setPercent(isVatUnion ? 0.0 : AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.PERCENTAGE))) // Tipo de IVA (porcentaje)	
 				.setQuota(isVatUnion ? 0.0 : getQuota(rec))	           						// Cuota IVA Repercutido/Soportado
-				.setDeductibleQuota(isSales ? 0.0 : getDeductibleQuota(rec, params))  // Cuota Deducible (Recibidas)
+				.setDeductibleQuota(isSales ? 0.0 : getDeductibleQuota(rec, params))  		// Cuota Deducible (Recibidas)
 				.setSurchargePercent(AonNumberUtils.todouble(rec.getValue(INVOICE_TAX.SURCHARGE)))  // Tipo de Recargo Eq. (porcentaje)	
 				.setSurchargeQuota(getSurchargeQuota(rec))     								// Cuota Recargo Eq.	
 				.setPayDate(null) 															// Fecha Cobro/Pago (Operación Criterio de Caja de IVA y/o artículo 7.2.1º de Reglamento del IRPF)
@@ -842,10 +842,12 @@ public class AccountingOperationDAO {
 				.setPayMethodName("") 														// Identificación Medio Utilizado Cobro/Pago
 				.setRetentionPercent(AonNumberUtils.todouble(rec.getValue(retInvoiceTax.PERCENTAGE)))  	// Tipo Retención del IRPF (porcentaje)	
 				.setRetentionQuota(getRetentionQuota(rec))    											// Importe Retenido del IRPF
-				.setBuildingLocation(buildingLocation) 													// Situación del Inmueble;	
-				.setCadasdralReference(cadasdralReference) 												// Referencia Catastral del Inmueble
-				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))												// ID del asiento
-				.setEntryJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))									// Número de diario del asiento
+				.setBuildingLocation(buildingLocation) 										// Situación del Inmueble;	
+				.setCadasdralReference(cadasdralReference) 									// Referencia Catastral del Inmueble
+				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))									// ID del asiento
+				.setEntryJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))						// Número de diario del asiento
+				.setAccountEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))				// Fecha de asiento
+				.setInvoiceTaxDate(rec.getValue(INVOICE.TAX_DATE))							// Fecha de IVA
 				;
 					
 		}
@@ -888,7 +890,6 @@ public class AccountingOperationDAO {
 			double proratePer = prorateData.getLeft();
 			String prorateTyp = prorateData.getRight();
 			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
-			//if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
 			if (mustApplyProrate) {
 				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
 					dedQuota = 0.0;
@@ -944,7 +945,6 @@ public class AccountingOperationDAO {
 			double proratePer = prorateData.getLeft();
 			String prorateTyp = prorateData.getRight();
 			boolean mustApplyProrate = AonStringUtils.equals(prorateTyp, "G") || (AonStringUtils.equals(prorateTyp, "E") && rec.getValue(INVOICE.ACTIVITY) == null);   
-			//if (mustApplyProrate && AonMathUtils.isNotZero(proratePer) && proratePer < 100) {
 			if (mustApplyProrate) {
 				if (params.isDistributeInvoice() && rec.getValue(allEnterpriseActivity.VAT_REGIME) != null && rec.getValue(allEnterpriseActivity.VAT_REGIME) == VATRegime.EXEMPT.value())
 					amount = (amount - AonMathUtils.round(amount * proratePer / 100)) + (dedQuota - AonMathUtils.round(dedQuota * proratePer / 100)) ;
@@ -1130,6 +1130,8 @@ public class AccountingOperationDAO {
 //				.setCadasdralReference() 													// Referencia Catastral del Inmueble
 				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))									// ID del asiento
 				.setEntryJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))						// Número de diario del asiento
+				.setAccountEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))				// Fecha de asiento
+				.setInvoiceTaxDate(rec.getValue(INVOICE.TAX_DATE))							// Fecha de IVA
 				;
 		}
 		
@@ -1222,6 +1224,8 @@ public class AccountingOperationDAO {
 //				.setCadasdralReference() 	                                // Referencia Catastral del Inmueble
 				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID))				    // ID del asiento
 				.setEntryJournal(rec.getValue(ACCOUNT_ENTRY.JOURNAL))	    // Número de diario del asiento
+				.setAccountEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))	// Fecha de asiento
+//				.setInvoiceTaxDate(rec.getValue(INVOICE.TAX_DATE))				// Fecha de IVA
 				;
 		}
 
