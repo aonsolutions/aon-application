@@ -803,6 +803,7 @@ div.aon_flex_block.aon_scroll_area {
 	padding: .25rem !important;
 	border-radius: .375rem !important;
 	border: .0625rem solid #cbd5e1 ;
+	background-color: transparent !important;
 }
 
 .aon-panelGrid-search-info,

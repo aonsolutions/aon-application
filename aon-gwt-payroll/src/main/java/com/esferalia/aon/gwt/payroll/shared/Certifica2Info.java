@@ -115,6 +115,7 @@ public class Certifica2Info implements Serializable {
 	
 	private Date startDate;
 	private Date endDate;
+	private Date seniorityDate;
 	private Integer settleQuoteDays;
 	private Double baseCgc;
 	private Double baseUnemployment;
@@ -352,6 +353,14 @@ public class Certifica2Info implements Serializable {
 		this.endDate = endDate;
 	}
 
+	public Date getSeniorityDate() {
+		return seniorityDate;
+	}
+	
+	public void setSeniorityDate(Date seniorityDate) {
+		this.seniorityDate = seniorityDate;
+	}
+	
 	public Integer getSettleQuoteDays() {
 		return settleQuoteDays;
 	}

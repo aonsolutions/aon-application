@@ -61,6 +61,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	private AonCustomTextBox fullName = new AonCustomTextBox("Trabajador");
 	private AonCustomTextBox contractType = new AonCustomTextBox("TC2");
 	private AonCustomTextBox quoteGroup = new AonCustomTextBox("Grupo Cotizaci\u00f3n");
+	private AonCustomListBox startDateLB = new AonCustomListBox("F. Inicio Comunicaci\u00f3n");
 	private AonCustomTextBox startDate = new AonCustomTextBox("F. Inicio");
 	private AonCustomTextBox endDate = new AonCustomTextBox("F. Fin");
 	private AonCustomTextBox contractDuration = new AonCustomTextBox("Duraci\u00f3n Contrato (D\u00edas)");
@@ -99,16 +100,33 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	private FormPanel formPanelXML;
 	private FormPanel formPanelPDF;
 	private FormPanel formPanelManual;
-	private Hidden documentHidden;
-	private Hidden endDateHidden;
-	private Hidden suspensionReasonCodeHidden;
-	private Hidden suspensionReasonHidden;
-	private Hidden ereCodeHidden;
-	private Hidden ereEndHidden;
+	
+	// XML
+	private Hidden xmlDocumentHidden             = new Hidden("document", "");
+	private Hidden xmlStartDateHidden            = new Hidden("startDate", "");
+	private Hidden xmlSuspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
+	private Hidden xmlEreCodeHidden              = new Hidden("ereCode", "");
+	private Hidden xmlEreEndHidden               = new Hidden("ereEnd", "");
+
+	// PDF
+	private Hidden pdfDocumentHidden = new Hidden("document", "");
+	private Hidden pdfEndDateHidden  = new Hidden("endDate", "");
+
+	// MANUAL
+	private Hidden manDocumentHidden             = new Hidden("document", "");
+	private Hidden manStartDateHidden            = new Hidden("startDate", "");
+	private Hidden manEndDateHidden              = new Hidden("endDate", "");
+	private Hidden manSuspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
+	private Hidden manSuspensionReasonHidden     = new Hidden("suspensionReason", "");
+	private Hidden manEreCodeHidden              = new Hidden("ereCode", "");
+	private Hidden manEreEndHidden               = new Hidden("ereEnd", "");
 	
 	private Map<String, CNO> cnoMap;
 	
 	private boolean hasChange = false;
+
+	private static final String START_DATE_CONTRACT  = "C";
+	private static final String START_DATE_SENIORITY = "A";
 	
 	// ------------------------------------------------- Constructor
 	
@@ -223,10 +241,21 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		contractCardTable.add(createRow(document, fullName, contractType, quoteGroup));
 		startDate.setValue(dateFormat.format(certifica2Info.getStartDate()));
 		startDate.setEnable(false);
+		
 		endDate.setValue(null == certifica2Info.getEndDate() ? "" : dateFormat.format(certifica2Info.getEndDate()));
 		endDate.setEnable(false);
 		contractDuration.setValue(null == certifica2Info.getContractDuration() ? "N/D" : certifica2Info.getContractDuration().toString());
 		contractDuration.setEnable(false);
+
+		if (hasDifferentStartDates()) {
+		    iniStartDateLB();
+		    contractCardTable.add(createRow(startDateLB, endDate, contractDuration));
+		} else {
+		    startDate.setValue(dateFormat.format(certifica2Info.getStartDate()));
+		    startDate.setEnable(false);
+		    contractCardTable.add(createRow(startDate, endDate, contractDuration));
+		}
+		
 		contractCardTable.add(createRow(startDate, endDate, contractDuration));
 		iniSuspensionCodeLB();
 		suspensionCodeLB.setValue(certifica2Info.getSuspensionCode());
@@ -234,12 +263,12 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		ertePanel.addStyleName(AON.CSS.aonItemFlex());
 		ertePanel.setWidth("100%");
 		erteCodeTB.addValueChangeHandler(e -> {
+			hasChange = true;
 			certifica2Info.setErteCode(e.getValue());
-			ereCodeHidden.setValue(e.getValue());
 		});
 		erteEnd.addValueChangeHandler(e -> {
+			hasChange = true;
 			certifica2Info.setErteEnd(e.getValue());
-			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
 		});
 		ertePanel.add(erteCodeTB);
 		ertePanel.add(erteCoefTB);
@@ -274,6 +303,49 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		
 		scrollPanel.setWidget(scrollContent);
 		container.add(scrollPanel);
+	}
+	
+	private boolean hasDifferentStartDates() {
+	    java.util.Date contractStart = certifica2Info.getStartDate();
+	    java.util.Date seniority     = certifica2Info.getSeniorityDate();
+	    
+	    if (null == contractStart || null == seniority)
+	        return false;
+
+	    return !dateFormat.format(contractStart).equals(dateFormat.format(seniority));
+	}
+
+	private void iniStartDateLB() {
+	    java.util.Date contractStart = certifica2Info.getStartDate();
+	    java.util.Date seniority     = certifica2Info.getSeniorityDate();
+
+	    startDateLB.clearItems();
+	    startDateLB.addItem("Inicio Contrato - " + dateFormat.format(contractStart), START_DATE_CONTRACT);
+	    startDateLB.addItem("Antig\u00fcedad - "  + dateFormat.format(seniority),    START_DATE_SENIORITY);
+
+	    boolean isSeniority = null != certifica2Info.getStartDate()
+	            && dateFormat.format(certifica2Info.getStartDate()).equals(dateFormat.format(seniority));
+
+	    startDateLB.setValue(isSeniority ? START_DATE_SENIORITY : START_DATE_CONTRACT);
+	    certifica2Info.setStartDate(isSeniority ? seniority : contractStart);
+
+	    startDateLB.addChangeHandler(e -> {
+	        hasChange = true;
+	        certifica2Info.setStartDate(START_DATE_SENIORITY.equals(startDateLB.getValue()) ? seniority : contractStart);
+	        refreshContractDuration();
+	    });
+	}
+
+	private void refreshContractDuration() {
+	    java.util.Date start = certifica2Info.getStartDate();
+	    java.util.Date end   = certifica2Info.getEndDate();
+
+	    if (null == start || null == end)
+	        return;
+
+	    int days = (int) Math.round((end.getTime() - start.getTime()) / 86400000d) + 1;
+	    certifica2Info.setContractDuration(days);
+	    contractDuration.setValue(String.valueOf(days));
 	}
 	
 	private void fillQuoteDataListPanel() {
@@ -342,15 +414,15 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		this.suspensionCodeLB.addItem("35 - EXTINCI\u00d3N DE LA RELACI\u00d3N LABORAL DE PERSONAS TRABAJADORAS AL SERVICIO DEL HOGAR POR LAS CAUSAS DEL ART. 11.2 RD 1620/2011", "35");
 		
 		this.suspensionCodeLB.addChangeHandler(e -> {
-			hasChange = true;
-			certifica2Info.setSuspensionCode(this.suspensionCodeLB.getValue());
-			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getValue());
-			suspensionReasonHidden.setValue(this.suspensionCodeLB.getListBox().getSelectedItemText().split(" - ")[1]);
-			
-			if(AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"16") || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"17") || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"18"))
-				this.ertePanel.getElement().getStyle().clearDisplay();
-			else
-				this.ertePanel.getElement().getStyle().setDisplay(Display.NONE);
+		    hasChange = true;
+		    certifica2Info.setSuspensionCode(this.suspensionCodeLB.getValue());
+
+		    if(AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"16")
+		            || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"17")
+		            || AonStringUtils.equalsIgnoreCase(this.suspensionCodeLB.getValue(),"18"))
+		        this.ertePanel.getElement().getStyle().clearDisplay();
+		    else
+		        this.ertePanel.getElement().getStyle().setDisplay(Display.NONE);
 		});
 	}
 
@@ -400,6 +472,12 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 					public void onSuccess(Void result) {
 						AonMessagePanel.showLoading(messagePanel, "Descargando XML Certific\u00402...");
 						hasChange = false;
+						
+						xmlDocumentHidden.setValue(certifica2Info.getDocument());
+						xmlStartDateHidden.setValue(formatOrEmpty(certifica2Info.getStartDate()));
+						xmlSuspensionReasonCodeHidden.setValue(suspensionCodeLB.getValue());
+						xmlEreCodeHidden.setValue(erteCodeTB.getValue());
+						xmlEreEndHidden.setValue(formatOrEmpty(erteEnd.getValue()));
 						formPanelXML.submit();
 					}
 					
@@ -476,11 +554,13 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 			
 			AonMessagePanel.showLoading(messagePanel, "Generando Certific\u00402 PDF...");
 			
-			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getValue());
-			suspensionReasonHidden.setValue(this.suspensionCodeLB.getListBox().getSelectedItemText().split(" - ")[1]);
-			ereCodeHidden.setValue(this.erteCodeTB.getValue());
-			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
-			
+			manDocumentHidden.setValue(certifica2Info.getDocument());
+			manStartDateHidden.setValue(formatOrEmpty(certifica2Info.getStartDate()));
+			manEndDateHidden.setValue(formatOrEmpty(certifica2Info.getEndDate()));
+			manSuspensionReasonCodeHidden.setValue(suspensionCodeLB.getValue());
+			manSuspensionReasonHidden.setValue(getSuspensionText());
+			manEreCodeHidden.setValue(erteCodeTB.getValue());
+			manEreEndHidden.setValue(formatOrEmpty(erteEnd.getValue()));
 			formPanelManual.submit();
 		});
 		
@@ -489,14 +569,12 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		comunicateCertifica2PDF = new AonToolbarSmallButton("Certific\u00402 PDF", AON.CSS.aonIconPdf());
 		comunicateCertifica2PDF.setVisible(false);
 		comunicateCertifica2PDF.addClickHandler(e -> {
-			
-			AonMessagePanel.showLoading(messagePanel, "Obteniendo Certific\u00402 PDF del SEPE...");
-			
-			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getValue());
-			ereCodeHidden.setValue(this.erteCodeTB.getValue());
-			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
-			
-			formPanelPDF.submit();
+
+		    AonMessagePanel.showLoading(messagePanel, "Obteniendo Certific\u00402 PDF del SEPE...");
+
+		    pdfDocumentHidden.setValue(certifica2Info.getDocument());
+		    pdfEndDateHidden.setValue(formatOrEmpty(certifica2Info.getEndDate()));
+		    formPanelPDF.submit();
 		});
 		
 		dockLayout.addToolbarButton(comunicateCertifica2PDF);
@@ -510,8 +588,15 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		createFormManualPanel();
 		dockLayout.addToolbarButton(formPanelManual);
 		
-		documentHidden.setValue(certifica2Info.getDocument());
-		endDateHidden.setValue(dateFormat.format(certifica2Info.getEndDate()));
+	}
+	
+	private String formatOrEmpty(java.util.Date date) {
+	    return null == date ? "" : dateFormat.format(date);
+	}
+
+	private String getSuspensionText() {
+	    String selected = suspensionCodeLB.getListBox().getSelectedItemText();
+	    return selected.contains(" - ") ? selected.split(" - ")[1] : "";
 	}
 	
 	private void initializeCNOSuggestions() {
@@ -595,105 +680,65 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	}
 
 	private void createFormXMLPanel() {
-		// Create Form Panel
-		formPanelXML = new FormPanel();
-		formPanelXML.setAction(GWT.getModuleBaseURL()+ "certifica2/");
-		formPanelXML.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanelXML.setMethod(FormPanel.METHOD_POST);
-		
-		Hidden userLoginHidden = new Hidden("userLogin", Wnd.getCurrentUser());
-		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
-		Hidden fileTypeHidden = new Hidden("type", "XML");
-		documentHidden = new Hidden("document", "");
-		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
-		ereCodeHidden = new Hidden("ereCode", "");
-		ereEndHidden = new Hidden("ereEnd", "");
-		
-		//Add all to FlowPanel to add to FormPanel
-		FlowPanel flowPanel = new FlowPanel();
-				
-		flowPanel.add(userLoginHidden);
-		flowPanel.add(currentDomainHidden);
-		flowPanel.add(contractIdHidden);
-		flowPanel.add(fileTypeHidden);
-		flowPanel.add(documentHidden);
-		flowPanel.add(suspensionReasonCodeHidden);
-		flowPanel.add(ereCodeHidden);
-		flowPanel.add(ereEndHidden);
-		
-		formPanelXML.add(flowPanel);
-		formPanelXML.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
+	    formPanelXML = new FormPanel();
+	    formPanelXML.setAction(GWT.getModuleBaseURL() + "certifica2/");
+	    formPanelXML.setEncoding(FormPanel.ENCODING_MULTIPART);
+	    formPanelXML.setMethod(FormPanel.METHOD_POST);
+
+	    FlowPanel flowPanel = new FlowPanel();
+	    flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
+	    flowPanel.add(new Hidden("currentDomain", Wnd.getCurrentDomainNameURL()));
+	    flowPanel.add(new Hidden("contractId", contractId.toString()));
+	    flowPanel.add(new Hidden("type", "XML"));
+	    flowPanel.add(xmlDocumentHidden);
+	    flowPanel.add(xmlStartDateHidden);
+	    flowPanel.add(xmlSuspensionReasonCodeHidden);
+	    flowPanel.add(xmlEreCodeHidden);
+	    flowPanel.add(xmlEreEndHidden);
+
+	    formPanelXML.add(flowPanel);
+	    formPanelXML.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
 	}
 	
 	private void createFormPDFPanel() {
-		// Create Form Panel
-		formPanelPDF = new FormPanel();
-		formPanelPDF.setAction(GWT.getModuleBaseURL()+ "certifica2/");
-		formPanelPDF.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanelPDF.setMethod(FormPanel.METHOD_POST);
-		
-		Hidden userLoginHidden = new Hidden("userLogin", Wnd.getCurrentUser());
-		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
-		Hidden fileTypeHidden = new Hidden("type", "PDF");
-		documentHidden = new Hidden("document", "");
-		endDateHidden = new Hidden("endDate", "");
-		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
-		ereCodeHidden = new Hidden("ereCode", "");
-		ereEndHidden = new Hidden("ereEnd", "");
-		
-		//Add all to FlowPanel to add to FormPanel
-		FlowPanel flowPanel = new FlowPanel();
-				
-		flowPanel.add(userLoginHidden);
-		flowPanel.add(currentDomainHidden);
-		flowPanel.add(contractIdHidden);
-		flowPanel.add(fileTypeHidden);
-		flowPanel.add(documentHidden);
-		flowPanel.add(endDateHidden);
-		flowPanel.add(suspensionReasonCodeHidden);
-		flowPanel.add(ereCodeHidden);
-		flowPanel.add(ereEndHidden);
-		
-		formPanelPDF.add(flowPanel);
-		formPanelPDF.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
+	    formPanelPDF = new FormPanel();
+	    formPanelPDF.setAction(GWT.getModuleBaseURL() + "certifica2/");
+	    formPanelPDF.setEncoding(FormPanel.ENCODING_MULTIPART);
+	    formPanelPDF.setMethod(FormPanel.METHOD_POST);
+
+	    FlowPanel flowPanel = new FlowPanel();
+	    flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
+	    flowPanel.add(new Hidden("currentDomain", Wnd.getCurrentDomainNameURL()));
+	    flowPanel.add(new Hidden("contractId", contractId.toString()));
+	    flowPanel.add(new Hidden("type", "PDF"));
+	    flowPanel.add(pdfDocumentHidden);
+	    flowPanel.add(pdfEndDateHidden);
+
+	    formPanelPDF.add(flowPanel);
+	    formPanelPDF.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
 	}
 	
 	private void createFormManualPanel() {
-		// Create Form Panel
-		formPanelManual = new FormPanel();
-		formPanelManual.setAction(GWT.getModuleBaseURL()+ "certifica2/");
-		formPanelManual.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanelManual.setMethod(FormPanel.METHOD_POST);
-		
-		Hidden userLoginHidden = new Hidden("userLogin", Wnd.getCurrentUser());
-		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
-		Hidden fileTypeHidden = new Hidden("type", "MANUAL");
-		documentHidden = new Hidden("document", "");
-		endDateHidden = new Hidden("endDate", "");
-		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
-		suspensionReasonHidden = new Hidden("suspensionReason", "");
-		ereCodeHidden = new Hidden("ereCode", "");
-		ereEndHidden = new Hidden("ereEnd", "");
-		
-		//Add all to FlowPanel to add to FormPanel
-		FlowPanel flowPanel = new FlowPanel();
-				
-		flowPanel.add(userLoginHidden);
-		flowPanel.add(currentDomainHidden);
-		flowPanel.add(contractIdHidden);
-		flowPanel.add(fileTypeHidden);
-		flowPanel.add(documentHidden);
-		flowPanel.add(endDateHidden);
-		flowPanel.add(suspensionReasonCodeHidden);
-		flowPanel.add(suspensionReasonHidden);
-		flowPanel.add(ereCodeHidden);
-		flowPanel.add(ereEndHidden);
-		
-		formPanelManual.add(flowPanel);
-		formPanelManual.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
+	    formPanelManual = new FormPanel();
+	    formPanelManual.setAction(GWT.getModuleBaseURL() + "certifica2/");
+	    formPanelManual.setEncoding(FormPanel.ENCODING_MULTIPART);
+	    formPanelManual.setMethod(FormPanel.METHOD_POST);
+
+	    FlowPanel flowPanel = new FlowPanel();
+	    flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
+	    flowPanel.add(new Hidden("currentDomain", Wnd.getCurrentDomainNameURL()));
+	    flowPanel.add(new Hidden("contractId", contractId.toString()));
+	    flowPanel.add(new Hidden("type", "MANUAL"));
+	    flowPanel.add(manDocumentHidden);
+	    flowPanel.add(manStartDateHidden);
+	    flowPanel.add(manEndDateHidden);
+	    flowPanel.add(manSuspensionReasonCodeHidden);
+	    flowPanel.add(manSuspensionReasonHidden);
+	    flowPanel.add(manEreCodeHidden);
+	    flowPanel.add(manEreEndHidden);
+
+	    formPanelManual.add(flowPanel);
+	    formPanelManual.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
 	}
 
 	// ------------------------------------------------- ButtonsPanel

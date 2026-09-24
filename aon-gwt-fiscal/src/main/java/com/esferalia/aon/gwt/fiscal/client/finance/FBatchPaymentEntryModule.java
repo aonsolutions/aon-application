@@ -61,8 +61,11 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 	private AonToolbarButton downloadButton;
 	private AonToolbarButton excelButton;
 	private AonToolbarButton deleteFileButton;
+	
 	private HTMLPanel messagePanel;
-
+	private String  pendingMessage;
+	private boolean pendingMessageIsError;
+	
 	private HTMLPanel container;
 
 	// FBatchDetail
@@ -151,6 +154,15 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 		messagePanel = new HTMLPanel("");
 		container.add(messagePanel);
+		
+		final boolean hadPendingMessage = pendingMessage != null;
+		if (hadPendingMessage) {
+			if (pendingMessageIsError)
+				AonMessagePanel.showError(messagePanel, new HTMLPanel(pendingMessage));
+			else
+				AonMessagePanel.showSuccess(messagePanel, new HTMLPanel(pendingMessage));
+			pendingMessage = null;
+		}
 
 		financesPanel = new SplitLayoutPanel();
 		financesPanel.setHeight("100%");
@@ -195,8 +207,8 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			
 			@Override
 			public void run() {
-				if(fBatch.isRecorded() || fBatch.isGenerated())
-					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado " + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
+				if(!hadPendingMessage && (fBatch.isRecorded() || fBatch.isGenerated()))
+ 					AonMessagePanel.showInfo(messagePanel, "Para poder modificar un vencimiento con estado " + fBatch.getStatus().getDescription() + " se debe eliminar primero el fichero generado");
 			}
 		};
 		
@@ -339,21 +351,15 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 			@Override
 			public void onSuccess(Integer rattachId) {
-				AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("El fichero SEPA de la remesa '<b>" + fBatch.getDescription() + "</b>' ha sido generado correctamente."));
-				
 				fBatch.setRattach(rattachId);
 				fBatch.setStatus(FBatchStatus.GENERATED);
-				
-				showHideToolbarButtons();
 
 				FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch, new AsyncCallback<FBatch>() {
 
 					@Override
 					public void onSuccess(FBatch savedFbatch) {
-						fBatch = savedFbatch;
-						hasSaved = true;
-						fBatchPaymentAviableList.setFBatch(fBatch);
-						fBatchPaymentBatchedList.setFBatch(fBatch);
+						reload(savedFbatch, "El fichero SEPA de la remesa '<b>" + savedFbatch.getDescription() + "</b>' ha sido generado correctamente.", false);
+								 					
 					}
 
 					@Override
@@ -379,23 +385,14 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 			@Override
 			public void onSuccess(Void seccess) {
-				AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("El fichero SEPA de la remesa '<b>" + fBatch.getDescription() + "</b>' ha sido eliminado correctamente."));
-				
 				fBatch.setRattach(null);
 				fBatch.setStatus(FBatchStatus.PENDING);
-				
-				showHideToolbarButtons();
 
 				FINANCE_SERVICE.createUpdateFBatch(opt.getDomainName(), opt.getDomain(), opt.getUser(), fBatch, new AsyncCallback<FBatch>() {
 
 					@Override
 					public void onSuccess(FBatch savedFbatch) {
-						hasSaved = true;
-						fBatch = savedFbatch;
-						fBatchPaymentAviableList.setFBatch(fBatch);
-						fBatchPaymentBatchedList.setFBatch(fBatch);
-						
-						showHideToolbarButtons();
+						reload(savedFbatch, "El fichero SEPA de la remesa '<b>" + savedFbatch.getDescription() + "</b>' ha sido eliminado correctamente.", false);		 					
 					}
 
 					@Override
@@ -436,8 +433,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 					
 					@Override
 					public void onSuccess(FBatch fBatch) {
-						onModuleLoad(opt, fBatch);
-						AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("Remesa contabilizada correctamente."));
+						reload(fBatch, "Remesa contabilizada correctamente.", false);
 					}
 					
 				});
@@ -467,8 +463,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 					
 					@Override
 					public void onSuccess(FBatch fBatch) {
-						onModuleLoad(opt, fBatch);
-						AonMessagePanel.showSuccess(messagePanel, new HTMLPanel("Remesa descontabilizada correctamente."));
+						reload(fBatch,"Remesa descontabilizada correctamente.", false);
 					}
 					
 				});
@@ -575,6 +570,15 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 
 	public void setHasSaved(boolean isNewFBatch) {
 		hasSaved = isNewFBatch;
+	}
+	
+	/** Recarga el modulo para que el split se repinte segun el nuevo estado. */
+	private void reload(FBatch fBatchIn, String message, boolean isError) {
+	    pendingMessage = message;
+	    pendingMessageIsError = isError;
+
+	    onModuleLoad(opt, fBatchIn);
+	    hasSaved = true;   // onModuleLoad lo pone a false de forma sincrona
 	}
 		
 	public abstract void back(boolean refresh);
