@@ -7,7 +7,8 @@ import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environmen
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { Chart } from "chart.js/auto";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import * as LS from '../../../services/localStorageService.js';
+
+import * as UA from '../../../services/userAgentService.js';
 
 let chartCanva;
 let cardFilter;
@@ -74,7 +75,7 @@ export class AonCompanyCostsListNew extends AonElement {
   }
 
   buildToolbarSearch() {
-	let btnSearch = this.getApplication().addSearchOption(LS.isFutureTheme());
+	let btnSearch = this.getApplication().addSearchOption(false);
     btnSearch.disabled = true;
     const searchValueFn = ({ detail }) => {
       if (detail) getApplicationParent().setDataFilter(detail);
@@ -353,7 +354,9 @@ const createLeyend = (leyends) => {
   leyendDiv.appendChild(button);
  
    button.onclick = () => {
-    document.getElementById("aonLaboralSidenavPaysheet").click();
+    if(UA.isMobile()) {
+      document.getElementById("aonLaboralMobileSidenavContentPaysheet").click();
+    } else document.getElementById("aonLaboralSidenavPaysheet").click();
   }
 }
 

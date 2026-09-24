@@ -42,7 +42,8 @@ class Mod303ARABA2026Declaration extends Mod303ARABA {
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
-		,Mod303Key.AR_C033,Mod303Key.AR_C034,Mod303Key.AR_C035,Mod303Key.AR_C036
+		,Mod303Key.AR_C033,Mod303Key.AR_C034,Mod303Key.AR_C035
+		,Mod303Key.AR_C036,Mod303Key.AR_C046
 	};
 	
 	private enum Mod303KeyDAO implements IMod303KeyDAO {
@@ -203,7 +204,7 @@ class Mod303ARABA2026Declaration extends Mod303ARABA {
 		
 		// Rectificacion de deducciones
 		,AR_C046	(Mod303Key.AR_C046,(mod,vat) -> rectificationDeduccionesFilter(vat,mod)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C046,mod,vat.getDeductibleQuota()))
+			,(ctx,mod,vat) -> addProrrated(Mod303Key.AR_C046,mod,vat))
 		
 		// TOTAL A DEDUCIR
 		,AR_C038	(Mod303Key.AR_C038,null,null,null,"AR_C030+AR_C031+AR_C032+AR_C033+AR_C034+AR_C035+AR_C036+AR_C037+AR_C046",null)
