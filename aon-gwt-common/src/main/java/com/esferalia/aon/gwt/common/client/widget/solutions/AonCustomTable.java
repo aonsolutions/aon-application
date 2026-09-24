@@ -44,19 +44,19 @@ public class AonCustomTable extends HTMLPanel {
 	}
 	
 	public Label addHeader(Label label, String width, String styles) {
-		addCellHeaderStyle(label);
-		applyCellWidth(label, width);
-		header.add(label);
-		addInlineStyle(label, styles);
-		return label;
+	    addCellHeaderStyle(label);
+	    addInlineStyle(label, styles);   // primero la columna
+	    applyCellWidth(label, width);    // y el ancho manda, como en las filas
+	    header.add(label);
+	    return label;
 	}
-	
-	public Widget addHeader(Widget wdiget, String width, String styles) {
-		addCellHeaderStyle(wdiget);
-		applyCellWidth(wdiget, width);
-		header.add(wdiget);
-		addInlineStyle(wdiget, styles);
-		return wdiget;
+
+	public Widget addHeader(Widget widget, String width, String styles) {
+	    addCellHeaderStyle(widget);
+	    addInlineStyle(widget, styles);
+	    applyCellWidth(widget, width);
+	    header.add(widget);
+	    return widget;
 	}
 	
 	public void addHeader(AonTableButton button, String width) {
@@ -127,14 +127,14 @@ public class AonCustomTable extends HTMLPanel {
 	private void applyCellWidth(Widget widget, String width) {
 		Style style = widget.getElement().getStyle();
 		style.setProperty("boxSizing", "border-box");
-		style.setProperty("minWidth", "0");
+		style.setProperty("minWidth", "0");   // suelo por defecto; la columna lo puede subir
 
 		if (AonStringUtils.equalsIgnoreCase(width, FLEX_WIDTH)) {
 			style.setProperty("flex", "1 1 0");
 			style.clearProperty("width");
 			style.clearProperty("maxWidth");
 		} else {
-			style.setProperty("flex", "0 0 " + width);
+			style.setProperty("flex", "0 1 " + width);   // antes 0 0: no encogia nunca
 			style.setProperty("width", width);
 			style.setProperty("maxWidth", width);
 		}
@@ -180,6 +180,12 @@ public class AonCustomTable extends HTMLPanel {
 	
 	public void addRow(HTMLPanel row, Widget widget, String width) {
 		applyCellWidth(widget, width);
+		row.add(widget);
+	}
+	
+	public void addRow(HTMLPanel row, Widget widget, String width, String styles) {
+		applyCellWidth(widget, width);
+		addInlineStyle(widget, styles);   // la columna tiene la ultima palabra
 		row.add(widget);
 	}
 
