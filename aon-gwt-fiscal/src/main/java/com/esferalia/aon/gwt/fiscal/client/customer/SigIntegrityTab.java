@@ -164,7 +164,6 @@ public class SigIntegrityTab extends ResizeComposite {
 		container.add(messagePanel);
 
 		tableScroll.setHeight("100%");
-		tableScroll.getElement().getStyle().setProperty("margin", "0 1rem");
 		container.add(tableScroll);
 
 		docklayoutPanel.add(container);
@@ -379,17 +378,17 @@ public class SigIntegrityTab extends ResizeComposite {
 
 	private enum COLS {
 
-		SEL(AonStringUtils.EMPTY, "3rem", "justify-content: center;"),
-		IDC("Cliente", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DOC("Documento", "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DES("Nombre", "-moz-available",
-				"min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CST("Estado cliente", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		CFE("F. Cliente", "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DOM("Dominio", "14rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DST("Estado dominio", "12rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DIA("Diagn\u00f3stico", "18rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		BTN(AonStringUtils.EMPTY, "5rem", "justify-content: center;");
+		SEL(AonStringUtils.EMPTY,	"3rem",				"min-width: 3rem !important; justify-content: center;"),
+		IDC("Cliente", 				"5rem",				"min-width: 3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DOC("Documento", 			"6rem",				"min-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DES("Nombre", 				"-moz-available",	"min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CST("Estado cliente", 		"7rem",				"min-width: 4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		CFE("F. Cliente", 			"6rem",				"min-width: 4.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DOM("Dominio", 				"14rem",			"min-width: 6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DST("Estado dominio", 		"12rem",			"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DIA("Diagn\u00f3stico", 	"18rem",			"min-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		BTN(AonStringUtils.EMPTY, 	"5rem",				"min-width: 5rem; justify-content: center;")
+		;
 
 		final String headerLabel;
 		final String colWidth;
@@ -413,7 +412,9 @@ public class SigIntegrityTab extends ResizeComposite {
 				selectAllBox.addValueChangeHandler(e -> onSelectAll(Boolean.TRUE.equals(e.getValue())));
 				tab.addHeader(selectAllBox, col.colWidth, col.styles);
 			} else {
-				tab.addHeader(new Label(col.headerLabel), col.colWidth, col.styles);
+				Label header = new Label(col.headerLabel);
+		        header.setTitle(col.headerLabel);
+				tab.addHeader(header, col.colWidth, col.styles);
 			}
 		}
 
@@ -478,8 +479,7 @@ public class SigIntegrityTab extends ResizeComposite {
 		HTMLPanel row = tab.createRow();
 		Label label = new Label(message);
 		label.setTitle(message);
-		tab.addInlineStyle(label, COLS.DES.styles);
-		tab.addRow(row, label, COLS.DES.colWidth);
+		tab.addRow(row, label, COLS.DES.colWidth, COLS.DES.styles);
 	}
 
 	private void paintRow(Row row) {
@@ -613,8 +613,7 @@ public class SigIntegrityTab extends ResizeComposite {
 	}
 
 	private void addCell(HTMLPanel tableRow, com.google.gwt.user.client.ui.Widget widget, COLS col) {
-		tab.addInlineStyle(widget, col.styles);
-		tab.addRow(tableRow, widget, col.colWidth);
+		tab.addRow(tableRow, widget, col.colWidth, col.styles);
 	}
 
 	private static String format(Date date) {

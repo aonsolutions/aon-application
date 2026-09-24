@@ -128,12 +128,11 @@ public class SigCustomerLinkTab extends ResizeComposite {
 		docklayoutPanel.addFilterWidget(sync);
 
 		container = new HTMLPanel("");
-		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.addStyleName(AON.CSS.aonFlexColumn2());
 		container.add(messagePanel);
 
 		centerPanel = new SimpleLayoutPanel();
 		centerPanel.setHeight("100%");
-		centerPanel.getElement().getStyle().setProperty("margin-left", "1rem");
 
 		container.add(centerPanel);
 

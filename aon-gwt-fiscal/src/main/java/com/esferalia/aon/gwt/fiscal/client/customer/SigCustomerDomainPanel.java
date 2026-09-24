@@ -76,13 +76,14 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 	private static enum COLS {
 
-		IDC("Cliente", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DOC(AON.MSG.document(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		DES(AON.MSG.name(), "-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		STA(AON.MSG.status(), "6rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
-		RAD("RaddInfo", "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
-		ACU("Aon Customer", "7rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
-		BTN(AonStringUtils.EMPTY, "5rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),;
+		IDC("Cliente",           "5rem",          "min-width: 3rem;   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DOC(AON.MSG.document(),  "6rem",          "min-width: 4rem;   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		DES(AON.MSG.name(),      "-moz-available","min-width: 6rem;   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		STA(AON.MSG.status(),    "6rem",          "min-width: 4rem;   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"),
+		RAD("RaddInfo",          "5rem",          "min-width: 2.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
+		ACU("Aon Customer",      "7rem",          "min-width: 2.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center;"),
+		BTN(AonStringUtils.EMPTY,"4rem",          "min-width: 4rem;   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		;
 
 		String headerLabel;
 		String colWidth;
@@ -174,7 +175,6 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 	private void search() {
 		tab = new AonCustomTable();
 		setWidget(tab);
-		getElement().getStyle().setProperty("margin", "0 1rem");
 
 		paintHeader();
 		searchData();
@@ -226,22 +226,18 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 		row.addDomHandler(e -> onCusotmerOpen(customer), ClickEvent.getType());
 
 		Label id = new Label(customer.getId().toString());
-		tab.addInlineStyle(id, COLS.IDC.getStyles());
-		tab.addRow(row, id, COLS.IDC.getColWidth());
+		tab.addRow(row, id, COLS.IDC.getColWidth(), COLS.IDC.getStyles());
 		
 		Label document = new Label(customer.getDocument());
-		tab.addInlineStyle(document, COLS.DOC.getStyles());
-		tab.addRow(row, document, COLS.DOC.getColWidth());
+		tab.addRow(row, document, COLS.DOC.getColWidth(), COLS.DOC.getStyles());
 
 		Label name = new Label(customer.getName());
 		name.setTitle(customer.getName());
-		tab.addInlineStyle(name, COLS.DES.getStyles());
-		tab.addRow(row, name, COLS.DES.getColWidth());
+		tab.addRow(row, name, COLS.DES.getColWidth(), COLS.DES.getStyles());
 
 		Label customerStatus = new Label(customer.getStatus().getDescription());
 		customerStatus.setTitle(customer.getStatus().getDescription());
-		tab.addInlineStyle(customerStatus, COLS.STA.getStyles());
-		tab.addRow(row, customerStatus, COLS.STA.getColWidth());
+		tab.addRow(row, customerStatus, COLS.STA.getColWidth(), COLS.STA.getStyles());
 
 		HTMLPanel customerRaddInfoPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		customerRaddInfoPanel.addStyleName(AON.CSS.aonItemFlex());
@@ -260,8 +256,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 
 			customerRaddInfoPanel.add(raddInfoBtn);
 		}
-		tab.addInlineStyle(customerRaddInfoPanel, COLS.RAD.getStyles());
-		tab.addRow(row, customerRaddInfoPanel, COLS.RAD.getColWidth());
+		tab.addRow(row, customerRaddInfoPanel, COLS.RAD.getColWidth(), COLS.RAD.getStyles());
 
 		HTMLPanel customerDomainPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		customerDomainPanel.addStyleName(AON.CSS.aonItemFlex());
@@ -280,8 +275,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			
 			customerDomainPanel.add(customerDomainBtn);
 		}
-		tab.addInlineStyle(customerDomainPanel, COLS.ACU.getStyles());
-		tab.addRow(row, customerDomainPanel, COLS.ACU.getColWidth());
+		tab.addRow(row, customerDomainPanel, COLS.ACU.getColWidth(), COLS.ACU.getStyles());
 
 		HTMLPanel optionsPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		optionsPanel.addStyleName(AON.CSS.aonItemFlex());
@@ -313,8 +307,7 @@ public abstract class SigCustomerDomainPanel extends ScrollPanel {
 			optionsPanel.add(messages);
 		}
 		
-		tab.addInlineStyle(optionsPanel, COLS.BTN.getStyles());
-		tab.addRow(row, optionsPanel, COLS.BTN.getColWidth());
+		tab.addRow(row, optionsPanel, COLS.BTN.getColWidth(), COLS.BTN.getStyles());
 
 		rowCustomers.put(customer.getId(), customer);
 	}
