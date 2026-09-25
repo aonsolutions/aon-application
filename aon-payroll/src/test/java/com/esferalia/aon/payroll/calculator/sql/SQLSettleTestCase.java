@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OBJECTIVE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -1214,6 +1215,83 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		assertEquals(1, deductions.size());
 		for ( SalaryDeduction d: deductions )
 			System.out.println(d.getDescription() + " = " + d.getAmount());
+		
+	}
+
+	@Test
+	public void testSettleVacationsBaseCgcMin() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		
+		
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				getToday(),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"502\"");
+						put(QUOTE_GROUP.getName(), "\"08\"");
+						put(PARTIAL_FACTOR.getName(), "1.00");
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						//put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+						
+					}
+				}, 
+				new String[] { 
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"BASE_CGP*(INDEFINIDO?1.55:1.60)/100"
+				}, 
+				null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+		addSystemData(aonContext, 
+				contract.getStartDate(),null,
+				Collections.singletonMap(CGC_BASE_MIN.getName(), 
+				"[ \"01\":(MAX(11.98, (BASE_HORARIA ? 11.98 * HORAS_TRABAJADAS : 1989.30 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"02\":(MAX(9.94, (BASE_HORARIA ? 9.94 * HORAS_TRABAJADAS : 1649.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"03\":(MAX(8.65, (BASE_HORARIA ? 8.65 * HORAS_TRABAJADAS : 1435.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"04\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"05\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"06\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"07\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD))) "
+				+ ",\"08\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : (MODALIDAD_MENSUAL ? 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 47.48 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD)))) "
+				+ ",\"09\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : (MODALIDAD_MENSUAL ? 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 47.48 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD)))) "
+				+ ",\"10\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : (MODALIDAD_MENSUAL ? 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 47.48 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD)))) "
+				+ ",\"11\":(MAX(8.58, (BASE_HORARIA ? 8.58 * HORAS_TRABAJADAS : (MODALIDAD_MENSUAL ? 1424.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD : 47.48 * DIAS_NOMINA * COEFICIENTE_PARCIALIDAD))))] "
+				+ "[GRUPO_COTIZACION]")
+				);
+
+		setData(aonContext, contract, 
+				contract.getStartDate()
+				, null
+				, Collections.singletonMap("BASE_HORARIA", "true" ));
+
+		setData(aonContext, contract, 
+				add(getToday(), Calendar.DAY_OF_MONTH,1)
+				, null
+				, new HashMap<String, String>() {
+			{
+				put("SALARIO_DIA", format("%d", 10));
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 20));
+			}
+		});
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract.getEndDate(), contract);
+		
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		assertEquals( 1424.40 / 30.00 * 20, settle.getCommonBase(), DELTA);
+	
 		
 	}
 

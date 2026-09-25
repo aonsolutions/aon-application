@@ -42,7 +42,7 @@
     </component>
     <component>
         <component-type>com.code.aon.faces.CommandButton</component-type>
-        <component-class>org.ajax4jsf.component.html.HtmlAjaxCommandButton</component-class>
+        <component-class>com.code.aon.faces.component.richfaces.commandButton.HtmlAjaxCommandButton</component-class>
     </component>
     <component>
         <component-type>com.code.aon.faces.CommandLink</component-type>

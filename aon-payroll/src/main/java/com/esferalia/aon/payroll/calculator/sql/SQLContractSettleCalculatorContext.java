@@ -226,6 +226,10 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 			}
 		};
 	}
+	
+	protected Date getSettleEnd() {
+		return super.getEnd();
+	}
 
 	// ------------------------------------------------------------------------
 	@Override
@@ -266,8 +270,10 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		fixSalaryEnd(ctx);
 		fixContractCompleteVariable(ctx);
 		
-		loadQuoteVariables(ctx, addDays2Date(super.getEnd(), 1) , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
-		return super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+		
+		Collection<ITimedObject<IExpression>> contractData = super.loadContractData(ctx, Period.min(getStart(), startDate)  , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+		loadQuoteVariables(ctx, addDays2Date(getSettleEnd(), 1) , noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+		return contractData;
 	}
 	
 	private void loadQuoteVariables(ExpressionContext ctx, Date noHolidaysStartDate, Date noHolidaysEndDate) {

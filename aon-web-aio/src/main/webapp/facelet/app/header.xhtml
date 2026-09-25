@@ -11,6 +11,8 @@
 	
 	<style>
 	
+	@import url('/css/aon-symbols-outlined.css');
+
 	:root{
 		/*
 		--colorNeutralStroke2:
@@ -3255,8 +3257,56 @@
 	    width: max-content;
     }	
 
+
+	.aon-symbol-container {
+	      position: relative;
+	      display: inline-block;
+	      vertical-align: middle;
+	}
+
+	/* The glyph replaces the sprite. Only the image goes: background-color still
+	   comes from the theme/hover rules. The 16px gutter that
+	   .aon-finding-toolbar-item reserves with padding-left stays as-is. */
+	.aon-symbol-container > input {
+	      background-image: none;
+	}
+	/* aon-gwt.css:648 sets background-image !important at (0,1,0).
+	   This is (0,2,1) + !important, so it wins regardless of load order. */
+	.aon-symbol-container > input[class*="aon-icon-"] {
+	      background-image: none !important;
+	}	
+	.aon-symbol-container > .aon-symbols-outlined {
+	      position: absolute;
+	      top: 50%;
+	      left: 50%;
+	      transform: translate(-50%, -50%);
+	      color: var(--aonIconColor, black);
+	      font-size: 24px;
+	      line-height: 1;
+	      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+	      color: inherit;
+	      pointer-events: none;
+	      user-select: none;
+      }
+	
+	.aon-symbol-container > input[disabled] + .aon-symbols-outlined {
+	      opacity: 0.4;
+	}	
+	
 	
 	</style>
 
+	<aon:set var="#{sessionScope['iconClassSymbolMap']}"  value="#{{
+		'aon-icon-reset' : 'plus',
+		'aon-icon-rubber' : 'eraser',
+		'aon-icon-delete' : 'trash-2',
+		'aon-icon-cancel' : 'arrow-left',
+		'aon-icon-search' : 'file-search'
+	}}" />
+
+	<aon:set var="#{sessionScope['renderCommandButtonSymbol']}"  value="#{true}" />
+	<aon:set var="#{sessionScope['symbolCommandButtonClass']}" value="aon-symbols-outlined" />
+
+	
 		
 </ui:composition>
