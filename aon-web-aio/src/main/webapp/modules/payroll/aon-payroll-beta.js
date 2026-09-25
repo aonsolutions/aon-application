@@ -170,6 +170,12 @@ export class AonPayrollBeta extends AonElement {
 					fn: () => this.getApplication().setContent(new JSF.AonJsfHolidays()),
 				});
 				
+			paramsOptions.push({
+				id: "contractParams",
+				icon: "speaker_notes",
+				name: MSG.CONTRACTS,
+				fn: () => this.getApplication().setContent(new JSF.AonJsfContractParams()),
+			});
 		}
 			
 		if (this.getDur().isComunicaManager()) {
