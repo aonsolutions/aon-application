@@ -33,7 +33,9 @@ import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -128,13 +130,9 @@ public class CostCSVServlet extends HttpServlet {
 		
 		try (ServletOutputStream sos = resp.getOutputStream();
 				CloseableAONContext aonContext = AONContext.getAONContext(domainName, user) ) {
-
+				
 				if (enterpriseId == null || enterpriseId == 0)
-					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
-							, aonContext.getDomainId()
-							, aonContext.getUser()
-							, w -> w.getIdProperty().eq(workplaceId))
-							.getEnterprise();
+					enterpriseId = WorkplaceDAO.get(aonContext, workplaceId, new Options().setSecurity(false)).getEnterprise();
 				
 				Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream =
 						EnterprisePayrollCSV.getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId);

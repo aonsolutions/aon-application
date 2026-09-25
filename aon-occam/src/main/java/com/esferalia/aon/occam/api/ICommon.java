@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Iae;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -114,12 +115,11 @@ public interface ICommon {
 	// --------------------------------------------
 	
 	public Stream<Workplace> getWorkplaces(AONContext ctx, Integer domainId);
+	public Stream<Workplace> getWorkplaces(AONContext ctx, WorkplaceFilter filter, Options... options);
 	public Optional<Workplace> getWorkplace(AONContext ctx, Integer domainId, Integer workplaceId);	
+	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter, Options... options);
 	public Workplace saveWorkplace(AONContext ctx, Workplace workplace);
 	public void deleteWorkplace(AONContext ctx, Integer workplaceId);
-
-	@Deprecated	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
-	@Deprecated	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
 	
 	// --------------------------------------------
 	// PAYROLL WORKPLACE

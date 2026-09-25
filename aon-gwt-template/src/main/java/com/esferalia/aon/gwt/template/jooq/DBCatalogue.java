@@ -5,15 +5,12 @@ import static com.esferalia.aon.jooq.tables.CatalogueItem.CATALOGUE_ITEM;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Date;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
-import org.jooq.Record2;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 
@@ -22,50 +19,23 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 
 
 public class DBCatalogue {
 	
-	public static LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> getWorkplaces(Domain domain, User user){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-			Result<Record2<Integer, String>> record;
-			
-			if(isParentUser(domain, user)){
-				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
-						.from(WORKPLACE)
-						.where(WORKPLACE.DOMAIN.eq(domain.getId()))
-						.and(WORKPLACE.ACTIVE.eq((byte)1))
-						.orderBy(WORKPLACE.DESCRIPTION)
-						.fetch();				
-			}
-			else{
-				record = ctx.getDslContext().select(WORKPLACE.ID, WORKPLACE.DESCRIPTION)
-					.from(WORKPLACE).join(USER_SCOPE).on(WORKPLACE.SCOPE.eq(USER_SCOPE.SCOPE))
-					.where(WORKPLACE.DOMAIN.eq(domain.getId()))
-					.and(WORKPLACE.ACTIVE.eq((byte)1))
-					.and(USER_SCOPE.USER_ID.eq(user.getId()))
-					.orderBy(WORKPLACE.DESCRIPTION)
-					.fetch();
-			}
-			LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace> v = new LinkedList<com.esferalia.aon.gwt.template.shared.WorkPlace>();
-			record.stream().forEach(r -> {
-				com.esferalia.aon.gwt.template.shared.WorkPlace w = new com.esferalia.aon.gwt.template.shared.WorkPlace() ;
-				w.setId(r.value1());
-				w.setName(r.value2());
-				v.add(w);
-			});
-			return v;
-			
-		} finally{
-			if (ctx != null) ctx.close();
+	public static LinkedList<Workplace> getWorkplaces(Domain domain, User user){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())) {
+			return WorkplaceDAO.getStream(ctx, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getActiveProperty().eq((byte)1)))
+				.collect(Collectors.toCollection(LinkedList::new));
 		}
 	}
 	
@@ -75,13 +45,16 @@ public class DBCatalogue {
 	}
 	
 	public static Workplace getWorkplace(Domain domain, User user, String workplaceDescription) {
-		return AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(),
-				filter -> filter.getDescriptionProperty().eq(workplaceDescription));
+		Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(user.getLogin());
+		return AON.getWorkplace(occam, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getDescriptionProperty().eq(workplaceDescription)),
+			new Options().setSecurity(false));
 	}
 	
 	public static Workplace getWorkplace(Domain domain, User user, Integer workplaceId){
-		return AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(),
-				filter -> filter.getIdProperty().eq(workplaceId));
+		Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(user.getLogin());
+		return AON.getWorkplace(occam, f -> f.getIdProperty().eq(workplaceId), new Options().setSecurity(false));
 	}
 	
 	public static Department getDepartment(Domain domain, Workplace wp, String departmentName, String login){

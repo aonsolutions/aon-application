@@ -1065,7 +1065,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setDescription("PRINCIPAL")
 				.setDomain(newDomain.getId())
 				.setEnterprise(companyId)
-				.setAddress(raddressId)
+				.setAddress(new RegistryAddress().setId(raddressId))
 				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
 				.setScope(enterpriseScope.isEmpty() ? null : enterpriseScope.get().getId())
 				.setPayrollWorkplace(new PayrollWorkplace().setDomain(newDomain.getId()))

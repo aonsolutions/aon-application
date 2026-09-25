@@ -39,18 +39,15 @@ public interface Properties {
 	}
 
 	public interface WorkplaceProperties {
-		
 		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
 		Property<Byte> getActiveProperty();
 		Property<Integer> getAddressProperty();
 		Property<Integer> getCustomerProperty();
 		Property<String> getDescriptionProperty();
-		Property<Integer> getDomainProperty();
 		Property<Byte> getEconomicagreementProperty();
 		Property<Integer> getEnterpriseProperty();
 		Property<Integer> getScopeProperty();
-		
-		Property<String> getGeozoneNameProperty();
 	}
 	
 	public interface ProjectProperties {

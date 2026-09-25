@@ -204,6 +204,7 @@ import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -7618,7 +7619,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	
 	private String getDefaultAgreement(Domain domain, User user, Integer workplaceId) {
 		if(null != workplaceId) {
-			com.esferalia.aon.occam.api.model.Workplace workplace = AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(workplaceId));
+			Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(user.getLogin());
+			com.esferalia.aon.occam.api.model.Workplace workplace = AON.getWorkplace(occam, domain.getId(), workplaceId).orElse(null);
 			
 			if(null != workplace) {
 				PayrollWorkplace parollWorkplace = AON.getPayrollWorkpalce(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getWorkplaceProperty().eq(workplace.getId())));
@@ -7681,9 +7683,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	private aon.sepe.objects.Contract createContract(String domainName, Integer domainId, String login,
 			EmployeeContractInfo employeeContractInfo, String ipf) {
-		com.esferalia.aon.occam.api.model.Workplace wp = AON.getWorkplace(domainName, domainId, login,
-				f -> f.getIdProperty().eq(employeeContractInfo.getContractInfo().getWorkplaceId()));
-		RegistryAddressFilter filter = f -> f.getIdProperty().eq(wp.getAddress());
+		Occam occam = new Occam().setDomainName(domainName).setDomain(domainId).setUser(login);
+		com.esferalia.aon.occam.api.model.Workplace wp = AON.getWorkplace(occam, domainId, employeeContractInfo.getContractInfo().getWorkplaceId()).orElse(null);
+		
+		RegistryAddressFilter filter = f -> f.getIdProperty().eq(wp.getAddress().getId());
 		RegistryAddress workAddress = AON.get(domainName, domainId, login, filter);
 
 		RegistryAddressFilter employeefilter = f -> f.getRegistryProperty()

@@ -86,7 +86,7 @@ public class ConfigurationDAO {
 			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setAllEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
-			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
+			.setWorkplaces( WorkplaceDAO.getStream(ctx, 
 					p -> (userScopes == null) 
 						? p.getDomainProperty().eq(ctx.getDomainId())
 							.and(p.getActiveProperty().eq( (byte) 1 ))
@@ -94,7 +94,7 @@ public class ConfigurationDAO {
 							.and(p.getActiveProperty().eq( (byte) 1 ))
 							.and(p.getScopeProperty().in( userScopes ))
 					
-					))
+					).collect(Collectors.toCollection(LinkedList::new)))
 			.setVatTaxes( TaxDAO.getVatTaxes(ctx,ctx.getDomainId(),params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
 			.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))

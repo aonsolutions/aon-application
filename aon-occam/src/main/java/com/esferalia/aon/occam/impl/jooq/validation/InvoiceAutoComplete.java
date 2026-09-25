@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -679,7 +680,7 @@ public class InvoiceAutoComplete {
 			if(detail.getWorkplace() == null || detail.getWorkplace().getId() == null) {
 				if(detail.getWorkplace() != null){
 					if ( detail.getWorkplace().getId() == null && AonStringUtils.isBlank( detail.getWorkplace().getDescription()) ) {
-						Workplace wp = WorkplaceDAO.getWorkplace(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkplace().getId()));
+						Workplace wp = WorkplaceDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(detail.getWorkplace().getId()), new Options().setSecurity(false));
 						detail.setWorkplace(wp);
 					}
 				} else {

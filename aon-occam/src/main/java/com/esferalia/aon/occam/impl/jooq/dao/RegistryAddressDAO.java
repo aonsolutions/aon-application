@@ -41,6 +41,8 @@ public class RegistryAddressDAO {
 	public static final String ADDRESS_NUMBER_LABEL = "N\u00fcmero";
 	public static final String ADDRESS_ZIP_LABEL = "C\u00F3digo postal";
 
+	public static final com.esferalia.aon.jooq.tables.Geozone PARENT_GEOZONE = GEOZONE.as("parentGeozone");
+	public static final com.esferalia.aon.jooq.tables.Geozone CHILD_GEOZONE = GEOZONE.as("childGeozone");
 	
 	private static final RAddressPropertiesDAO RADDRESS_PROPERTIES = new RAddressPropertiesDAO();
 	private static class RAddressPropertiesDAO implements RegistryAddressProperties {
@@ -75,9 +77,7 @@ public class RegistryAddressDAO {
 		}
 		
 		public static RegistryAddress build(Record r) {
-			com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
-			com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
-			return build(r, parent, child);
+			return build(r, PARENT_GEOZONE, CHILD_GEOZONE);
 		}
 		
 		public static RegistryAddress build(Record r, Geozone parent, Geozone child) {
@@ -190,15 +190,12 @@ public class RegistryAddressDAO {
 	}
 
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistryAddressFilter filter) {
-		com.esferalia.aon.jooq.tables.Geozone parent = GEOZONE.as("parentGeozone");
-		com.esferalia.aon.jooq.tables.Geozone child = GEOZONE.as("childGeozone");
-
 		return ctx.getDslContext().select()
 				.from(RADDRESS)
 				.join(DOMAIN).on(DOMAIN.ID.eq(RADDRESS.DOMAIN))
-				.leftOuterJoin(child).on(child.ID.eq(RADDRESS.GEOZONE))
+				.leftOuterJoin(CHILD_GEOZONE).on(CHILD_GEOZONE.ID.eq(RADDRESS.GEOZONE))
 				.leftOuterJoin(GEOTREE).on(GEOTREE.CHILD.eq(RADDRESS.GEOZONE).and(GEOTREE.DOMAIN.eq(DOMAIN.ID).or(GEOTREE.DOMAIN.eq(DOMAIN.PARENT))))
-				.leftOuterJoin(parent).on(parent.ID.eq(GEOTREE.PARENT))
+				.leftOuterJoin(PARENT_GEOZONE).on(PARENT_GEOZONE.ID.eq(GEOTREE.PARENT))
 				.where(RADDRESS_PROPERTIES.getConditions(filter));
 	}
 

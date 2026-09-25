@@ -14,8 +14,8 @@ import com.esferalia.aon.gwt.template.shared.ProductCategory;
 import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.WorkPlace;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -64,7 +64,7 @@ public interface ITemplateAsync {
 
 	void insertTransferStock(Domain domain, User user, AsyncCallback<Error> callback);
 
-	void getWorkplaces(Domain domain, User user, AsyncCallback<List<WorkPlace>> callback);
+	void getWorkplaces(Domain domain, User user, AsyncCallback<List<Workplace>> callback);
 
 	void getDepartments(Domain domain, User user, String workplace,
 			AsyncCallback<List<Department>> callback);

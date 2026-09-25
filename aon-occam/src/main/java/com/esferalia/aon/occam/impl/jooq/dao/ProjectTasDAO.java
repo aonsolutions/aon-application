@@ -21,6 +21,7 @@ import org.jooq.conf.ParamType;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.ProjectTasFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.ProjectTasProperties;
 import com.esferalia.aon.occam.api.model.Status;
 import com.esferalia.aon.occam.api.model.project.ProjectTas;
@@ -105,7 +106,7 @@ public class ProjectTasDAO {
 					
 					pt.setTarget(TargetDAO.get(ctx, r.get(PROJECT_TAS.TARGET)));
 					pt.setTaskHolder(TaskHolderDAO.get(ctx, r.get(PROJECT_TAS.TASK_HOLDER)));
-					pt.setWorkplace(WorkplaceDAO.getWorkplace(ctx, f -> f.getIdProperty().eq(r.getValue(PROJECT_TAS.WORKPLACE))));
+					pt.setWorkplace(WorkplaceDAO.get(ctx, f -> f.getIdProperty().eq(r.getValue(PROJECT_TAS.WORKPLACE)), new Options().setSecurity(false)));
 					
 					return pt;
 				})
@@ -122,7 +123,7 @@ public class ProjectTasDAO {
 					
 					pt.setTarget(TargetDAO.get(ctx, r.get(PROJECT_TAS.TARGET)));
 					pt.setTaskHolder(TaskHolderDAO.get(ctx, r.get(PROJECT_TAS.TASK_HOLDER)));
-					pt.setWorkplace(WorkplaceDAO.getWorkplace(ctx, f -> f.getIdProperty().eq(r.getValue(PROJECT_TAS.WORKPLACE))));
+					pt.setWorkplace(WorkplaceDAO.get(ctx, f -> f.getIdProperty().eq(r.getValue(PROJECT_TAS.WORKPLACE)), new Options().setSecurity(false)));
 					
 					return pt;
 				});

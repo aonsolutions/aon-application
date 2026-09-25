@@ -1283,43 +1283,23 @@ public class AON {
 		}
 	}
 	
-	/**
-	 * @deprecated use getWorkplace(Occam occam, Integer domainId, Integer workplaceId)
-	 */
-	@Deprecated
-	public static Workplace getWorkplace(String domainName, Integer domainId,
-			String login, WorkplaceFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getWorkplace(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static Stream<Workplace> getWorkplaces(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getCommon().getWorkplaces(ctx, domainId);
 		}
 	}
-	
-	/**
-	 * @deprecated use getWorkplaces(Occam occam, Integer domainId)
-	 */
-	@Deprecated
-	public static LinkedList<Workplace> getWorkplaceList(String domainName,
-			Integer domainId, String login, WorkplaceFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getWorkplaceList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+
+	public static Workplace getWorkplace(Occam occam, WorkplaceFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplace(ctx, filter, options);
 		}
-	}	
+	}
+	
+	public static Stream<Workplace> getWorkplaces(Occam occam, WorkplaceFilter filter, Options... options) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getWorkplaces(ctx, filter, options);
+		}
+	}
 
 	public static Workplace saveWorkplace(Domain domain, User user, Workplace workplace) {
 		return saveWorkplace(domain.getName(), domain.getId(), user.getLogin(), workplace);

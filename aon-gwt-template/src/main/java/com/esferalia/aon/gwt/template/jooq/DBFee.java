@@ -163,8 +163,12 @@ public class DBFee {
 	}
 	
 	public LinkedList<Workplace> getWorkplaceList(Domain domain, User user){
-		return AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(),
-				filter -> filter.getDomainProperty().eq(domain.getId()));
+		Occam occam = new Occam()
+			.setDomainName(domain.getName())
+			.setDomain(domain.getId())
+			.setUser(user.getLogin());
+		return AON.getWorkplaces(occam, domain.getId())
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public LinkedList<InvoicingGroup> getInvoicingGroupList(Domain domain, User user){

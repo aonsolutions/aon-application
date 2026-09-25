@@ -414,22 +414,18 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	
 	private DATOSCENTROTRABAJOTYPE obtainDATOSCENTROTRABAJO(AONContext ctx,
 			Sales sales) {
-		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace().getId()));
+		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, sales.getDomain(), sales.getWorkplace().getId()).orElse(null);
 		if(workplace!=null){
-			RAddress address = RegistryOldDAO
-					.getRAddressStream(ctx,
-							p -> p.getIdProperty().eq(workplace.getAddress()))
-					.findFirst().orElse(new RAddress());
-			if(address!=null){
+			if(workplace.getAddress() != null && workplace.getAddress().getId() != null){
 				DATOSCENTROTRABAJOTYPE datos = new DATOSCENTROTRABAJOTYPE();
 				datos.setDESCRIPCION(workplace.getDescription());
 				datos.setDATOSDIRECCION(new DATOSDIRECCIONTYPE());
-				datos.getDATOSDIRECCION().setDIRECCION(address.getAddress());
-				datos.getDATOSDIRECCION().setDIRECCION2(address.getAddress2());
-				datos.getDATOSDIRECCION().setDIRECCION3(address.getAddress3());
-				datos.getDATOSDIRECCION().setCIUDAD(address.getCity());
-				datos.getDATOSDIRECCION().setCODIGOPOSTAL(address.getZip());
-				datos.getDATOSDIRECCION().setPROVINCIA(null);
+				datos.getDATOSDIRECCION().setDIRECCION(workplace.getAddress().getAddress());
+				datos.getDATOSDIRECCION().setDIRECCION2(workplace.getAddress().getAddress2());
+				datos.getDATOSDIRECCION().setDIRECCION3(workplace.getAddress().getAddress3());
+				datos.getDATOSDIRECCION().setCIUDAD(workplace.getAddress().getCity());
+				datos.getDATOSDIRECCION().setCODIGOPOSTAL(workplace.getAddress().getZip());
+				datos.getDATOSDIRECCION().setPROVINCIA(workplace.getAddress().getProvince());
 				return datos;
 			} else {
 				String errorMsg = "Centro de trabajo sin direccion definida:" 

@@ -17,13 +17,13 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
-import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -38,7 +38,6 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.ProductType;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -278,14 +277,14 @@ public class FeeImport extends Import {
 		// WORKPLACE
 		if(fee.getWorkplace().getDescription() != null){
 			Workplace workplace = fee.getWorkplace();
-			fee.setWorkplace(AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> workplaceFilter(domain, user, workplace, f)));
+			fee.setWorkplace(AON.getWorkplace(occam, f -> workplaceFilter(domain, user, workplace, f), new Options().setSecurity(false)));
 			if(fee.getWorkplace().getId() == null) {
 				error.setError(false);
 				error.setTextError("Línea " + index + ": El centro de trabajo introducido no existe.");
 				return error;
 			}
 		} else {
-			LinkedList<Workplace> list = AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+			List<Workplace> list = AON.getWorkplaces(occam, domain.getId()).toList();
 			if(list != null && (list.size() < 1 || list.size() > 1 )) {
 				error.setError(false);
 				error.setTextError("Línea " + index + ": Hay que introducir el centro de trabajo.");

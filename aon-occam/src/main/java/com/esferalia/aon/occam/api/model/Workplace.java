@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class Workplace implements Serializable {
@@ -12,7 +13,7 @@ public class Workplace implements Serializable {
 	private Integer domain;
 	private String description;
 	private boolean active;
-	private Integer address;
+	private RegistryAddress address;
 	private Integer customer;
 	private Administration economicAgreement;
 	private Integer enterprise;
@@ -27,10 +28,10 @@ public class Workplace implements Serializable {
 		this.active = active;
 		return this;
 	}
-	public Integer getAddress() {
+	public RegistryAddress getAddress() {
 		return address;
 	}
-	public Workplace setAddress(Integer address) {
+	public Workplace setAddress(RegistryAddress address) {
 		this.address = address;
 		return this;
 	}

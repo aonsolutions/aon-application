@@ -11,12 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,11 +21,18 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CommonServlet", urlPatterns = {"/common/*",
@@ -313,9 +314,8 @@ public class CommonServlet extends HttpServlet{
 	
     private JSONArray getWorkplaceList(Domain domain, String login){
     	JSONArray array = new JSONArray();
-    	AON.getWorkplaceList(domain.getName(), domain.getId(), login, 
-    			f -> f.getDomainProperty().eq(domain.getId()))
-    	.stream().forEach(wp -> 
+    	Occam occam = new Occam().setDomainName(domain.getName()).setDomain(domain.getId()).setUser(login);
+    	AON.getWorkplaces(occam, domain.getId()).forEach(wp -> 
     		array.put(ToJSON.objectToJSON(wp.getId(), wp.getDescription())));
     	return array;
     }
